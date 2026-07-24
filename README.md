@@ -9,7 +9,7 @@
 <br>
 
 <p align="center">
-  <img src="https://lvgl.io/github-assets/logo-colored.png" width=300px>
+  <img src="https://lvgl.io/github-assets/logo-colored.png" height=50px>
 </p>
 
 <h1 align="center">LVGL Pro</h1>
@@ -85,13 +85,13 @@ Describing UIs in XML rather than only through drag-and-drop editing has several
 
 ## Workflow
 
-1. **Create reusable components** in the editor and use the instant, pixel-perfect preview to see them render live.
-2. **Build screens** from those components, then add tests, transitions, data bindings, and translations in XML.
+1. **Create reusable components** in the [editor](https://lvgl.io/docs/pro/editor) and use the instant, pixel-perfect preview to see them render live.
+2. **Build screens** from those components, then add tests, transitions, data bindings, and translations in [XML](https://lvgl.io/docs/pro/syntax).
 3. **Add custom logic or widgets** in C, then recompile the editor's preview so your C runs both in preview and on the target.
-4. **Import from Figma** with the LVGL Flow plugin to bring in styles, layouts, data bindings, and navigation.
-5. **Integrate the UI** into your project by [exporting LVGL C code](https://lvgl.io/docs/pro/integration) or loading the XML at runtime.
-6. **Collaborate** by pushing to a GitHub repo and opening it in the Online Viewer, so teammates, designers, or managers need no local setup.
-7. **Automate** in CI/CD with the CLI to export C code and run UI tests as part of your pipeline.
+4. **Import from Figma** with the [LVGL Flow plugin](https://lvgl.io/docs/pro/figma) to bring in styles, layouts, data bindings, and navigation.
+5. **Integrate the UI** into your project by [exporting LVGL C code or loading the XML at runtime](https://lvgl.io/docs/pro/integration).
+6. **Collaborate** by pushing to a GitHub repo and opening it in the [Online Viewer](https://lvgl.io/docs/pro/online-viewer), so teammates, designers, or managers need no local setup.
+7. **Automate** in CI/CD with the [CLI](https://lvgl.io/docs/pro/cli) to export C code and run UI tests as part of your pipeline.
 
 ## Get Started
 

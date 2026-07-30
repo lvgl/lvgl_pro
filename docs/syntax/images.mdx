@@ -14,11 +14,13 @@ names.
 ## Registering Images
 
 
-In order to use images in the Editor add your PNG images in the `images` folder of your project, and list them in an `<images>` block in `globals.xml`. Note that only PNG files are supported at this moment.
+In order to use images in the Editor add your images in the `images` folder of your project, and list them in an `<images>` block in `globals.xml`.
+
+`<data>` and `<file>` entries reference **PNG** files. To convert JPEG or SVG images to PNG, or scale images use [`<convert>`](#converting-and-resizing).
 
 ### Path Resolution
 
-All `src_path` values are **relative to the project root** — the folder that contains `project.xml` and `globals.xml`. So `src_path="images/logo.png"` refers to `<project_root>/images/logo.png` on disk.
+All `src_path` values are **relative to the project root**: the folder that contains `project.xml` and `globals.xml`. So `src_path="images/logo.png"` refers to `<project_root>/images/logo.png` on disk.
 
 When you export C code and load images as files (`<file>` entries), the runtime needs to know where those files actually live on the target. This is handled by the path you pass to the project's init function:
 
@@ -55,6 +57,101 @@ system), they can be simply added to `globals.xml`:
   <file name="avatar" src_path="images/avatar1.png"/>
   <file name="logo" src_path="images/path/to/my_logo.png"/>
 </images>
+```
+
+## Converting and Resizing
+
+`<convert>` creates a PNG image from a source image when code is generated. Use it to
+bring in a source that isn't already a PNG, or to resize an asset to the size
+it's actually drawn at.
+
+The source can be `.svg`, `.jpg`, `.jpeg` or `.png`. The output is
+always a PNG, because that's the format the Editor renders with. `dest` is
+the file a `<data>` or `<file>` entry then points at:
+
+```xml
+<images>
+  <convert src="images/icons/home.svg" dest="images/icons/home.png" width="24"/>
+  <data name="icon_home" src_path="images/icons/home.png" color_format="argb8888"/>
+</images>
+```
+
+`<convert>` entries are processed before `<data>` and `<file>`, so `dest` doesn't
+have to exist yet. Treat converted PNGs as build output rather than sources.
+
+| Attribute | Required | Description |
+|---|---|---|
+| `src` | yes | Source image, relative to the project root. `.svg`, `.jpg`, `.jpeg` or `.png` |
+| `dest` | yes | Output PNG path, relative to the project root |
+| `width` | no | Target width in pixels. A `#const` can be used |
+| `height` | no | Target height in pixels. A `#const` can be used |
+| `scale` | no | Size as a percent of the source's natural size, e.g. `50%` |
+
+### Sizing
+
+- **`width` only** or **`height` only**: the other axis follows, keeping the aspect ratio. A 960×641 photo with `width="64"` becomes 64×43.
+- **both**: exactly that size; the aspect ratio is not preserved.
+- **`scale`**: a percent of the source's natural size. It must be written as a percent (`25%`), not a factor (`0.25`). A 24×24 SVG with `scale="25%"` becomes 6×6.
+- **none of them**: the source's natural size.
+
+Sizes can be picked from `<consts>` too to allow easily changing the size of many images at once:
+
+```xml
+<consts>
+  <int name="icon_size" value="16"/>
+  <int name="icon_size_lg" value="28"/>
+</consts>
+
+<images>
+  <convert src="images/icons/home.svg" dest="images/icons/home.png" width="#icon_size"/>
+  <data name="icon_home" src_path="images/icons/home.png" color_format="argb8888"/>
+
+  <convert src="images/icons/home.svg" dest="images/icons/lg/home.png" width="#icon_size_lg"/>
+  <data name="icon_home_lg" src_path="images/icons/lg/home.png" color_format="argb8888"/>
+</images>
+```
+
+It also works well with [`if_target`](./targets):
+```xml
+<consts>
+  <int name="icon_size_small" value="16"/>
+  <int name="icon_size_large" value="24"/>
+</consts>
+
+<images>
+  <convert src="images/icons/home.svg" dest="images/icons/home_small.png" width="#icon_size_small"/>
+  <convert src="images/icons/home.svg" dest="images/icons/home_large.png" width="#icon_size_large"/>
+</images>
+
+<images if_target="small">
+  <data name="icon_home" src_path="images/icons/home_small.png" color_format="argb8888"/>
+</images>
+
+<images if_target="large">
+  <data name="icon_home" src_path="images/icons/home_large.png" color_format="argb8888"/>
+</images>
+```
+
+Note that `if_target` belongs on the `<images>` block, not on `<convert>`. So
+convert every size once in a plain `<images>` block, then choose between the
+results in target-scoped blocks, as above. Both `<data>` entries can use the same
+`name`, because only one target is ever active.
+
+### SVG Sources
+
+Most icon sets (Lucide, Feather, Heroicons) stroke their shapes with
+`currentColor`, which only resolves in a browser. Converted as-is, such an SVG
+renders as nothing at all. Replace it with a real color once, up front:
+
+```bash
+sed -i 's/currentColor/#000000/' images/icons/*.svg
+```
+
+Black is the practical choice: the alpha channel carries the shape, so a single
+asset can be tinted anywhere it's used and one icon set serves every theme.
+
+```xml
+<lv_image src="icon_home" style_image_recolor="#color_accent" style_image_recolor_opa="100%"/>
 ```
 
 ## Using the Images

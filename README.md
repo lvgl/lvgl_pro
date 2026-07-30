@@ -29,6 +29,7 @@
 
 <p align="center">
   <a href="#overview" title="What LVGL Pro is">Overview</a> •
+  <a href="#lvgl-open-vs-lvgl-pro" title="How LVGL Pro compares to LVGL Open">Open vs Pro</a> •
   <a href="#features" title="What LVGL Pro can do">Features</a> •
   <a href="#why-xml" title="Why LVGL Pro uses XML">Why XML</a> •
   <a href="#workflow" title="How the pieces fit together">Workflow</a> •
@@ -53,6 +54,19 @@ It consists of four tightly related tools:
 
 Together, these tools let you build UIs faster, test them reliably, and collaborate with your team.
 
+## LVGL Open vs LVGL Pro
+
+[LVGL Open](https://github.com/lvgl/lvgl) gives you the engine. Hand-writing C for it works well for a few
+screens you maintain alone. Shipping a product is a different job, and that's what LVGL Pro is for:
+
+- **See the pixels, not the code**: An instant, pixel-perfect preview instead of compile, flash, look, repeat. A huge productivity boost.
+- **Naturally clean structure**: Create components with their own API, share styles across the project, and handle multiple targets from one codebase. You can write clean C code, but XML is way more maintainable.
+- **CI/CD integration**: The [CLI](https://lvgl.io/docs/pro/cli) tool runs headlessly to validate XMLs, run tests, or generate plain LVGL code.
+- **Designers in the loop**: Turn real Figma designs into XML with 1 click using the [Figma plugin](https://lvgl.io/docs/pro/figma), and let designers, managers, or customers open the project in the [Online Viewer](https://viewer.lvgl.io) to review or even edit it, with nothing to install.
+- **Work faster and better with AI**: Agents can access the docs via our [MCP server](https://lvgl.io/docs/pro/ai), generate XML, and the [CLI](https://lvgl.io/docs/pro/cli) tool can locally `validate` and produce `screenshot`s, so agents can iterate without guessing.
+
+In short, LVGL Open is great for personal and small projects. LVGL Pro - as the name implies - is for professionals working on complex projects in teams.
+
 ## Features
 
 - **Familiar environment**: A VS Code-like editor with file navigation, search, Git integration, an integrated terminal, and extensions.
@@ -64,7 +78,7 @@ Together, these tools let you build UIs faster, test them reliably, and collabor
 - **Assets and memory management**: Track images and fonts, plan memory regions, and estimate usage and access times.
 - **Multiple targets**: Handle several resolutions or architectures in a single project.
 - **Figma import**: Bring in layouts, widgets, data bindings, and navigation with the LVGL Flow plugin.
-- **AI integration**: Use AI assistants with an LVGL-aware [MCP server](https://lvgl.io/docs/pro/ai).
+- **AI integration**: An LVGL-aware [MCP server](https://lvgl.io/docs/pro/ai) to access the docs, plus a [CLI](https://lvgl.io/docs/pro/cli) for agents to validate and screenshot their own work.
 - **C export and runtime loading**: Export plain LVGL C code, or load the XML at runtime without recompiling.
 - **Testing and debugging**: Create UI tests and debug the exported C code inside the editor.
 - **Online sharing**: Open projects in the browser and share them without any local setup.
@@ -78,8 +92,7 @@ Describing UIs in XML rather than only through drag-and-drop editing has several
 - **Easy to share**: copy, paste, and send as text.
 - **Reusable**: copy snippets across projects and compose UIs from smaller components.
 - **Automation ready**: scripts and CI/CD systems can process XML directly.
-- **AI compatible**: AI tools can parse, generate, and refactor XML.
-- **Fast to edit**: quicker to type and refactor than dragging elements.
+- **AI compatible**: a small, schema-checked target that AI tools can parse, generate, and refactor, with validation errors instead of silent mistakes.
 - **Runtime loading**: parse XML on the target device without recompiling.
 - **Cross-platform**: the same XML works across all LVGL targets.
 
@@ -92,6 +105,7 @@ Describing UIs in XML rather than only through drag-and-drop editing has several
 5. **Integrate the UI** into your project by [exporting LVGL C code or loading the XML at runtime](https://lvgl.io/docs/pro/integration).
 6. **Collaborate** by pushing to a GitHub repo and opening it in the [Online Viewer](https://lvgl.io/docs/pro/online-viewer), so teammates, designers, or managers need no local setup.
 7. **Automate** in CI/CD with the [CLI](https://lvgl.io/docs/pro/cli) to export C code and run UI tests as part of your pipeline.
+8. **Bring in AI** with the [MCP server](https://lvgl.io/docs/pro/ai) for grounded LVGL knowledge, and let the CLI's `validate` and `screenshot` close the loop so the assistant can check its own work.
 
 ## Get Started
 

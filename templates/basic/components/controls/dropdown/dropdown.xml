@@ -1,0 +1,56 @@
+<component>
+	<previews>
+		<preview name="default" width="300" style_pad_all="10" />
+	</previews>
+
+	<api>
+		<prop
+			name="options"
+			type="string"
+			default="Option 1&#10;Option 2&#10;Option 3"
+			help="Newline-separated list of options"
+		/>
+		<prop name="selected" type="int" default="0" help="Initially selected option (0-based index)" />
+		<prop name="subject" type="subject" help="Optional int subject bound to the selected index" />
+	</api>
+
+	<styles>
+		<style name="style_dropdown" radius="#radius_default" />
+		<style name="style_chevron_light" image_recolor="#color_light_text" image_recolor_opa="100%" />
+		<style name="style_chevron_dark" image_recolor="#color_dark_text" image_recolor_opa="100%" />
+
+		<style name="style_list" text_line_space="#space_lg" />
+		<!-- Accent highlight on the focused/selected option in the open list -->
+		<style name="style_dd_selected" bg_color="#color_accent" bg_opa="100%" text_color="#color_accent_text" />
+		<style name="style_dd_pressed" bg_color="#color_track" bg_opa="#opa_muted" />
+	</styles>
+
+	<!-- Dropdown selector. Reuses the panel surface so it matches text fields
+	     and follows the light/dark theme. -->
+	<view
+		extends="lv_dropdown"
+		width="200"
+		options="$options"
+		selected="$selected"
+		bind_value="$subject"
+		symbol="icon_chevron_down"
+	>
+		<style name="style_dropdown" />
+		<style name="style_panel_light" />
+		<bind_style name="style_panel_dark" subject="subject_theme_dark" ref_value="1" />
+		<style name="style_chevron_light" selector="indicator" />
+		<bind_style name="style_chevron_dark" selector="indicator" subject="subject_theme_dark" ref_value="1" />
+
+		<!-- The open option list is a separate top-layer object, so it can't
+		     inherit the screen theme — style it explicitly with the same panel
+		     surface and an accent highlight on the selected row. -->
+		<lv_dropdown-list>
+			<style name="style_list" />
+			<style name="style_panel_light" />
+			<bind_style name="style_panel_dark" subject="subject_theme_dark" ref_value="1" />
+			<style name="style_scrollbar" selector="scrollbar" />
+			<style name="style_dd_selected" selector="selected|checked" />
+			<style name="style_dd_pressed" selector="selected|pressed" />
+		</lv_dropdown-list>
+	</view>
+</component>

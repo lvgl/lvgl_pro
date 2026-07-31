@@ -1,0 +1,30 @@
+<!--
+Example
+<lv_dropdown options="option1\noption2" dir="left">
+    <lv_dropdown-list style="red"/>
+</lv_dropdown>
+-->
+
+<widget>
+    <api>
+        <prop name="text" type="string" help="Set text displayed instead of the selected option label"/>
+        <prop name="options" type="string" help="Set options as a newline (`\n`) separated string"/>
+        <prop name="selected" type="int" help="Select an option by index (0-based)"/>
+        <prop name="symbol" type="image" help="Set a symbol shown next to the dropdown"/>
+        <prop name="bind_value" type="subject" help="Bind the selected option index to a subject"/>
+        <prop name="dir" type="enum:lv_dir" help="Tells in which direction the dropdown should be opened"/>
+
+        <element name="list" access="get" type="lv_obj" help="The dropdown list object for styling or customization">
+            <parts>
+                <part name="main" help="The open list background: background, border and padding. `max_height` caps the open list size."/>
+                <part name="scrollbar" help="The list's scrollbar: `width` (thickness), background properties and padding on the respective side."/>
+                <part name="selected" help="The highlighted option: background and text properties. The 'checked' state styles the currently selected option and 'pressed' the one being pressed/keyed."/>
+            </parts>
+        </element>
+
+        <parts>
+            <part name="main" help="The closed button: background and text properties. Gets the 'checked' state while the list is open."/>
+            <part name="indicator" help="The symbol shown next to the text (set via `symbol`): `image_recolor` and `image_recolor_opa`."/>
+        </parts>
+    </api>
+</widget>

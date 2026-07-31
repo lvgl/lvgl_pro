@@ -1,0 +1,33 @@
+<!--
+Example
+<lv_label text="Hello"/>
+-->
+
+<widget>
+    <api>
+        <enumdef name="lv_label_long_mode" help="How to handle text that doesn’t fit">
+            <enum name="wrap" help="Wrap to next line"/>
+            <enum name="scroll" help="Scroll horizontally"/>
+            <enum name="scroll_circular" help="Scroll continuously in a loop"/>
+            <enum name="clip" help="Clip at the boundary"/>
+            <enum name="dots" help="Show dots (…) at the end"/>
+        </enumdef>
+
+        <prop name="text" type="string" help="Set label text"/>
+        <prop name="translation_tag" type="string" help="Set translation tag"/>
+        <prop name="long_mode" type="enum:lv_label_long_mode" help="Choose overflow mode"/>
+        <prop name="recolor" type="bool" help="Allow recoloring words like: A #ff0000 red# word."/>
+        <prop name="text_selection_start" type="int" help="Beginning of text highlight"/>
+        <prop name="text_selection_end" type="int" help="End of text highlight"/>
+
+        <prop name="bind_text" help="Bind text to a subject">
+            <param name="bind_text" type="subject" help="Subject that provides text"/>
+            <param name="fmt" type="string" default="NULL" help="Format string for bound text (printf style)"/>
+        </prop>
+
+        <parts>
+            <part name="main" help="Style the text and its area: text properties (`text_color`, `text_font`, `text_letter_space`, `text_line_space`, `text_decor`, `text_align`) plus background/padding if needed."/>
+            <part name="selected" help="Style the highlighted character range (text_selection_start/end). Only `text_color` and `bg_color` are used."/>
+        </parts>
+    </api>
+</widget>

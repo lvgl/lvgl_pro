@@ -1,0 +1,38 @@
+<component>
+	<api>
+		<prop name="pad" type="int" default="0" help="Inner padding on all sides" />
+		<prop name="gap" type="int" default="0" help="Space between children" />
+		<prop name="grow" type="int" default="0" help="flex_grow in a flex parent; NULL = natural size" />
+		<!-- Alignment. In a row the main axis is horizontal, the cross axis vertical. -->
+		<prop
+			name="horizontal_align"
+			type="enum:lv_flex_align"
+			default="start"
+			help="Children along the row: start, center, end, space_between, space_around, space_evenly"
+		/>
+		<prop
+			name="vertical_align"
+			type="enum:lv_flex_align"
+			default="start"
+			help="Children across the row: start, center, end"
+		/>
+		<prop
+			name="content_align"
+			type="enum:lv_flex_align"
+			default="start"
+			help="Placement of wrapped rows; only matters when children wrap"
+		/>
+	</api>
+
+	<!-- Lays children out left-to-right: a container fixed to flow=row. -->
+	<view
+		extends="container"
+		flow="row"
+		pad="$pad"
+		gap="$gap"
+		grow="$grow"
+		style_flex_main_place="$horizontal_align"
+		style_flex_cross_place="$vertical_align"
+		style_flex_track_place="$content_align"
+	/>
+</component>

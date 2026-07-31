@@ -1,0 +1,7 @@
+preview-build
+.cache.json
+scripts/__pycache__/
+
+# Simulator build output
+build/
+compile_commands.json

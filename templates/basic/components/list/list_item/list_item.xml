@@ -1,0 +1,56 @@
+<component>
+	<previews>
+		<preview name="default" width="320" />
+	</previews>
+
+	<api>
+		<prop name="title" type="string" default="Title" help="Primary text" />
+		<prop
+			name="subtitle"
+			type="string"
+			default=""
+			help="Secondary text under the title (empty = just a blank line)"
+		/>
+		<!-- Left icon area. -->
+		<prop name="icon" type="image" default="" />
+		<!-- Right area for a chevron, value label, switch, icon, etc.
+		     Fill with <list_item-trailing>...</list_item-trailing>. -->
+		<slot name="trailing" />
+	</api>
+
+	<styles>
+		<style
+			name="style_list_row"
+			width="100%"
+			flex_cross_place="center"
+			border_side="bottom"
+			border_width="1"
+			border_color="#color_track"
+			border_opa="25%"
+		/>
+		<style name="style_icon_light" image_recolor="#color_light_text" image_recolor_opa="100%" />
+		<style name="style_icon_dark" image_recolor="#color_dark_text" image_recolor_opa="100%" />
+		<style name="style_list_row_pressed" bg_color="#color_track" bg_opa="40%" />
+	</styles>
+
+	<!-- One list row: [icon] title / subtitle [trailing].
+	     Transparent by default, and gets gray on. -->
+	<view extends="container" flow="row" pad="#space_md" gap="#space_md" clickable="true">
+		<style name="style_list_row" />
+		<style name="style_list_row_pressed" selector="pressed" />
+
+		<!-- slot target: left icon -->
+		<monoicon src="$icon" hidden="{!icon}" />
+
+		<!-- title + subtitle stacked, taking the remaining width -->
+		<container grow="1" gap="#space_xs" clickable="false" pad="0">
+			<h5 text="$title" />
+			<text text="$subtitle" hidden="{!subtitle}">
+				<style name="style_text_muted" />
+			</text>
+		</container>
+
+		<!-- slot target: trailing content -->
+		<container name="trailing" flow="row" pad="0" gap="#space_sm" />
+	</view>
+</component>

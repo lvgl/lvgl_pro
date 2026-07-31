@@ -1,0 +1,28 @@
+<component>
+	<previews>
+		<preview name="default" width="260" style_pad_all="10" />
+	</previews>
+
+	<api>
+		<prop name="text" type="string" default="" help="Initial text" />
+		<prop name="placeholder" type="string" default="Type..." help="Greyed-out hint shown while empty" />
+		<prop name="password" type="bool" default="false" help="Mask the characters (password field)" />
+	</api>
+
+	<styles>
+		<style name="style_text_input" radius="#radius_default" />
+	</styles>
+
+	<!-- Single-line text field. Read its text from C via the name you give it.
+	     Override the default width where you use it. -->
+	<view
+		extends="text_box"
+		one_line="true"
+		width="200"
+		text="$text"
+		placeholder_text="$placeholder"
+		password_mode="$password"
+	>
+		<style name="style_text_input" />
+	</view>
+</component>

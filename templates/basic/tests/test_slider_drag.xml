@@ -1,0 +1,48 @@
+<!-- Dragging a slider writes its bound subject.
+
+     Where test_theme_toggle.xml extends a real screen, this one builds a small
+     view of its own — useful for exercising a single component without
+     depending on where it happens to sit on a screen.
+     Docs: https://lvgl.io/docs/pro/syntax/testing -->
+<test width="480" height="320">
+	<view width="100%" height="100%" flex_flow="column" style_pad_all="20">
+		<!-- Track spans x=20..220 and is #space_md tall, so its centre is y=24. -->
+		<slider subject="subject_brightness" width="200" />
+	</view>
+
+	<steps>
+		<subject_set subject="subject_brightness" value="0" />
+		<wait ms="50" />
+
+		<!-- Drag past the right end of the track.
+
+		     Give every pointer step a few ms of its own: move_to only updates the
+		     input position, and LVGL needs a tick to read it. Pressing in the
+		     same instant registers at the *previous* position, and the drag then
+		     silently does nothing.
+
+		     Releasing beyond the end clamps to max_value, so the assertion holds
+		     without depending on knob width or pixel-perfect aim. Prefer clamped
+		     endpoints over mid-track positions, which are brittle. -->
+		<move_to x="40" y="24" />
+		<wait ms="30" />
+		<press />
+		<wait ms="30" />
+		<move_to x="400" y="24" />
+		<wait ms="30" />
+		<release />
+		<wait ms="50" />
+		<subject_compare subject="subject_brightness" value="100" />
+
+		<!-- ...and dragging back past the left end clamps to min_value. -->
+		<move_to x="200" y="24" />
+		<wait ms="30" />
+		<press />
+		<wait ms="30" />
+		<move_to x="0" y="24" />
+		<wait ms="30" />
+		<release />
+		<wait ms="50" />
+		<subject_compare subject="subject_brightness" value="0" />
+	</steps>
+</test>

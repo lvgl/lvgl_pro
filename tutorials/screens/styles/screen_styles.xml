@@ -1,0 +1,33 @@
+<!-- Shows reusable style sheets, per-part selectors, local style overrides and bind_style. -->
+<screen>
+	<consts>
+		<color name="main_color" value="0x7a00ff" />
+		<color name="secondary_color" value="0xfaab44" />
+	</consts>
+
+	<!-- Create style sheets that can be added to multiple widgets -->
+	<styles>
+		<style name="style_main" bg_color="0x333" bg_opa="30%" radius="2" />
+		<style name="style_main_dark" bg_color="#main_color" />
+		<style name="style_indicator" bg_color="#main_color" radius="2" />
+		<style name="style_knob" bg_color="#main_color" radius="4" pad_all="6" />
+	</styles>
+
+	<view>
+		<!-- Use the style sheets on different parts -->
+		<lv_slider align="center" y="-20" value="20">
+			<style name="style_main" />
+			<style name="style_indicator" selector="indicator" />
+			<style name="style_knob" selector="knob" />
+			<bind_style name="style_main_dark" subject="subject_dark_mode" ref_value="1" />
+		</lv_slider>
+
+		<!-- Also add local styles to overwrite the style sheets -->
+		<lv_slider align="center" y="20" value="30" style_bg_color-indicator="#secondary_color">
+			<style name="style_main" />
+			<style name="style_indicator" selector="indicator" />
+			<style name="style_knob" selector="knob" />
+			<bind_style name="style_main_dark" subject="subject_dark_mode" ref_value="1" />
+		</lv_slider>
+	</view>
+</screen>

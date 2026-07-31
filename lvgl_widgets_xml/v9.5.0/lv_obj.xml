@@ -1,0 +1,405 @@
+<!--
+Example
+<lv_obj width="100" hidden="true"/>
+ -->
+
+<widget>
+	<api>
+		<enumdef name="lv_obj_flag" help="Flags that control the object's behavior">
+		    <enum name="hidden"       help="Make the object hidden. (Like it wasn't there at all)"/>
+		    <enum name="clickable"       help="Make the object clickable by the input devices"/>
+		    <enum name="click_focusable" help="Add focused state to the object when clicked"/>
+		    <enum name="checkable"       help="Toggle checked state when the object is clicked"/>
+		    <enum name="scrollable"      help="Make the object scrollable"/>
+		    <enum name="scroll_elastic"  help="Allow scrolling inside but with slower speed"/>
+		    <enum name="scroll_momentum" help="Make the object scroll further when 'thrown'"/>
+		    <enum name="scroll_one"      help="Allow scrolling only one snappable children"/>
+		    <enum name="scroll_chain_hor" help="Allow propagating the horizontal scroll to a parent"/>
+		    <enum name="scroll_chain_ver" help="Allow propagating the vertical scroll to a parent"/>
+		    <enum name="scroll_chain"      help="SCROLL_CHAIN_HOR and SCROLL_CHAIN_VER"/>
+		    <enum name="scroll_on_focus" help="Automatically scroll object to make it visible when focused"/>
+		    <enum name="scroll_with_arrow"  help="Allow scrolling the focused object with arrow keys"/>
+		    <enum name="snappable"       help="If scroll snap is enabled on the parent it can snap to this object"/>
+		    <enum name="press_lock"      help="Keep the object pressed even if the press slid from the object"/>
+		    <enum name="event_bubble"    help="Propagate the events to the parent too"/>
+		    <enum name="gesture_bubble"  help="Propagate the gestures to the parent"/>
+            <enum name="event_trickle"   help="Send events to children first"/>
+            <enum name="state_trickle"   help="Propagate state changes to children"/>
+		    <enum name="adv_hittest"     help="Allow performing more accurate hit (click) test. E.g. consider rounded corners."/>
+		    <enum name="ignore_layout"   help="Make the object not positioned by the layouts"/>
+		    <enum name="floating"        help="Do not scroll the object when the parent scrolls and ignore layout"/>
+		    <enum name="send_draw_task_events" help="Send `LV_EVENT_DRAW_TASK_ADDED` events"/>
+		    <enum name="overflow_visible" help="Do not clip the children to the parent's ext draw size"/>
+		    <enum name="flex_in_new_track" help="Start a new flex track on this item"/>
+		    <enum name="layout_1"        help="Custom flag, free to use by layouts"/>
+		    <enum name="layout_2"        help="Custom flag, free to use by layouts"/>
+		    <enum name="widget_1"        help="Custom flag, free to use by widget"/>
+		    <enum name="widget_2"        help="Custom flag, free to use by widget"/>
+		    <enum name="user_1"          help="Custom flag, free to use by user"/>
+		    <enum name="user_2"          help="Custom flag, free to use by user"/>
+		    <enum name="user_3"          help="Custom flag, free to use by user"/>
+		    <enum name="user_4"          help="Custom flag, free to use by user"/>
+		</enumdef>
+
+       <element name="style" access="add" type="void" help="Add a style to the widget">
+            <arg name="name" type="style" help="Style name"/>
+            <arg name="selector" type="selector+" default="0" help="Target part and state, can be ORed, e.g. pressed|knob"/>
+        </element>
+
+        <element name="remove_style" access="custom" type="void" help="Remove a style from the widget">
+            <arg name="name" type="style" default="NULL" help="Style name (NULL means all)"/>
+            <arg name="selector" type="selector+" default="0" help="Target part and state, can be ORed, e.g. pressed|knob"/>
+        </element>
+
+        <element name="remove_style_all" access="custom" type="void" help="Remove all styles"/>
+
+        <element name="bind_style" access="custom" type="void" help="Bind a style to a subject value">
+            <arg name="name" type="style" help="Style name"/>
+            <arg name="selector" type="selector+" default="0" help="Selector (part+state)"/>
+            <arg name="subject" type="subject" help="Subject to monitor"/>
+            <arg name="ref_value" type="int" help="Value that activates the style"/>
+        </element>
+
+        <element name="bind_style_prop" access="custom" type="void" help="Bind a style to a subject value">
+            <arg name="prop" type="style_prop" help="Name of a style property"/>
+            <arg name="selector" type="selector+" default="0" help="Selector (part and/or state)"/>
+            <arg name="subject" type="subject" help="Subject to bind"/>
+        </element>
+
+        <element name="event_cb" access="add" type="void" help="Attach an event callback">
+            <arg name="callback" type="event_cb" help="Callback function"/>
+            <arg name="trigger" type="lv_event" default="clicked" help="Event to trigger callback"/>
+            <arg name="user_data" type="string" default="NULL" help="Optional user data as a string"/>
+        </element>
+
+        <element name="screen_load_event" access="add" type="void" help="Load another screen on event">
+            <arg name="trigger" type="lv_event" default="clicked" help="Trigger event"/>
+            <arg name="screen" type="screen" help="Target screen"/>
+            <arg name="anim_type" type="enum:lv_screen_load_anim" default="none" help="Load animation"/>
+            <arg name="duration" type="int" default="0" help="Animation duration (ms)"/>
+            <arg name="delay" type="int" default="0" help="Start delay (ms)"/>
+        </element>
+
+        <element name="screen_create_event" access="add" type="void" help="Create + load a new screen on event">
+            <arg name="trigger" type="lv_event" default="clicked" help="Trigger event"/>
+            <arg name="screen" type="screen_create_cb" help="Screen create callback"/>
+            <arg name="anim_type" type="enum:lv_screen_load_anim" default="none" help="Load animation"/>
+            <arg name="duration" type="int" default="0" help="Animation duration (ms)"/>
+            <arg name="delay" type="int" default="0" help="Start delay (ms)"/>
+        </element>
+
+        <element name="play_timeline_event" access="add" type="void" help="Play a timeline on event">
+            <arg name="trigger" type="lv_event" default="clicked" help="Trigger event"/>
+            <arg name="target" type="lv_obj|self" help="Timeline target"/>
+            <arg name="timeline" type="timeline" help="Timeline to play"/>
+            <arg name="delay" type="int" default="0" help="Start delay (ms)"/>
+            <arg name="reverse" type="bool" default="false" help="Play in reverse"/>
+        </element>
+
+        <element name="subject_toggle_event" access="add" type="void" help="Toggle an int subject's value on an a trigger">
+            <arg name="subject" type="subject" help="Target subject"/>
+            <arg name="trigger" type="lv_event" default="clicked"  help="Trigger event"/>
+        </element>
+
+        <element name="subject_set_int_event" access="add" type="void" help="Set a subject (int) on event">
+            <arg name="subject" type="subject" help="Target subject"/>
+            <arg name="trigger" type="lv_event" default="clicked" help="Trigger event"/>
+            <arg name="value" type="int" help="Value to assign"/>
+        </element>
+
+        <element name="subject_set_float_event" access="add" type="void" help="Set subject (float) on event">
+            <arg name="subject" type="subject" help="Target subject"/>
+            <arg name="trigger" type="lv_event" default="clicked" help="Trigger event"/>
+            <arg name="value" type="float" help="Value to assign"/>
+        </element>
+
+        <element name="subject_set_string_event" access="add" type="void" help="Set subject (string) on event">
+            <arg name="subject" type="subject" help="Target subject"/>
+            <arg name="trigger" type="lv_event" default="clicked" help="Trigger event"/>
+            <arg name="value" type="string" help="Value to assign"/>
+        </element>
+
+        <element name="subject_increment_event" access="add" type="lv_subject_increment_dsc" help="Increment (or decrement) an int subject's value on an event">
+            <arg name="subject" type="subject" help="Subject to change"/>
+            <arg name="trigger" type="lv_event" default="clicked" help="Trigger event"/>
+            <arg name="step" type="int" default="1" help="Value to add on trigger (can be negative to decrement)"/>
+            <prop name="rollover" type="bool" help="false: stop at the min/max value; true: jump to the other end"/>
+            <prop name="min_value" type="int" help="Minimum value to set"/>
+            <prop name="max_value" type="int" help="Maximum value to set"/>
+        </element>
+
+        <!-- Bind widget flags to subject values -->
+        <element name="bind_flag_if_eq" access="custom" type="void" help="Enable flag if subject's value is is equal to a reference value">
+            <arg name="subject" type="subject" help="Subject to monitor"/>
+            <arg name="flag" type="enum:lv_obj_flag" help="Flag to set/clear"/>
+            <arg name="ref_value" type="int" help="Reference value"/>
+        </element>
+
+        <element name="bind_flag_if_not_eq" access="custom" type="void" help="Enable flag if subject's value is not equal to a reference value">
+            <arg name="subject" type="subject" help="Subject to monitor"/>
+            <arg name="flag" type="enum:lv_obj_flag" help="Flag to set/clear"/>
+            <arg name="ref_value" type="int" help="Reference value to compare the subject against"/>
+        </element>
+
+        <element name="bind_flag_if_gt" access="custom" type="void" help="Enable flag if subject's value is graeter than a reference value">
+            <arg name="subject" type="subject" help="Subject to monitor"/>
+            <arg name="flag" type="enum:lv_obj_flag" help="Flag to set/clear"/>
+            <arg name="ref_value" type="int" help="Reference value to compare the subject against"/>
+        </element>
+
+        <element name="bind_flag_if_ge" access="custom" type="void" help="Enable flag if subject's value is greater than or equal to a reference value">
+            <arg name="subject" type="subject" help="Subject to monitor"/>
+            <arg name="flag" type="enum:lv_obj_flag" help="Flag to set/clear"/>
+            <arg name="ref_value" type="int" help="Reference value to compare the subject against"/>
+        </element>
+
+        <element name="bind_flag_if_lt" access="custom" type="void" help="Enable flag if subject's value is less than value">
+            <arg name="subject" type="subject" help="Subject to monitor"/>
+            <arg name="flag" type="enum:lv_obj_flag" help="Flag to set/clear"/>
+            <arg name="ref_value" type="int" help="Reference value to compare the subject against"/>
+        </element>
+
+        <element name="bind_flag_if_le" access="custom" type="void" help="Enable flag if subject's value is less than or equal to a reference value">
+            <arg name="subject" type="subject" help="Subject to monitor"/>
+            <arg name="flag" type="enum:lv_obj_flag" help="Flag to set/clear"/>
+            <arg name="ref_value" type="int" help="Reference value to compare the subject against"/>
+        </element>
+
+        <!-- Bind widget states to subject values -->
+        <element name="bind_state_if_eq" access="custom" type="void" help="Apply a state if subject's value is equal to a reference value">
+            <arg name="subject" type="subject" help="Subject to monitor"/>
+            <arg name="state" type="enum:lv_state" help="State to apply"/>
+            <arg name="ref_value" type="int" help="Reference value to compare the subject against"/>
+        </element>
+
+        <element name="bind_state_if_not_eq" access="custom" type="void" help="Apply a state if subject's value is not equal to a reference value">
+            <arg name="subject" type="subject" help="Subject to monitor"/>
+            <arg name="state" type="enum:lv_state" help="State to apply"/>
+            <arg name="ref_value" type="int" help="Reference value to compare the subject against"/>
+        </element>
+
+        <element name="bind_state_if_gt" access="custom" type="void" help="Apply a state if subject's value is greater than a reference value">
+            <arg name="subject" type="subject" help="Subject to monitor"/>
+            <arg name="state" type="enum:lv_state" help="State to apply"/>
+            <arg name="ref_value" type="int" help="Reference value to compare the subject against"/>
+        </element>
+
+        <element name="bind_state_if_ge" access="custom" type="void" help="Apply a state if subject's value is greater or equal to a reference value">
+            <arg name="subject" type="subject" help="Subject to monitor"/>
+            <arg name="state" type="enum:lv_state" help="State to apply"/>
+            <arg name="ref_value" type="int" help="Reference value to compare the subject against"/>
+        </element>
+
+        <element name="bind_state_if_lt" access="custom" type="void" help="Apply a state if subject's value is less than a reference value">
+            <arg name="subject" type="subject" help="Subject to monitor"/>
+            <arg name="state" type="enum:lv_state" help="State to apply"/>
+            <arg name="ref_value" type="int" help="Reference value to compare the subject against"/>
+        </element>
+
+        <element name="bind_state_if_le" access="custom" type="void" help="Apply a state if subject's value is less or equal to a reference value">
+            <arg name="subject" type="subject" help="Subject to monitor"/>
+            <arg name="state" type="enum:lv_state" help="State to apply"/>
+            <arg name="ref_value" type="int" help="Reference value to compare the subject against"/>
+        </element>
+
+        <prop name="name" type="string" help="Object name (for lv_obj_find_by_name or debugging)"/>
+        <prop name="x" type="px|%" help="Set X position (px or %)"/>
+        <prop name="y" type="px|%" help="Set Y position (px or %)"/>
+        <prop name="height" type="px|%|content" help="Set height (px, % or content)"/>
+        <prop name="width" type="px|%|content" help="Set width (px, % or content)"/>
+        <prop name="align" type="enum:lv_align" help="Align on parent"/>
+
+        <prop name="ext_click_area" type="int" help="Extra clickable area around object in px"/>
+        <prop name="scroll_snap_x" type="enum:lv_scroll_snap" help="Snap children horizontally"/>
+        <prop name="scroll_snap_y" type="enum:lv_scroll_snap" help="Snap children vertically"/>
+        <prop name="scrollbar_mode" type="enum:lv_scrollbar_mode" help="Set the scrollbar mode"/>
+
+        <prop name="style_x-selector" type="px|%" help="Horizontal position relative to the parent's content area (px or %). Usually set `align` or use a layout instead."/>
+        <prop name="style_y-selector" type="px|%" help="Vertical position relative to the parent's content area (px or %). Usually set `align` or use a layout instead."/>
+        <prop name="style_height-selector" type="px|%|content" help="Widget height: px, % of the parent, or `content` to shrink-wrap the children."/>
+        <prop name="style_min_height-selector" type="px|%" help="Minimum height the widget may shrink to (px or %). Useful with `content` sizing."/>
+        <prop name="style_max_height-selector" type="px|%" help="Maximum height the widget may grow to (px or %). Useful with `content` sizing."/>
+        <prop name="style_width-selector" type="px|%|content" help="Widget width: px, % of the parent, or `content` to shrink-wrap the children."/>
+        <prop name="style_min_width-selector" type="px|%" help="Minimum width the widget may shrink to (px or %). Useful with `content` sizing."/>
+        <prop name="style_max_width-selector" type="px|%" help="Maximum width the widget may grow to (px or %). Useful with `content` sizing."/>
+        <prop name="style_length-selector" type="px|%" help="Size of a widget-specific element (e.g. scale tick length, arc/slider knob). Meaning depends on the widget."/>
+
+        <prop name="style_pad_top-selector" type="int" help="Space between the top edge and the content/children (px)."/>
+        <prop name="style_pad_bottom-selector" type="int" help="Space between the bottom edge and the content/children (px)."/>
+        <prop name="style_pad_left-selector" type="int" help="Space between the left edge and the content/children (px)."/>
+        <prop name="style_pad_right-selector" type="int" help="Space between the right edge and the content/children (px)."/>
+        <prop name="style_pad_hor-selector" type="int" help="Shorthand for `pad_left` and `pad_right` together (px)."/>
+        <prop name="style_pad_ver-selector" type="int" help="Shorthand for `pad_top` and `pad_bottom` together (px)."/>
+        <prop name="style_pad_all-selector" type="int" help="Shorthand for all four paddings at once (px)."/>
+        <prop name="style_pad_row-selector" type="int" help="Gap between rows of children in a flex/grid layout (px)."/>
+        <prop name="style_pad_column-selector" type="int" help="Gap between columns of children in a flex/grid layout (px)."/>
+        <prop name="style_pad_gap-selector" type="int" help="Shorthand for both `pad_row` and `pad_column` (px)."/>
+        <prop name="style_pad_radial-selector" type="int" help="On round scales, distance of the tick labels from the scale (px)."/>
+        <prop name="style_margin_top-selector" type="int" help="Empty space kept above the widget in a layout, pushing neighbors away (px)."/>
+        <prop name="style_margin_bottom-selector" type="int" help="Empty space kept below the widget in a layout, pushing neighbors away (px)."/>
+        <prop name="style_margin_left-selector" type="int" help="Empty space kept left of the widget in a layout, pushing neighbors away (px)."/>
+        <prop name="style_margin_right-selector" type="int" help="Empty space kept right of the widget in a layout, pushing neighbors away (px)."/>
+        <prop name="style_margin_hor-selector" type="int" help="Shorthand for `margin_left` and `margin_right` (px)."/>
+        <prop name="style_margin_ver-selector" type="int" help="Shorthand for `margin_top` and `margin_bottom` (px)."/>
+        <prop name="style_margin_all-selector" type="int" help="Shorthand for all four margins at once (px)."/>
+
+        <prop name="style_radius-selector" type="int" help="Corner radius (px). 0 = square corners. Default: 0."/>
+        <prop name="style_radial_offset-selector" type="int" help="Shifts the part radially out from (or into) the center on round widgets such as scales (px). Default: 0."/>
+        <prop name="style_align-selector" type="enum:lv_align" help="Anchor point of the widget within the parent (e.g. center, top_left). `x`/`y` then act as offsets from it."/>
+        <prop name="style_clip_corner-selector" type="bool" help="Clip the content/children to the rounded corners set by `radius`. Small performance cost. Default: false."/>
+        <prop name="style_base_dir-selector" type="enum:lv_base_dir" help="Base text direction (LTR/RTL/auto). Affects bidirectional text order and which side the vertical scrollbar sits on."/>
+
+        <prop name="style_bg_color-selector" type="color" help="Background fill color. Only visible when `bg_opa` is above 0."/>
+        <prop name="style_bg_opa-selector" type="opa" help="Background opacity (0-255 or 0-100%). Default: 0 (transparent) — raise it to reveal `bg_color`/gradient."/>
+        <prop name="style_bg_grad_dir-selector" type="enum:lv_grad_dir" help="Background gradient direction: none, hor or ver. Blends `bg_color` into `bg_grad_color`. Default: none."/>
+        <prop name="style_bg_main_stop-selector" type="int" help="Position where the start color stops fading, 0-255 (0=start, 128=middle, 255=end). Default: 0."/>
+        <prop name="style_bg_grad_stop-selector" type="int" help="Position where the end color begins, 0-255. Default: 255."/>
+        <prop name="style_bg_grad_color-selector" type="color" help="Second color of the background gradient (used when `bg_grad_dir` is set)."/>
+
+        <prop name="style_bg_image_src-selector" type="image" help="Background image (image name or symbol). Drawn over the background color and under the border."/>
+        <prop name="style_bg_image_tiled-selector" type="bool" help="Repeat (tile) the background image to fill the area instead of drawing it once. Default: false."/>
+        <prop name="style_bg_image_recolor-selector" type="color" help="Color blended onto the background image; intensity set by `bg_image_recolor_opa`."/>
+        <prop name="style_bg_image_recolor_opa-selector" type="opa" help="Strength of `bg_image_recolor` (0-255 or 0-100%). Default: 0 (no recolor)."/>
+
+        <prop name="style_border_color-selector" type="color" help="Border color. Only visible when `border_width` is above 0."/>
+        <prop name="style_border_width-selector" type="int" help="Border thickness (px). Drawn inside the bounds, so it doesn't change the widget's size. Default: 0."/>
+        <prop name="style_border_opa-selector" type="opa" help="Border opacity (0-255 or 0-100%). Default: 255 (opaque)."/>
+        <prop name="style_border_side-selector" type="enum:lv_border_side" help="Which edges get a border: none/left/right/top/bottom/full (can be ORed). Default: full."/>
+        <prop name="style_border_post-selector" type="bool" help="Draw the border after the children so it stays on top of them. Default: false."/>
+
+        <prop name="style_outline_color-selector" type="color" help="Outline color. Only visible when `outline_width` is above 0."/>
+        <prop name="style_outline_width-selector" type="int" help="Outline thickness (px). Drawn outside the bounds and doesn't affect layout. Default: 0."/>
+        <prop name="style_outline_opa-selector" type="opa" help="Outline opacity (0-255 or 0-100%). Default: 255 (opaque)."/>
+        <prop name="style_outline_pad-selector" type="int" help="Gap between the widget's edge and the outline (px); can be negative."/>
+
+        <prop name="style_shadow_width-selector" type="int" help="Shadow blur size (px). Default: 0 (no shadow). Larger spreads a softer shadow."/>
+        <prop name="style_shadow_color-selector" type="color" help="Shadow color. Only visible when `shadow_width` is above 0."/>
+        <prop name="style_shadow_opa-selector" type="opa" help="Shadow opacity (0-255 or 0-100%). Default: 255 (opaque)."/>
+        <prop name="style_shadow_offset_x-selector" type="int" help="Horizontal shadow offset (px), positive = right. Default: 0."/>
+        <prop name="style_shadow_offset_y-selector" type="int" help="Vertical shadow offset (px), positive = down. Default: 0."/>
+        <prop name="style_shadow_spread-selector" type="int" help="Grow (or shrink, if negative) the shadow by this many px before blurring. Default: 0."/>
+
+        <prop name="style_text_color-selector" type="color" help="Text color."/>
+        <prop name="style_text_opa-selector" type="opa" help="Text opacity (0-255 or 0-100%). Default: 255 (opaque)."/>
+        <prop name="style_text_font-selector" type="font" help="Font used for the text."/>
+        <prop name="style_text_align-selector" type="enum:lv_text_align" help="Horizontal text alignment: left/center/right/auto (auto follows the base direction)."/>
+        <prop name="style_text_letter_space-selector" type="int" help="Extra spacing between characters (px); can be negative."/>
+        <prop name="style_text_line_space-selector" type="int" help="Extra spacing between lines (px); can be negative."/>
+        <prop name="style_text_decor-selector" type="enum:lv_text_decor" help="Text decoration: none, underline or strikethrough."/>
+
+        <prop name="style_image_opa-selector" type="opa" help="Opacity of images the widget draws (0-255 or 0-100%). Default: 255 (opaque)."/>
+        <prop name="style_image_recolor-selector" type="color" help="Color blended onto the image; intensity set by `image_recolor_opa`."/>
+        <prop name="style_image_recolor_opa-selector" type="opa" help="Strength of `image_recolor` (0-255 or 0-100%). Default: 0 (no recolor)."/>
+
+        <prop name="style_line_width-selector" type="int" help="Line thickness (px). Default: 0 (nothing drawn)."/>
+        <prop name="style_line_color-selector" type="color" help="Line color."/>
+        <prop name="style_line_opa-selector" type="opa" help="Line opacity (0-255 or 0-100%). Default: 255 (opaque)."/>
+        <prop name="style_line_dash_width-selector" type="int" help="Length of each dash (px). 0 = solid line."/>
+        <prop name="style_line_dash_gap-selector" type="int" help="Gap between dashes (px). Needs `line_dash_width` above 0."/>
+        <prop name="style_line_rounded-selector" type="bool" help="Round the line (and dash) endpoints. Default: false."/>
+
+        <prop name="style_arc_width-selector" type="int" help="Arc thickness (px). Default: 0."/>
+        <prop name="style_arc_color-selector" type="color" help="Arc color."/>
+        <prop name="style_arc_opa-selector" type="opa" help="Arc opacity (0-255 or 0-100%). Default: 255 (opaque)."/>
+        <prop name="style_arc_rounded-selector" type="bool" help="Round the arc endpoints. Default: false."/>
+        <prop name="style_arc_image_src-selector" type="image" help="Image drawn along the arc instead of a solid color (e.g. a gradient/textured arc)."/>
+
+        <prop name="style_layout-selector" type="enum:lv_layout" help="Layout engine that positions the children: none, flex or grid."/>
+
+        <prop name="style_flex_flow-selector" type="enum:lv_flex_flow" help="How children flow in a flex layout: row/column, optionally wrapping/reversed. Needs `layout`=flex."/>
+        <prop name="style_flex_main_place-selector" type="enum:lv_flex_align" help="Distribution of children along the main axis (e.g. start, center, space_between). Default is `start`."/>
+        <prop name="style_flex_cross_place-selector" type="enum:lv_flex_align" help="Alignment of children on the cross axis (perpendicular to the flow). Default is `start`."/>
+        <prop name="style_flex_track_place-selector" type="enum:lv_flex_align" help="Alignment of the track(s). Default is `start`."/>
+        <prop name="style_flex_grow-selector" type="int" help="Share of leftover track space this child claims relative to its siblings. 0 = don't grow."/>
+
+        <prop name="style_grid_column_dsc_array-selector" type="grid_dsc[LV_GRID_TEMPLATE_LAST]" help="Array of column track sizes, e.g. `20 1fr  content`. Needs `layout`=grid."/>
+        <prop name="style_grid_row_dsc_array-selector" type="grid_dsc[LV_GRID_TEMPLATE_LAST]" help="Array of row track sizes, e.g. `20 1fr content`. Needs `layout`=grid."/>
+        <prop name="style_grid_column_align-selector" type="enum:lv_grid_align" help="How to distribute the columns when the grid has spare horizontal space."/>
+        <prop name="style_grid_row_align-selector" type="enum:lv_grid_align" help="How to distribute the rows when the grid has spare vertical space."/>
+        <prop name="style_grid_cell_column_pos-selector" type="int" help="On a grid child: the column index where its cell starts (0-based)."/>
+        <prop name="style_grid_cell_column_span-selector" type="int" help="On a grid child: how many columns its cell spans."/>
+        <prop name="style_grid_cell_x_align-selector" type="enum:lv_grid_align" help="On a grid child: horizontal alignment within its grid cell."/>
+        <prop name="style_grid_cell_row_pos-selector" type="int" help="On a grid child: the row index where its cell starts (0-based)."/>
+        <prop name="style_grid_cell_row_span-selector" type="int" help="On a grid child: how many rows its cell spans."/>
+        <prop name="style_grid_cell_y_align-selector" type="enum:lv_grid_align" help="On a grid child: vertical alignment within its grid cell."/>
+
+        <prop name="style_opa-selector" type="opa" help="Opacity of the whole widget and its children (0-255 or 0-100%). Default: 255 (opaque)."/>
+        <prop name="style_opa_layered-selector" type="opa" help="Like `opa`, but composites the widget as one layer so overlapping parts don't show through. Slower. Default: 255."/>
+        <prop name="style_anim_duration-selector" type="int" help="Length of the widget's built-in animation in ms (e.g. label scroll). Default: 0. Exact effect is widget-specific."/>
+        <prop name="style_blend_mode-selector" type="enum:lv_blend_mode" help="How the widget's pixels mix with the background: normal, additive, subtractive, multiply or difference."/>
+        <prop name="style_transform_width-selector" type="int" help="Enlarge (or shrink, if negative) the drawn widget horizontally without affecting layout (px)."/>
+        <prop name="style_transform_height-selector" type="int" help="Enlarge (or shrink, if negative) the drawn widget vertically without affecting layout (px)."/>
+        <prop name="style_translate_x-selector" type="int" help="Shift the widget horizontally after layout (px or %); siblings are not affected."/>
+        <prop name="style_translate_y-selector" type="int" help="Shift the widget vertically after layout (px or %); siblings are not affected."/>
+        <prop name="style_translate_radial-selector" type="int" help="On round/scale layouts, move the widget toward or away from the parent's center (px)."/>
+        <prop name="style_transform_scale_x-selector" type="int" help="Horizontal zoom: 256 = 100%, 128 = 50%, 512 = 200%. Default: 256 (no scaling)."/>
+        <prop name="style_transform_scale_y-selector" type="int" help="Vertical zoom: 256 = 100%, 128 = 50%, 512 = 200%. Default: 256 (no scaling)."/>
+        <prop name="style_transform_rotation-selector" type="int" help="Rotation in 0.1° units (450 = 45°, 3600 = 360°). Default: 0. Pivot set by `transform_pivot_x`/`y`."/>
+        <prop name="style_transform_pivot_x-selector" type="int" help="X of the rotation/scale pivot, relative to the widget's top-left corner (px or %). Default: 0."/>
+        <prop name="style_transform_pivot_y-selector" type="int" help="Y of the rotation/scale pivot, relative to the widget's top-left corner (px or %). Default: 0."/>
+        <prop name="style_transform_skew_x-selector" type="int" help="Horizontal skew in 0.1° units. Not supported by the SW renderer. Default: 0."/>
+        <prop name="style_transform_skew_y-selector" type="int" help="Vertical skew in 0.1° units. Not supported by the SW renderer. Default: 0."/>
+        <prop name="style_bitmap_mask_src-selector" type="image" help="An A8/L8 image used as an alpha mask: the widget is drawn on a layer and masked by this bitmap."/>
+        <prop name="style_rotary_sensitivity-selector" type="int" help="Scales rotary-encoder/Crown input in 1/256 units: 256 = 1:1, 128 = half, 512 = double. Default: 256."/>
+        <prop name="style_recolor-selector" type="color" help="Color blended over the whole widget and its children; intensity set by `recolor_opa`."/>
+        <prop name="style_recolor_opa-selector" type="opa" help="Strength of `recolor` (0-255 or 0-100%). Default: 0 (no recolor)."/>
+        <prop name="style_blur_radius-selector" type="int" help="Gaussian blur radius applied to the widget (px). Default: 0 (no blur). Has a performance cost."/>
+        <prop name="style_blur_quality-selector" type="enum:lv_blur_quality" help="Blur rendering trade-off: prefer speed or precision."/>
+        <prop name="style_blur_backdrop-selector" type="bool" help="true: blur what is behind the widget (frosted-glass effect); false: blur the widget itself. Default: false."/>
+
+        <prop name="style_drop_shadow_radius-selector" type="int" help="Blur radius of the drop shadow (px). Default: 0 (no drop shadow)."/>
+        <prop name="style_drop_shadow_offset_x-selector" type="int" help="Horizontal drop-shadow offset (px). Default: 0."/>
+        <prop name="style_drop_shadow_offset_y-selector" type="int" help="Vertical drop-shadow offset (px). Default: 0."/>
+        <prop name="style_drop_shadow_color-selector" type="color" help="Drop-shadow color."/>
+        <prop name="style_drop_shadow_opa-selector" type="opa" help="Drop-shadow opacity (0-255 or 0-100%). Default: 0 (invisible), raise it to show the shadow."/>
+        <prop name="style_drop_shadow_quality-selector" type="enum:lv_blur_quality" help="Drop-shadow rendering trade-off: prefer speed or precision."/>
+
+        <prop name="flex_grow" type="int" help="Set flex grow to fill the available space in the track"/>
+        <prop name="flex_flow" type="enum:lv_flex_flow" help="Set flex flow direction (row, column, etc.)"/>
+
+        <prop name="checked"  type="flag:state lv_state" help="Mark widget as checked (e.g. switch or checkbox)"/>
+        <prop name="focused"  type="flag:state lv_state" help="Mark widget as focused"/>
+        <prop name="focus_key" type="flag:state lv_state" help="Mark widget as focused via key navigation"/>
+        <prop name="edited"   type="flag:state lv_state" help="Mark widget as being edited (e.g. text input)"/>
+        <prop name="hovered"  type="flag:state lv_state" help="Mark widget as hovered by a pointer"/>
+        <prop name="pressed"  type="flag:state lv_state" help="Mark widget as pressed"/>
+        <prop name="scrolled" type="flag:state lv_state" help="Mark widget as being scrolled"/>
+        <prop name="disabled" type="flag:state lv_state" help="Disable widget interaction"/>
+
+        <prop name="hidden"              type="flag:flag lv_obj_flag" help="Make the object hidden. (Like it wasn't there at all)"/>
+        <prop name="clickable"           type="flag:flag lv_obj_flag" help="Make the object clickable by the input devices"/>
+        <prop name="click_focusable"     type="flag:flag lv_obj_flag" help="Add focused state to the object when clicked"/>
+        <prop name="checkable"           type="flag:flag lv_obj_flag" help="Toggle checked state when the object is clicked"/>
+        <prop name="scrollable"          type="flag:flag lv_obj_flag" help="Make the object scrollable"/>
+        <prop name="scroll_elastic"      type="flag:flag lv_obj_flag" help="Allow scrolling inside but with slower speed"/>
+        <prop name="scroll_momentum"     type="flag:flag lv_obj_flag" help="Make the object scroll further when 'thrown'"/>
+        <prop name="scroll_one"          type="flag:flag lv_obj_flag" help="Allow scrolling only one snappable children"/>
+        <prop name="scroll_chain_hor"    type="flag:flag lv_obj_flag" help="Allow propagating the horizontal scroll to a parent"/>
+        <prop name="scroll_chain_ver"    type="flag:flag lv_obj_flag" help="Allow propagating the vertical scroll to a parent"/>
+        <prop name="scroll_chain"        type="flag:flag lv_obj_flag" help="SCROLL_CHAIN_HOR and SCROLL_CHAIN_VER"/>
+        <prop name="scroll_on_focus"     type="flag:flag lv_obj_flag" help="Automatically scroll object to make it visible when focused"/>
+        <prop name="scroll_with_arrow"   type="flag:flag lv_obj_flag" help="Allow scrolling the focused object with arrow keys"/>
+        <prop name="snappable"           type="flag:flag lv_obj_flag" help="If scroll snap is enabled on the parent it can snap to this object"/>
+        <prop name="press_lock"          type="flag:flag lv_obj_flag" help="Keep the object pressed even if the press slid from the object"/>
+        <prop name="event_bubble"        type="flag:flag lv_obj_flag" help="Propagate the events to the parent too"/>
+        <prop name="event_trickle"       type="flag:flag lv_obj_flag" help="Send events to children first"/>
+        <prop name="state_trickle"       type="flag:flag lv_obj_flag" help="Propagate state changes to children"/>
+        <prop name="gesture_bubble"      type="flag:flag lv_obj_flag" help="Propagate the gestures to the parent"/>
+        <prop name="adv_hittest"         type="flag:flag lv_obj_flag" help="Allow performing more accurate hit (click) test. E.g. consider rounded corners."/>
+        <prop name="ignore_layout"       type="flag:flag lv_obj_flag" help="Make the object not positioned by the layouts"/>
+        <prop name="floating"            type="flag:flag lv_obj_flag" help="Do not scroll the object when the parent scrolls and ignore layout"/>
+        <prop name="send_draw_task_events" type="flag:flag lv_obj_flag" help="Send `LV_EVENT_DRAW_TASK_ADDED` events"/>
+        <prop name="overflow_visible"    type="flag:flag lv_obj_flag" help="Do not clip the children to the parent's ext draw size"/>
+        
+        <prop name="radio_button"        type="bool" help="Allow only one radio_button sibling to be checked"/>
+
+        <prop name="flex_in_new_track"   type="flag:flag lv_obj_flag" help="Start a new flex track on this item"/>
+
+        <prop name="bind_checked"        type="subject" help="Bind widget’s checked state to a subject"/>
+
+        <parts>
+            <part name="main" help="Style the widget's main area: background, border, outline, shadow and padding properties."/>
+            <part name="scrollbar" help="Style the scrollbars: `width` (thickness), background properties, and padding on the respective side. `base_dir`='rtl' moves the vertical scrollbar to the left."/>
+        </parts>
+	</api>
+</widget>

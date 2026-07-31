@@ -72,6 +72,15 @@ Once the LVGL Editor is open, you can create and edit LVGL XML files as
 usual. Use the Editor's export code functionality to generate C code,
 which E2Studio will automatically detect and include in its build.
 
+## Configuration
+
+LVGL Pro projects rely on two LVGL features that need to be enabled in `src/lv_conf_user.h`:
+
+```c
+#define LV_USE_OBJ_NAME 1
+#define LV_USE_TRANSLATION 1
+```
+
 ## Loading the UI
 
 Once the UI is created you need to initialize it and create the screens:

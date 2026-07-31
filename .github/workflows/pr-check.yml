@@ -37,22 +37,22 @@ jobs:
           version: 4.0.6
 
       - name: Remove Generated Files
-        run: find examples -path examples/images -prune -o -type f \( -name '*.c' -o -name '*.h' \) -print | xargs rm -f
+        run: find examples/lvgl_open -path examples/lvgl_open/images -prune -o -type f \( -name '*.c' -o -name '*.h' \) -print | xargs rm -f
 
       - name: Download CLI
-        run: curl -L https://github.com/lvgl/lvgl_editor/releases/download/v2.0.0/LVGL_Pro_CLI-2.0.0-linux.zip -o lvgl-cli.zip
+        run: curl -L https://github.com/lvgl/lvgl_pro/releases/download/v2.0.0/LVGL_Pro_CLI-2.0.0-linux.zip -o lvgl-cli.zip
 
       - name: Unzip CLI
         run: unzip lvgl-cli.zip -d lvgl-cli
 
       - name: Generate Code
         run: |
-          node ./lvgl-cli/lved-cli.js generate examples
+          node ./lvgl-cli/lved-cli.js generate examples/lvgl_open
 
       - name: Compile Code
         run: |
-          node ./lvgl-cli/lved-cli.js compile examples --target cli
+          node ./lvgl-cli/lved-cli.js compile examples/lvgl_open --target cli
 
       - name: Run tests
         run: |
-          node ./lvgl-cli/lved-cli.js run-all-tests examples
+          node ./lvgl-cli/lved-cli.js run-all-tests examples/lvgl_open

@@ -31,7 +31,7 @@ The CLI is a **Professional feature** and is **not available with the Community 
 
 The CLI ships as a self-contained Node script.
 
-1. **Download** the latest CLI archive from the [Releases page](https://github.com/lvgl/lvgl_editor/releases) and unzip it.
+1. **Download** the latest CLI archive from the [Releases page](https://github.com/lvgl/lvgl_pro/releases) and unzip it.
 2. **Install Node.js** 18 or newer (CI is tested on Node 22).
 3. **Run commands** to test, validate, build, etc the UI project
 
@@ -192,9 +192,9 @@ jobs:
           node-version: "22"
 
       - name: Download CLI
-        # Latest Linux/macOS CLI build; see https://github.com/lvgl/lvgl_editor/releases for all assets
+        # Latest Linux/macOS CLI build; see https://github.com/lvgl/lvgl_pro/releases for all assets
         run: |
-          curl -L https://github.com/lvgl/lvgl_editor/releases/download/nightly/LVGL_Pro_CLI-nightly-linux-mac.zip -o lvgl-cli.zip
+          curl -L https://github.com/lvgl/lvgl_pro/releases/download/nightly/LVGL_Pro_CLI-nightly-linux-mac.zip -o lvgl-cli.zip
           unzip lvgl-cli.zip -d lvgl-cli
 
       - name: Generate code
@@ -207,7 +207,7 @@ jobs:
         run: node ./lvgl-cli/lved-cli.js run-all-tests examples
 ```
 
-A full, working example lives in the [project's PR-check workflow](https://github.com/lvgl/lvgl_editor/blob/master/.github/workflows/pr-check.yml).
+A full, working example lives in the [project's PR-check workflow](https://github.com/lvgl/lvgl_pro/blob/master/.github/workflows/pr-check.yml).
 
 ## Use case: AI-driven UI development
 

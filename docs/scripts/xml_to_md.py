@@ -11,11 +11,11 @@ a `source` URL pointing back at the original .xml:
 The `source` URL is built from a base you pass on the CLI plus the file's path
 within the source tree. For example, with
 
-    --source-base https://github.com/lvgl/lvgl/blob/master/examples
+    --source-base https://github.com/lvgl/lvgl_pro/blob/master/examples
 
 a file at SRC_DIR/scroll/scroll_scrollable/lv_example_scroll_scrollable.xml gets
 
-    source="https://github.com/lvgl/lvgl/blob/master/examples/scroll/scroll_scrollable/lv_example_scroll_scrollable.xml"
+    source="https://github.com/lvgl/lvgl_pro/blob/master/examples/scroll/scroll_scrollable/lv_example_scroll_scrollable.xml"
 
 Two ways to call it:
 

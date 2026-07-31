@@ -45,14 +45,20 @@
 You can build any UI with LVGL in C. LVGL Pro lets you build the same UIs visually, preview every change
 instantly, and export plain LVGL C code that drops into an existing project with no extra runtime or dependency.
 
-It consists of four tightly related tools:
+LVGL Pro consists of four tightly related tools:
 
 1. **Editor**: The heart of LVGL Pro. A desktop app to build components and screens in XML, and manage data bindings, translations, animations, tests, assets, and more. See the [Editor docs](https://lvgl.io/docs/pro/editor) and the [XML syntax](https://lvgl.io/docs/pro/syntax).
 2. **Online Viewer**: Run the editor in your browser, open GitHub projects, and share with teammates, designers, or customers without any local setup. Visit [viewer.lvgl.io](https://viewer.lvgl.io) or read the [docs](https://lvgl.io/docs/pro/online-viewer).
 3. **Figma plugin (LVGL Flow)**: Bring a Figma design into LVGL Pro, including layouts, widgets, data bindings, and screen navigation. See how it works [here](https://lvgl.io/docs/pro/figma).
 4. **CLI**: Export C code and run UI tests in CI/CD pipelines. See the [CLI docs](https://lvgl.io/docs/pro/cli).
 
-Together, these tools let you build UIs faster, test them reliably, and collaborate with your team.
+Together, these tools let you build UIs faster, test them reliably, and collaborate with your team effectively.
+
+In this repository you will also find the source of the [documentation](docs), many [`examples/`](examples), 
+[`tutorials/`](tutorials), and [`templates/`](templates) to start a new project from. It also contains 
+[`lvgl_widgets_xml/`](lvgl_widgets_xml) with the XML schema of every built-in LVGL widget, being the
+source of truth for valid widget properties, enums, and styles a widget accepts, so it is worth a look for you 
+and for any AI agent working on an LVGL Pro project. 
 
 ## LVGL Open vs LVGL Pro
 
@@ -115,7 +121,7 @@ Open the [Online Viewer](https://viewer.lvgl.io), then pick an example or tutori
 
 ### Locally
 
-1. Download the LVGL Pro Editor for Windows, Linux, or macOS from the [Releases](https://github.com/lvgl/lvgl_editor/releases) page, or from [lvgl.io/pro](https://lvgl.io/pro#download).
+1. Download the LVGL Pro Editor for Windows, Linux, or macOS from the [Releases](https://github.com/lvgl/lvgl_pro/releases) page, or from [lvgl.io/pro](https://lvgl.io/pro#download).
 2. On first launch, pick the free Community or Evaluation license.
 3. Create an example or tutorial project and open a screen to start from. `Hello World` is a good first stop.
 
@@ -136,6 +142,6 @@ See the current plans and details at [lvgl.io/pro#pricing](https://lvgl.io/pro#p
 
 We are building this tool for you, and your feedback drives its development.
 
-Please [open an issue](https://github.com/lvgl/lvgl_editor/issues) to share suggestions, report bugs, or request features. You can also reach us on the [forum](https://forum.lvgl.io) or at [lvgl@lvgl.io](mailto:lvgl@lvgl.io).
+Please [open an issue](https://github.com/lvgl/lvgl_pro/issues) to share suggestions, report bugs, or request features. You can also reach us on the [forum](https://forum.lvgl.io) or at [lvgl@lvgl.io](mailto:lvgl@lvgl.io).
 
 Thank you! ❤️

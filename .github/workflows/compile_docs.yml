@@ -14,6 +14,9 @@ on:
     paths:
       - 'docs/**'
       - 'examples/**'
+      - 'tutorials/**'
+      - 'templates/**'
+      - 'lvgl_widgets_xml/**'
       - '.github/workflows/compile_docs.yml'
   push:
     branches:
@@ -23,6 +26,9 @@ on:
       - 'docs/**'
       - 'src/**'
       - 'examples/**'
+      - 'tutorials/**'
+      - 'templates/**'
+      - 'lvgl_widgets_xml/**'
       - 'demos/**'
       - '.github/workflows/compile_docs.yml'
 
@@ -62,9 +68,7 @@ jobs:
         uses: hendrikmuhs/ccache-action@v1
 
       - name: Build examples (with cache)
-        run: |
-          cd ..
-          ./lvgl_editor/docs/scripts/build_html_examples.sh
+        run: ./docs/scripts/build_html_examples.sh
 
       - name: Setup Node        
         uses: actions/setup-node@v4
@@ -83,7 +87,10 @@ jobs:
       - name: Convert xml files to md
         run: |
             mkdir -p /tmp/xml
-            python3 docs/scripts/xml_to_md.py examples /tmp/xml --source-base https://github.com/lvgl/lvgl/blob/${{ github.sha }}/examples
+            for dir in examples tutorials templates lvgl_widgets_xml; do
+              python3 docs/scripts/xml_to_md.py "$dir" "/tmp/xml/$dir" \
+                --source-base "https://github.com/lvgl/lvgl_pro/blob/${{ github.sha }}/$dir"
+            done
      
       - name: Deploy Latest
         if: >
@@ -103,7 +110,6 @@ jobs:
           cp -r /tmp/xml/. /tmp/pro-docs-latest/xml/latest
 
 
-          rm -rf /tmp/pro-docs-latest/latest/src/examples
           rm -rf /tmp/pro-docs-latest/latest/src/scripts
 
           cd /tmp/pro-docs-latest

@@ -446,11 +446,24 @@ function injectBelowMarker(file: string, generated: string): boolean {
 
 const here = dirname(fileURLToPath(import.meta.url));
 const docsDir = join(here, '..');
+const repoRoot = join(docsDir, '..');
 const bwDir = join(docsDir, 'built_in_widgets');
+
+// Default to the newest `lvgl_widgets_xml/v*` folder in this repo. Override with
+// argv[2] or LV_WIDGETS_DIR to document a different LVGL version.
+function latestWidgetsDir(): string {
+	const root = join(repoRoot, 'lvgl_widgets_xml');
+	if (!existsSync(root)) return root;
+	const versions = readdirSync(root)
+		.filter((d) => /^v\d/.test(d))
+		.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+	return versions.length ? join(root, versions[versions.length - 1]) : root;
+}
+
 const widgetsDir =
 	process.argv[2] ||
 	process.env.LV_WIDGETS_DIR ||
-	'/home/kisvegabor/projects/lvgl/eclipse-workspace/lv_port_pc_eclipse/lv_xml/xmls/widgets';
+	latestWidgetsDir();
 
 function main() {
 	if (!existsSync(widgetsDir)) {

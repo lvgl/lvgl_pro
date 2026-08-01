@@ -13,7 +13,7 @@
   <img src="https://lvgl.io/github-assets/logo-colored.png" height="50px" alt="LVGL">
 </p>
 
-<h1 align="center">The Professional Way to Build Embedded UIs</h1>
+<h1 align="center">The Complete Workflow for<br/>Professional LVGL UI Development</h1>
 
 <p align="center">
   Design, develop, test, debug, and ship production-ready embedded UIs with an LVGL-native editor, Figma integration, online collaboration, and CLI tools.
@@ -70,9 +70,9 @@ The open-source LVGL library is the foundation for creating scalable and vendor 
 
 Both produce the same thing in the end: plain LVGL C code that you compile into your application.
 
-**Stay on LVGL Open** if you are one or two developers on a single product, the screens are few, and there is no time pressure.
+**Use LVGL Open directly** when the UI is relatively small, a code-first workflow works well, and one or two developers can comfortably maintain it.
 
-**Move to LVGL Pro** when the UI becomes the bottleneck. That usually happens when a designer joins, when the second product variant appears, when the screen count passes what one person can hold in their head, or when a deadline makes the compile-and-flash loop too expensive to keep paying.
+**Add LVGL Pro** when the UI workflow becomes critical, such as when a designer joins, product variants multiply, the screen count grows, or rapid iteration becomes critical.
 
 ## What You Get
 

@@ -3,12 +3,13 @@ title: AI Integration
 description: Connect AI assistants to LVGL Pro through the LVGL MCP server for grounded documentation answers, and close the loop with the CLI for validation and visual feedback.
 ---
 
-LVGL Pro is built to work hand-in-hand with AI coding assistants. Two pieces make this possible:
+LVGL Pro is built to work hand-in-hand with AI coding assistants. Three pieces make this possible:
 
 - **The LVGL MCP server** gives the AI accurate, up-to-date knowledge of LVGL and LVGL Pro, so it stops guessing APIs.
+- **The [`lvgl_pro` repo](#lvgl_pro-repo-real-xml-to-learn-from)** gives it real, valid XML to read: the schema of every built-in widget, plus example and template projects.
 - **The [CLI](/cli)** gives the AI objective validation and *eyes*. It can validate XML, generate code, and screenshot the result to verify its own work.
 
-This page covers the MCP server. For the validation-and-screenshot loop, see the [CLI page](/cli).
+This page covers the MCP server and the repo. For the validation-and-screenshot loop, see the [CLI page](/cli).
 
 ## The LVGL MCP server
 
@@ -60,18 +61,65 @@ Other tools use the same idea but look for a different file in a slightly differ
 | --- | --- |
 | Claude Code | `.mcp.json` (project root) or `~/.claude.json` (global) |
 | Cursor | `.cursor/mcp.json` (project) or `~/.cursor/mcp.json` (global) |
-| GitHub Copilot (VS Code) | `.vscode/mcp.json` — uses the `servers` key |
+| GitHub Copilot (VS Code) | `.vscode/mcp.json`, uses the `servers` key |
 | Gemini CLI | `.gemini/settings.json` (project) or `~/.gemini/settings.json` |
 | Windsurf | `~/.codeium/windsurf/mcp_config.json` |
+
+## `lvgl_pro` repo: Real XML to learn from
+
+Docs explain the concepts, but agents write better XML when they can read actual, valid XML. The
+[lvgl/lvgl_pro](https://github.com/lvgl/lvgl_pro) repository is exactly that, and it's public:
+
+| Path | What's in it |
+| --- | --- |
+| [`lvgl_widgets_xml/`](https://github.com/lvgl/lvgl_pro/tree/master/lvgl_widgets_xml) | The **XML schema of every built-in LVGL widget**, one folder per LVGL version (e.g. `v9.5.0/`), one `<widget>` file per widget (`lv_slider.xml`, `lv_chart.xml`, ...). Each lists the exact properties, parameters, enums, and elements the tag accepts, with `help` texts. This is the source of truth for "what can I write on this tag?". |
+| [`examples/lvgl_open/`](https://github.com/lvgl/lvgl_pro/tree/master/examples/lvgl_open) | 130+ small, focused example screens (widgets, layouts, styles, scrolling) in one runnable project. `examples/lvgl_pro/` next to it holds the one-per-widget examples embedded in these docs. |
+| [`tutorials/`](https://github.com/lvgl/lvgl_pro/tree/master/tutorials) | A tutorial project with one screen per concept: styles, layouts, animations, assets, data bindings, translations, custom components and widgets, testing. |
+| [`templates/`](https://github.com/lvgl/lvgl_pro/tree/master/templates) | The `basic` project template (a small design system plus reusable components) and the `empty` one. |
+| [`docs/`](https://github.com/lvgl/lvgl_pro/tree/master/docs) | The source of this documentation, as plain Markdown. |
+
+Two ways for an agent to use it:
+
+**Clone it once** into a temp folder and grep around freely. This is the cheapest option when the assistant needs
+to look up several things:
+
+```bash
+git clone --depth 1 https://github.com/lvgl/lvgl_pro /tmp/lvgl_pro
+grep -rn "start_angle" /tmp/lvgl_pro/lvgl_widgets_xml/v9.5.0/
+```
+
+**Or fetch single files** over raw HTTP when only one answer is needed:
+
+```bash
+curl -s https://raw.githubusercontent.com/lvgl/lvgl_pro/master/lvgl_widgets_xml/v9.5.0/lv_slider.xml
+```
+
+<Callout type="info">
+Pick the `lvgl_widgets_xml` folder that matches the `lvgl_version` in your project's `project.xml`.
+The same widget API is also rendered as documentation under [Built-in Widgets](/built_in_widgets), which
+the MCP server can search.
+</Callout>
 
 ## The AI development loop
 
 The MCP server gives the AI *knowledge*; the [CLI](/cli) closes the loop with *validation* and *eyes*. Together they let the assistant write, check, and visually verify a UI on its own:
 
-1. **Ask**: the AI consults the MCP server for the right LVGL approach.
-3. **Validate**: `validate` returns precise, machine-readable errors to fix and repeat until clean.
-2. **Generate**: it writes or edits XML, then runs `generate` to export C code.
-4. **See**: `screenshot` renders the screen to a PNG.
-5. **Judge**: a vision-capable model compares the image to the intent and iterates from step 1.
+<Steps>
+<Step>
+**Ask**: the AI consults the MCP server to check the details of LVGL Open or Pro features, and reads the widget XML and examples from the [`lvgl_pro` repo](#lvgl_pro-repo-real-xml-to-learn-from) for concrete syntax.
+</Step>
+<Step>
+**Write**: it writes or edits XMLs based on the user's request and the information it learned
+</Step>
+<Step>
+**Validate**: run `validate` with the CLI and it returns precise, machine-readable errors to fix, then repeat until clean. `generate` and `compile` with the CLI are also recommended after some iterations to catch all issues.
+</Step>
+<Step>
+**See**: `screenshot` renders the screen to a PNG.
+</Step>
+<Step>
+**Judge**: a vision-capable model compares the image to the intent and iterates from step 1.
+</Step>
+</Steps>
 
 See the [CLI page](/cli) for the full command reference and a ready-to-use CI/CD example.

@@ -1,0 +1,43 @@
+<!--
+Example
+<lv_slider mode="range" value="30"/>
+ -->
+
+<widget>
+    <api>
+        <enumdef name="lv_slider_mode" help="How the slider behaves">
+            <enum name="normal" help="One knob, grows left to right"/>
+            <enum name="range" help="Two knobs, select a range"/>
+            <enum name="symmetrical" help="Indicator grows from zero"/>
+        </enumdef>
+
+        <enumdef name="lv_slider_orientation" help="How the slider oriented">
+            <enum name="auto" help="Decide based on width an height"/>
+            <enum name="horizontal" help="Always horizontally"/>
+            <enum name="vertical" help="Always vertical"/>
+        </enumdef>
+
+        <prop name="min_value" type="int" help="Set minimum value. If `min_value` > `max_value` fills from the right"/>
+        <prop name="max_value" type="int" help="Set maximum value. If `min_value` > `max_value` fills from the right"/>
+
+        <prop name="value" help="Set current value">
+            <param name="value" type="int" help="Current value"/>
+            <param name="anim" type="bool" default="false" help="Animate update (reference as `value-anim`)"/>
+        </prop>
+
+        <prop name="start_value" help="Set start value in range mode">
+            <param name="start_value" type="int" help="Start value"/>
+            <param name="anim" type="bool" default="false" help="Animate update (reference as `start_value-anim`)"/>
+        </prop>
+
+        <prop name="mode" type="enum:lv_slider_mode" help="Set slider mode"/>
+        <prop name="bind_value" type="subject" help="Bind value to subject"/>
+        <prop name="orientation" type="enum:lv_slider_orientation" help="Set the orientation to horizontal, vertical or auto"/>
+
+        <parts>
+            <part name="main" help="The track/background: background properties. padding makes the indicator smaller in the respective direction."/>
+            <part name="indicator" help="The filled portion that shows the value: background properties."/>
+            <part name="knob" help="The draggable handle: background, border, shadow and padding properties. Use knob|pressed for drag feedback; range mode draws two knobs."/>
+        </parts>
+    </api>
+</widget>

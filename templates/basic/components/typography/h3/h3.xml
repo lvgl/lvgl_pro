@@ -1,0 +1,18 @@
+<component>
+	<previews>
+		<preview name="default" width="400" />
+	</previews>
+
+	<api>
+		<prop name="text" type="string" default="Heading 3" help="Heading text" />
+	</api>
+
+	<styles>
+		<style name="style_h3" text_font="font_h3" />
+	</styles>
+
+	<!-- Heading. Text color inherited; override per-use with style_text_color. -->
+	<view extends="lv_label" text="$text">
+		<style name="style_h3" />
+	</view>
+</component>

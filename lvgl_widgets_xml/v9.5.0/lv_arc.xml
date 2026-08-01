@@ -1,0 +1,34 @@
+<!--
+Example
+<lv_arc mode="reverse" bg_start_angle="30" bg_end_ange="150"
+                       min_value="40" max_value="120"
+                       value="60"/>
+-->
+
+<widget>
+    <api>
+        <enumdef name="lv_arc_mode" help="How the arc’s indicator grows">
+            <enum name="normal" help="Make the indicator grow clockwise"/>
+            <enum name="symmetrical" help="Make the indicator grow symmetrically left and right from the midpoint"/>
+            <enum name="reverse" help="Make the indicator grow counterclockwise"/>
+        </enumdef>
+
+        <prop name="start_angle" type="int" help="Set the start angle of the indicator"/>
+        <prop name="end_angle" type="int" help="Set the end angle of the indicator"/>
+        <prop name="bg_start_angle" type="int" help="Set the start angle of the background arc"/>
+        <prop name="bg_end_angle" type="int" help="Set the end angle of the background arc"/>
+        <prop name="rotation" type="int" help="Rotate the whole arc by a given angle"/>
+        <prop name="min_value" type="int" help="Set the minimum value of the arc"/>
+        <prop name="max_value" type="int" help="Set the maximum value of the arc"/>
+        <prop name="value" type="int" help="Set the current value of the arc (between minimum and maximum)"/>
+        <prop name="mode" type="enum:lv_arc_mode" help="Select how the indicator grows"/>
+        <prop name="change_rate" type="int" help="How fast the arc should jump to the clicked value (deg/sec)"/>
+        <prop name="bind_value" type="subject" help="Bind the arc’s value to a subject"/>
+
+        <parts>
+            <part name="main" help="The background arc: `arc_color`, `arc_width`, `arc_opa`, `arc_rounded` and `arc_image_src`. Background properties draw a box behind it."/>
+            <part name="indicator" help="The value arc drawn over the background: the arc_* properties. Its padding is relative to the background arc."/>
+            <part name="knob" help="The handle at the end of the indicator: background, border, shadow and padding properties (padding enlarges it)."/>
+        </parts>
+    </api>
+</widget>

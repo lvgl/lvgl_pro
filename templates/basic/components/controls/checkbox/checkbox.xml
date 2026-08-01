@@ -1,0 +1,44 @@
+<component>
+	<previews>
+		<preview name="default" width="180" style_pad_all="10" />
+	</previews>
+
+	<api>
+		<prop name="text" type="string" default="Checkbox" help="Label shown next to the box" />
+		<prop name="subject" type="subject" help="Optional 0/1 subject bound two-way to the checked state" />
+		<prop name="color" type="color" default="#color_accent" help="Box fill color when checked" />
+	</api>
+
+	<styles>
+		<style name="style_checkbox" pad_column="#space_sm" />
+		<!-- Outline box; fills with the accent color once checked. -->
+		<style
+			name="style_box"
+			radius="#space_sm"
+			border_width="#border_width"
+			border_color="#color_track"
+			bg_opa="0%"
+			pad_all="2"
+		/>
+		<style
+			name="style_box_checked"
+			bg_opa="100%"
+			bg_image_src="icon_check"
+			bg_image_recolor="0xfff"
+			bg_image_recolor_opa="100%"
+		/>
+	</styles>
+
+	<!-- Checkbox + label. Toggles on click; pass a subject to bind it two-way. -->
+	<view
+		extends="lv_checkbox"
+		text="$text"
+		bind_checked="$subject"
+		style_bg_color-indicator-checked="$color"
+		style_border_color-indicator-checked="$color"
+	>
+		<style name="style_checkbox" />
+		<style name="style_box" selector="indicator" />
+		<style name="style_box_checked" selector="indicator|checked" />
+	</view>
+</component>

@@ -1,0 +1,34 @@
+<!-- Toggling the theme switch flips subject_theme_dark and restyles the screen.
+
+     A test's <view> is built exactly like a component's, so it can `extends` a
+     real screen and drive the actual UI. Steps run top to bottom; the first
+     failing assertion fails the test.
+     Docs: https://lvgl.io/docs/pro/syntax/testing -->
+<test width="480" height="320">
+	<view extends="screen_components" />
+
+	<steps>
+		<!-- Pin every subject the assertions depend on instead of inheriting
+		     whatever globals.xml currently defaults to — otherwise changing a
+		     default silently changes what this test means. -->
+		<subject_set subject="subject_theme_dark" value="0" />
+		<subject_set subject="subject_brightness" value="60" />
+		<wait ms="50" />
+
+		<!-- A reference image is created on the first run and compared on every
+		     run after it. On a mismatch the actual frame is written next to the
+		     reference with an `_err` suffix so you can look at the difference. -->
+		<screenshot_compare path="theme_light.png" />
+
+		<!-- The theme switch in the screen header. -->
+		<click_at x="436" y="30" />
+		<wait ms="100" />
+		<subject_compare subject="subject_theme_dark" value="1" />
+		<screenshot_compare path="theme_dark.png" />
+
+		<!-- Tapping it again returns to the light theme. -->
+		<click_at x="436" y="30" />
+		<wait ms="100" />
+		<subject_compare subject="subject_theme_dark" value="0" />
+	</steps>
+</test>

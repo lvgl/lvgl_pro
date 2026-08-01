@@ -1,0 +1,523 @@
+<globals>
+	<!-- DESIGN SYSTEM — single source of truth for spacing, colors, fonts,
+	     the light/dark styles and the observable subjects.
+	     Reference consts as #name, styles by <style name="...">, fonts by name. -->
+
+	<api>
+		<!-- Project-wide enums go here. Add <enumdef> when a component needs one. -->
+	</api>
+
+	<!-- Design tokens. Reference as #name so one edit re-tunes the whole UI.
+	     Per-target blocks scale spacing/shape to the display size. -->
+	<!-- Spacing scale: use these instead of raw pixel paddings/gaps -->
+	<consts>
+		<int name="space_xs" value="2" help="Smallest spacing/padding unit" />
+		<int name="space_sm" value="4" help="Small spacing/padding unit" />
+		<int name="space_md" value="8" help="Default spacing/padding unit" />
+		<int name="space_lg" value="16" help="Large spacing/padding unit" />
+		<int name="space_xl" value="32" help="Extra-large spacing/padding unit" />
+
+		<!-- Shape -->
+		<int name="radius_default" value="12" help="Default corner radius" />
+		<int name="border_width" value="1" help="Default border width" />
+
+		<int name="icon_size" value="16" help="Default icon size" />
+		<opa name="opa_muted" value="35%" help="Used to dim down contant" />
+
+		<!-- Light palette -->
+		<color name="color_light_bg" value="0xEEF1F6" help="Light theme screen background" />
+		<color name="color_light_panel" value="0xFFFFFF" help="Light theme panel/card background" />
+		<color name="color_light_text" value="0x1B1F27" help="Light theme primary text" />
+
+		<!-- Dark palette -->
+		<color name="color_dark_bg" value="0x12151C" help="Dark theme screen background" />
+		<color name="color_dark_panel" value="0x1E232E" help="Dark theme panel/card background" />
+		<color name="color_dark_text" value="0xE6E9F0" help="Dark theme primary text" />
+
+		<!-- Accent + semantic colors (same in both themes) -->
+		<color name="color_accent" value="0x9429FF" help="Accent / active control color" />
+		<color name="color_accent_text" value="0xFFFFFF" help="Text/icon drawn on top of the accent color" />
+		<color name="color_danger" value="0xE5484D" help="Destructive / warning color" />
+		<color name="color_track" value="0x9AA3B2" help="Neutral track behind sliders/arcs/bars" />
+	</consts>
+
+	<!-- Montserrat, compiled in (as_file="false"). Latin range + a few symbols;
+	     bump range/symbols if you need more glyphs.
+	     font_body is the inherited default (see style_screen_*). -->
+	<fonts>
+		<!-- FontAwesome glyphs for the LV_SYMBOLs used by lv_keyboard (left,
+		     right, OK, close, backspace, new-line, keyboard) plus up/down.
+		     lv_fallback=font_body so Latin keys still render from one font. -->
+		<bin
+			name="font_body_symbols"
+			size="16"
+			src_path="fonts/FontAwesome5.ttf"
+			bpp="4"
+			range="0xF00C,0xF00D,0xF053-0xF054,0xF077-0xF078,0xF11C,0xF55A,0xF8A2"
+			as_file="false"
+		/>
+
+		<bin
+			name="font_body"
+			size="16"
+			src_path="fonts/Montserrat-Regular.ttf"
+			bpp="4"
+			range="0x20-0x7F"
+			symbols="°—•"
+			as_file="false"
+			lv_fallback="font_body_symbols_data"
+		/>
+		<bin
+			name="font_h5"
+			size="18"
+			src_path="fonts/Montserrat-Medium.ttf"
+			bpp="4"
+			range="0x20-0x7F"
+			symbols="°—•"
+			as_file="false"
+		/>
+		<bin
+			name="font_h4"
+			size="22"
+			src_path="fonts/Montserrat-SemiBold.ttf"
+			bpp="4"
+			range="0x20-0x7F"
+			symbols="°—•"
+			as_file="false"
+		/>
+		<bin
+			name="font_h3"
+			size="28"
+			src_path="fonts/Montserrat-SemiBold.ttf"
+			bpp="4"
+			range="0x20-0x7F"
+			symbols="°—•"
+			as_file="false"
+		/>
+		<bin
+			name="font_h2"
+			size="34"
+			src_path="fonts/Montserrat-Bold.ttf"
+			bpp="4"
+			range="0x20-0x7F"
+			symbols="°—•"
+			as_file="false"
+		/>
+		<bin
+			name="font_h1"
+			size="44"
+			src_path="fonts/Montserrat-Bold.ttf"
+			bpp="4"
+			range="0x20-0x7F"
+			symbols="°—•"
+			as_file="false"
+		/>
+	</fonts>
+
+	<!-- Reusable styles. Light/dark variants are swapped at runtime with
+	     <bind_style subject="subject_theme_dark">. -->
+	<styles>
+		<!-- Screen backgrounds. Set BOTH text_color and text_font so they
+		     inherit down the whole tree (children clear the theme and never
+		     re-set text_color), so one subject_theme_dark flip recolors all
+		     text and font_body becomes the default font everywhere. -->
+		<style
+			name="style_screen_light"
+			bg_color="#color_light_bg"
+			bg_opa="100%"
+			text_color="#color_light_text"
+			text_font="font_body"
+		/>
+		<style
+			name="style_screen_dark"
+			bg_color="#color_dark_bg"
+			bg_opa="100%"
+			text_color="#color_dark_text"
+			text_font="font_body"
+		/>
+
+		<!-- Panel surface: bg, border and matching text_color.
+		     Geometry lives in the panel component. -->
+		<style
+			name="style_panel_light"
+			bg_color="#color_light_panel"
+			bg_opa="100%"
+			border_color="#color_light_text"
+			border_opa="20%"
+			border_width="#border_width"
+			text_color="#color_light_text"
+			pad_all="#space_md"
+			radius="#radius_default"
+		/>
+		<style
+			name="style_panel_dark"
+			bg_color="#color_dark_panel"
+			bg_opa="100%"
+			border_color="#color_dark_text"
+			border_opa="20%"
+			border_width="#border_width"
+			text_color="#color_dark_text"
+			pad_all="#space_md"
+			radius="#radius_default"
+		/>
+
+		<!-- Accent text, e.g. a live value readout -->
+		<style name="style_text_accent" text_color="#color_accent" />
+
+		<!-- Muted secondary text (captions, subtitles, section headers) -->
+		<style name="style_text_muted" text_opa="60%" />
+
+		<!-- Thin scrollbar shared by scrollable screens -->
+		<style
+			name="style_scrollbar"
+			width="#space_sm"
+			radius="#space_sm"
+			bg_color="#color_track"
+			bg_opa="80%"
+			pad_all="#space_sm"
+		/>
+	</styles>
+
+	<!-- Observable model the UI binds to. Add your own and bind widgets with
+	     bind_value / bind_checked / bind_text. -->
+	<subjects>
+		<int name="subject_theme_dark" value="0" min_value="0" max_value="1" help="0 = light theme, 1 = dark theme" />
+		<int
+			name="subject_brightness"
+			value="60"
+			min_value="0"
+			max_value="100"
+			help="Example value (0..100) driven by the demo controls"
+		/>
+		<int name="subject_show_keyboard" value="0" help="Wether to show a keyboard " />
+	</subjects>
+
+	<images>
+		<!-- Icons: Lucide (MIT). One SVG per icon in images/icons/svg/;
+		     <convert> rasterizes each straight to #icon_size, so an icon is
+		     rendered from the vector at its final size rather than resampled
+		     from a bitmap. Add a size tier by adding another <convert>. -->
+		<convert
+			src="images/icons/svg/arrow_down.svg"
+			dest="images/icons/arrow_down.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_arrow_down" src_path="images/icons/arrow_down.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/arrow_left.svg"
+			dest="images/icons/arrow_left.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_arrow_left" src_path="images/icons/arrow_left.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/arrow_right.svg"
+			dest="images/icons/arrow_right.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_arrow_right" src_path="images/icons/arrow_right.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/arrow_up.svg"
+			dest="images/icons/arrow_up.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_arrow_up" src_path="images/icons/arrow_up.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/battery.svg"
+			dest="images/icons/battery.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_battery" src_path="images/icons/battery.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/battery_full.svg"
+			dest="images/icons/battery_full.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_battery_full" src_path="images/icons/battery_full.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/bell.svg"
+			dest="images/icons/bell.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_bell" src_path="images/icons/bell.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/bluetooth.svg"
+			dest="images/icons/bluetooth.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_bluetooth" src_path="images/icons/bluetooth.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/calendar.svg"
+			dest="images/icons/calendar.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_calendar" src_path="images/icons/calendar.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/camera.svg"
+			dest="images/icons/camera.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_camera" src_path="images/icons/camera.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/check.svg"
+			dest="images/icons/check.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_check" src_path="images/icons/check.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/chevron_down.svg"
+			dest="images/icons/chevron_down.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_chevron_down" src_path="images/icons/chevron_down.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/chevron_left.svg"
+			dest="images/icons/chevron_left.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_chevron_left" src_path="images/icons/chevron_left.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/chevron_right.svg"
+			dest="images/icons/chevron_right.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_chevron_right" src_path="images/icons/chevron_right.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/chevron_up.svg"
+			dest="images/icons/chevron_up.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_chevron_up" src_path="images/icons/chevron_up.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/clock.svg"
+			dest="images/icons/clock.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_clock" src_path="images/icons/clock.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/close.svg"
+			dest="images/icons/close.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_close" src_path="images/icons/close.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/download.svg"
+			dest="images/icons/download.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_download" src_path="images/icons/download.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/edit.svg"
+			dest="images/icons/edit.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_edit" src_path="images/icons/edit.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/heart.svg"
+			dest="images/icons/heart.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_heart" src_path="images/icons/heart.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/home.svg"
+			dest="images/icons/home.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_home" src_path="images/icons/home.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/info.svg"
+			dest="images/icons/info.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_info" src_path="images/icons/info.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/lock.svg"
+			dest="images/icons/lock.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_lock" src_path="images/icons/lock.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/mail.svg"
+			dest="images/icons/mail.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_mail" src_path="images/icons/mail.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/menu.svg"
+			dest="images/icons/menu.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_menu" src_path="images/icons/menu.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/minus.svg"
+			dest="images/icons/minus.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_minus" src_path="images/icons/minus.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/moon.svg"
+			dest="images/icons/moon.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_moon" src_path="images/icons/moon.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/pause.svg"
+			dest="images/icons/pause.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_pause" src_path="images/icons/pause.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/play.svg"
+			dest="images/icons/play.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_play" src_path="images/icons/play.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/plus.svg"
+			dest="images/icons/plus.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_plus" src_path="images/icons/plus.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/power.svg"
+			dest="images/icons/power.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_power" src_path="images/icons/power.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/refresh.svg"
+			dest="images/icons/refresh.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_refresh" src_path="images/icons/refresh.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/search.svg"
+			dest="images/icons/search.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_search" src_path="images/icons/search.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/settings.svg"
+			dest="images/icons/settings.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_settings" src_path="images/icons/settings.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/signal.svg"
+			dest="images/icons/signal.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_signal" src_path="images/icons/signal.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/star.svg"
+			dest="images/icons/star.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_star" src_path="images/icons/star.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/sun.svg"
+			dest="images/icons/sun.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_sun" src_path="images/icons/sun.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/trash.svg"
+			dest="images/icons/trash.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_trash" src_path="images/icons/trash.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/unlock.svg"
+			dest="images/icons/unlock.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_unlock" src_path="images/icons/unlock.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/upload.svg"
+			dest="images/icons/upload.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_upload" src_path="images/icons/upload.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/user.svg"
+			dest="images/icons/user.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_user" src_path="images/icons/user.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/volume.svg"
+			dest="images/icons/volume.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_volume" src_path="images/icons/volume.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/wifi.svg"
+			dest="images/icons/wifi.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_wifi" src_path="images/icons/wifi.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/wifi_high.svg"
+			dest="images/icons/wifi_high.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_wifi_high" src_path="images/icons/wifi_high.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/wifi_low.svg"
+			dest="images/icons/wifi_low.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_wifi_low" src_path="images/icons/wifi_low.png" color_format="argb8888" />
+		<convert
+			src="images/icons/svg/wifi_zero.svg"
+			dest="images/icons/wifi_zero.png"
+			width="#icon_size"
+			color_format="argb8888"
+		/>
+		<data name="icon_wifi_zero" src_path="images/icons/wifi_zero.png" color_format="argb8888" />
+	</images>
+</globals>

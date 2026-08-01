@@ -1,0 +1,44 @@
+<test>
+	<!-- Play the test on the Tests panel -->
+
+	<view extends="screen_layouts">
+		<!-- Add some extra content in the test -->
+		<lv_label translation_tag="dog" align="center" />
+		<lv_slider bind_value="subject_volume" align="center" y="40" x="20" />
+	</view>
+	<steps>
+		<!-- Initial values -->
+		<set_language name="en" />
+		<subject_set subject="subject_volume" value="30" />
+		<wait ms="200" />
+		<screenshot_compare path="start.png" />
+
+		<!-- Click a checkbox by a coordinate and wait for the animations -->
+		<click_at x="20" y="125" />
+		<wait ms="500" />
+		<screenshot_compare path="checkbox_1.png" />
+
+		<!-- Click another checkbox by name and wait for the animations -->
+		<click_on name="lv_checkbox_5" />
+		<wait ms="500" />
+		<screenshot_compare path="checkbox_2.png" />
+
+		<!-- Scroll -->
+		<move_to x="430" y="176" />
+		<press />
+		<wait ms="100" />
+		<move_to x="430" y="136" />
+		<wait ms="100" />
+		<release />
+		<wait ms="500" />
+		<screenshot_compare path="scroll.png" />
+
+		<!-- Change language -->
+		<set_language name="de" />
+		<screenshot_compare path="german.png" />
+
+		<!-- Change subject -->
+		<subject_set subject="subject_volume" value="50" />
+		<screenshot_compare path="half_volume.png" />
+	</steps>
+</test>

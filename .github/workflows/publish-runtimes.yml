@@ -37,7 +37,7 @@ jobs:
             - name: Download the LVGL CLI tool
               run: |
                 # download the LVGL CLI tool
-                curl -OL https://github.com/lvgl/lvgl_editor/releases/download/v.0.3.0/LVGL_CLI-0.3.0-linux-mac.zip
+                curl -OL https://github.com/lvgl/lvgl_pro/releases/download/v.0.3.0/LVGL_CLI-0.3.0-linux-mac.zip
                 # unzip the downloaded file
                 unzip LVGL_CLI-0.3.0-linux-mac.zip
                 # run it to show the version

@@ -2,13 +2,22 @@
 
 set -e
 
-STARTER_PATH=`pwd`
-PROJ_PATH=`pwd`/lvgl_editor
+# Paths are derived from this script's own location, so the checkout folder can
+# be named anything and the script can be started from any directory.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJ_PATH="$(cd "$SCRIPT_DIR/../.." && pwd)"
+STARTER_PATH="$(dirname "$PROJ_PATH")"
+
+# The LVGL Pro examples used by the docs. `examples/lvgl_open` is the set shared
+# with the LVGL Open docs and is not built here.
+EXAMPLES_PATH=$PROJ_PATH/examples/lvgl_pro
 
 export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
 
 echo Clone the Emscripten port
 echo -------------------------
+
+cd $STARTER_PATH
 
 if true; then
     rm -rf emscripten_builder
@@ -27,13 +36,13 @@ echo LVGL_PATH: $LVGL_PATH
 echo Generate example list
 echo ---------------------
 
-# Replace the lvgl examples with the lvgl_editor exmamples so that emscripten will build them
+# Replace the lvgl examples with these examples so that emscripten will build them
 rm -r $LVGL_PATH/examples
-cp -r $PROJ_PATH/docs/examples $LVGL_PATH
+cp -r "$EXAMPLES_PATH" "$LVGL_PATH/examples"
 
 cd $STARTER_PATH
 EXAMPLE_LIST_C=$EMSCRIPTEN_BUILDER_PATH/examplelist.c
-./lvgl_editor/docs/scripts/genexamplelist.sh > $EXAMPLE_LIST_C
+$SCRIPT_DIR/genexamplelist.sh $EXAMPLES_PATH > $EXAMPLE_LIST_C
 cat $EXAMPLE_LIST_C
 
 echo Generate lv_conf
@@ -44,7 +53,7 @@ LV_CONF_PATH=$LVGL_PATH/configs/ci/docs/lv_conf_docs.h
 python $LVGL_PATH/scripts/generate_lv_conf.py \
   --template $LVGL_PATH/lv_conf_template.h \
   --config $LV_CONF_PATH \
-  --defaults $PROJ_PATH/docs/scripts/lv_conf_docs.defaults
+  --defaults $SCRIPT_DIR/lv_conf_docs.defaults
 
 echo Build the examples
 echo ------------------
@@ -59,4 +68,4 @@ echo -----------------------
 
 
 rm -rf cmbuild/CMakeFiles
-cp -a cmbuild $STARTER_PATH/lvgl_editor/docs/built_lv_examples
+cp -a cmbuild $PROJ_PATH/docs/built_lv_examples

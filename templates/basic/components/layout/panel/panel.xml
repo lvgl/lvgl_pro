@@ -1,0 +1,19 @@
+<component>
+	<previews>
+		<preview name="light" width="240" height="140" />
+		<preview name="dark" width="240" height="140" style_bg_color="#color_dark_bg" />
+	</previews>
+
+	<api>
+		<prop name="pad" type="int" default="#space_lg" help="Inner padding on all sides" />
+		<prop name="gap" type="int" default="#space_md" help="Space between children along the flow direction" />
+		<prop name="flow" type="enum:lv_flex_flow" default="column" help="Child layout direction: column or row" />
+		<prop name="grow" type="int" default="0" help="flex_grow when placed in a flex row; NULL = natural size" />
+	</api>
+
+	<!-- Visible card surface over a container; pad/gap/flow/grow pass through. -->
+	<view extends="container" pad="$pad" gap="$gap" flow="$flow" grow="$grow">
+		<style name="style_panel_light" />
+		<bind_style name="style_panel_dark" subject="subject_theme_dark" ref_value="1" />
+	</view>
+</component>

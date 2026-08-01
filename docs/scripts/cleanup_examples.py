@@ -4,7 +4,7 @@
 Generator output (`screenN_gen.c`) is verbose — section-banner comments, an
 empty `style_inited` block, `LV_TRACE_OBJ_CREATE` traces, redundant
 `lv_obj_set_name` calls, etc. — and this script post-processes those files
-into the hand-written-looking examples we ship in `examples/`.
+into the hand-written-looking examples we ship in `examples/lvgl_pro/`.
 
 Each `.c` file that has a sibling `.xml` of the same basename is run through
 `TRANSFORMATIONS` in order; each transform is `(source, path) -> str` and
@@ -21,14 +21,15 @@ import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-# Repo root = parent of `scripts/`. Used to (a) locate the `examples/` tree
-# and (b) compute the relative path to `examples/lv_examples.h` for include
-# rewriting.
-REPO_ROOT = Path(__file__).resolve().parent.parent
+# Repo root = two levels above `docs/scripts/`. Used to (a) locate the
+# `examples/lvgl_pro/` tree and (b) compute the relative path to its
+# `lv_examples.h` for include rewriting.
+REPO_ROOT = Path(__file__).resolve().parents[2]
+EXAMPLES_DIR = REPO_ROOT / "examples" / "lvgl_pro"
 
 # Subjects declared at the project level (one source of truth) so each example
 # can pull the names/types/initial-values it actually references.
-GLOBALS_XML_PATH = REPO_ROOT / "examples" / "globals.xml"
+GLOBALS_XML_PATH = EXAMPLES_DIR / "globals.xml"
 
 # Fixed buffer size used for string subjects when promoted into example-local
 # inits. The project's gen header uses `UI_SUBJECT_STRING_LENGTH = 256`; the
@@ -211,7 +212,7 @@ INCLUDE_BLOCK_RE = re.compile(
 
 def replace_includes_with_lv_examples(source: str, path: Path) -> str:
     # Relative path is recomputed per file so this works for any directory depth.
-    rel = os.path.relpath(REPO_ROOT / "examples" / "lv_examples.h", path.parent)
+    rel = os.path.relpath(EXAMPLES_DIR / "lv_examples.h", path.parent)
     return INCLUDE_BLOCK_RE.sub(f'#include "{rel}"\n', source, count=1)
 
 
@@ -1216,7 +1217,7 @@ def process(path: Path) -> bool:
 
 
 def main(argv: list[str]) -> int:
-    examples_dir = REPO_ROOT / "examples"
+    examples_dir = EXAMPLES_DIR
     if not examples_dir.is_dir():
         print(f"examples directory not found: {examples_dir}", file=sys.stderr)
         return 1

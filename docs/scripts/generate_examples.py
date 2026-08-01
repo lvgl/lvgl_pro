@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
 """Generate C files for the XML examples by driving `lved-cli.js`.
 
-`examples/` is itself a valid LVGL Pro project (`project.xml`, `globals.xml`,
-`screens/*.xml`). A single CLI run converts every screen XML into a sibling
-`lv_example_<name>_gen.{c,h}`. This script then:
+`examples/lvgl_pro/` is itself a valid LVGL Pro project (`project.xml`,
+`globals.xml`, `screens/*.xml`). A single CLI run converts every screen XML into
+a sibling `lv_example_<name>_gen.{c,h}`. This script then:
 
-1. Runs `lved-cli.js generate examples` to (re)create those `_gen` files.
+1. Runs `lved-cli.js generate examples/lvgl_pro` to (re)create those `_gen` files.
 2. Drops the `_gen` suffix from each per-example `screens/lv_example_*_gen.c`
    and deletes the per-example `_gen.h` headers (the project-level `*_gen.*`
-   scaffolding at the `examples/` root is left alone — it's part of the build).
+   scaffolding at the project root is left alone, it's part of the build).
 3. Runs the `cleanup_examples.py` transformations so the result reads like a
    hand-written example.
-4. Writes a single `examples/lv_examples.h` declaring every example's
+4. Writes a single `examples/lvgl_pro/lv_examples.h` declaring every example's
    prototype (the header each cleaned `.c` includes via `../lv_examples.h`).
 
 USAGE
 -----
-    python scripts/generate_examples.py [--cli /path/to/lved-cli.js]
+    python docs/scripts/generate_examples.py [--cli /path/to/lved-cli.js]
 """
 
 from __future__ import annotations
@@ -31,8 +31,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import cleanup_examples  # noqa: E402
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
-EXAMPLES_DIR = REPO_ROOT / "examples"
+REPO_ROOT = Path(__file__).resolve().parents[2]
+EXAMPLES_DIR = REPO_ROOT / "examples" / "lvgl_pro"
 SCREENS_DIR = EXAMPLES_DIR / "screens"
 EXAMPLES_HEADER = EXAMPLES_DIR / "lv_examples.h"
 
@@ -97,7 +97,7 @@ def resolve_cli(cli_arg: str | None) -> str:
 
 
 def generate(cli_path: str) -> bool:
-    """Run `lved-cli.js generate examples` against the examples project."""
+    """Run `lved-cli.js generate examples/lvgl_pro` against the examples project."""
     result = subprocess.run(
         ["node", cli_path, "generate", str(EXAMPLES_DIR.relative_to(REPO_ROOT))],
         cwd=REPO_ROOT,
@@ -112,7 +112,7 @@ def strip_gen_suffix() -> list[Path]:
     the matching `_gen.h` (every prototype lives in the shared
     `lv_examples.h` instead). Scoped to the per-example files in `screens/`,
     so the project-level `examples_gen.*` / `*_list_gen.cmake` scaffolding at
-    the `examples/` root keeps its name.
+    the project root keeps its name.
 
     Returns the renamed `.c` paths.
     """
@@ -131,7 +131,7 @@ def strip_gen_suffix() -> list[Path]:
 
 
 def write_examples_header(example_cs: list[Path]) -> None:
-    """Write `examples/lv_examples.h` with a prototype per example `.c`.
+    """Write `examples/lvgl_pro/lv_examples.h` with a prototype per example `.c`.
 
     Each `screens/lv_example_<name>.c` defines `void lv_example_<name>(void)`;
     the function name is the file stem, so prototypes derive straight from the
@@ -157,7 +157,7 @@ def main(argv: list[str]) -> int:
 
     cli_path = resolve_cli(args.cli)
 
-    print("generating C from examples/ via lved-cli.js")
+    print("generating C from examples/lvgl_pro/ via lved-cli.js")
     if not generate(cli_path):
         sys.stderr.write("  ! lved-cli generation failed\n")
         return 1

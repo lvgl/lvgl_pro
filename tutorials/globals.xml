@@ -1,0 +1,69 @@
+<!-- Project-wide definitions: shared constants, styles, subjects, images and fonts.
+     Anything defined here can be referenced from any screen or component. -->
+<globals>
+	<api>
+		<!-- Add <enumdefs> here -->
+	</api>
+
+	<consts>
+		<!-- Add <px>, <int>, <color> etc here -->
+		<int name="unit_small" value="6" />
+		<int name="unit_medium" value="12" />
+		<int name="unit_large" value="24" />
+		<color name="dark_blue" value="0x035391" />
+		<color name="yellow" value="0xda9d19" />
+	</consts>
+
+	<styles>
+		<!-- Add <style> tags here -->
+	</styles>
+
+	<subjects>
+		<!-- Add <int>, <string>, or <float> subjects here -->
+		<int name="subject_dark_mode" value="0" />
+		<int name="subject_max_current" value="0" />
+		<int name="subject_timeout" value="0" />
+		<int name="subject_volume" value="0" />
+		<int name="subject_segment" value="0" />
+	</subjects>
+
+	<images memory="int_flash">
+		<!-- Add <file> or <data> tags here -->
+
+		<data src_path="images/orange-flower.png" name="flower_data" color_format="argb8888" />
+		<file src_path="images/orange-flower.png" name="flower_file" />
+	</images>
+
+	<fonts memory="int_flash">
+		<!-- Add <bin> , <tiny_ttf>, <freetype> tags here -->
+
+		<!-- <bin as_file="false"> means convert the font to C array -->
+		<bin
+			name="montserrat_14_c_array"
+			as_file="false"
+			bpp="2"
+			src_path="fonts/Montserrat_Medium.ttf"
+			size="14"
+			range="0x20-0x7f"
+			symbols="°äü"
+		/>
+
+		<!-- <bin as_file="true"> means to create bin file they can be loaded at runtime-->
+		<bin
+			name="montserrat_16_bin_file"
+			as_file="false"
+			bpp="2"
+			src_path="fonts/Montserrat_Medium.ttf"
+			size="16"
+			range="0x20-0x7f"
+			symbols="°"
+		/>
+		<!-- <tiny_ttf as_file="false" means convert the TTF files raw data to a C array and load it runtime with TinyTTF.
+		     Characters will be rendered at runtime from the TTF file./> -->
+		<tiny_ttf name="montserrat_18_tiny_ttf_data" as_file="false" size="18" src_path="fonts/Montserrat_Medium.ttf" />
+
+		<!-- <tiny_ttf as_file="true" means load the TTF files at runtime with TinyTTF.
+		     Characters will be rendered at runtime from the TTF file./> -->
+		<tiny_ttf name="montserrat_20_tiny_ttf_file" as_file="true" size="20" src_path="fonts/Montserrat_Medium.ttf" />
+	</fonts>
+</globals>

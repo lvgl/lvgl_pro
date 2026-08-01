@@ -1,0 +1,19 @@
+<component>
+	<previews>
+		<preview name="default" width="400" />
+	</previews>
+
+	<api>
+		<prop name="text" type="string" default="Heading 4" help="Heading text" />
+		<prop name="translation_tag" type="string" default="" help="Translation tag; overrides text when set" />
+	</api>
+
+	<styles>
+		<style name="style_h4" text_font="font_h4" />
+	</styles>
+
+	<!-- Heading. Text color inherited; override per-use with style_text_color. -->
+	<view extends="lv_label" text="$text" translation_tag="$translation_tag">
+		<style name="style_h4" />
+	</view>
+</component>

@@ -1,0 +1,68 @@
+<component>
+	<previews>
+		<preview name="light" width="360" height="200" />
+		<preview name="dark" width="360" height="200" style_bg_color="#color_dark_bg" />
+	</previews>
+
+	<api>
+		<prop
+			name="textarea"
+			type="lv_obj"
+			default="NULL"
+			help="Text field the keyboard types into; give a text_input/text_box a name and pass it here"
+		/>
+		<prop
+			name="mode"
+			type="enum:lv_keyboard_mode"
+			default="text_lower"
+			help="Initial layout: text_lower, text_upper, special or number"
+		/>
+	</api>
+
+	<styles>
+		<!-- Key buttons: rounded, theme-colored, borderless -->
+		<style
+			name="style_kb_key_light"
+			bg_color="#color_light_bg"
+			text_color="#color_light_text"
+			radius="#radius_default"
+			border_width="0"
+		/>
+		<style
+			name="style_kb_key_dark"
+			bg_color="#color_dark_bg"
+			text_color="#color_dark_text"
+			radius="#radius_default"
+			border_width="0"
+		/>
+		<!-- Control keys (enter, shift, backspace…) are flagged 'checked' by the matrix -->
+		<style name="style_kb_key_accent" bg_color="#color_accent" text_color="#color_accent_text" />
+		<!-- Pressed feedback -->
+		<style name="style_kb_key_pressed" recolor="#color_track" recolor_opa="40%" />
+		<style name="style_keyboard" pad_gap="#space_xs" pad_all="#space_md" radius="0" />
+	</styles>
+
+	<!-- On-screen keyboard. Pin it to the bottom of a screen and point it at a field:
+	         <text_input name="email" />
+	         <keyboard textarea="email" />
+	     Surface + keys follow subject_theme_dark like the panels. -->
+	<view
+		extends="lv_keyboard"
+		mode="$mode"
+		textarea="$textarea"
+		width="100%"
+		height="50%"
+		align="bottom_mid"
+	>
+		<style name="style_keyboard" />
+		<!-- Background surface -->
+		<style name="style_panel_light" />
+		<bind_style name="style_panel_dark" subject="subject_theme_dark" ref_value="1" />
+
+		<!-- Keys -->
+		<style name="style_kb_key_light" selector="items" />
+		<bind_style name="style_kb_key_dark" subject="subject_theme_dark" ref_value="1" selector="items" />
+		<style name="style_kb_key_accent" selector="items|checked" />
+		<style name="style_kb_key_pressed" selector="items|pressed" />
+	</view>
+</component>

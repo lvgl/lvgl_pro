@@ -1,0 +1,404 @@
+<api>
+    <enumdef name="lv_state" help="Widget states">
+        <enum name="default" help="Normal state"/>
+        <enum name="pressed" help="Being pressed"/>
+        <enum name="checked" help="Toggled or checked"/>
+        <enum name="hovered" help="Pointer over widget"/>
+        <enum name="scrolled" help="Being scrolled"/>
+        <enum name="disabled" help="Disabled, no interaction"/>
+        <enum name="focused" help="Has input focus"/>
+        <enum name="focus_key" help="Focused by keyboard"/>
+        <enum name="edited" help="Being edited"/>
+        <enum name="user_1" help="User state 1"/>
+        <enum name="user_2" help="User state 2"/>
+        <enum name="user_3" help="User state 3"/>
+        <enum name="user_4" help="User state 4"/>
+    </enumdef>
+
+    <enumdef name="lv_part" help="Widget parts">
+        <enum name="main" help="Main body"/>
+        <enum name="scrollbar" help="Scrollbar"/>
+        <enum name="indicator" help="Indicator (e.g. bar fill)"/>
+        <enum name="knob" help="Knob or handle"/>
+        <enum name="selected" help="Selected item or region"/>
+        <enum name="cursor" help="Cursor (e.g. in text area)"/>
+        <enum name="items" help="Items (e.g. chart series or table cells)"/>
+        <enum name="textarea_placeholder" help="Placeholder text in text area"/>
+    </enumdef>
+
+    <enumdef name="lv_event" help="Widget events">
+        <enum name="all" help="Match all events"/>
+
+        <!-- Input device -->
+        <enum name="pressed" help="Pressed"/>
+        <enum name="pressing" help="Being pressed"/>
+        <enum name="press_lost" help="Press lost (pointer moved)"/>
+        <enum name="short_clicked" help="Short click + release"/>
+        <enum name="single_clicked" help="First short click"/>
+        <enum name="double_clicked" help="Second short click"/>
+        <enum name="triple_clicked" help="Third short click"/>
+        <enum name="long_pressed" help="Long pressed"/>
+        <enum name="long_pressed_repeat" help="Repeat while long pressed"/>
+        <enum name="clicked" help="Released without scroll"/>
+        <enum name="released" help="Released in all cases"/>
+        <enum name="scroll_begin" help="Scroll begins"/>
+        <enum name="scroll_throw_begin" help="Scroll continues after throw"/>
+        <enum name="scroll_end" help="Scroll ends"/>
+        <enum name="scroll" help="Scrolling"/>
+        <enum name="gesture" help="Gesture detected"/>
+        <enum name="key" help="Key sent to widget"/>
+        <enum name="rotary" help="Rotary encoder turned"/>
+        <enum name="focused" help="Got focus"/>
+        <enum name="defocused" help="Lost focus"/>
+        <enum name="leave" help="Focus/pointer left"/>
+        <enum name="hit_test" help="Hit testing"/>
+        <enum name="indev_reset" help="Input device reset"/>
+        <enum name="hover_over" help="Pointer hovers"/>
+        <enum name="hover_leave" help="Pointer stops hovering"/>
+
+        <!-- Drawing -->
+        <enum name="cover_check" help="Check full cover"/>
+        <enum name="refr_ext_draw_size" help="Get extra draw size"/>
+        <enum name="draw_main_begin" help="Start main draw"/>
+        <enum name="draw_main" help="Main draw"/>
+        <enum name="draw_main_end" help="End main draw"/>
+        <enum name="draw_post_begin" help="Start post draw"/>
+        <enum name="draw_post" help="Post draw"/>
+        <enum name="draw_post_end" help="End post draw"/>
+        <enum name="draw_task_added" help="Draw task added"/>
+
+        <!-- Special -->
+        <enum name="value_changed" help="Value changed"/>
+        <enum name="insert" help="Text inserted"/>
+        <enum name="refresh" help="Refresh requested"/>
+        <enum name="ready" help="Process finished"/>
+        <enum name="cancel" help="Process cancelled"/>
+
+        <!-- Object + children -->
+        <enum name="create" help="Object created"/>
+        <enum name="delete" help="Object deleted"/>
+        <enum name="child_changed" help="Child changed"/>
+        <enum name="child_created" help="Child created"/>
+        <enum name="child_deleted" help="Child deleted"/>
+
+        <!-- Screen -->
+        <enum name="screen_unload_start" help="Screen unload start"/>
+        <enum name="screen_load_start" help="Screen load start"/>
+        <enum name="screen_loaded" help="Screen loaded"/>
+        <enum name="screen_unloaded" help="Screen unloaded"/>
+
+        <!-- Layout + style -->
+        <enum name="size_changed" help="Size changed"/>
+        <enum name="style_changed" help="Style changed"/>
+        <enum name="layout_changed" help="Layout changed"/>
+        <enum name="get_self_size" help="Request widget size"/>
+
+        <!-- Display/driver -->
+        <enum name="invalidate_area" help="Area invalidated"/>
+        <enum name="resolution_changed" help="Resolution changed"/>
+        <enum name="color_format_changed" help="Color format changed"/>
+        <enum name="refr_request" help="Refresh requested"/>
+        <enum name="refr_start" help="Refresh start"/>
+        <enum name="refr_ready" help="Refresh done"/>
+        <enum name="render_start" help="Render start"/>
+        <enum name="render_ready" help="Render done"/>
+        <enum name="flush_start" help="Flush start"/>
+        <enum name="flush_finish" help="Flush done"/>
+        <enum name="flush_wait_start" help="Flush wait start"/>
+        <enum name="flush_wait_finish" help="Flush wait done"/>
+        <enum name="vsync" help="Vertical sync"/>
+    </enumdef>
+
+    <enumdef name="lv_align" help="Object alignment">
+        <enum name="default" help="Top-left"/>
+        <enum name="top_left" help="Top-left"/>
+        <enum name="top_mid" help="Top-center"/>
+        <enum name="top_right" help="Top-right"/>
+        <enum name="bottom_left" help="Bottom-left"/>
+        <enum name="bottom_mid" help="Bottom-center"/>
+        <enum name="bottom_right" help="Bottom-right"/>
+        <enum name="left_mid" help="Left-center"/>
+        <enum name="right_mid" help="Right-center"/>
+        <enum name="center" help="Center"/>
+    </enumdef>
+
+    <enumdef name="lv_dir" help="Direction flags">
+        <enum name="none" help="No direction"/>
+        <enum name="top" help="Top"/>
+        <enum name="bottom" help="Bottom"/>
+        <enum name="left" help="Left"/>
+        <enum name="right" help="Right"/>
+        <enum name="hor" help="Horizontal (L+R)"/>
+        <enum name="ver" help="Vertical (T+B)"/>
+        <enum name="all" help="All directions"/>
+    </enumdef>
+
+    <enumdef name="lv_layout" help="Layout modes">
+        <enum name="none" help="No layout"/>
+        <enum name="flex" help="Flexbox layout"/>
+        <enum name="grid" help="Grid layout"/>
+    </enumdef>
+
+    <enumdef name="lv_flex_flow" help="Flex flow">
+        <enum name="row" help="Row"/>
+        <enum name="row_wrap" help="Row wrap"/>
+        <enum name="row_reverse" help="Row reverse"/>
+        <enum name="row_wrap_reverse" help="Row wrap reverse"/>
+        <enum name="column" help="Column"/>
+        <enum name="column_wrap" help="Column wrap"/>
+        <enum name="column_reverse" help="Column reverse"/>
+        <enum name="column_wrap_reverse" help="Column wrap reverse"/>
+    </enumdef>
+
+    <enumdef name="lv_flex_align" help="Flex alignment">
+        <enum name="center" help="Center"/>
+        <enum name="start" help="Start"/>
+        <enum name="end" help="End"/>
+        <enum name="space_around" help="Space around"/>
+        <enum name="space_between" help="Space between"/>
+        <enum name="space_evenly" help="Space evenly"/>
+    </enumdef>
+
+    <enumdef name="lv_grid_align" help="Grid alignment">
+        <enum name="center" help="Center of cell"/>
+        <enum name="start" help="Start of cell"/>
+        <enum name="end" help="End of cell"/>
+        <enum name="stretch" help="Stretch to fill"/>
+        <enum name="space_around" help="Space around"/>
+        <enum name="space_between" help="Space between"/>
+        <enum name="space_evenly" help="Space evenly"/>
+    </enumdef>
+
+    <enumdef name="lv_text_align" help="Text alignment">
+        <enum name="center" help="Center"/>
+        <enum name="left" help="Left"/>
+        <enum name="right" help="Right"/>
+        <enum name="auto" help="Auto (based on dir)"/>
+    </enumdef>
+
+    <enumdef name="lv_text_decor" help="Text decoration">
+        <enum name="none" help="None"/>
+        <enum name="underline" help="Underline"/>
+        <enum name="strikethrough" help="Strikethrough"/>
+    </enumdef>
+
+    <enumdef name="lv_blend_mode" help="Blend modes">
+        <enum name="normal" help="Normal overwrite"/>
+        <enum name="additive" help="Add colors"/>
+        <enum name="subtractive" help="Subtract colors"/>
+        <enum name="multiply" help="Multiply colors"/>
+        <enum name="difference" help="Color difference"/>
+    </enumdef>
+
+    <enumdef name="lv_base_dir" help="Base text direction">
+        <enum name="ltr" help="Left-to-right"/>
+        <enum name="rtl" help="Right-to-left"/>
+        <enum name="auto" help="Auto detect"/>
+    </enumdef>
+
+    <enumdef name="lv_grad_dir" help="Gradient direction">
+        <enum name="none" help="No gradient"/>
+        <enum name="hor" help="Horizontal"/>
+        <enum name="ver" help="Vertical"/>
+    </enumdef>
+
+    <enumdef name="lv_border_side" help="Border sides">
+        <enum name="none" help="No border"/>
+        <enum name="left" help="Left side"/>
+        <enum name="right" help="Right side"/>
+        <enum name="top" help="Top side"/>
+        <enum name="bottom" help="Bottom side"/>
+        <enum name="full" help="All sides"/>
+    </enumdef>
+
+    <enumdef name="lv_scroll_snap" help="Scroll snapping">
+        <enum name="none" help="No snap"/>
+        <enum name="start" help="Align to start of the parent"/>
+        <enum name="end" help="Align to end of the parent"/>
+        <enum name="center" help="Align to center of the parent"/>
+    </enumdef>
+
+    <enumdef name="lv_scrollbar_mode" help="How to display scrollbars">
+        <enum name="off" help="Never show the scrollbars"/>
+        <enum name="on" help="Always show the scrollbars"/>
+        <enum name="active" help="Show scrollbars while the widget is being scrolled"/>
+        <enum name="auto" help="Show scrollbars when the content is large enough to be scrolled"/>
+    </enumdef>
+
+    <enumdef name="lv_screen_load_anim" help="Screen load animations">
+        <enum name="none" help="No animation"/>
+        <enum name="over_left" help="Slide in from left"/>
+        <enum name="over_right" help="Slide in from right"/>
+        <enum name="over_top" help="Slide in from top"/>
+        <enum name="over_bottom" help="Slide in from bottom"/>
+        <enum name="move_left" help="Move out left, new enters"/>
+        <enum name="move_right" help="Move out right, new enters"/>
+        <enum name="move_top" help="Move out up, new enters"/>
+        <enum name="move_bottom" help="Move out down, new enters"/>
+        <enum name="fade_in" help="Fade in new"/>
+        <enum name="fade_on" help="Fade on top"/>
+        <enum name="fade_out" help="Fade out old"/>
+        <enum name="out_left" help="Slide out left"/>
+        <enum name="out_right" help="Slide out right"/>
+        <enum name="out_top" help="Slide out top"/>
+        <enum name="out_bottom" help="Slide out bottom"/>
+    </enumdef>
+
+    <styledef>
+        <!-- Position and size -->
+        <prop name="x" type="px|%" help="Horizontal position relative to the parent's content area (px or %). Usually set `align` or use a layout instead."/>
+        <prop name="y" type="px|%" help="Vertical position relative to the parent's content area (px or %). Usually set `align` or use a layout instead."/>
+        <prop name="height" type="px|%|content" help="Widget height: px, % of the parent, or `content` to shrink-wrap the children."/>
+        <prop name="min_height" type="px|%" help="Minimum height the widget may shrink to (px or %). Useful with `content` sizing."/>
+        <prop name="max_height" type="px|%" help="Maximum height the widget may grow to (px or %). Useful with `content` sizing."/>
+        <prop name="width" type="px|%|content" help="Widget width: px, % of the parent, or `content` to shrink-wrap the children."/>
+        <prop name="min_width" type="px|%" help="Minimum width the widget may shrink to (px or %). Useful with `content` sizing."/>
+        <prop name="max_width" type="px|%" help="Maximum width the widget may grow to (px or %). Useful with `content` sizing."/>
+        <prop name="length" type="px|%" help="Size of a widget-specific element (e.g. scale tick length, arc/slider knob). Meaning depends on the widget."/>
+
+        <!-- Padding and margin -->
+        <prop name="pad_top" type="int" help="Space between the top edge and the content/children (px)."/>
+        <prop name="pad_bottom" type="int" help="Space between the bottom edge and the content/children (px)."/>
+        <prop name="pad_left" type="int" help="Space between the left edge and the content/children (px)."/>
+        <prop name="pad_right" type="int" help="Space between the right edge and the content/children (px)."/>
+        <prop name="pad_hor" type="int" help="Shorthand for `pad_left` and `pad_right` together (px)."/>
+        <prop name="pad_ver" type="int" help="Shorthand for `pad_top` and `pad_bottom` together (px)."/>
+        <prop name="pad_all" type="int" help="Shorthand for all four paddings at once (px)."/>
+        <prop name="pad_row" type="int" help="Gap between rows of children in a flex/grid layout (px)."/>
+        <prop name="pad_column" type="int" help="Gap between columns of children in a flex/grid layout (px)."/>
+        <prop name="pad_gap" type="int" help="Shorthand for both `pad_row` and `pad_column` (px)."/>
+        <prop name="pad_radial" type="int" help="On round scales, distance of the tick labels from the scale (px)."/>
+        <prop name="margin_top" type="int" help="Empty space kept above the widget in a layout, pushing neighbors away (px)."/>
+        <prop name="margin_bottom" type="int" help="Empty space kept below the widget in a layout, pushing neighbors away (px)."/>
+        <prop name="margin_left" type="int" help="Empty space kept left of the widget in a layout, pushing neighbors away (px)."/>
+        <prop name="margin_right" type="int" help="Empty space kept right of the widget in a layout, pushing neighbors away (px)."/>
+        <prop name="margin_hor" type="int" help="Shorthand for `margin_left` and `margin_right` (px)."/>
+        <prop name="margin_ver" type="int" help="Shorthand for `margin_top` and `margin_bottom` (px)."/>
+        <prop name="margin_all" type="int" help="Shorthand for all four margins at once (px)."/>
+
+        <!-- Geometry -->
+        <prop name="radius" type="int" help="Corner radius (px). 0 = square corners. Default: 0."/>
+        <prop name="radial_offset" type="int" help="Shifts the part radially out from (or into) the center on round widgets such as scales (px). Default: 0."/>
+        <prop name="align" type="enum:lv_align" help="Anchor point of the widget within the parent (e.g. center, top_left). `x`/`y` then act as offsets from it."/>
+        <prop name="clip_corner" type="bool" help="Clip the content/children to the rounded corners set by `radius`. Small performance cost. Default: false."/>
+        <prop name="base_dir" type="enum:lv_base_dir" help="Base text direction (LTR/RTL/auto). Affects bidirectional text order and which side the vertical scrollbar sits on."/>
+
+        <!-- Background -->
+        <prop name="bg_color" type="color" help="Background fill color. Only visible when `bg_opa` is above 0."/>
+        <prop name="bg_opa" type="opa" help="Background opacity (0-255 or 0-100%). Default: 0 (transparent) — raise it to reveal `bg_color`/gradient."/>
+        <prop name="bg_grad_dir" type="enum:lv_grad_dir" help="Background gradient direction: none, hor or ver. Blends `bg_color` into `bg_grad_color`. Default: none."/>
+        <prop name="bg_main_stop" type="int" help="Position where the start color stops fading, 0-255 (0=start, 128=middle, 255=end). Default: 0."/>
+        <prop name="bg_grad_stop" type="int" help="Position where the end color begins, 0-255. Default: 255."/>
+        <prop name="bg_grad_color" type="color" help="Second color of the background gradient (used when `bg_grad_dir` is set)."/>
+
+        <!-- Background image -->
+        <prop name="bg_image_src" type="image" help="Background image (image name or symbol). Drawn over the background color and under the border."/>
+        <prop name="bg_image_tiled" type="bool" help="Repeat (tile) the background image to fill the area instead of drawing it once. Default: false."/>
+        <prop name="bg_image_recolor" type="color" help="Color blended onto the background image; intensity set by `bg_image_recolor_opa`."/>
+        <prop name="bg_image_recolor_opa" type="opa" help="Strength of `bg_image_recolor` (0-255 or 0-100%). Default: 0 (no recolor)."/>
+
+        <!-- Border -->
+        <prop name="border_color" type="color" help="Border color. Only visible when `border_width` is above 0."/>
+        <prop name="border_width" type="int" help="Border thickness (px). Drawn inside the bounds, so it doesn't change the widget's size. Default: 0."/>
+        <prop name="border_opa" type="opa" help="Border opacity (0-255 or 0-100%). Default: 255 (opaque)."/>
+        <prop name="border_side" type="enum:lv_border_side" help="Which edges get a border: none/left/right/top/bottom/full (can be ORed). Default: full."/>
+        <prop name="border_post" type="bool" help="Draw the border after the children so it stays on top of them. Default: false."/>
+
+        <!-- Outline -->
+        <prop name="outline_color" type="color" help="Outline color. Only visible when `outline_width` is above 0."/>
+        <prop name="outline_width" type="int" help="Outline thickness (px). Drawn outside the bounds and doesn't affect layout. Default: 0."/>
+        <prop name="outline_opa" type="opa" help="Outline opacity (0-255 or 0-100%). Default: 255 (opaque)."/>
+        <prop name="outline_pad" type="int" help="Gap between the widget's edge and the outline (px); can be negative."/>
+
+        <!-- Shadow -->
+        <prop name="shadow_width" type="int" help="Shadow blur size (px). Default: 0 (no shadow). Larger spreads a softer shadow."/>
+        <prop name="shadow_color" type="color" help="Shadow color. Only visible when `shadow_width` is above 0."/>
+        <prop name="shadow_opa" type="opa" help="Shadow opacity (0-255 or 0-100%). Default: 255 (opaque)."/>
+        <prop name="shadow_offset_x" type="int" help="Horizontal shadow offset (px), positive = right. Default: 0."/>
+        <prop name="shadow_offset_y" type="int" help="Vertical shadow offset (px), positive = down. Default: 0."/>
+        <prop name="shadow_spread" type="int" help="Grow (or shrink, if negative) the shadow by this many px before blurring. Default: 0."/>
+
+        <!-- Text -->
+        <prop name="text_color" type="color" help="Text color."/>
+        <prop name="text_opa" type="opa" help="Text opacity (0-255 or 0-100%). Default: 255 (opaque)."/>
+        <prop name="text_font" type="font" help="Font used for the text."/>
+        <prop name="text_align" type="enum:lv_text_align" help="Horizontal text alignment: left/center/right/auto (auto follows the base direction)."/>
+        <prop name="text_letter_space" type="int" help="Extra spacing between characters (px); can be negative."/>
+        <prop name="text_line_space" type="int" help="Extra spacing between lines (px); can be negative."/>
+        <prop name="text_decor" type="enum:lv_text_decor" help="Text decoration: none, underline or strikethrough."/>
+
+        <!-- Image -->
+        <prop name="image_opa" type="opa" help="Opacity of images the widget draws (0-255 or 0-100%). Default: 255 (opaque)."/>
+        <prop name="image_recolor" type="color" help="Color blended onto the image; intensity set by `image_recolor_opa`."/>
+        <prop name="image_recolor_opa" type="opa" help="Strength of `image_recolor` (0-255 or 0-100%). Default: 0 (no recolor)."/>
+
+        <!-- Line -->
+        <prop name="line_width" type="int" help="Line thickness (px). Default: 0 (nothing drawn)."/>
+        <prop name="line_color" type="color" help="Line color."/>
+        <prop name="line_opa" type="opa" help="Line opacity (0-255 or 0-100%). Default: 255 (opaque)."/>
+        <prop name="line_dash_width" type="int" help="Length of each dash (px). 0 = solid line."/>
+        <prop name="line_dash_gap" type="int" help="Gap between dashes (px). Needs `line_dash_width` above 0."/>
+        <prop name="line_rounded" type="bool" help="Round the line (and dash) endpoints. Default: false."/>
+
+        <!-- Arc -->
+        <prop name="arc_width" type="int" help="Arc thickness (px). Default: 0."/>
+        <prop name="arc_color" type="color" help="Arc color."/>
+        <prop name="arc_opa" type="opa" help="Arc opacity (0-255 or 0-100%). Default: 255 (opaque)."/>
+        <prop name="arc_rounded" type="bool" help="Round the arc endpoints. Default: false."/>
+        <prop name="arc_image_src" type="image" help="Image drawn along the arc instead of a solid color (e.g. a gradient/textured arc)."/>
+
+        <!-- Layout -->
+        <prop name="layout" type="enum:lv_layout" help="Layout engine that positions the children: none, flex or grid."/>
+
+        <!-- Flex -->
+        <prop name="flex_flow" type="enum:lv_flex_flow" help="How children flow in a flex layout: row/column, optionally wrapping/reversed. Needs `layout`=flex."/>
+        <prop name="flex_main_place" type="enum:lv_flex_align" help="Distribution of children along the main axis (e.g. start, center, space_between). Default is `start`."/>
+        <prop name="flex_cross_place" type="enum:lv_flex_align" help="Alignment of children on the cross axis (perpendicular to the flow). Default is `start`."/>
+        <prop name="flex_track_place" type="enum:lv_flex_align" help="Alignment of the track(s). Default is `start`."/>
+        <prop name="flex_grow" type="int" help="Share of leftover track space this child claims relative to its siblings. 0 = don't grow."/>
+
+        <!-- Grid -->
+        <prop name="grid_column_dsc_array" type="grid_dsc[LV_GRID_TEMPLATE_LAST]" help="Array of column track sizes, e.g. `20 1fr content`. Needs `layout`=grid."/>
+        <prop name="grid_row_dsc_array" type="grid_dsc[LV_GRID_TEMPLATE_LAST]" help="Array of row track sizes, e.g. `20 1fr content`. Needs `layout`=grid."/>
+        <prop name="grid_column_align" type="enum:lv_grid_align" help="How to distribute the columns when the grid has spare horizontal space."/>
+        <prop name="grid_row_align" type="enum:lv_grid_align" help="How to distribute the rows when the grid has spare vertical space."/>
+        <prop name="grid_cell_column_pos" type="int" help="On a grid child: the column index where its cell starts (0-based)."/>
+        <prop name="grid_cell_column_span" type="int" help="On a grid child: how many columns its cell spans."/>
+        <prop name="grid_cell_x_align" type="enum:lv_grid_align" help="On a grid child: horizontal alignment within its grid cell."/>
+        <prop name="grid_cell_row_pos" type="int" help="On a grid child: the row index where its cell starts (0-based)."/>
+        <prop name="grid_cell_row_span" type="int" help="On a grid child: how many rows its cell spans."/>
+        <prop name="grid_cell_y_align" type="enum:lv_grid_align" help="On a grid child: vertical alignment within its grid cell."/>
+
+        <!-- Misc -->
+        <prop name="opa" type="opa" help="Opacity of the whole widget and its children (0-255 or 0-100%). Default: 255 (opaque)."/>
+        <prop name="opa_layered" type="opa" help="Like `opa`, but composites the widget as one layer so overlapping parts don't show through. Slower. Default: 255."/>
+        <prop name="anim_duration" type="int" help="Length of the widget's built-in animation in ms (e.g. label scroll). Default: 0. Exact effect is widget-specific."/>
+        <prop name="blend_mode" type="enum:lv_blend_mode" help="How the widget's pixels mix with the background: normal, additive, subtractive, multiply or difference."/>
+        <prop name="transform_width" type="int" help="Enlarge (or shrink, if negative) the drawn widget horizontally without affecting layout (px)."/>
+        <prop name="transform_height" type="int" help="Enlarge (or shrink, if negative) the drawn widget vertically without affecting layout (px)."/>
+        <prop name="translate_x" type="int" help="Shift the widget horizontally after layout (px or %); siblings are not affected."/>
+        <prop name="translate_y" type="int" help="Shift the widget vertically after layout (px or %); siblings are not affected."/>
+        <prop name="translate_radial" type="int" help="On round/scale layouts, move the widget toward or away from the parent's center (px)."/>
+        <prop name="transform_scale_x" type="int" help="Horizontal zoom: 256 = 100%, 128 = 50%, 512 = 200%. Default: 256 (no scaling)."/>
+        <prop name="transform_scale_y" type="int" help="Vertical zoom: 256 = 100%, 128 = 50%, 512 = 200%. Default: 256 (no scaling)."/>
+        <prop name="transform_rotation" type="int" help="Rotation in 0.1° units (450 = 45°, 3600 = 360°). Default: 0. Pivot set by `transform_pivot_x`/`y`."/>
+        <prop name="transform_pivot_x" type="int" help="X of the rotation/scale pivot, relative to the widget's top-left corner (px or %). Default: 0."/>
+        <prop name="transform_pivot_y" type="int" help="Y of the rotation/scale pivot, relative to the widget's top-left corner (px or %). Default: 0."/>
+        <prop name="transform_skew_x" type="int" help="Horizontal skew in 0.1° units. Not supported by the SW renderer. Default: 0."/>
+        <prop name="transform_skew_y" type="int" help="Vertical skew in 0.1° units. Not supported by the SW renderer. Default: 0."/>
+        <prop name="bitmap_mask_src" type="image" help="An A8/L8 image used as an alpha mask: the widget is drawn on a layer and masked by this bitmap."/>
+        <prop name="rotary_sensitivity" type="int" help="Scales rotary-encoder/Crown input in 1/256 units: 256 = 1:1, 128 = half, 512 = double. Default: 256."/>
+        <prop name="recolor" type="color" help="Color blended over the whole widget and its children; intensity set by `recolor_opa`."/>
+        <prop name="recolor_opa" type="opa" help="Strength of `recolor` (0-255 or 0-100%). Default: 0 (no recolor)."/>
+        <prop name="blur_radius" type="int" help="Gaussian blur radius applied to the widget (px). Default: 0 (no blur). Has a performance cost."/>
+        <prop name="blur_quality" type="enum:lv_blur_quality" help="Blur rendering trade-off: prefer speed or precision."/>
+        <prop name="blur_backdrop" type="bool" help="true: blur what is behind the widget (frosted-glass effect); false: blur the widget itself. Default: false."/>
+        <prop name="drop_shadow_radius" type="int" help="Blur radius of the drop shadow (px). Default: 0 (no drop shadow)."/>
+        <prop name="drop_shadow_offset_x" type="int" help="Horizontal drop-shadow offset (px). Default: 0."/>
+        <prop name="drop_shadow_offset_y" type="int" help="Vertical drop-shadow offset (px). Default: 0."/>
+        <prop name="drop_shadow_color" type="color" help="Drop-shadow color."/>
+        <prop name="drop_shadow_opa" type="opa" help="Drop-shadow opacity (0-255 or 0-100%). Default: 0 (invisible), raise it to show the shadow."/>
+        <prop name="drop_shadow_quality" type="enum:lv_blur_quality" help="Drop-shadow rendering trade-off: prefer speed or precision."/>
+    </styledef>
+
+    </api>

@@ -104,7 +104,8 @@ Arrays can be defined in three ways:
 | Syntax | Description |
 |--------|-------------|
 | `int[5]` | Array with a fixed set of elements.  |
-| `string[NULL]` | Array terminated with a `NULL` element. `NULL` can be any other string too. |
+| `string[NULL]` | Array terminated with a `NULL` element. `NULL` can be any other string too, for example `grid_dsc[LV_GRID_TEMPLATE_LAST]`. |
+| `int[count]` | The number of elements is passed to the C API as a separate parameter. Used by `lv_chart`'s `values`, `lv_animimg`'s `src`, and `lv_line`'s `points`. |
 | `string[]` | No termination or count parameter |
 
 The termination of the array is important only to

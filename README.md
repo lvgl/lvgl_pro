@@ -187,6 +187,8 @@ If you are already familiar with the C API of LVGL, XML will be familiar too, be
 
 Here `<row>` and `<column>` are custom components, and `#space_lg` is a constant.
 
+See the [XML syntax documentation](https://lvgl.io/docs/pro/syntax) for the full reference.
+
 ## Get Started
 
 ### Try it in your browser

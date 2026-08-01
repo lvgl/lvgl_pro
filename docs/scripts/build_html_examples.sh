@@ -38,7 +38,7 @@ echo ---------------------
 
 # Replace the lvgl examples with these examples so that emscripten will build them
 rm -r $LVGL_PATH/examples
-cp -r $EXAMPLES_PATH $LVGL_PATH/examples
+cp -r "$EXAMPLES_PATH" "$LVGL_PATH/examples"
 
 cd $STARTER_PATH
 EXAMPLE_LIST_C=$EMSCRIPTEN_BUILDER_PATH/examplelist.c

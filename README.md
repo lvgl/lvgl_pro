@@ -13,7 +13,7 @@
   <img src="https://lvgl.io/github-assets/logo-colored.png" height="50px" alt="LVGL">
 </p>
 
-<h1 align="center">The Complete Workflow for Professional LVGL UI Development</h1>
+<h1 align="center">The Complete Workflow for<br/>Professional LVGL UI Development</h1>
 
 <p align="center">
   Design, develop, test, debug, and ship production-ready embedded UIs with an LVGL-native editor, Figma integration, online collaboration, and CLI tools.

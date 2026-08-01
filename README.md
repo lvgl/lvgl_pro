@@ -1,10 +1,10 @@
 <p align="center">
   <a href="https://lvgl.io/pro" title="LVGL Pro homepage">Website</a> |
   <a href="https://lvgl.io/docs/pro" title="LVGL Pro documentation">Docs</a> |
-  <a href="https://viewer.lvgl.io" title="Try LVGL Pro in your browser"><b>Try Online</b></a> |
+  <a href="https://viewer.lvgl.io" title="Try LVGL Pro in your browser">Try Online</a> |
   <a href="https://github.com/lvgl/lvgl_editor/releases" title="Download LVGL Pro">Download</a> |
-  <a href="https://forum.lvgl.io" title="Get help and share your work">Forum</a> |
-  <a href="https://lvgl.io/pro#pricing" title="Licensing and pricing">Pricing</a>
+  <a href="https://forum.lvgl.io/c/lvgl-pro/17" title="Get help and share your work">Forum</a> |
+  <a href="https://lvgl.io/pro#pricing" title="Licensing and pricing">Licencing</a>
 </p>
 
 <br>
@@ -16,8 +16,8 @@
 <h1 align="center">The Professional Way to Build LVGL UIs</h1>
 
 <p align="center">
-  Design, develop, test, debug, and ship production-ready embedded UIs with an LVGL-native editor, Figma integration, online collaboration, and CI/CD tools.
-  LVGL Pro Export plain LVGL code, so no additonal runtime is needed.
+  Design, develop, test, debug, and ship production-ready embedded UIs with an LVGL-native editor, Figma integration, online collaboration, and CLI tools.
+  LVGL Pro export plain LVGL code, so no additional runtime is needed.
 </p>
 
 <p align="center">
@@ -26,7 +26,7 @@
   <a href="https://github.com/lvgl/lvgl_editor/releases"><b>Download the Editor</b></a>
 </p>
 
-<p align="center">
+<p align="center" >
   Free for evaluation, personal use, and open-source projects.
 </p>
 
@@ -50,19 +50,28 @@
 
 <br/>
 
-## Why LVGL Pro
+## Why LVGL Pro?
 
-The LVGL engine gives you the flexibility to create any embedded UI in C. LVGL Pro adds the **complete workflow for professional UI development**, so you can build larger interfaces, build UIs much faster, support multiple products, and collaborate more easily across engineering and design teams.
+The open-source LVGL library is the foundation to create scalable and vendor independent UIs in C. LVGL Pro adds the **complete workflow for professional UI development**, so that you can 
+- build larger interfaces from resuable components easily 
+- build UIs much faster by seeing a pixel perfect preview as you edit, without recompiling
+- manage and test animations, data bindings, and translation 
+- support multiple products in one project and review asset memory usage
+- collaborate easily with designer by importing Figma projects and sharing the project online
+- use AI agents to iterate write UIs and validate the result automatically 
+- use a CLI tool to validate projects, generate code, and run test in CI/CD 
 
-You can create screens and reusable components, share styles and assets, add animations, translations, and data bindings, and see every change instantly without repeatedly recompiling and flashing the target. You can also import designs from Figma, inspect layouts and interaction areas, and share working projects in the browser without requiring any local setup.
+The primary language of the Editor XML (similar to HTML), from which the Editor or the CLI tool can exports plain LVGL C code that you can compile and integrate just like any handwritten C code. IF you wish you can also load the UIs from XML files directly at runtime, without recompiling the application. 
 
-Your custom widgets, callbacks, application logic, and hardware integrations can stay in C, and the same code can run in both the Editor preview and on the target device. You can export ordinary LVGL C code or load XML dynamically, automate validation and testing with the CLI, and use AI tools with LVGL documentation, examples, and iterative preview workflows.
+Use LVGL Open directly when projects are not connected, there is smaller team, development time is no critical, long term maintainability is not a comnern.
+
+Add LVGL Pro when you need develop product with strict deadlines at scale in large teams overseeing multiple products, and maintaining high quality standard. 
 
 ## The LVGL Pro Toolkit
 
 LVGL Pro consists of 4 connected tools:
 
-1. **Editor** - A VS Code-like desktop environment for building components and screens and components visualy, managing assets and translations, creating tests, debugging C code, and previewing every change. Learn more about the [XML syntax](https://lvgl.io/docs/pro/syntax).
+1. **Editor** - A VS Code-like desktop environment for building components and screens and components visually in XML, managing assets and translations, creating tests, debugging C code, and previewing every change. Learn more about the [XML syntax](https://lvgl.io/docs/pro/syntax).
 
 2. **Online Viewer** - Open GitHub hosted LVGL Pro projects in a browser to share a working UI with teammates, designers, managers, or customers without requiring an installation. Check out the [Examples Online](https://viewer.lvgl.io).
  
@@ -70,19 +79,17 @@ LVGL Pro consists of 4 connected tools:
 
 4. **CLI**   Validate projects, export C code, run UI tests, compile previews, and generate screenshots locally or in CI/CD. Also useful agents to work on their on XML files, and validate the result. See the full [CLI documentation](https://lvgl.io/docs/pro/cli)
 
+### Features
 
-
-## Features
-
-### Development environment
+#### Development environment
 
 * **VS Code-like editor:** File navigation, search, Git integration, extensions, and an integrated terminal.
 * **Powerful XML language** Build UIs using a HTML-like XML language 
 * **Instant preview:** See changes immediately without repeatedly compiling and flashing the target.
-* **Inspector:** Examine layout, spacing, sizing, click areas, and object hierarchy.
+* **Inspector:** Examine layout, spacing, sizing, click areas, and object hierarchy at runtime
 * **C debugging:** Debug generated and custom C code directly inside the editor.
 
-### UI architecture
+#### UI architecture
 
 * **Component-oriented XML:** Create reusable components with custom properties and a clear public API.
 * **Shared styles:** Define consistent styling once and reuse it throughout the project.
@@ -91,7 +98,7 @@ LVGL Pro consists of 4 connected tools:
 * **Animations:** Organize animations into reusable timelines.
 * **Translations:** Manage localized strings and preview languages during development.
 
-### Cross Product developemnt
+#### Cross Product developmnt
 
 * **Multiple targets:** Support different products, resolutions, hardware configurations, or architectures in one UI project.
 * **Asset management:** Organize images and fonts alongside the UI.
@@ -116,32 +123,7 @@ LVGL Pro consists of 4 connected tools:
 * **Validation loop:** Let agents generate XML, validate it locally, render it, and inspect screenshots instead of relying only on text output.
 * **Public Schema:** LVGL Pro uses the built-in LVGL Widgets. In [lvgl_widget_xmls]() you an find all widget and stlyes properties with all the enums
 
-  
-## LVGL Open and LVGL Pro
-
-[LVGL Open](https://github.com/lvgl/lvgl) is the open-source graphics engine and C API used by the application on the target device.
-
-LVGL Pro works on top of LVGL Open and adds development tools for visual creation, maintainable UI architecture, design collaboration, testing, sharing, and automation.
-
-|                                         | LVGL Open | LVGL Pro       |
-| --------------------------------------- | --------- | -------------- |
-| Embedded graphics engine                | ✅         | Uses LVGL Open |
-| Complete C API                          | ✅         | ✅              |
-| Visual UI development                   |           | ✅              |
-| Instant desktop preview                 |           | ✅              |
-| Reusable XML components                 |           | ✅              |
-| Figma integration                       |           | ✅              |
-| UI testing                              |           | ✅              |
-| Online project sharing                  |           | ✅              |
-| CI/CD tools                             |           | ✅              |
-| Plain LVGL C export                     |           | ✅              |
-| Additional proprietary runtime required | No        | No             |
-
-Use LVGL Open directly when a code-first workflow is the best fit.
-
-Add LVGL Pro when visual development, reusable components, design integration, multiple targets, automated testing, or team collaboration become important.
-
-## Why XML
+## Why XML?
 
 LVGL Pro stores the UI in readable, declarative XML rather than in a proprietary binary project format.
 
@@ -158,6 +140,31 @@ This provides several practical benefits:
 
 Application behavior and hardware-specific logic can remain in C, while XML describes the UI structure and configuration.
 
+If you already familiar with the C API of LVGL, you will find XML simple too, as it exposes the properties with the same names. For example:
+
+<img width="394" height="188" alt="image" src="https://github.com/user-attachments/assets/c9a1e690-2844-465d-925d-3da26c3ceee2" />
+
+```xml
+<screen>
+	<view>
+		<column gap="#space_lg" pad="#space_lg">
+			<lv_label text="Device Dashboard" style_text_font="font_h3" />
+
+			<row vertical_align="center" gap="12" pad="4">
+				<lv_slider width="240" bind_value="subject_brightness" />
+				<lv_label bind_text="subject_brightness" />
+			</row>
+
+			<lv_button>
+				<lv_label text="Apply Setting" />
+				<event_cb callback="my_callback" trigger="clicked" />
+			</lv_button>
+		</column>
+	</view>
+</screen>
+```
+`<row>` and `<column>` are part custom components, and `#space_lg` is a constant-
+
 ## Get Started
 
 ### Try it in your browser
@@ -172,7 +179,6 @@ No installation is required.
 2. Launch the editor and select the free **Community** or **Evaluation** license.
 3. Click the Learn more button and open a screen, change a property, and see the preview update immediately.
 5. Explore the generated C code and run the project on your target.
-
 
 ### Example in the Docs
 
@@ -189,8 +195,6 @@ LVGL Pro comes with flexible liceneing for both makers and proessionals.
 * **Platform:** Organization-wide access for companies standardizing UI development on LVGL accross multiple products.
 
 See the current plans at [lvgl.io/pro#pricing](https://lvgl.io/pro#pricing).
-
-## Documentation and Support
 
 ## Feedback
 

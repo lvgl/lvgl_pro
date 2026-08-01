@@ -3,7 +3,7 @@ title: Data Binding
 description: Learn how to use subjects for data binding to create dynamic, responsive UIs that update automatically.
 faqs:
   - question: "What data types are supported for subjects?"
-    answer: "Currently, only integer and string types are supported for subjects. You define them in globals.xml using <int> or <string> tags with a name and initial value."
+    answer: "Integer, string, and float types are supported for subjects. You define them in globals.xml using <int>, <string>, or <float> tags with a name and initial value."
   - question: "How do I update a subject value from my C code?"
     answer: "Use the generated setter functions in your application code. For a subject named 'battery_power', call set_battery_power(value) to update it. All widgets bound to that subject will automatically update."
   - question: "What's the difference between simple and complex binding?"
@@ -43,12 +43,17 @@ Subjects can be created in `globals.xml` like this:
   <subjects>
     <int name="battery_power" value="32"/>
     <string name="user_name" value="John"/>
+    <float name="room_temperature" value="21.5"/>
   </subjects>
 </globals>
 ```
 
 As the example shows, a subject consists of a type, name, and initial
-value. Currently, only integer and string types are supported.
+value. Integer, string, and float types are supported.
+
+<Callout type="info">
+Float subjects require `LV_USE_FLOAT` to be enabled in `lv_conf.h`. Without it, the generated code fails to compile.
+</Callout>
 
 ## Simple binding
 

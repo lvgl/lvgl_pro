@@ -1,0 +1,45 @@
+<!--
+Example
+<lv_tabview active="3">
+    <lv_tabview-tab text="First">
+        <lv_button/>
+    </lv_tabview-tab>
+</lv_tabview>
+ -->
+
+<widget>
+    <api>
+        <prop name="active" help="Set active tab index (0-based)">
+            <param name="active" type="int" help="Set active tab index (0-based)"/>
+            <param name="anim" type="bool" default="false" help="Animate update (reference as `active-anim`)"/>
+        </prop>
+
+        <prop name="tab_bar_position" type="enum:lv_dir" help="Set tab bar position (top, bottom, left, right)"/>
+
+        <element name="tab_bar" type="lv_obj" access="get" help="Get the tab bar object">
+            <parts>
+                <part name="main" help="The tab bar container holding the tab buttons: background and padding properties."/>
+                <part name="scrollbar" help="The tab bar's scrollbar shown when the buttons overflow: `width` (thickness), background properties and padding."/>
+            </parts>
+        </element>
+
+        <element name="tab" type="lv_obj" access="add" help="Add a tab with content">
+            <arg name="text" type="string" help="Set tab button text"/>
+            <parts>
+                <part name="main" help="The tab content page: background and padding properties."/>
+                <part name="scrollbar" help="The page's scrollbar shown when its content overflows: `width` (thickness), background properties and padding."/>
+            </parts>
+        </element>
+
+        <element name="tab_button" type="lv_obj" access="get" help="Get a specific tab button">
+            <arg name="index" type="int" help="Tab index (0-based)"/>
+            <parts>
+                <part name="main" help="The tab button (an lv_button): background, border and text properties. Use the 'checked' state for the active tab and 'pressed'/'focused' for feedback."/>
+            </parts>
+        </element>
+
+        <parts>
+            <part name="main" help="The tab view body (the content container background): background and padding properties. The tab bar is a separate object styled via the `tab_bar` element, and each tab button (an lv_button) via the `tab_button` element."/>
+        </parts>
+    </api>
+</widget>

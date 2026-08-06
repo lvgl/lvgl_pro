@@ -154,6 +154,99 @@ The most commonly bound `LV_OBJ_FLAG_*` flags, exposed by the same names without
 
 For the full list of states and flags see LVGL's [Object basics](https://lvgl.io/docs/open/intro/basics) and [Style states](https://lvgl.io/docs/open/main-modules/style#states) reference.
 
+## Expression binding
+
+The `bind_*` attributes and elements can bind only what they were designed for. To bind **any** widget attribute to **any** expression of subjects, wrap the expression in `@{ }`:
+
+```xml
+<lv_label text="@{'Battery: ' . subject_battery . '%'}"/>
+<lv_obj width="@{subject_column_count * 100}"/>
+<lv_obj hidden="@{subject_unread == 0}"/>
+<lv_obj style_bg_color="@{subject_temp > 30 ? 0xff0000 : 0x00ff00}"/>
+```
+
+The expression is evaluated when the widget is created, and **re-evaluated whenever any subject it references changes**. The result is applied to the attribute exactly as if you had typed the computed value there.
+
+`@{ }` and `{ }` share the same syntax, operators, and type rules — see [Evaluate expressions](./evaluate). The difference is only *when* they run:
+
+```xml
+<!-- Updates whenever subject_volume changes -->
+<lv_label text="@{'Volume: ' . subject_volume}"/>
+
+<!-- Evaluated once, when the label is created -->
+<lv_label text="{'Volume: ' . subject_volume}"/>
+```
+
+### What can be referenced
+
+Inside `@{ }` names are written as **bare identifiers**, without `$` or `#`:
+
+- **Subjects** - defined in `globals.xml`. An expression should reference at least one subject (or variant), else it could never update, and it's skipped with a warning.
+- **Variants** - the Component's own reactive state. A variant name reads the currently selected option, and the option names can be used as constants. See [Variants](./variants).
+- **Constants** - they are inlined as literals.
+- **`type="subject"` properties** - see below.
+
+Properties of any other type **cannot** be used, because they exist only while the element is being created. Such a binding is skipped with a warning, but the widget is still created normally.
+
+Several subjects can be used in one expression, and a change of any of them re-evaluates it:
+
+```xml
+<lv_obj width="@{subject_cell_width * subject_column_count}"/>
+```
+
+### Per-instance subjects
+
+A binding written in a Component is shared by all of its instances, so referencing a subject by name makes every instance follow the *same* subject. To let each instance follow a *different* one, declare a `type="subject"` property and pass the subject's name where the Component is used:
+
+```xml
+<!-- room_card.xml -->
+<component>
+  <api>
+    <prop name="temperature" type="subject"/>
+  </api>
+
+  <view extends="lv_obj">
+    <lv_label text="@{temperature . ' °C'}"/>
+    <lv_obj style_bg_color="@{temperature > 25 ? 0xff8800 : 0x0088ff}"/>
+  </view>
+</component>
+```
+
+```xml
+<!-- screen -->
+<room_card temperature="subject_kitchen_temp"/>
+<room_card temperature="subject_bedroom_temp"/>
+```
+
+### Where it can be used
+
+`@{ }` works on the attributes of **widgets**: on the `<view>` itself, on any widget inside it, and on local style properties (`style_bg_color`, `style_pad_all-pressed`, ...). It also works on a Component instance's [variant](./variants) attributes.
+
+It can't be used in the `<styles>` section, as [styles](./styles) are initialized only once, nor on the normal properties of a Component instance:
+
+```xml
+<!-- ❌ A style is initialized once, so it can't be bound -->
+<style name="style_main" bg_color="@{subject_theme_color}"/>
+
+<!-- ❌ `title` is a property of the my_card Component -->
+<my_card title="@{subject_user_name}"/>
+
+<!-- ✅ Bind inside the Component, and pass the subject to it -->
+<my_card title_subject="subject_user_name"/>
+```
+
+To switch a whole style at runtime, use [`<bind_style>`](./styles#style-binding), which takes the same kind of expression in its `if` attribute:
+
+```xml
+<bind_style name="style_warning" if="subject_temp > 10 and subject_temp &lt;= 30"/>
+```
+
+### Errors
+
+An expression that can't be parsed is reported with a warning and the binding is skipped, so the attribute keeps its default value. The widget itself is always created.
+
+If the evaluation fails only later — a division by zero after a subject became `0`, for example — a warning is logged and the attribute **keeps its previous value** instead of being set to something meaningless.
+
 ## Selection groups via a shared subject
 
 A common pattern is to express "exactly one of these widgets is active" with a single integer subject and one `ref_value` per option. Combining `subject_set_int_event` (writes the subject on click) with `bind_state_if_eq` (reads it to drive the `checked` state) produces a runtime-driven radio group with no application code.

@@ -22,7 +22,7 @@ Expressions are useful whenever a value is *derived* from other values: a width 
 A few important properties to keep in mind:
 
 - **Creation-time only.** An expression is evaluated **once**, when the UI element is created. The result is then handed to the normal attribute parser exactly as if you had typed the computed value yourself.
-- **Not data binding.** Expressions do *not* react to changes. If you need a value that updates at runtime when a subject changes, use [data binding](./data-binding) instead.
+- **Not reactive.** A `{ }` expression does *not* react to changes. For a value that follows a subject or a variant at runtime, write the very same expression as a binding — `@{ }` instead of `{ }` — see [Expression binding](./data-binding#expression-binding).
 - **The result type is inferred from the terms.** You never declare the type — it follows from the literals and variables you use (see [Value types](#value-types)).
 
 <Callout type="info">
@@ -39,9 +39,12 @@ An expression is the whole attribute value, wrapped in a single pair of braces:
 
 Inside the braces you can use literals, operators, and **variable names**. A variable name is written as a **bare identifier** — without the `$` or `#` prefixes used elsewhere in XML. The name is resolved, in order, against:
 
-1. **Parameters** declared in the element's [`<api>`](./api) — the value comes from the instance (or the parameter's `default`), and the type from the declared `type`.
-2. **Constants** from [`<consts>`](./constants) — the type is inferred from the constant's value.
-3. **Other named items** the XML processor resolves later (a font, image, subject, or screen name). These are passed through as plain strings.
+1. **Variants** declared in the element's [`<api>`](./api) — the currently selected option of that [variant](./variants).
+2. **Parameters** declared in the element's [`<api>`](./api) — the value comes from the instance (or the parameter's `default`), and the type from the declared `type`.
+3. **Constants** from [`<consts>`](./constants) — the type is inferred from the constant's value.
+4. **Variant option names** — an integer constant, the option's index in its variant.
+5. **Subjects** from `globals.xml` — their current value, read once (use `@{ }` to follow them).
+6. **Other named items** the XML processor resolves later (a font, image, or screen name). These are passed through as plain strings.
 
 ```xml
 <component>
@@ -101,7 +104,7 @@ Notes:
 <lv_obj checked="{mode == 'dark'}"/>
 ```
 
-Only **one** comparison is allowed per expression — comparisons cannot be chained (`a < b < c` is invalid).
+Comparisons cannot be **chained**: `a < b < c` is invalid. Each operand of a logical `and`/`or` may contain one comparison, so a range check is written as `a > 10 and a <= 30`.
 
 ### Logical not
 
@@ -111,7 +114,29 @@ The unary `!` accepts a number, bool, or string and returns a bool. An empty or 
 <lv_obj clickable="{!locked}"/>
 ```
 
-There are intentionally **no** `&&`, `||`, or `^^` operators.
+### Logical and / or
+
+`&&` and `||` combine two conditions and return a bool. Their operands can be anything that has a truthiness: a bool, a number (non-zero is true), or a string (non-empty is true). A color has none, so it's a type error.
+
+Because `&` must be escaped in an XML attribute value, both operators also have a keyword spelling — `and` and `or` — which is usually the readable choice:
+
+```xml
+<!-- These two are identical -->
+<lv_obj hidden="{temperature > 10 and temperature &lt;= 30}"/>
+<lv_obj hidden="{temperature > 10 &amp;&amp; temperature &lt;= 30}"/>
+```
+
+`&&` binds tighter than `||`, and both bind tighter than the ternary, so a range check reads naturally as a condition:
+
+```xml
+<lv_label text="{level > 80 or charging ? 'OK' : 'Low'}"/>
+```
+
+<Callout type="warn">
+Both sides are **always evaluated** — there is no short-circuiting (same as with the two ternary branches). So `count != 0 and total / count > 5` still fails on a division by zero when `count` is 0.
+</Callout>
+
+`and`/`or` are keywords, so a constant, property, or subject cannot be named `and` or `or`. There is no `^^` operator.
 
 ### Ternary
 
@@ -141,13 +166,38 @@ From highest to lowest:
 2. `*`, `/`, `%`
 3. `+`, `-`
 4. Comparisons (`==`, `!=`, `<`, `<=`, `>`, `>=`)
-5. Concatenation (`.`)
-6. Ternary (`? :`)
+5. `&&` (`and`)
+6. `||` (`or`)
+7. Concatenation (`.`)
+8. Ternary (`? :`)
 
-Parentheses `( )` group **arithmetic and comparison** sub-expressions. They cannot contain a concatenation or a ternary.
+Parentheses `( )` group **arithmetic, comparison, and logical** sub-expressions. They cannot contain a concatenation or a ternary.
 
 ```xml
 <lv_obj width="{(a + b) * 2}"/>
+<lv_obj hidden="{(a or b) and c}"/>
+```
+
+## XML escaping
+
+An expression lives in an XML attribute value, where a few characters are reserved. This is a property of XML itself, not of the expression syntax:
+
+| Character | Write it as | Note |
+|---|---|---|
+| `<` | `&lt;` | Never allowed in an attribute value |
+| `&` | `&amp;` | So `&&` becomes `&amp;&amp;` — or use `and` |
+| `'` | `&apos;` | Only inside a `'…'` delimited value |
+| `>` | `>` | Allowed as-is |
+
+```xml
+<!-- ❌ not well-formed XML: the file won't load -->
+<lv_obj hidden="{count < 10 && locked}"/>
+
+<!-- ✅ -->
+<lv_obj hidden="{count &lt; 10 and locked}"/>
+
+<!-- ✅ or turn the comparison around and avoid the escape entirely -->
+<lv_obj hidden="{10 > count and locked}"/>
 ```
 ## Error handling
 

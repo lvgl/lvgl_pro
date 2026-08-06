@@ -66,7 +66,50 @@ Within each `timeline`, add individual `<animation>` elements to describe each s
 - `duration` - Duration of the animation in milliseconds.
 - `delay` - Delay before starting in milliseconds. Default is 0.
 - `early_apply` - If `true`, the start value is applied immediately, even during the delay. Default is `false`.
+- `easing` - The animation path, e.g. `ease_out`. See below. Default is `linear`.
 
+### Easing
+
+The `easing` property tells how the value should progress from `start` to `end` during the `duration`. Besides `<animation>`, style [`<transition>`](./styles#transitions)s support it too.
+
+These built-in paths can be used:
+
+- `linear` - Constant speed. This is the default.
+- `ease_in` - Slow start.
+- `ease_out` - Slow end.
+- `ease_in_out` - Slow start and end.
+- `overshoot` - Goes above the end value and settles back.
+- `bounce` - Bounces back a few times at the end.
+- `step` - Stays at the start value and jumps to the end value at the very end.
+
+```xml
+<animation prop="translate_y" target="self" start="-30" end="0" duration="500" easing="ease_out"/>
+```
+
+For full control, `bezier(x1 y1 x2 y2)` describes a cubic bezier curve with its two control points, just like `cubic-bezier()` in CSS:
+
+```xml
+<animation prop="translate_y" target="self" start="-30" end="0" duration="500"
+           easing="bezier(0.34 1.56 0.64 1)"/>
+```
+
+`x1` and `x2` need to be in the `0..1` range, while `y1` and `y2` can be outside it to overshoot. Ready to use curves can be picked from e.g. [easings.net](https://easings.net).
+
+Finally, an animation path implemented in C can be registered by name and then referenced in `easing`:
+
+```c
+static int32_t my_easing(const lv_anim_t * a)
+{
+    return lv_map(a->act_time, 0, a->duration, a->start_value, a->end_value);
+}
+
+/* `NULL` registers it globally. It can be a component's scope as well. */
+lv_xml_register_easing_cb(NULL, "my_easing", my_easing);
+```
+
+```xml
+<animation prop="translate_y" target="self" start="-30" end="0" duration="500" easing="my_easing"/>
+```
 
 ### Include External Timelines
 

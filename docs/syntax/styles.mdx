@@ -56,6 +56,49 @@ As shown in the example, parts and states can be set using `selector`.
     It's recommended to prefix style names with `style_` to avoid name collisions.
 </Callout>
 
+### Transitions
+
+By default the properties of a style are applied immediately when the widget's state changes. A `<transition>` child of a `<style>` animates the listed properties instead:
+
+```xml
+<styles>
+    <style name="style_button" bg_color="0x0088ff" transform_scale_x="256">
+        <transition props="bg_color transform_scale_x" duration="300"/>
+    </style>
+
+    <style name="style_button_pressed" bg_color="0x004488" transform_scale_x="230">
+        <transition props="bg_color transform_scale_x" duration="80"/>
+    </style>
+</styles>
+
+<view extends="lv_button">
+    <style name="style_button"/>
+    <style name="style_button_pressed" selector="pressed"/>
+</view>
+```
+
+`<transition>` supports these properties:
+
+- `props` - Space separated list of the style properties to animate. Use `remove` to delete a previously set transition.
+- `duration` - Duration of the animation in milliseconds. Mandatory.
+- `delay` - Delay before the animation starts in milliseconds. Default is `0`.
+- `easing` - The animation path, e.g. `ease_out`. See [Easing](./animations#easing). Default is `linear`.
+
+A transition describes how to animate **into** the state of the style that contains it. In the above example pressing the button uses the 80 ms transition of `style_button_pressed`, and releasing it uses the 300 ms transition of `style_button`.
+
+This means that to animate in both directions, a `<transition>` needs to be added to the default state's style too. If only the pressed style has one, the button animates when it's pressed, but snaps back when it's released.
+
+<Callout>
+Only state changes (`pressed`, `checked`, `disabled`, `focused`, ...) start a transition. `<bind_style>` enables and disables styles instead of changing the state, so its styles are applied without animation.
+</Callout>
+
+Keep these limitations in mind:
+
+- A style can store only one transition. To use different durations for different properties, split them into two styles.
+- Only numeric (including opacity) and color properties can be animated. Properties referencing other data (`text_font`, `bg_image_src`, `bg_grad`, ...) and most enums and booleans (`flex_flow`, `text_align`, `clip_corner`, ...) are ignored with a warning.
+- The composite names are expanded, so e.g. `props="pad_all"` transitions all the four paddings.
+- Like in any other style property, `#constants` can be used, but `$api_properties` can't.
+
 ## Style Binding
 
 Instead of directly adding styles to UI elements, you can add them conditionally when a subject's value equals a reference value. This enables dynamic styling at runtime, allowing you to change appearance or layout based on conditions.
@@ -85,6 +128,35 @@ Here is an example:
 </component>
 ```
 
+`<bind_style>` accepts the same `selector` as `<style>`, so a bound style can target a part or a state as well.
+
+### Conditional style binding
+
+`subject` and `ref_value` cover the "equals a value" case. For anything more complex, describe the condition with an [expression](./evaluate) in the `if` attribute:
+
+```xml
+<styles>
+  <style name="style_warning" bg_color="0xff8800"/>
+</styles>
+
+<view extends="lv_obj">
+  <bind_style name="style_warning" if="subject_temp > 10 and subject_temp &lt;= 30"/>
+</view>
+```
+
+The style is applied while the expression is true, and removed while it's false. It is re-evaluated whenever any subject or [variant](./variants) referenced in the expression changes.
+
+- Write the expression **directly**, without the `@{ }` wrapper.
+- Any number of subjects and variants can be used, and the whole [expression syntax](./evaluate) is available, including `and` / `or`.
+- The condition doesn't have to be a comparison. Any value with a truthiness works, so `if="subject_error"` is enough for an int subject.
+- Use `if` **or** `subject`+`ref_value`, not both. If both are given, `if` wins and `subject` is ignored with a warning.
+- A condition referencing no subject at all (e.g. only constants) is evaluated once, at creation.
+- An invalid expression is reported and the style is **not added**, so a typo can't leave a style stuck on the widget.
+
+<Callout type="info">
+Under the hood the style is added once and only *enabled* or *disabled* as the condition changes. Its priority relative to the other styles of the widget therefore stays the same, no matter how often the condition flips.
+</Callout>
+
 ## Local Styles
 
 ### Simple Usage 
@@ -111,6 +183,13 @@ Instead of setting local style properties directly, you can bind them to subject
   <bind_style_prop prop="bg_opa" selector="knob|pressed" subject="slider_knob_opa" />
  </view>
 </component>
+```
+
+`<bind_style_prop>` copies a subject's value into the property as-is. To compute the value, write an [expression binding](./data-binding#expression-binding) on the local style property itself — selectors included:
+
+```xml
+<lv_label style_text_color-pressed="@{subject_error_mode ? 0xff0000 : 0xaaaaaa}"/>
+<lv_slider style_bg_opa-knob="@{subject_brightness * 2}"/>
 ```
 
 ## Relation to Constants

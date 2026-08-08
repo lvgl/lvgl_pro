@@ -3,7 +3,7 @@ title: Variants
 description: Declare a Component's visual variations, like size or tone, and switch between them at runtime.
 ---
 
-Most Components exist in a few flavors: a button that is `small` or `large`, a badge that is `normal` or `danger`. A **variant** declares such a dimension once, and every instance can pick an option from it: statically, from a subject, or from C at runtime.
+Most Components exist in a few flavors: a button that is `small` or `large`, a badge that is `normal` or `danger`. A **variant** declares these once, and every instance can pick an option from it: statically, from a subject, or at runtime from C.
 
 ```xml
 <my_badge size="large" tone="danger"/>
@@ -34,16 +34,16 @@ A variant is not an [`<api>`](./api) property, so it can't be read with `$name`.
 Each variant is **per-instance reactive state**: ten instances of the same Component can be in ten different states, and switching one of them updates only that instance. This makes variants the Component-level counterpart of [subjects](./data-binding), which are global.
 
 <Callout type="info">
-Variants are useful when a Component's *appearance* has a fixed set of named states. For free-form data (a temperature, a user name) use a subject or an [`<api>`](./api) property instead.
+Variants are useful when a Component's *appearance* has a fixed set of named states. For free-form data (a temperature, a user name) use a subject as an [`<api>`](./api) property instead.
 </Callout>
 
 ## Reacting to a variant
 
-A variant is meaningless until something reads it. There are two ways, and they are usually combined.
+A variant is meaningless until something reads it. There are two ways to do it.
 
 ### Switching styles
 
-`<bind_style>` attaches a style while a variant has a given option. Use the variant's name as `subject` and an option name as `ref_value`:
+`<bind_style>` attaches a style while a condition is true, so a variant can select the styles of an option:
 
 ```xml
 <component>
@@ -63,20 +63,20 @@ A variant is meaningless until something reads it. There are two ways, and they 
 
   <view extends="lv_button">
     <style name="style_normal"/>
-    <bind_style name="style_danger" subject="tone" ref_value="danger"/>
-    <bind_style name="style_small" subject="size" ref_value="small"/>
-    <bind_style name="style_large" subject="size" ref_value="large"/>
+    <bind_style name="style_danger" if="tone == danger"/>
+    <bind_style name="style_small" if="size == small"/>
+    <bind_style name="style_large" if="size == large"/>
 
     <lv_label name="title" text="Title"/>
   </view>
 </component>
 ```
 
-This is the recommended way to express the *visual* difference between options: the styles stay declarative, and only the option selection changes at runtime.
+This is the recommended way to express the **visual difference** between options. The styles stay declarative, and only the selection changes at runtime.
 
 ### In expressions
 
-A variant can also be used in [`@{ }` bindings](./data-binding#expression-binding), where:
+A variant can also be used in [`@{ }` bindings](./data-binding#generic-bindings-with-expressions), where:
 
 - a **variant name** reads the currently selected option,
 - an **option name** is a constant that can be compared against it.
@@ -86,7 +86,7 @@ A variant can also be used in [`@{ }` bindings](./data-binding#expression-bindin
 <lv_label name="subtitle" text="Subtitle" hidden="@{size == small}"/>
 
 <!-- A variant and a global subject in one expression -->
-<lv_label text="@{tone == danger ? 'Alert: ' . subject_error_count : 'All good'}"/>
+<lv_label text="@{tone == danger ? 'Alert: ' . subject_error_text : 'All good'}"/>
 ```
 
 Because `@{ }` re-evaluates on every change, switching the variant updates these attributes immediately. In a plain [`{ }` expression](./evaluate) a variant works too, but it's read only once, when the element is created.
@@ -103,7 +103,7 @@ A variant behaves like a normal property where the Component is used:
 
 An unknown option name falls back to the variant's `default` and logs a warning.
 
-The value can also be a [binding](./data-binding#expression-binding), so a variant can follow a subject:
+The value can also be a [binding](./data-binding#generic-bindings-with-expressions), so a variant can follow a subject:
 
 ```xml
 <my_badge tone="@{subject_level > 100 ? danger : normal}"/>
@@ -126,32 +126,6 @@ void my_badge_set_size(lv_obj_t * obj, my_badge_size_t size);
 my_badge_size_t my_badge_get_size(lv_obj_t * obj);
 ```
 
-When the XML is loaded at runtime instead (in the Editor's preview, or with `lv_xml_create()`), select an option by name:
+When calling the `set` function, every style and data binding that reads the variant is re-evaluated automatically.
 
-```c
-lv_xml_set_variant(badge, "size", "large");
-```
-
-Both look the variant up on the given widget and then on its parents, so any widget inside a Component instance can be passed. Every `bind_style` and `@{ }` expression referencing the variant updates immediately.
-
-An option name `lv_xml_set_variant()` doesn't recognize is refused with a warning, and the variant keeps its current option. This also applies to a variant binding whose expression returns something that is not an option name.
-
-## Name resolution
-
-Inside expressions a bare identifier is resolved in this order:
-
-1. **Variant name**
-2. **`<api>` property**
-3. **Constant**
-4. **Variant option name**
-5. **Subject**
-6. Anything else is kept as a plain string (a font or image name, for example)
-
-Two consequences worth remembering:
-
-- A variant **shadows** a property, constant, or subject of the same name. Avoid such collisions.
-- **Option names have to be unique across a Component's variants**, otherwise a bare option name in an expression is ambiguous. The first declared variant wins, and registration logs a warning. `<bind_style>` is exempt, since its `subject` attribute already tells which variant the `ref_value` belongs to.
-
-<Callout type="warn">
-The order of `options` defines the integer value of each option in the exported C code. Reordering them is a breaking change for code that was already generated; adding new options at the end is safe.
-</Callout>
+The option order in `options` defines the value of each enum field, so reordering them changes the exported C API. Adding new options at the end is safe.

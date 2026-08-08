@@ -61,8 +61,7 @@ Slots are very useful for creating components like screen templates where users 
 
 It's also possible to change the basic `lv_obj` properties on the slots, such as `hidden="true"`, `style_bg_color-pressed="0xff0000"`, `checked="true"`, `width="100"`, etc.
 
-
-#### Slots Example
+The example below shows it in the practice:
 
 ```xml
 <!-- simple_screen.xml -->
@@ -81,7 +80,7 @@ It's also possible to change the basic `lv_obj` properties on the slots, such as
 <!-- main_screen.xml -->
 <component>
   <styles>
-    <styles name="style_thin_border" border_width="1" border_color="0x800"/>
+    <style name="style_thin_border" border_width="1" border_color="0x800"/>
   </styles>
   <view extends="simple_screen" width="100%">
 
@@ -99,6 +98,46 @@ It's also possible to change the basic `lv_obj` properties on the slots, such as
   </view>
 </component>
 ```
+
+### Variants
+
+Besides `<prop>`s, a Component can declare **variants**: named lists of options that can be changed after creation. Unlike properties, a variant keeps its value per instance, so `<bind_style>` and [data bindings](./data-binding) can follow it at runtime.
+
+`badge.xml`
+
+```xml
+<component>
+  <api>
+    <variants>
+      <variant name="tone" options="normal danger" default="normal"/>
+    </variants>
+  </api>
+
+  <styles>
+    <style name="style_danger" bg_color="0xff0000" text_color="0xffffff"/>
+  </styles>
+
+  <view extends="lv_obj" width="content" height="content">
+    <bind_style name="style_danger" if="tone == danger"/>
+    <lv_label name="label" text="Ready"/>
+    <lv_image name="alert_icon" src="img_alert" hidden="@{tone == normal}"/>
+  </view>
+</component>
+```
+
+`screen1.xml`
+
+```xml
+<screen>
+  <view flex_flow="row">
+    <badge/>                 <!-- `normal`, the default -->
+    <badge tone="danger"/>
+    <badge tone="@{subject_alarm_count > 0 ? danger : normal}"/>
+  </view>
+</screen>
+```
+
+Learn more about variants on their [dedicated page](./variants).
 
 ### Limitations
 
@@ -246,7 +285,7 @@ Used in a view:
   <my_widget width="100px">
     <my_widget-indicator name="indic1" color="0xff0000" max_value="120" value="30"/>
   </my_widget>
-</view>  
+</view>
 ```
 
 LVGL's UI Editor generates:
@@ -272,11 +311,11 @@ Used for internal or implicit elements:
 Used in a view:
 
 ```xml
-<view>  
+<view>
   <my_widget width="100px">
     <my_widget-control_button name="btn1" index="3" title="Hello"/>
   </my_widget>
-</view>  
+</view>
 ```
 
 LVGL's UI Editor generates:
@@ -303,11 +342,11 @@ Used for indexed access, like setting values in a table:
 Used in a view:
 
 ```xml
-<view>  
+<view>
   <my_widget width="100px">
     <my_widget-item index="3" icon="image1" color="0xff0000"/>
   </my_widget>
-</view>  
+</view>
 ```
 
 LVGL's UI Editor generates:
@@ -332,11 +371,11 @@ Used to describe custom API functions with a custom name. Custom elements can ha
 Used in a view:
 
 ```xml
-<view>  
+<view>
   <my_widget width="100px">
     <my_widget-bind_color subject="subject_1" new_color="0xff0000" ref_value="15"/>
   </my_widget>
-</view>  
+</view>
 ```
 
 LVGL's UI Editor generates:

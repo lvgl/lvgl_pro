@@ -185,7 +185,7 @@ Instead of setting local style properties directly, you can bind them to subject
 </component>
 ```
 
-`<bind_style_prop>` copies a subject's value into the property as-is. To compute the value, write an [expression binding](./data-binding#expression-binding) on the local style property itself, selectors included:
+`<bind_style_prop>` copies a subject's value into the property as-is. To compute the value, write an [expression binding](./data-binding#generic-bindings-with-expressions) on the local style property itself, selectors included:
 
 ```xml
 <lv_label style_text_color-pressed="@{subject_error_mode ? 0xff0000 : 0xaaaaaa}"/>

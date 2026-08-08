@@ -23,6 +23,7 @@
 
     "---Interaction & Configuration---",
     "api",
+    "variants",
     "events",
     "data-binding",
     "evaluate",

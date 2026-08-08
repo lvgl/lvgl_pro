@@ -7,15 +7,17 @@ Create smooth, professional animations for your UI components using LVGL's timel
 
 ## Overview
 
-XML animations are built on timeline animations that organize multiple animation steps into coordinated sequences.
+XML animations are used to animate one or more widgets and their properties. They are built from timeline animations that organize multiple animation steps into coordinated sequences.
 
 Timelines are composed of simple animations. For example: *"change the `bg_opa` of `my_button_2` from 0 to 255 in 500 ms."*
 
 Each Component can define its own timeline animations, which can then be played by the Component itself or by any parent Components.
 
+Style [`<transition>`](./styles#transitions)s can animate widgets too. The difference is what starts them: a timeline is played on demand, while a transition runs when the widget's state changes, for example from default to pressed.
+
 ## Defining Timelines
 
-Timelines can be defined inside [`<screen>`](./screens)s and [`<component>`](./components)s. 
+Timelines can be defined inside [`<screen>`](./screens)s and [`<component>`](./components)s.
 
 Example:
 
@@ -31,9 +33,9 @@ Example:
 
   <!-- Shake horizontally -->
   <timeline name="shake" repeat_count="infinite" repeat_delay="200">
-   <animation prop="translate_x" target="self" start="0" end="-30" duration="150"/>
-   <animation prop="translate_x" target="self" start="-30" end="30" duration="300" delay="150"/>
-   <animation prop="translate_x" target="self" start="30" end="0" duration="150" delay="450"/>
+   <animation prop="translate_x" target="self" start="0" end="-30" duration="150" easing="ease_in_out"/>
+   <animation prop="translate_x" target="self" start="-30" end="30" duration="300" delay="150" easing="ease_in_out"/>
+   <animation prop="translate_x" target="self" start="30" end="0" duration="150" delay="450" easing="ease_in_out"/>
   </timeline>
  </animations>
 
@@ -54,7 +56,7 @@ Inside `<animations>`, you can define `<timeline>`s with unique names that you c
 - `repeat_count` - How many times the whole timeline repeats. Use a number, or `infinite` to loop forever. Default is `1`.
 - `repeat_delay` - Delay in milliseconds between repetitions. Default is `0`.
 
-### Simple Animations 
+### Simple Animations
 
 Within each `timeline`, add individual `<animation>` elements to describe each step. The following properties are supported:
 
@@ -63,10 +65,51 @@ Within each `timeline`, add individual `<animation>` elements to describe each s
 - `target` - Name of the UI element to animate. `self` refers to the root element of the Component (the `view`).
 - `start` - Start value (integer only).
 - `end` - End value (integer only).
-- `duration` - Duration of the animation in milliseconds.
+- `duration` - Duration of the animation in milliseconds. Default is `1000`.
 - `delay` - Delay before starting in milliseconds. Default is 0.
 - `early_apply` - If `true`, the start value is applied immediately, even during the delay. Default is `false`.
+- `easing` - The animation path, e.g. `ease_out`. See below. Default is `linear`.
 
+### Easing
+
+The `easing` property tells how the value should progress from `start` to `end` during the `duration`. These built-in paths can be used:
+
+- `linear` - Constant speed. This is the default.
+- `ease_in` - Slow start.
+- `ease_out` - Slow end.
+- `ease_in_out` - Slow start and end.
+- `overshoot` - Goes above the end value and settles back.
+- `bounce` - Bounces back a few times at the end.
+- `step` - Stays at the start value and jumps to the end value at the very end.
+
+```xml
+<animation prop="translate_y" target="self" start="-30" end="0" duration="500" easing="ease_out"/>
+```
+
+For full control, `bezier(x1 y1 x2 y2)` describes a cubic bezier curve with its two control points, just like `cubic-bezier()` in CSS:
+
+```xml
+<animation prop="translate_y" target="self" start="-30" end="0" duration="500"
+           easing="bezier(0.34 1.56 0.64 1)"/>
+```
+
+`x1` and `x2` need to be in the `0..1` range, while `y1` and `y2` can be outside it to overshoot. At most four decimals are used from each value. Ready to use curves can be picked from e.g. [easings.net](https://easings.net).
+
+Finally, an animation path implemented in C can be referenced by its function name:
+
+```xml
+<animation prop="translate_y" target="self" start="-30" end="0" duration="500" easing="my_easing"/>
+```
+
+```c
+int32_t my_easing(const lv_anim_t * a)
+{
+    /*Return the value to apply now, interpolating between start_value and end_value*/
+    return lv_map(a->act_time, 0, a->duration, a->start_value, a->end_value);
+}
+```
+
+The exported code calls this function directly, so it can't be `static` and it has to be visible where the generated file is compiled.
 
 ### Include External Timelines
 

@@ -95,6 +95,13 @@ It can't be used in the `<styles>` section, as [styles](./styles) are initialize
 <!-- ❌ `title` is a property of the my_card Component -->
 <my_card title="@{subject_user_name}"/>
 
+<!-- ✅ Simple bindings to common widget properties -->
+<lv_slider hidden="@{!subject_settings_show}" disabled="@{!subject_settings_active}"/>
+
+<!-- ✅ `text` comes from `lv_label` that `h3` extends. 
+     It means a binding can be used on it.-->
+<h3 text="@{'Hi ' . subject_name}"/>
+
 <!-- ✅ `tone` is a variant of my_card -->
 <my_card tone="@{subject_alarm == 1 ? danger : normal}"/>
 

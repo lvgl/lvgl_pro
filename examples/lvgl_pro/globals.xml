@@ -9,10 +9,6 @@
 		<color name="color_text_on_fill" value="0x013992" help="Label color over filled widgets" />
 	</consts>
 
-	<styles>
-		<!-- Add shared <style> tags here when 2+ examples need the same look. -->
-	</styles>
-
 	<subjects>
 		<!-- Generic subjects reused by every data-binding example so each
 		     screen doesn't have to invent its own subject names. -->
@@ -36,4 +32,8 @@
 	<fonts>
 		<bin name="font_large" src_path="fonts/Montserrat-Medium.ttf" size="28" bpp="4" as_file="false" />
 	</fonts>
+
+	<styles>
+		<!-- Add shared <style> tags here when 2+ examples need the same look. -->
+	</styles>
 </globals>

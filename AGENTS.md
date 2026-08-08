@@ -192,7 +192,7 @@ Only `int`, `string` and `float` are supported.
 States: `default`, `checked`, `focused`, `focus_key`, `edited`, `hovered`, `pressed`, `scrolled`, `disabled`.
 Common flags: `hidden`, `clickable`, `checkable`, `scrollable`, `floating`, `ignore_layout`.
 
-`@{ }` is `{ }` that re-runs whenever a referenced subject or variant changes. It works on **widget** attributes (including `style_*` locals) and on a component instance's **variant** attributes — not in `<styles>` (initialized once) and not on a component's own props or slots. It must reference at least one subject or variant, and inside it only `type="subject"` props may appear; other props are an error. A failed re-evaluation (e.g. `/0`) keeps the previous value.
+`@{ }` is `{ }` that re-runs whenever a referenced subject or variant changes. It works on **widget** attributes (including `style_*` locals) and on a component instance's **variant** attributes. Not in `<styles>` (initialized once) and not on a component's own props or slots. It must reference at least one subject or variant, and inside it only `type="subject"` props may appear; other props are an error. A failed re-evaluation (e.g. `/0`) keeps the previous value.
 
 To give each instance its own data, declare `<prop name="temp" type="subject"/>` and pass a subject name at the call site: `<room_card temp="subject_kitchen"/>`.
 
@@ -219,7 +219,7 @@ A component's named visual states, declared in `<api>`. Per-instance and reactiv
 
 Read a variant with `<bind_style subject="<variant>" ref_value="<option>">` (preferred for anything visual) or in `@{ }`, where the variant name is the current option and an option name is a constant.
 
-Pick an option on the instance — `<my_badge size="large" tone="@{subject_level > 100 ? danger : normal}"/>` — or from C with `lv_xml_set_variant(obj, "size", "large")`. Unknown option → `default` + warning. Option names must be unique across a component's variants, a variant name shadows a same-named prop/const/subject, and reordering `options` breaks already exported C.
+Pick an option on the instance, `<my_badge size="large" tone="@{subject_level > 100 ? danger : normal}"/>`, or from C with the exported `my_badge_set_size(obj, MY_BADGE_SIZE_LARGE)` (`lv_xml_set_variant(obj, "size", "large")` at runtime). An unknown option on the instance falls back to `default` with a warning; in `lv_xml_set_variant()` it's refused and the option is left unchanged. Option names must be unique across a component's variants, a variant name shadows a same-named prop/const/subject, and reordering `options` breaks already exported C.
 
 ## Events
 
@@ -249,7 +249,7 @@ Evaluated **once at creation**, not reactive. For anything that changes at runti
 
 `.` concatenates. Strings use single quotes. Comparisons cannot be chained (`a < b < c`) and ternaries cannot be nested.
 
-`&&` and `||` exist, but `&` and `<` must be XML-escaped in an attribute value, so prefer the `and` / `or` keywords: `hidden="{a > 10 and a &lt;= 30}"`. Both sides are always evaluated — there is no short-circuiting.
+`&&` and `||` exist, but `&` and `<` must be XML-escaped in an attribute value, so prefer the `and` / `or` keywords: `hidden="{a > 10 and a &lt;= 30}"`. Both sides are always evaluated, there is no short-circuiting.
 
 ## Animations
 
@@ -292,7 +292,7 @@ The slot target is `<component_name-slot_name>`, and you can set normal object p
 
 - Inventing an attribute instead of reading `lvgl_widgets_xml/`.
 - Putting `$prop` into a `<style>`. Use a local style property.
-- Expecting `{ }` to update at runtime. It does not — write `@{ }` for that.
+- Expecting `{ }` to update at runtime. It does not, write `@{ }` for that.
 - Putting a non-subject `$prop` inside `@{ }`, or `@{ }` on a component's own prop or in a `<style>`. None of them can update.
 - Using `bind_state_*` with a `flag=` attribute, or `bind_flag_*` with `state=`.
 - `screen_load_event` on a screen that isn't `permanent="true"`.

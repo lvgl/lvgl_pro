@@ -7,12 +7,20 @@ description: Compute attribute values from arithmetic, comparisons, ternaries, a
 This feature requires [LVGL Pro Editor v2.0](https://github.com/lvgl/lvgl_pro/releases) or higher.
 </Callout>
 
-Any XML attribute value can be an **expression** wrapped in `{ }`. Instead of writing a fixed value, you let the Editor compute it from numbers, colors, strings, constants, and parameters.
+Any XML attribute value can be an **expression** wrapped in `{ }`. Instead of writing a fixed value, you let the Editor compute it from numbers, colors, strings, constants, and parameters **when the instance is created**.
 
 ```xml
 <lv_obj width="{base_width * 2}"/>
 <lv_label text="{'Hello, ' . user_name . '!'}"/>
 <lv_obj hidden="{item_count == 0}"/>
+```
+
+Wrapping the same expression in `@{ }` creates a dynamic data binding instead, **re-evaluated whenever a subject or variant in it changes**.
+
+```xml
+<lv_obj width="@{variant_size == large ? large_width : small_width}"/>
+<lv_label text="@{'Hello, ' . subject_user_name . '!'}"/>
+<lv_obj hidden="@{subject_item_count == 0}"/>
 ```
 
 ## Overview
@@ -21,30 +29,37 @@ Expressions are useful whenever a value is *derived* from other values: a width 
 
 A few important properties to keep in mind:
 
-- **Creation-time only.** An expression is evaluated **once**, when the UI element is created. The result is then handed to the normal attribute parser exactly as if you had typed the computed value yourself.
-- **Not reactive.** A `{ }` expression does *not* react to changes. For a value that follows a subject or a variant at runtime, write the very same expression as a binding: `@{ }` instead of `{ }`. See [Expression binding](./data-binding#expression-binding).
-- **The result type is inferred from the terms.** You never declare the type — it follows from the literals and variables you use (see [Value types](#value-types)).
+- **`{ }` is creation-time only.** An expression is evaluated **once**, when the UI element is created. The result is then handed to the normal attribute parser exactly as if you had typed the computed value yourself.
+- **`@{ }` is reactive.** An `@{ }` expression is re-evaluated as the connected subjects or variants change.
+- **The result type is inferred from the terms.** You never declare the type, it follows from the literals and variables you use (see [Value types](#value-types)).
 
 <Callout type="info">
-    Expressions are exported into the generated C code, not pre-computed to a fixed literal. They are re-evaluated every time the element is created — including when you create a component manually from C — using the parameter values passed at that moment.
+    Expressions are exported into the generated C code, not pre-computed to a fixed literal. They are re-evaluated every time the element is created, including when you create a component manually from C, using the parameter values passed at that moment.
 </Callout>
 
-## Writing expressions
+The same expression engine is used in `<bind_style if="...">` too. There no `@{ }` wrapping is needed, as that attribute is always treated as a binding.
 
-An expression is the whole attribute value, wrapped in a single pair of braces:
+## Basic syntax
+
+An expression is the whole attribute value, wrapped into `{ }` (one time evaluated) or `@{ }` (reactive binding):
 
 ```xml
 <lv_obj width="{10 + 20}"/>   <!-- becomes width="30" -->
 ```
 
-Inside the braces you can use literals, operators, and **variable names**. A variable name is written as a **bare identifier** — without the `$` or `#` prefixes used elsewhere in XML. The name is resolved, in order, against:
+Inside the braces you can use the following data:
 
-1. **Variants** declared in the element's [`<api>`](./api): the currently selected option of that [variant](./variants).
-2. **Parameters** declared in the element's [`<api>`](./api): the value comes from the instance (or the parameter's `default`), and the type from the declared `type`.
+- In a `{ }` one time evaluation: literals, operators, constants, API `<prop>`s, subjects, and variants. Subjects and variants are read once, so their later changes are ignored.
+- In an `@{ }` binding: the same, except that API `<prop>`s cannot be used. They are not stored per instance, they only exist during creation. The one exception is a `type="subject"` `<prop>`, which names a subject the binding can follow.
+
+Names are written as **bare identifiers**, without the `$` or `#` prefixes used elsewhere in XML. They are resolved in this order:
+
+1. **Variants** declared in the element's [`<api>`](./api), the value is the currently selected option of that [variant](./variants).
+2. **Parameters** declared in the element's [`<api>`](./api) as `<prop>`.
 3. **Constants** from [`<consts>`](./constants): the type is inferred from the constant's value.
 4. **Variant option names**: an integer constant, the option's index in its variant.
-5. **Subjects** from `globals.xml`: their current value, read once (use `@{ }` to follow them).
-6. **Other named items** the XML processor resolves later (a font, image, or screen name). These are passed through as plain strings.
+5. **Subjects** from `globals.xml`.
+6. **Other named items** the XML processor resolves later (a font, image, or screen name).
 
 ```xml
 <component>
@@ -62,7 +77,9 @@ Inside the braces you can use literals, operators, and **variable names**. A var
 </component>
 ```
 
+<Callout type="warn">
 Note that `$` and `#` are not used in expressions to reference properties and constants.
+</Callout>
 
 ## Value types
 
@@ -81,8 +98,8 @@ Each term has a type, inferred from how it is written:
 Notes:
 
 - **Colors** accept both the full `0xRRGGBB` form and the `0xRGB` shorthand, which expands like CSS (`0xf00` → `0xff0000`).
-- **Strings** use **single quotes** (`'…'`), since double quotes already delimit the XML attribute.
-- **Floats** require `LV_USE_FLOAT`. Without it, a float degrades to its integer part. Float results are serialized with two decimals (e.g. `3.50`).
+- **Strings** use **single quotes** (`'...'`), since double quotes already delimit the XML attribute.
+- **Floats** require `LV_USE_FLOAT`. Without it, a float degrades to its integer part. Float results are serialized with two decimals in texts (e.g. `3.50`).
 
 ## Operators
 
@@ -101,7 +118,7 @@ Notes:
 
 ```xml
 <lv_obj hidden="{count == 0}"/>
-<lv_obj checked="{mode == 'dark'}"/>
+<lv_obj checked="{mode != 'dark'}"/>
 ```
 
 Comparisons cannot be **chained**: `a < b < c` is invalid. Each operand of a logical `and`/`or` may contain one comparison, so a range check is written as `a > 10 and a <= 30`.
@@ -138,17 +155,6 @@ Both sides are **always evaluated**. There is no short-circuiting, just like wit
 
 `and`/`or` are keywords, so a constant, property, or subject cannot be named `and` or `or`. There is no `^^` operator.
 
-### Ternary
-
-`cond ? a : b` chooses between two values. The condition must be a bool, a number, or a string (a non-empty string is truthy); it **cannot** be a color. Both branches must have the same type (int and float mix freely).
-
-```xml
-<lv_label text="{count == 0 ? 'Empty' : 'Has items'}"/>
-<lv_obj style_bg_color="{is_on ? 0x00ff00 : 0x333333}"/>
-```
-
-Ternaries **cannot be nested**, but each branch may itself be a string concatenation.
-
 ### String concatenation
 
 The `.` operator joins values into a single string. Each operand is automatically stringified — integers and floats as decimals, bools as `true`/`false`, colors as `0xRRGGBB`.
@@ -157,6 +163,17 @@ The `.` operator joins values into a single string. Each operand is automaticall
 <lv_label text="{'Battery: ' . level . '%'}"/>
 <lv_label text="{first_name . ' ' . last_name}"/>
 ```
+
+### Ternary
+
+`cond ? a : b` chooses between two values. The condition must be a bool, a number, or a string (a non-empty string is truthy); it **cannot** be a color. Both branches must have the same type (int and float mix freely).
+
+```xml
+<lv_label text="@{subject_count == 0 ? 'Empty' : 'Has ' . subject_count . ' items'}"/>
+<lv_obj style_bg_color="{is_on ? 0x00ff00 : 0x333333}"/>
+```
+
+Ternaries **cannot be nested**, but each branch may itself be a string concatenation.
 
 ## Precedence and grouping
 
@@ -200,22 +217,6 @@ An expression lives in an XML attribute value, where a few characters are reserv
 <lv_obj hidden="{10 > count and locked}"/>
 ```
 
-## Error handling
-
-If an expression is malformed, for example a type mismatch, a missing `)` or `:`, or a division by zero, evaluation fails. A warning naming the exact problem and the offending expression is logged, and the raw `{ … }` text is left in the attribute, which the normal attribute parser then reads as `0` or as literal text.
-
-Common messages include:
-
-- *the two ternary branches must have the same type*.
-- *the two sides of `==`/`!=` have different types*.
-- *`< <= > >=` need numeric operands (use `==`/`!=` for strings, colors, bools)*.
-- *arithmetic `+ - * / %` needs numeric operands*.
-- *`%` needs integer operands*.
-- *division or modulo by zero*.
-- *unexpected character (note: use `==` to compare, `.` to concatenate)*.
-
-A name that is not a variant, parameter, constant, variant option, or subject is **not** an error: it's kept as a plain string, as [Writing expressions](#writing-expressions) describes. A typo in a name therefore shows up as a type error, or later as a "not found" warning from whatever resolves the value (a font, an image, and so on).
-
 ## Examples
 
 ```xml
@@ -229,8 +230,8 @@ A name that is not a variant, parameter, constant, variant option, or subject is
 <lv_label text="{'Room ' . room_id . ': ' . temperature . ' °C'}"/>
 
 <!-- Boolean flag from a comparison -->
-<lv_obj hidden="{progress >= 100}"/>
+<lv_obj hidden="@{subject_progress >= 100}"/>
 
 <!-- Color chosen by a flag -->
-<lv_obj style_bg_color="{active ? 0x2e7d32 : 0x9e9e9e}"/>
+<lv_obj style_bg_color="@{variant_mode == active ? 0x2e7d32 : 0x9e9e9e}"/>
 ```

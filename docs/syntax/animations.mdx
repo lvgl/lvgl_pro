@@ -7,15 +7,17 @@ Create smooth, professional animations for your UI components using LVGL's timel
 
 ## Overview
 
-XML animations are built on timeline animations that organize multiple animation steps into coordinated sequences.
+XML animations are used to animate one or more widgets and their properties. They are built from timeline animations that organize multiple animation steps into coordinated sequences.
 
 Timelines are composed of simple animations. For example: *"change the `bg_opa` of `my_button_2` from 0 to 255 in 500 ms."*
 
 Each Component can define its own timeline animations, which can then be played by the Component itself or by any parent Components.
 
+Style [`<transition>`](./styles#transitions)s can animate widgets too. The difference is what starts them: a timeline is played on demand, while a transition runs when the widget's state changes, for example from default to pressed.
+
 ## Defining Timelines
 
-Timelines can be defined inside [`<screen>`](./screens)s and [`<component>`](./components)s. 
+Timelines can be defined inside [`<screen>`](./screens)s and [`<component>`](./components)s.
 
 Example:
 
@@ -31,9 +33,9 @@ Example:
 
   <!-- Shake horizontally -->
   <timeline name="shake" repeat_count="infinite" repeat_delay="200">
-   <animation prop="translate_x" target="self" start="0" end="-30" duration="150"/>
-   <animation prop="translate_x" target="self" start="-30" end="30" duration="300" delay="150"/>
-   <animation prop="translate_x" target="self" start="30" end="0" duration="150" delay="450"/>
+   <animation prop="translate_x" target="self" start="0" end="-30" duration="150" easing="ease_in_out"/>
+   <animation prop="translate_x" target="self" start="-30" end="30" duration="300" delay="150" easing="ease_in_out"/>
+   <animation prop="translate_x" target="self" start="30" end="0" duration="150" delay="450" easing="ease_in_out"/>
   </timeline>
  </animations>
 
@@ -54,7 +56,7 @@ Inside `<animations>`, you can define `<timeline>`s with unique names that you c
 - `repeat_count` - How many times the whole timeline repeats. Use a number, or `infinite` to loop forever. Default is `1`.
 - `repeat_delay` - Delay in milliseconds between repetitions. Default is `0`.
 
-### Simple Animations 
+### Simple Animations
 
 Within each `timeline`, add individual `<animation>` elements to describe each step. The following properties are supported:
 
@@ -70,9 +72,7 @@ Within each `timeline`, add individual `<animation>` elements to describe each s
 
 ### Easing
 
-The `easing` property tells how the value should progress from `start` to `end` during the `duration`. Besides `<animation>`, style [`<transition>`](./styles#transitions)s support it too.
-
-These built-in paths can be used:
+The `easing` property tells how the value should progress from `start` to `end` during the `duration`. These built-in paths can be used:
 
 - `linear` - Constant speed. This is the default.
 - `ease_in` - Slow start.
@@ -95,26 +95,21 @@ For full control, `bezier(x1 y1 x2 y2)` describes a cubic bezier curve with its 
 
 `x1` and `x2` need to be in the `0..1` range, while `y1` and `y2` can be outside it to overshoot. At most four decimals are used from each value. Ready to use curves can be picked from e.g. [easings.net](https://easings.net).
 
-Finally, an animation path implemented in C can be registered by name and then referenced in `easing`:
-
-```c
-static int32_t my_easing(const lv_anim_t * a)
-{
-    return lv_map(a->act_time, 0, a->duration, a->start_value, a->end_value);
-}
-
-/* `NULL` registers the name globally, so every XML file can use it.
- * Pass `lv_xml_component_get_scope("my_component")` to keep it local. */
-lv_xml_register_easing_cb(NULL, "my_easing", my_easing);
-```
-
-The callback returns the value to apply at the current moment, so it interpolates between `start_value` and `end_value` itself.
+Finally, an animation path implemented in C can be referenced by its function name:
 
 ```xml
 <animation prop="translate_y" target="self" start="-30" end="0" duration="500" easing="my_easing"/>
 ```
 
-Register the callback **before** the XML that uses it, as the name is resolved while the XML is being parsed. In the exported code the name is emitted as a plain C function reference, so the function has to be visible to the generated file.
+```c
+int32_t my_easing(const lv_anim_t * a)
+{
+    /*Return the value to apply now, interpolating between start_value and end_value*/
+    return lv_map(a->act_time, 0, a->duration, a->start_value, a->end_value);
+}
+```
+
+The exported code calls this function directly, so it can't be `static` and it has to be visible where the generated file is compiled.
 
 ### Include External Timelines
 

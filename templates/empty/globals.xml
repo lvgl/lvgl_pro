@@ -7,10 +7,6 @@
         <!-- Add <px>, <int>, <color> etc here -->
     </consts>
 
-    <styles>
-        <!-- Add <style> tags here -->
-    </styles>
-
     <subjects>
         <!-- Add <int>, <string>, or <float> subjects here -->
     </subjects>
@@ -22,4 +18,8 @@
     <fonts>
         <!-- Add <bin> , <tiny_ttf>, <freetype> tags here -->
     </fonts>
+
+    <styles>
+        <!-- Add <style> tags here -->
+    </styles>
 </globals>

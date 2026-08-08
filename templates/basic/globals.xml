@@ -114,70 +114,6 @@
 		/>
 	</fonts>
 
-	<!-- Reusable styles. Light/dark variants are swapped at runtime with
-	     <bind_style subject="subject_theme_dark">. -->
-	<styles>
-		<!-- Screen backgrounds. Set BOTH text_color and text_font so they
-		     inherit down the whole tree (children clear the theme and never
-		     re-set text_color), so one subject_theme_dark flip recolors all
-		     text and font_body becomes the default font everywhere. -->
-		<style
-			name="style_screen_light"
-			bg_color="#color_light_bg"
-			bg_opa="100%"
-			text_color="#color_light_text"
-			text_font="font_body"
-		/>
-		<style
-			name="style_screen_dark"
-			bg_color="#color_dark_bg"
-			bg_opa="100%"
-			text_color="#color_dark_text"
-			text_font="font_body"
-		/>
-
-		<!-- Panel surface: bg, border and matching text_color.
-		     Geometry lives in the panel component. -->
-		<style
-			name="style_panel_light"
-			bg_color="#color_light_panel"
-			bg_opa="100%"
-			border_color="#color_light_text"
-			border_opa="20%"
-			border_width="#border_width"
-			text_color="#color_light_text"
-			pad_all="#space_md"
-			radius="#radius_default"
-		/>
-		<style
-			name="style_panel_dark"
-			bg_color="#color_dark_panel"
-			bg_opa="100%"
-			border_color="#color_dark_text"
-			border_opa="20%"
-			border_width="#border_width"
-			text_color="#color_dark_text"
-			pad_all="#space_md"
-			radius="#radius_default"
-		/>
-
-		<!-- Accent text, e.g. a live value readout -->
-		<style name="style_text_accent" text_color="#color_accent" />
-
-		<!-- Muted secondary text (captions, subtitles, section headers) -->
-		<style name="style_text_muted" text_opa="60%" />
-
-		<!-- Thin scrollbar shared by scrollable screens -->
-		<style
-			name="style_scrollbar"
-			width="#space_sm"
-			radius="#space_sm"
-			bg_color="#color_track"
-			bg_opa="80%"
-			pad_all="#space_sm"
-		/>
-	</styles>
-
 	<!-- Observable model the UI binds to. Add your own and bind widgets with
 	     bind_value / bind_checked / bind_text. -->
 	<subjects>
@@ -520,4 +456,68 @@
 		/>
 		<data name="icon_wifi_zero" src_path="images/icons/wifi_zero.png" color_format="argb8888" />
 	</images>
+
+	<!-- Reusable styles. Light/dark variants are swapped at runtime with
+	     <bind_style subject="subject_theme_dark">. -->
+	<styles>
+		<!-- Screen backgrounds. Set BOTH text_color and text_font so they
+		     inherit down the whole tree (children clear the theme and never
+		     re-set text_color), so one subject_theme_dark flip recolors all
+		     text and font_body becomes the default font everywhere. -->
+		<style
+			name="style_screen_light"
+			bg_color="#color_light_bg"
+			bg_opa="100%"
+			text_color="#color_light_text"
+			text_font="font_body"
+		/>
+		<style
+			name="style_screen_dark"
+			bg_color="#color_dark_bg"
+			bg_opa="100%"
+			text_color="#color_dark_text"
+			text_font="font_body"
+		/>
+
+		<!-- Panel surface: bg, border and matching text_color.
+		     Geometry lives in the panel component. -->
+		<style
+			name="style_panel_light"
+			bg_color="#color_light_panel"
+			bg_opa="100%"
+			border_color="#color_light_text"
+			border_opa="20%"
+			border_width="#border_width"
+			text_color="#color_light_text"
+			pad_all="#space_md"
+			radius="#radius_default"
+		/>
+		<style
+			name="style_panel_dark"
+			bg_color="#color_dark_panel"
+			bg_opa="100%"
+			border_color="#color_dark_text"
+			border_opa="20%"
+			border_width="#border_width"
+			text_color="#color_dark_text"
+			pad_all="#space_md"
+			radius="#radius_default"
+		/>
+
+		<!-- Accent text, e.g. a live value readout -->
+		<style name="style_text_accent" text_color="#color_accent" />
+
+		<!-- Muted secondary text (captions, subtitles, section headers) -->
+		<style name="style_text_muted" text_opa="60%" />
+
+		<!-- Thin scrollbar shared by scrollable screens -->
+		<style
+			name="style_scrollbar"
+			width="#space_sm"
+			radius="#space_sm"
+			bg_color="#color_track"
+			bg_opa="80%"
+			pad_all="#space_sm"
+		/>
+	</styles>
 </globals>

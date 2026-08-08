@@ -13,13 +13,13 @@
 		<prop name="unit" type="string" default="%d" />
 	</api>
 
-	<styles>
-		<style name="style_dark" bg_color="0x333" text_color="0xfff" border_color="0x111" />
-	</styles>
-
 	<consts>
 		<int name="width" value="200" help="Width of the whole slider box" />
 	</consts>
+
+	<styles>
+		<style name="style_dark" bg_color="0x333" text_color="0xfff" border_color="0x111" />
+	</styles>
 
 	<view width="#width" height="content" flex_flow="row" style_flex_cross_place="center">
 		<bind_style name="style_dark" subject="subject_dark_mode" ref_value="1" />

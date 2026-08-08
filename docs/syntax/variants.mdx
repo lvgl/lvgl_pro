@@ -3,7 +3,7 @@ title: Variants
 description: Declare a Component's visual variations, like size or tone, and switch between them at runtime.
 ---
 
-Most Components exist in a few flavors: a button that is `small` or `large`, a badge that is `normal` or `danger`. A **variant** declares such a dimension once, and every instance can pick an option from it — statically, from a subject, or from C at runtime.
+Most Components exist in a few flavors: a button that is `small` or `large`, a badge that is `normal` or `danger`. A **variant** declares such a dimension once, and every instance can pick an option from it: statically, from a subject, or from C at runtime.
 
 ```xml
 <my_badge size="large" tone="danger"/>
@@ -25,9 +25,11 @@ A variant is a named list of options, declared in the Component's [`<api>`](./ap
 </component>
 ```
 
-- `name` - The name of the variant. It becomes a property of the Component.
+- `name` - The name of the variant. It becomes an attribute of the Component, set like a property where the Component is used.
 - `options` - Space separated list of the option names.
 - `default` - The option to use when the instance doesn't set one. If it's missing or unknown, the first option is used.
+
+A variant is not an [`<api>`](./api) property, so it can't be read with `$name`. Read it with [`<bind_style>`](./styles#style-binding) or in an expression, as shown below.
 
 Each variant is **per-instance reactive state**: ten instances of the same Component can be in ten different states, and switching one of them updates only that instance. This makes variants the Component-level counterpart of [subjects](./data-binding), which are global.
 
@@ -84,7 +86,7 @@ A variant can also be used in [`@{ }` bindings](./data-binding#expression-bindin
 <lv_label name="subtitle" text="Subtitle" hidden="@{size == small}"/>
 
 <!-- A variant and a global subject in one expression -->
-<lv_label text="@{mode == on ? 'n=' . subject_count : 'off'}"/>
+<lv_label text="@{tone == danger ? 'Alert: ' . subject_error_count : 'All good'}"/>
 ```
 
 Because `@{ }` re-evaluates on every change, switching the variant updates these attributes immediately. In a plain [`{ }` expression](./evaluate) a variant works too, but it's read only once, when the element is created.
@@ -111,27 +113,44 @@ Note that such a binding is evaluated in the **surrounding** element's scope: `s
 
 ### From C
 
+Each variant becomes an enum plus a typed setter and getter in the exported code:
+
+```c
+/* my_badge.h */
+typedef enum {
+    MY_BADGE_SIZE_SMALL = 0,
+    MY_BADGE_SIZE_LARGE = 1
+} my_badge_size_t;
+
+void my_badge_set_size(lv_obj_t * obj, my_badge_size_t size);
+my_badge_size_t my_badge_get_size(lv_obj_t * obj);
+```
+
+When the XML is loaded at runtime instead (in the Editor's preview, or with `lv_xml_create()`), select an option by name:
+
 ```c
 lv_xml_set_variant(badge, "size", "large");
 ```
 
-The variant is searched on the given widget and then up along its parents, so passing any widget inside a Component instance works too. Every `bind_style` and `@{ }` expression referencing the variant updates immediately.
+Both look the variant up on the given widget and then on its parents, so any widget inside a Component instance can be passed. Every `bind_style` and `@{ }` expression referencing the variant updates immediately.
+
+An option name `lv_xml_set_variant()` doesn't recognize is refused with a warning, and the variant keeps its current option. This also applies to a variant binding whose expression returns something that is not an option name.
 
 ## Name resolution
 
 Inside expressions a bare identifier is resolved in this order:
 
-1. **variant name**
-2. `<api>` property
-3. constant
-4. variant option name
-5. subject
-6. anything else is kept as a plain string (a font or image name, for example)
+1. **Variant name**
+2. **`<api>` property**
+3. **Constant**
+4. **Variant option name**
+5. **Subject**
+6. Anything else is kept as a plain string (a font or image name, for example)
 
 Two consequences worth remembering:
 
 - A variant **shadows** a property, constant, or subject of the same name. Avoid such collisions.
-- **Option names have to be unique across a Component's variants**, otherwise a bare option name in an expression is ambiguous — the first declared variant wins, and registration logs a warning. `<bind_style>` is exempt, since its `subject` attribute already tells which variant the `ref_value` belongs to.
+- **Option names have to be unique across a Component's variants**, otherwise a bare option name in an expression is ambiguous. The first declared variant wins, and registration logs a warning. `<bind_style>` is exempt, since its `subject` attribute already tells which variant the `ref_value` belongs to.
 
 <Callout type="warn">
 The order of `options` defines the integer value of each option in the exported C code. Reordering them is a breaking change for code that was already generated; adding new options at the end is safe.

@@ -79,7 +79,7 @@ By default the properties of a style are applied immediately when the widget's s
 
 `<transition>` supports these properties:
 
-- `props` - Space separated list of the style properties to animate. Use `remove` to delete a previously set transition.
+- `props` - Space separated list of the style properties to animate. Mandatory. Use `remove` to delete a previously set transition.
 - `duration` - Duration of the animation in milliseconds. Mandatory.
 - `delay` - Delay before the animation starts in milliseconds. Default is `0`.
 - `easing` - The animation path, e.g. `ease_out`. See [Easing](./animations#easing). Default is `linear`.
@@ -185,7 +185,7 @@ Instead of setting local style properties directly, you can bind them to subject
 </component>
 ```
 
-`<bind_style_prop>` copies a subject's value into the property as-is. To compute the value, write an [expression binding](./data-binding#expression-binding) on the local style property itself — selectors included:
+`<bind_style_prop>` copies a subject's value into the property as-is. To compute the value, write an [expression binding](./data-binding#expression-binding) on the local style property itself, selectors included:
 
 ```xml
 <lv_label style_text_color-pressed="@{subject_error_mode ? 0xff0000 : 0xaaaaaa}"/>

@@ -22,7 +22,7 @@ Expressions are useful whenever a value is *derived* from other values: a width 
 A few important properties to keep in mind:
 
 - **Creation-time only.** An expression is evaluated **once**, when the UI element is created. The result is then handed to the normal attribute parser exactly as if you had typed the computed value yourself.
-- **Not reactive.** A `{ }` expression does *not* react to changes. For a value that follows a subject or a variant at runtime, write the very same expression as a binding — `@{ }` instead of `{ }` — see [Expression binding](./data-binding#expression-binding).
+- **Not reactive.** A `{ }` expression does *not* react to changes. For a value that follows a subject or a variant at runtime, write the very same expression as a binding: `@{ }` instead of `{ }`. See [Expression binding](./data-binding#expression-binding).
 - **The result type is inferred from the terms.** You never declare the type — it follows from the literals and variables you use (see [Value types](#value-types)).
 
 <Callout type="info">
@@ -39,11 +39,11 @@ An expression is the whole attribute value, wrapped in a single pair of braces:
 
 Inside the braces you can use literals, operators, and **variable names**. A variable name is written as a **bare identifier** — without the `$` or `#` prefixes used elsewhere in XML. The name is resolved, in order, against:
 
-1. **Variants** declared in the element's [`<api>`](./api) — the currently selected option of that [variant](./variants).
-2. **Parameters** declared in the element's [`<api>`](./api) — the value comes from the instance (or the parameter's `default`), and the type from the declared `type`.
-3. **Constants** from [`<consts>`](./constants) — the type is inferred from the constant's value.
-4. **Variant option names** — an integer constant, the option's index in its variant.
-5. **Subjects** from `globals.xml` — their current value, read once (use `@{ }` to follow them).
+1. **Variants** declared in the element's [`<api>`](./api): the currently selected option of that [variant](./variants).
+2. **Parameters** declared in the element's [`<api>`](./api): the value comes from the instance (or the parameter's `default`), and the type from the declared `type`.
+3. **Constants** from [`<consts>`](./constants): the type is inferred from the constant's value.
+4. **Variant option names**: an integer constant, the option's index in its variant.
+5. **Subjects** from `globals.xml`: their current value, read once (use `@{ }` to follow them).
 6. **Other named items** the XML processor resolves later (a font, image, or screen name). These are passed through as plain strings.
 
 ```xml
@@ -118,7 +118,7 @@ The unary `!` accepts a number, bool, or string and returns a bool. An empty or 
 
 `&&` and `||` combine two conditions and return a bool. Their operands can be anything that has a truthiness: a bool, a number (non-zero is true), or a string (non-empty is true). A color has none, so it's a type error.
 
-Because `&` must be escaped in an XML attribute value, both operators also have a keyword spelling — `and` and `or` — which is usually the readable choice:
+Because `&` must be escaped in an XML attribute value, both operators also have a keyword spelling, `and` and `or`, which is usually the readable choice:
 
 ```xml
 <!-- These two are identical -->
@@ -126,14 +126,14 @@ Because `&` must be escaped in an XML attribute value, both operators also have 
 <lv_obj hidden="{temperature > 10 &amp;&amp; temperature &lt;= 30}"/>
 ```
 
-`&&` binds tighter than `||`, and both bind tighter than the ternary, so a range check reads naturally as a condition:
+`&&` binds tighter than `||`, and both bind tighter than concatenation and the ternary. So a combined condition can be written directly as a ternary condition, without parentheses:
 
 ```xml
 <lv_label text="{level > 80 or charging ? 'OK' : 'Low'}"/>
 ```
 
 <Callout type="warn">
-Both sides are **always evaluated** — there is no short-circuiting (same as with the two ternary branches). So `count != 0 and total / count > 5` still fails on a division by zero when `count` is 0.
+Both sides are **always evaluated**. There is no short-circuiting, just like with the two ternary branches. So `count != 0 and total / count > 5` still fails on a division by zero when `count` is 0.
 </Callout>
 
 `and`/`or` are keywords, so a constant, property, or subject cannot be named `and` or `or`. There is no `^^` operator.
@@ -185,8 +185,8 @@ An expression lives in an XML attribute value, where a few characters are reserv
 | Character | Write it as | Note |
 |---|---|---|
 | `<` | `&lt;` | Never allowed in an attribute value |
-| `&` | `&amp;` | So `&&` becomes `&amp;&amp;` — or use `and` |
-| `'` | `&apos;` | Only inside a `'…'` delimited value |
+| `&` | `&amp;` | So `&&` becomes `&amp;&amp;`. Or use `and` |
+| `'` | `&apos;` | Only if the attribute value itself is delimited by `'` |
 | `>` | `>` | Allowed as-is |
 
 ```xml
@@ -199,17 +199,22 @@ An expression lives in an XML attribute value, where a few characters are reserv
 <!-- ✅ or turn the comparison around and avoid the escape entirely -->
 <lv_obj hidden="{10 > count and locked}"/>
 ```
+
 ## Error handling
 
-If an expression is malformed — an unknown identifier, a type mismatch, a missing `)` or `:`, division by zero, and so on — evaluation fails. A warning describing the exact problem and the offending expression is logged, and the attribute is left unset.
+If an expression is malformed, for example a type mismatch, a missing `)` or `:`, or a division by zero, evaluation fails. A warning naming the exact problem and the offending expression is logged, and the raw `{ … }` text is left in the attribute, which the normal attribute parser then reads as `0` or as literal text.
 
 Common messages include:
 
-- *unknown identifier* — the name is not a const, or prop.
 - *the two ternary branches must have the same type*.
-- *`< <= > >=` need numeric operands* — use `==`/`!=` for strings, colors, and bools.
+- *the two sides of `==`/`!=` have different types*.
+- *`< <= > >=` need numeric operands (use `==`/`!=` for strings, colors, bools)*.
 - *arithmetic `+ - * / %` needs numeric operands*.
+- *`%` needs integer operands*.
+- *division or modulo by zero*.
 - *unexpected character (note: use `==` to compare, `.` to concatenate)*.
+
+A name that is not a variant, parameter, constant, variant option, or subject is **not** an error: it's kept as a plain string, as [Writing expressions](#writing-expressions) describes. A typo in a name therefore shows up as a type error, or later as a "not found" warning from whatever resolves the value (a font, an image, and so on).
 
 ## Examples
 

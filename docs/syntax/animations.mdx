@@ -70,6 +70,18 @@ Within each `timeline`, add individual `<animation>` elements to describe each s
 - `early_apply` - If `true`, the start value is applied immediately, even during the delay. Default is `false`.
 - `easing` - The animation path, e.g. `ease_out`. See below. Default is `linear`.
 
+`start`, `end`, `duration` and `delay` accept constants and [expressions](./evaluate#outside-the-view) of them:
+
+```xml
+<consts>
+  <int name="slide_ms" value="500"/>
+  <int name="slide_dist" value="30"/>
+</consts>
+
+<animation prop="translate_x" target="self" start="{-slide_dist}" end="0"
+           duration="{slide_ms}" delay="{slide_ms / 2}"/>
+```
+
 ### Easing
 
 The `easing` property tells how the value should progress from `start` to `end` during the `duration`. These built-in paths can be used:

@@ -97,7 +97,7 @@ Keep these limitations in mind:
 - A style can store only one transition. To use different durations for different properties, split them into two styles.
 - Only numeric (including opacity) and color properties can be animated. Properties referencing other data (`text_font`, `bg_image_src`, `bg_grad`, ...) and most enums and booleans (`flex_flow`, `text_align`, `clip_corner`, ...) are ignored with a warning.
 - The composite names are expanded, so e.g. `props="pad_all"` transitions all the four paddings.
-- Like in any other style property, `#constants` can be used, but `$api_properties` can't.
+- Like in any other style property, constants and `{ }` expressions of them can be used, but API `<prop>`s can't.
 
 ## Style Binding
 
@@ -211,9 +211,9 @@ In the values of style properties constants can be used as well.
 ```
 
 
-## Relation to API Properties
+## Relation to API `<prop>`s
 
-Since styles are initialized only once, it's not possible to pass API properties to them when the instances ar created. So this is invalid:
+Since styles are initialized only once, it's not possible to pass API `<prop>`s to them when the instances are created. So this is invalid:
 
 ```xml
 <component>
@@ -222,14 +222,28 @@ Since styles are initialized only once, it's not possible to pass API properties
     </api>
 
     <styles>
-       <!-- ❌ CAN'T DO THIS -->
+       <!-- ❌ CAN'T DO THIS. `{thickness}` doesn't work either: a style is
+            initialized before any instance exists, so a <prop> has no value -->
        <style name="style_main" border_width="$thickness"/>
     </styles>
     
 </component>
 ```
 
-However you can pass [`<api>`](./api) properties to local style properties:
+[Constants](./constants) do have a value there, so a style property can be computed from them with an [expression](./evaluate#outside-the-view):
+
+```xml
+<consts>
+    <int name="thin" value="2"/>
+</consts>
+
+<styles>
+    <!-- ✅ Constants and literals work -->
+    <style name="style_main" border_width="{thin * 2}"/>
+</styles>
+```
+
+And you can pass [`<api>`](./api) `<prop>`s to local style properties:
 
 ```xml
 <component>
@@ -238,9 +252,9 @@ However you can pass [`<api>`](./api) properties to local style properties:
         <prop name="bg_color" type="color"/>
     </api>
 
-    <view style_bg_color="$bg_color">
+    <view style_bg_color="{bg_color}">
        <!-- ✅ Passing api properties to local styles work -->
-       <lv_slider style_border_width-knob="$thickness"/>
+       <lv_slider style_border_width-knob="{thickness}"/>
     </view>
 </component>
 ```

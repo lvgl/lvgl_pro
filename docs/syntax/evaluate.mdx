@@ -81,6 +81,42 @@ Names are written as **bare identifiers**, without the `$` or `#` prefixes used 
 Note that `$` and `#` are not used in expressions to reference properties and constants.
 </Callout>
 
+`{ }` is the general way to reference anything by name. `$param_name` and `#const_name` are the legacy syntax for the same thing: they reference a single name, so they can't be part of a larger expression.
+
+### Outside the view
+
+`<consts>`, `<styles>`, `<subjects>`, `<animations>` and `<gradients>` are processed once, when the component is registered, before any instance of it exists. Expressions work there too, but they can only use **constants and literals**, with every operator, including `and` / `or` and the ternary:
+
+```xml
+<consts>
+  <int name="gap" value="8"/>
+  <!-- A constant computed from another one -->
+  <int name="gap_large" value="{gap * 3}"/>
+  <int name="anim_ms" value="150"/>
+  <bool name="dark_theme" value="true"/>
+</consts>
+
+<styles>
+  <style name="style_card" pad_all="{gap_large}" bg_color="{dark_theme ? 0x101010 : 0xf0f0f0}">
+    <transition props="bg_color" duration="{anim_ms * 2}"/>
+  </style>
+</styles>
+
+<subjects>
+  <int name="subject_page" value="{gap - 8}"/>
+</subjects>
+
+<animations>
+  <timeline name="timeline_load">
+    <animation prop="translate_y" target="self" start="{-gap_large}" end="0" duration="{anim_ms}"/>
+  </timeline>
+</animations>
+```
+
+A **property**, **subject** or **variant** has no value at that point: a property has no instance to take it from, and a subject or variant would have to be read again later, which these sections can't do. Using one is reported.
+
+An `if_target` block is filtered before its content is processed, so an expression there sees the constants of the current target.
+
 ## Value types
 
 Each term has a type, inferred from how it is written:

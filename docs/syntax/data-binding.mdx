@@ -54,6 +54,8 @@ Subjects can be created in `globals.xml` like this:
 As the example shows, a subject consists of a type, name, and initial
 value. Integer, string, and float types are supported.
 
+The initial value can be a constant or an [expression](./evaluate#outside-the-view) of constants, e.g. `<int name="battery_power" value="{full_charge / 2}"/>`.
+
 <Callout type="info">
 Float subjects require `LV_USE_FLOAT` to be enabled in `lv_conf.h`. Without it, the generated code fails to compile.
 </Callout>

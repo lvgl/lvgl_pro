@@ -29,7 +29,7 @@ A variant is a named list of options, declared in the Component's [`<api>`](./ap
 - `options` - Space separated list of the option names.
 - `default` - The option to use when the instance doesn't set one. If it's missing or unknown, the first option is used.
 
-A variant is not an [`<api>`](./api) property, so it can't be read with `$name`. Read it with [`<bind_style>`](./styles#style-binding) or in an expression, as shown below.
+A variant is not an [`<api>`](./api) `<prop>`, so `$variant_name` doesn't read it. Use `{variant_name}` or `@{variant_name}`, or [`<bind_style>`](./styles#style-binding), as shown below.
 
 Each variant is **per-instance reactive state**: ten instances of the same Component can be in ten different states, and switching one of them updates only that instance. This makes variants the Component-level counterpart of [subjects](./data-binding), which are global.
 

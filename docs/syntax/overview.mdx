@@ -15,9 +15,26 @@ LVGL Pro Editor uses standard XML syntax with special conventions for property n
   - Hex without prefix: `112233`
   - Short hex: `0x123`, `#123`, or `123` (all equivalent to `#112233`)
 - **LVGL API alignment**: Follow LVGL naming conventions (e.g., `align="center"`, `bg_color="0xff0000"`)
-- **Property references**: Use `$` prefix (e.g., `$param_name`)
-- **Constant references**: Use `#` prefix (e.g., `#const_name`)
-- [**Expressions**](./evaluate): Use `{ }`. When referencing properties or constants inside, no `$` or `#` is needed
+- **References**: Use `{ }` to reference anything by name: a `<prop>`, a constant, a subject, or a variant (e.g. `width="{card_width}"`). Inside the braces the name is written plain, and it can be part of a larger [expression](./evaluate)
+- **Legacy references**: `$param_name` for a `<prop>` and `#const_name` for a constant. Each takes a single name, so it can't be part of an expression
+
+## Names and Scopes
+
+Styles, constants, subjects, and animation timelines are all referenced **by name**. Every Component, Widget, and Screen has its own **local scope**, and `globals.xml` holds the **global scope**.
+
+A name is looked up in the local scope first, and in the global scope only after that. Two consequences:
+
+- Two Components can use the same local name freely. Their scopes never see each other.
+- A local name **hides** a global one. If a Component defines `style_card` and `globals.xml` defines `style_card` too, that Component always gets its own.
+
+Keeping names unique **within one scope is your responsibility**. Nothing reports a collision, so give every style, constant, subject, timeline, and widget `name="..."` a distinct name. Two cases make a collision easy to miss:
+
+- In an [expression](./evaluate) a bare name is resolved in a fixed order: variant, property, constant, variant option, subject. The first match wins, so a constant named `temperature` hides a subject of the same name.
+- A `name="..."` is found by searching the widget tree and the first match is used, so two widgets with the same name make animation targets and `lv_obj_find_by_name()` ambiguous.
+
+A prefix per kind keeps them apart: `style_card`, `subject_temperature`, `timeline_load`.
+
+Component, Widget, and Screen names come from their file names and are kept separately, so `h3.xml` never collides with a style, constant, or subject named `h3`.
 
 ## Property Names
 
@@ -84,7 +101,28 @@ The same names can also be used as `<prop>` types so a Component can accept an a
 | **subject** | A subject registered under `<subjects>` | `<prop name="subject" type="subject" default="subject_dimmer1"/>` |
 | **style** | A style defined in `<styles>` or `globals.xml` | `<prop name="extra_style" type="style"/>` |
 
-These props are typically forwarded into a child element with the `$` prefix, e.g. `<lv_image src="$src"/>` or `<lv_slider bind_value="$subject"/>`.
+These props are typically forwarded into a child element by name, e.g. `<lv_image src="{src}"/>` or `<lv_slider bind_value="{subject}"/>`.
+
+A **style** prop names a style of the Component that passes it, and it is resolved there:
+
+```xml
+<!-- card.xml -->
+<component>
+    <api>
+        <prop name="outline" type="style"/>
+    </api>
+    <view extends="lv_obj">
+        <style name="$outline"/>
+    </view>
+</component>
+
+<!-- The style belongs to the file that uses the card -->
+<card outline="style_focus_ring"/>
+```
+
+<Callout type="warn">
+A `name` is always a literal or a single `$param_name` / `#const_name` reference, never an expression. The Editor has to resolve it to check that the style, font, image, and so on exists.
+</Callout>
 
 **Automatic binding** occurs for:
 - Styles, fonts, images, animations

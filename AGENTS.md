@@ -62,15 +62,16 @@ my_project/
 </component>
 ```
 
-### The three sigils
+### The sigils
 
 | Prefix | Means | Example |
 | --- | --- | --- |
 | `$name` | An `<api>` property of this element | `<lv_label text="$title"/>` |
 | `#name` | A constant from `<consts>` or `globals.xml` | `pad="#space_md"` |
 | `{ ... }` | An expression, evaluated once at creation | `hidden="{!icon}"` |
+| `@{ ... }` | The same expression as a binding: re-evaluated whenever a subject or variant in it changes | `hidden="@{subject_count == 0}"` |
 
-Inside `{ }` you write bare identifiers, no `$` or `#`.
+Inside `{ }` and `@{ }` you write bare identifiers, no `$` or `#`.
 
 ### `view` and `extends`
 
@@ -123,6 +124,12 @@ Three ways, in order of preference:
 
 <!-- 3. Bound style, applied when a subject matches -->
 <bind_style name="style_dark" subject="subject_dark_theme_on" ref_value="1"/>
+
+<!-- 3b. Bound style, applied while an expression is true (no @{} wrapper) -->
+<bind_style name="style_warning" if="subject_temp > 10 and subject_temp &lt;= 30"/>
+
+<!-- 2b. Computed local style property -->
+<lv_label style_text_color-pressed="@{subject_error ? 0xf00 : 0xaaa}"/>
 ```
 
 Prefix style names with `style_`. Selectors combine parts and states with `|`.
@@ -139,6 +146,19 @@ But constants can be used:
 ```
 
 Pass the property to a *local* style property instead: `<lv_slider style_border_width-knob="$thickness"/>`.
+
+A `<transition>` child animates a style's properties on state changes. It animates *into* the state of the style holding it, so for both directions add one to the default style too:
+
+```xml
+<style name="style_card" bg_color="#color_panel">
+  <transition props="bg_color" duration="300" easing="ease_out"/>
+</style>
+<style name="style_card_pressed" bg_color="#color_panel_pressed">
+  <transition props="bg_color" duration="80"/>
+</style>
+```
+
+One transition per style, numeric and color properties only, and `<bind_style>` never animates.
 
 ## Data binding
 
@@ -161,6 +181,10 @@ Only `int`, `string` and `float` are supported.
 <!-- Conditional: child element binding -->
 <bind_flag_if_eq  subject="subject_mode" flag="hidden"  ref_value="0"/>
 <bind_state_if_gt subject="subject_temp" state="checked" ref_value="30"/>
+
+<!-- Generic: any widget attribute bound to any expression -->
+<lv_label text="@{'Battery: ' . subject_battery . '%'}"/>
+<lv_obj width="@{subject_columns * 100}" style_bg_color="@{subject_on ? 0x0f0 : 0x333}"/>
 ```
 
 `bind_flag_*` takes a `flag`, `bind_state_*` takes a `state`. Both come in `_eq`, `_not_eq`, `_gt`, `_ge`, `_lt`, `_le`. The `lv_obj-` prefix is optional.
@@ -168,7 +192,34 @@ Only `int`, `string` and `float` are supported.
 States: `default`, `checked`, `focused`, `focus_key`, `edited`, `hovered`, `pressed`, `scrolled`, `disabled`.
 Common flags: `hidden`, `clickable`, `checkable`, `scrollable`, `floating`, `ignore_layout`.
 
+`@{ }` is `{ }` that re-runs whenever a referenced subject or variant changes. It works on **widget** attributes (including `style_*` locals) and on a component instance's **variant** attributes. Not in `<styles>` (initialized once) and not on a component's own props or slots. It must reference at least one subject or variant, and inside it only `type="subject"` props may appear; other props are an error. A failed re-evaluation (e.g. `/0`) keeps the previous value.
+
+To give each instance its own data, declare `<prop name="temp" type="subject"/>` and pass a subject name at the call site: `<room_card temp="subject_kitchen"/>`.
+
 **Binding beats callbacks.** A radio group, a theme switch, or a value readout needs no C at all: write the subject with `subject_set_int_event`, read it with `bind_state_if_eq`.
+
+## Variants
+
+A component's named visual states, declared in `<api>`. Per-instance and reactive, so they are the component-scoped counterpart of global subjects.
+
+```xml
+<api>
+  <variants>
+    <variant name="size" options="small large" default="small"/>
+    <variant name="tone" options="normal danger" default="normal"/>
+  </variants>
+</api>
+<view extends="lv_button">
+  <style name="style_normal"/>
+  <bind_style name="style_danger" subject="tone" ref_value="danger"/>
+  <bind_style name="style_large"  subject="size" ref_value="large"/>
+  <lv_label text="Subtitle" hidden="@{size == small}"/>
+</view>
+```
+
+Read a variant with `<bind_style subject="<variant>" ref_value="<option>">` (preferred for anything visual) or in `@{ }`, where the variant name is the current option and an option name is a constant.
+
+Pick an option on the instance, `<my_badge size="large" tone="@{subject_level > 100 ? danger : normal}"/>`, or from C with the exported `my_badge_set_size(obj, MY_BADGE_SIZE_LARGE)` (`lv_xml_set_variant(obj, "size", "large")` at runtime). An unknown option on the instance falls back to `default` with a warning; in `lv_xml_set_variant()` it's refused and the option is left unchanged. Option names must be unique across a component's variants, a variant name shadows a same-named prop/const/subject, and reordering `options` breaks already exported C.
 
 ## Events
 
@@ -196,14 +247,16 @@ Evaluated **once at creation**, not reactive. For anything that changes at runti
 <lv_obj style_bg_color="{is_on ? 0x00ff00 : 0x333333}"/>
 ```
 
-`.` concatenates. Strings use single quotes. There is no `&&` or `||`, comparisons cannot be chained, and ternaries cannot be nested.
+`.` concatenates. Strings use single quotes. Comparisons cannot be chained (`a < b < c`) and ternaries cannot be nested.
+
+`&&` and `||` exist, but `&` and `<` must be XML-escaped in an attribute value, so prefer the `and` / `or` keywords: `hidden="{a > 10 and a &lt;= 30}"`. Both sides are always evaluated, there is no short-circuiting.
 
 ## Animations
 
 ```xml
 <animations>
   <timeline name="timeline_load">
-    <animation prop="translate_x" target="self" start="-30" end="0" duration="500"/>
+    <animation prop="translate_x" target="self" start="-30" end="0" duration="500" easing="ease_out"/>
     <animation prop="opa" target="label" start="0" end="255" duration="500" delay="200"/>
     <include_timeline target="icon" timeline="show_up" delay="300"/>
   </timeline>
@@ -211,6 +264,8 @@ Evaluated **once at creation**, not reactive. For anything that changes at runti
 ```
 
 `target="self"` is the `view`; anything else is matched against a child's `name`. Play with `<play_timeline_event>`.
+
+`easing` (on `<animation>` and `<transition>`) is `linear` (default), `ease_in`, `ease_out`, `ease_in_out`, `overshoot`, `bounce`, `step`, `bezier(x1 y1 x2 y2)` with `x` in `0..1`, or a callback registered with `lv_xml_register_easing_cb()`.
 
 ## Slots
 
@@ -237,7 +292,8 @@ The slot target is `<component_name-slot_name>`, and you can set normal object p
 
 - Inventing an attribute instead of reading `lvgl_widgets_xml/`.
 - Putting `$prop` into a `<style>`. Use a local style property.
-- Expecting `{ }` to update at runtime. It does not, that's data binding.
+- Expecting `{ }` to update at runtime. It does not, write `@{ }` for that.
+- Putting a non-subject `$prop` inside `@{ }`, or `@{ }` on a component's own prop or in a `<style>`. None of them can update.
 - Using `bind_state_*` with a `flag=` attribute, or `bind_flag_*` with `state=`.
 - `screen_load_event` on a screen that isn't `permanent="true"`.
 - Hard-coding `pad="8"` and `bg_color="0x1E232E"` when `#space_md` and `#color_dark_panel` already exist in `globals.xml`.

@@ -42,7 +42,7 @@ Constants can be used in:
 - Widget properties
 - Component properties
 
-Constant values are referenced using the `#` symbol followed by the constant name. For example:
+A constant is referenced by its name in `{ }`, where it can also be part of a larger [expression](./evaluate). This works in the `view` and in the `<consts>`, `<styles>`, `<subjects>`, `<animations>` and `<gradients>` sections alike:
 
 ```xml
 <components>
@@ -50,15 +50,20 @@ Constant values are referenced using the `#` symbol followed by the constant nam
     <color name="red" value="0xff0000" help="A pure red color"/>
     <int name="long" value="200" help="Just large number"/>
     <string name="greeting" value="Hi There!" help="Just be nice"/>
+
+    <!-- A constant computed from another one -->
+    <int name="half" value="{long / 2}"/>
   </consts>
-  
+
   <styles>
-    <style name="style_1" bg_color="#red"/>
+    <style name="style_1" bg_color="{red}" pad_all="{half}"/>
   </styles>
 
-  <view width="#long">
+  <view width="{long}">
     <style name="style_1"/>
-    <lv_label text="#greeting"/>
+    <lv_label text="{greeting}"/>
   </view>
 </components>
 ```
+
+`#const_name` is the legacy syntax for referencing a constant. It takes a single name only, so `{ }` is the recommended form.

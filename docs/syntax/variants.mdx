@@ -1,0 +1,131 @@
+---
+title: Variants
+description: Declare a Component's visual variations, like size or tone, and switch between them at runtime.
+---
+
+Most Components exist in a few flavors: a button that is `small` or `large`, a badge that is `normal` or `danger`. A **variant** declares these once, and every instance can pick an option from it: statically, from a subject, or at runtime from C.
+
+```xml
+<my_badge size="large" tone="danger"/>
+```
+
+## Overview
+
+A variant is a named list of options, declared in the Component's [`<api>`](./api):
+
+```xml
+<component>
+  <api>
+    <variants>
+      <variant name="size" options="small large" default="small"/>
+      <variant name="tone" options="normal danger" default="normal"/>
+    </variants>
+  </api>
+  ...
+</component>
+```
+
+- `name` - The name of the variant. It becomes an attribute of the Component, set like a property where the Component is used.
+- `options` - Space separated list of the option names.
+- `default` - The option to use when the instance doesn't set one. If it's missing or unknown, the first option is used.
+
+A variant is not an [`<api>`](./api) `<prop>`, so `$variant_name` doesn't read it. Use `{variant_name}` or `@{variant_name}`, or [`<bind_style>`](./styles#style-binding), as shown below.
+
+Each variant is **per-instance reactive state**: ten instances of the same Component can be in ten different states, and switching one of them updates only that instance. This makes variants the Component-level counterpart of [subjects](./data-binding), which are global.
+
+<Callout type="info">
+Variants are useful when a Component's *appearance* has a fixed set of named states. For free-form data (a temperature, a user name) use a subject as an [`<api>`](./api) property instead.
+</Callout>
+
+## Reacting to a variant
+
+A variant is meaningless until something reads it. There are two ways to do it.
+
+### Switching styles
+
+`<bind_style>` attaches a style while a condition is true, so a variant can select the styles of an option:
+
+```xml
+<component>
+  <api>
+    <variants>
+      <variant name="size" options="small large" default="small"/>
+      <variant name="tone" options="normal danger" default="normal"/>
+    </variants>
+  </api>
+
+  <styles>
+    <style name="style_normal" bg_color="0x0000ff"/>
+    <style name="style_danger" bg_color="0xff0000"/>
+    <style name="style_small" height="40"/>
+    <style name="style_large" height="100"/>
+  </styles>
+
+  <view extends="lv_button">
+    <style name="style_normal"/>
+    <bind_style name="style_danger" if="tone == danger"/>
+    <bind_style name="style_small" if="size == small"/>
+    <bind_style name="style_large" if="size == large"/>
+
+    <lv_label name="title" text="Title"/>
+  </view>
+</component>
+```
+
+This is the recommended way to express the **visual difference** between options. The styles stay declarative, and only the selection changes at runtime.
+
+### In expressions
+
+A variant can also be used in [`@{ }` bindings](./data-binding#generic-bindings-with-expressions), where:
+
+- a **variant name** reads the currently selected option,
+- an **option name** is a constant that can be compared against it.
+
+```xml
+<!-- Show the subtitle only in the large size -->
+<lv_label name="subtitle" text="Subtitle" hidden="@{size == small}"/>
+
+<!-- A variant and a global subject in one expression -->
+<lv_label text="@{tone == danger ? 'Alert: ' . subject_error_text : 'All good'}"/>
+```
+
+Because `@{ }` re-evaluates on every change, switching the variant updates these attributes immediately. In a plain [`{ }` expression](./evaluate) a variant works too, but it's read only once, when the element is created.
+
+## Selecting an option
+
+### On the instance
+
+A variant behaves like a normal property where the Component is used:
+
+```xml
+<my_badge size="large" tone="danger"/>
+```
+
+An unknown option name falls back to the variant's `default` and logs a warning.
+
+The value can also be a [binding](./data-binding#generic-bindings-with-expressions), so a variant can follow a subject:
+
+```xml
+<my_badge tone="@{subject_level > 100 ? danger : normal}"/>
+```
+
+Note that such a binding is evaluated in the **surrounding** element's scope: `subject_level` needs to be visible there, while `danger` and `normal` need to be options of `my_badge`'s `tone` variant.
+
+### From C
+
+Each variant becomes an enum plus a typed setter and getter in the exported code:
+
+```c
+/* my_badge.h */
+typedef enum {
+    MY_BADGE_SIZE_SMALL = 0,
+    MY_BADGE_SIZE_LARGE = 1
+} my_badge_size_t;
+
+void my_badge_set_size(lv_obj_t * obj, my_badge_size_t size);
+my_badge_size_t my_badge_get_size(lv_obj_t * obj);
+```
+
+When calling the `set` function, every style and data binding that reads the variant is re-evaluated automatically.
+
+The option order in `options` defines the value of each enum field, so reordering them changes the exported C API. Adding new options at the end is safe.

@@ -99,7 +99,7 @@ However, you can also define custom properties in the [`api` tag](./api). These 
   </api>
 
   <view extends="lv_button">
-    <lv_label text="$btn_text"/>
+    <lv_label text="{btn_text}"/>
   </view>
 </component>
 ```
@@ -160,7 +160,7 @@ The following examples demonstrate parameter passing, styles, and constants in C
   <view extends="lv_button" style_radius="0" style_bg_color="0xff0000">
     <style name="pressed_style" selector="pressed"/>
     <h3 text="Some text"/>
-    <h3 text="$btn_text" y="40"/>
+    <h3 text="{btn_text}" y="40"/>
   </view>
 </component>
 ```

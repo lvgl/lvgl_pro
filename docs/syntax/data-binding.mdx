@@ -6,12 +6,12 @@ faqs:
     answer: "Integer, string, and float types are supported for subjects. You define them in globals.xml using <int>, <string>, or <float> tags with a name and initial value."
   - question: "How do I update a subject value from my C code?"
     answer: "Use the generated setter functions in your application code. For a subject named 'battery_power', call set_battery_power(value) to update it. All widgets bound to that subject will automatically update."
-  - question: "What's the difference between simple and complex binding?"
-    answer: "Simple binding directly binds a subject to a widget property using attributes like bind_text or bind_value. Complex binding uses child elements to add conditional logic with multiple subjects and parameters, like bind_flag_if_eq or bind_state_if_gt."
+  - question: "What's the difference between a generic and a widget specific binding?"
+    answer: "A generic binding wraps an expression in @{ } and works on any widget property, with any number of subjects and variants. A widget specific binding is a dedicated bind_* property, like bind_text or bind_value, that takes a single subject without an expression and is often two-way."
   - question: "Can multiple widgets bind to the same subject?"
     answer: "Yes! Multiple widgets can bind to the same subject. When the subject's value changes (either from code or user interaction), all bound widgets automatically update to reflect the new value."
   - question: "How do I use data binding to show or hide a widget?"
-    answer: "Use complex binding with the 'hidden' flag. For example: <lv_obj-bind_flag_if_eq subject=\"some_value\" flag=\"hidden\" ref_value=\"0\"/> will hide the widget when some_value equals 0."
+    answer: "Bind the 'hidden' property to a condition. For example: <lv_obj hidden=\"@{some_subject == 0}\"/> will hide the widget when some_subject equals 0."
 ---
 
 ## Overview
@@ -23,7 +23,7 @@ application or the UI, and whose value can be bound to widget
 properties.
 
 <Callout type="info">
-Designing in Figma? You can bind layers to subjects directly in the plugin, no code required. See [Subjects & Data Binding in Figma Flow](../figma/subjects).
+Designing in Figma? You can bind layers to subjects directly in the Figma plugin, no code required. See [Subjects & Data Binding in Figma Flow](../figma/subjects).
 </Callout>
 
 For example, a `room1_temperature` subject's value can be set in the
@@ -31,8 +31,11 @@ application when the temperature is measured, and can be bound to a
 label like this:
 
 ```xml
-<lv_label bind_text="room1_temperature"/>
+<!-- Wrap subjects and expressions in @{ } to create a binding. -->
+<lv_label text="@{room1_temperature}"/>
 ```
+
+Some widgets also define dedicated `bind_*` properties, for example `<lv_slider bind_value="subject_1"/>`. They take a single subject without an expression, and most of them are two way. See [Widget specific bindings](#widget-specific-bindings).
 
 ## Defining subjects
 
@@ -51,11 +54,96 @@ Subjects can be created in `globals.xml` like this:
 As the example shows, a subject consists of a type, name, and initial
 value. Integer, string, and float types are supported.
 
+The initial value can be a constant or an [expression](./evaluate#outside-the-view) of constants, e.g. `<int name="battery_power" value="{full_charge / 2}"/>`.
+
 <Callout type="info">
 Float subjects require `LV_USE_FLOAT` to be enabled in `lv_conf.h`. Without it, the generated code fails to compile.
 </Callout>
 
-## Simple binding
+## Binding widget properties
+
+### Generic bindings with expressions
+
+The simplest way to create bindings is to wrap subjects and optional expressions into `@{ }`. For example:
+
+```xml
+<lv_label text="@{'My name is ' . subject_first_name . ' ' . subject_last_name}"
+          hidden="@{variant_mode == no_details}"/>
+```
+
+These expressions support
+
+- multiple subjects
+- variants
+- basic arithmetic, ternaries, and logic operators
+
+Inside `@{ }` names are written as **bare identifiers** (without `$` or `#`). The following symbols can be used:
+
+- **Subjects** - defined in `globals.xml`.
+- **Variants** - the Component's own reactive state. A variant name reads the currently selected option, and the option names can be used as constants. See [Variants](./variants).
+- **Constants** - they are inlined as literals.
+- **`type="subject"` properties** - see [Per-instance subjects](#per-instance-subjects) below.
+
+Properties (`<prop>`) of types other than subject cannot be used, because they exist only while the element is being created. Such a binding is skipped with a warning, but the widget is still created normally.
+
+`@{ }` works on the attributes of **widgets**: on the `<view>` itself, on any widget inside it, and on local style properties (`style_bg_color`, `style_pad_all-pressed`, ...). On a Component instance only its [variant](./variants) attributes can be bound.
+
+It can't be used in the `<styles>` section, as [styles](./styles) are initialized only once, and not on the attributes of a Component instance either:
+
+```xml
+<!-- ❌ A style is initialized once, so it can't be bound -->
+<style name="style_main" bg_color="@{subject_theme_color}"/>
+
+<!-- ❌ `title` is a property of the my_card Component -->
+<my_card title="@{subject_user_name}"/>
+
+<!-- ✅ Simple bindings to common widget properties -->
+<lv_slider hidden="@{!subject_settings_show}" disabled="@{!subject_settings_active}"/>
+
+<!-- ✅ `text` comes from `lv_label` that `h3` extends. 
+     It means a binding can be used on it.-->
+<h3 text="@{'Hi ' . subject_name}"/>
+
+<!-- ✅ `tone` is a variant of my_card -->
+<my_card tone="@{subject_alarm == 1 ? danger : normal}"/>
+
+<!-- ✅ `tone` is a variant of my_card -->
+<my_card tone="@{subject_alarm == 1 ? danger : normal}"/>
+
+<!-- ✅ Bind inside the Component, and pass the subject to it
+     (`title_subject` is a `type="subject"` property of my_card) -->
+<my_card title_subject="subject_user_name"/>
+```
+
+Learn more about the details on the [Evaluate expressions](./evaluate) page.
+
+### Per-instance subjects
+
+Referencing a subject by name in the component makes every instance follow the *same* subject. To let each instance follow a *different* one, declare a `type="subject"` property and pass the subject's name where the Component is used:
+
+```xml
+<!-- room_card.xml -->
+<component>
+  <api>
+    <prop name="temperature" type="subject"/>
+  </api>
+
+  <view extends="lv_obj">
+    <lv_label text="@{temperature . ' °C'}"/>
+    <lv_obj style_bg_color="@{temperature > 25 ? 0xff8800 : 0x0088ff}"/>
+  </view>
+</component>
+```
+
+```xml
+<!-- screen -->
+<room_card temperature="subject_kitchen_temp"/>
+<room_card temperature="subject_bedroom_temp"/>
+```
+
+The value has to name an existing subject. If it doesn't, the binding is skipped with a warning.
+
+### Widget specific bindings
 
 Some widgets (e.g., label, slider) support binding the subject's value
 directly to the widget. These bindings use attributes that start with
@@ -63,142 +151,60 @@ directly to the widget. These bindings use attributes that start with
 
 ```xml
 <lv_slider bind_value="some_subject"/>
-<lv_label bind_text="some_subject"/>
+<lv_label bind_text="some_subject" bind_text-fmt="%03d Volts"/>
 ```
 
-Once a binding is created, if the subject's value changes (e.g., by
-adjusting the slider), all bound widgets will be updated automatically.
+Most of these are two way bindings: the widget can set the subject and the subject can set the widget too. If the subject's value changes (for example because the user dragged the slider), every widget bound to it is updated automatically.
 
-## Complex binding
+`lv_label` also accepts a format string, which `@{ }` cannot do, so `bind_text` is the way to control the number of digits or decimals.
 
-In more complex cases---when a binding requires multiple
-parameters---the binding can be added as a child element of a widget.
-This allows binding multiple subjects with different parameters. For
-example:
+### Old syntax
+
+Before `@{ }` existed, flags and states were bound like this:
 
 ```xml
 <lv_label text="Hello world">
   <lv_obj-bind_flag_if_eq subject="subject1" flag="hidden" ref_value="10"/>
-  <lv_obj-bind_flag_if_gt subject="subject1" flag="clickable" ref_value="20"/>
+  <lv_obj-bind_state_if_gt subject="subject1" state="checked" ref_value="20"/>
 </lv_label>
 ```
 
-Explanation of complex bindings:
+`bind_flag_*` takes a `flag`, `bind_state_*` takes a `state`, and both come in `_eq`, `_not_eq`, `_gt`, `_ge`, `_lt`, and `_le` variants. The `lv_obj-` prefix is optional.
 
-| Binding Type | Condition | Description |
-| --- | --- | --- |
-| `bind_flag_if_eq` | Equals | Set a flag if the subject's value equals the reference value |
-| `bind_flag_if_not_eq` | Not equals | Set a flag if the subject's value does not equal the reference value |
-| `bind_flag_if_gt` | Greater than | Set a flag if the subject's value is greater than the reference value |
-| `bind_flag_if_ge` | Greater or equal | Set a flag if the subject's value is greater than or equal to the reference value |
-| `bind_flag_if_lt` | Less than | Set a flag if the subject's value is less than the reference value |
-| `bind_flag_if_le` | Less or equal | Set a flag if the subject's value is less than or equal to the reference value |
-| `bind_state_if_eq` | Equals | Set a state if the subject's value equals the reference value |
-| `bind_state_if_not_eq` | Not equals | Set a state if the subject's value does not equal the reference value |
-| `bind_state_if_gt` | Greater than | Set a state if the subject's value is greater than the reference value |
-| `bind_state_if_ge` | Greater or equal | Set a state if the subject's value is greater than or equal to the reference value |
-| `bind_state_if_lt` | Less than | Set a state if the subject's value is less than the reference value |
-| `bind_state_if_le` | Less or equal | Set a state if the subject's value is less than or equal to the reference value |
-
-Note: The `lv_obj-` prefix can be omitted. For example, you can simply
-write `bind_state_if_gt` instead.
-
-### Choosing the right attribute
-
-`bind_flag_*` and `bind_state_*` look almost identical but expect a different attribute and a different set of values:
-
-- `bind_flag_*` toggles a widget **flag** — use the `flag` attribute.
-- `bind_state_*` toggles a widget **state** — use the `state` attribute.
+These still work, but `@{ }` is more powerful and replaces all of them, so it's recommended to migrate:
 
 ```xml
-<!-- Set the "hidden" flag while subject_mode != 1 -->
-<lv_obj>
-  <bind_flag_if_not_eq subject="subject_mode" flag="hidden" ref_value="1"/>
-</lv_obj>
-
-<!-- Enter the "checked" state while subject_lamp == 2 -->
-<lv_obj>
-  <bind_state_if_eq subject="subject_lamp" state="checked" ref_value="2"/>
-</lv_obj>
+<lv_label text="Hello world" hidden="@{subject1 == 10}" checked="@{subject1 > 20}"/>
 ```
 
-### Valid state values
+## Variants
 
-These match LVGL's `LV_STATE_*` constants. The same names are used as style selectors and in `bind_state_*` bindings.
+A subject is global, but a Component often needs reactive state of its own, for example whether a badge is `normal` or `danger`. That is what a [variant](./variants) is: a named list of options declared in the Component's `<api>`, with its own value in every instance.
 
-| Value | Meaning |
-|---|---|
-| `default` | Widget is in its base state |
-| `checked` | Widget is toggled on (e.g. a checkable button) |
-| `focused` | Widget has focus from any input device |
-| `focus_key` | Widget has focus from a keypad/encoder |
-| `edited` | Widget is being edited (e.g. encoder edit mode) |
-| `hovered` | Pointer is over the widget |
-| `pressed` | Widget is currently pressed |
-| `scrolled` | Widget is being scrolled |
-| `disabled` | Widget rejects input |
-
-### Valid flag values
-
-The most commonly bound `LV_OBJ_FLAG_*` flags, exposed by the same names without the prefix:
-
-| Value | Effect when set |
-|---|---|
-| `hidden` | Widget is not drawn and ignores input |
-| `clickable` | Widget can be pressed/clicked |
-| `checkable` | Click toggles the `checked` state |
-| `scrollable` | Widget can be scrolled |
-| `scroll_on_focus` | Parent scrolls so the focused child is visible |
-| `floating` | Excluded from the parent's layout |
-| `ignore_layout` | Ignored by the parent's layout |
-
-For the full list of states and flags see LVGL's [Object basics](https://lvgl.io/docs/open/intro/basics) and [Style states](https://lvgl.io/docs/open/main-modules/style#states) reference.
-
-## Selection groups via a shared subject
-
-A common pattern is to express "exactly one of these widgets is active" with a single integer subject and one `ref_value` per option. Combining `subject_set_int_event` (writes the subject on click) with `bind_state_if_eq` (reads it to drive the `checked` state) produces a runtime-driven radio group with no application code.
+Variants are used in bindings exactly like subjects:
 
 ```xml
-<!-- globals.xml -->
-<subjects>
-  <int name="subject_lamp" value="0"/>
-</subjects>
+<!-- Inside the Component that declares the `tone` variant -->
+<bind_style name="style_danger" if="tone == danger"/>
+<lv_label text="@{tone == danger ? 'Alert' : 'All good'}"/>
 ```
 
 ```xml
-<!-- lamp_cell.xml — one cell instantiated per option -->
-<component>
-  <api>
-    <prop name="label" type="string" default="Lamp"/>
-    <prop name="ref_value" type="int" default="0"/>
-  </api>
-
-  <view extends="lv_obj" width="content" height="content" flex_flow="column">
-    <lv_label text="$label"/>
-
-    <lv_button style_bg_color-checked="0xed7d31">
-      <lv_image src="img_lightbulb"/>
-
-      <!-- Read: this button is checked iff subject_lamp == ref_value -->
-      <bind_state_if_eq subject="subject_lamp" state="checked" ref_value="$ref_value"/>
-
-      <!-- Write: clicking this button stores ref_value in subject_lamp -->
-      <subject_set_int_event subject="subject_lamp" trigger="clicked" value="$ref_value"/>
-    </lv_button>
-  </view>
-</component>
+<!-- Where the Component is used, the variant can follow a subject -->
+<my_badge tone="@{subject_alarm == 1 ? danger : normal}"/>
 ```
+
+Inside an expression a variant name reads the currently selected option, and an option name acts as a constant. See [Variants](./variants) for declaring them and for setting an option from C.
+
+## Bind styles
+
+To switch a whole style at runtime, use [`<bind_style>`](./styles#style-binding), which takes the same kind of expression in its `if` attribute:
 
 ```xml
-<!-- screen — each cell carries a unique ref_value -->
-<lamp_cell label="Lamp 1" ref_value="0"/>
-<lamp_cell label="Lamp 2" ref_value="1"/>
-<lamp_cell label="Lamp 3" ref_value="2"/>
+<bind_style name="style_warning" if="subject_temp > 10 and subject_temp &lt;= 30"/>
 ```
 
-When the user taps a cell, `subject_lamp` is written to that cell's `ref_value`; every other cell's `bind_state_if_eq` re-evaluates and drops out of the `checked` state automatically. The same subject can also be set from C (`lv_subject_set_int(&subject_lamp, …)`) to drive the selection from application code.
-
-## Subject Related Events
+## Subject related events
 
 Besides binding properties to subjects, it's also possible to add
 events that change the value of a subject on pressed, release, etc.

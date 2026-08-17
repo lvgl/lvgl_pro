@@ -1,4 +1,4 @@
-# lvgl_app2pro
+# LVGL App to LVGL Pro Converter
 
 Turn an **existing LVGL application** into an **LVGL Pro XML project**.
 

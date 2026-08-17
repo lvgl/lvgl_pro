@@ -691,6 +691,9 @@ def dump():
     out = {"lvgl_version": probe_version(),
            "capabilities": capabilities, "displays": displays,
            "images": _exported,
+           # Where the PNGs went, so converting this dump again from anywhere
+           # else can still find them. The entries themselves are bare names.
+           "image_dir": os.path.abspath(image_dir) if image_dir else None,
            "theme_reference": theme_reference,
            "class_defaults": class_defaults}
     with open(os.environ["LVGL_APP2PRO_OUT"], "w") as f:

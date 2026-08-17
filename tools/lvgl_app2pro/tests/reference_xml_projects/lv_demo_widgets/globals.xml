@@ -1,7 +1,9 @@
 <globals>
 	<consts>
 		<color name="color_009688" value="0x009688" />
+		<color name="color_1976d2" value="0x1976d2" />
 		<color name="color_2196f3" value="0x2196f3" />
+		<color name="color_388e3c" value="0x388e3c" />
 		<color name="color_4caf50" value="0x4caf50" />
 		<color name="color_607d8b" value="0x607d8b" />
 		<color name="color_9c27b0" value="0x9c27b0" />

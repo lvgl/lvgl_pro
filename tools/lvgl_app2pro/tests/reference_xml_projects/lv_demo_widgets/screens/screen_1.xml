@@ -13,10 +13,10 @@
 		<style name="style_19" length="#num_10" />
 		<style name="style_2" text_color="#color_2196f3" />
 		<style name="style_20" length="#num_20" />
-		<style name="style_21" arc_color="0x4caf50" arc_width="8" />
-		<style name="style_22" line_color="0x388e3c" line_width="4" />
-		<style name="style_23" arc_color="0x2196f3" arc_width="8" />
-		<style name="style_24" line_color="0x1976d2" line_width="4" />
+		<style name="style_21" arc_color="#color_4caf50" arc_width="8" />
+		<style name="style_22" line_color="#color_388e3c" line_width="#num_4" />
+		<style name="style_23" arc_color="#color_2196f3" arc_width="8" />
+		<style name="style_24" line_color="#color_1976d2" line_width="#num_4" />
 		<style name="style_25" grid_column_dsc_array="content 5 1fr 1fr" grid_row_dsc_array="1fr 1fr" height="content" layout="grid" width="100%" />
 		<style name="style_26" align="bottom_right" bg_color="#color_ffffff" bg_opa="255" flex_cross_place="center" flex_flow="row" flex_main_place="space_evenly" flex_track_place="center" height="49" layout="flex" pad_right="45" radius="#num_32767" width="49" />
 		<style name="style_27" bg_color="#color_ffffff" />

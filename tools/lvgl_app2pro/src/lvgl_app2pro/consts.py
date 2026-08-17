@@ -41,11 +41,22 @@ class Consts:
             yield "int", name, value
 
 
+def _node_slots(node):
+    """Every style slot on a node, its scale sections included.
+
+    A section's styles are slots like any other - they just hang off the section
+    rather than the node, and would otherwise miss out on consts.
+    """
+    yield from node.slots
+    for section in node.sections:
+        yield from section["styles"].values()
+
+
 def _all_style_values(screens):
     """Every style property value in the project, with repeats."""
     for screen in screens:
         for node in walk(screen.root):
-            for slot in node.slots:
+            for slot in _node_slots(node):
                 for _, value in slot.props:
                     yield value
 
@@ -73,18 +84,23 @@ def collect(screens, number_repeats=3):
     return consts
 
 
+def _substituted(slot, consts):
+    return type(slot)(
+        selector=slot.selector,
+        props=tuple((name, consts.substitute(value)) for name, value in slot.props),
+        is_local=slot.is_local,
+    )
+
+
 def apply(screens, consts):
     """Rewrite every style value that has a const into a `#name` reference."""
     if consts.empty:
         return
     for screen in screens:
         for node in walk(screen.root):
-            node.slots = [
-                type(slot)(
-                    selector=slot.selector,
-                    props=tuple((name, consts.substitute(value))
-                                for name, value in slot.props),
-                    is_local=slot.is_local,
-                )
-                for slot in node.slots
-            ]
+            node.slots = [_substituted(slot, consts) for slot in node.slots]
+            for section in node.sections:
+                section["styles"] = {
+                    key: _substituted(slot, consts)
+                    for key, slot in section["styles"].items()
+                }

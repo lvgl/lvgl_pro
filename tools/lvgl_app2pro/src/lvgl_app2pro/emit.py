@@ -6,7 +6,6 @@ state needs a named <style> because an attribute has nowhere to put a selector.
 """
 
 import re
-from collections import Counter
 
 from .mapping import DIRECT_ONLY, DIRECT_PROPS, PSEUDO_TAGS, WIDGET_TAGS
 from .model import SECTION_STYLES, walk
@@ -312,11 +311,18 @@ def write_project(out_dir, dump, screens, book, consts, report, lvgl_version):
         render_globals(book, consts, report, dump.get("images") or {}))
     written.append(globals_file)
 
-    used = Counter()
+    # Every emitted name, not a count per base: sanitising can make two screens
+    # share a base, and a suffixed name can collide with a real one, so
+    # "screen_1" twice plus a screen actually called "screen_1_2" must still be
+    # three files.
+    taken = set()
     for screen in screens:
         safe = _safe_name(screen.name, report)
-        used[safe] += 1
-        name = safe if used[safe] == 1 else f"{safe}_{used[safe]}"
+        name, attempt = safe, 1
+        while name in taken:
+            attempt += 1
+            name = f"{safe}_{attempt}"
+        taken.add(name)
         path = out_dir / "screens" / f"{name}.xml"
         path.write_text(render_screen(screen, book, report))
         written.append(path)

@@ -140,7 +140,8 @@ def make_prop_filter(report):
                 # A symbol is text drawn from a font, not an image, so there is
                 # no image to declare and no name to point at. Writing the glyph
                 # itself produces C that does not compile.
-                notes.append(f"{xml_name} was the symbol U+{ord(value[0]):04X}: "
+                glyph = next(c for c in value if ord(c) in _SYMBOL_RANGE)
+                notes.append(f"{xml_name} was the symbol U+{ord(glyph):04X}: "
                              "set it as an image or a label here")
                 return None
             report.images.add(value)

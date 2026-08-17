@@ -63,27 +63,33 @@ FALLBACK_VERSION = "9.5.0"
 def _restore_images(dump, image_dir):
     """Put the images a saved dump rebuilt into this run's project.
 
-    A dump records where each image was written, which is the previous run's
-    output directory. Converting the same dump into a new --out would reference
-    images that are not there.
+    The dump names each image but keeps the pixels in the directory the original
+    run wrote them to, so converting the same dump into a different --out has to
+    copy them across or globals.xml points at files that are not there.
     """
+    source_dir = dump.get("image_dir")
+    if not source_dir:
+        return
+    source_dir = Path(source_dir)
     missing = []
     for info in (dump.get("images") or {}).values():
-        source = info.get("file")
-        if not source:
+        name = info.get("file")
+        if not name:
             continue
-        source = Path(source)
-        target = image_dir / source.name
-        if target.exists():
-            continue
+        source = source_dir / name
+        target = image_dir / name
         if not source.exists():
-            missing.append(source.name)
+            missing.append(name)
+            continue
+        # Overwrite: a name that is already there may be another conversion's
+        # image, and the dump's own pixels are the right ones.
+        if source.resolve() == target.resolve():
             continue
         image_dir.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(source, target)
     if missing:
-        print(f"WARNING: {len(missing)} image(s) the dump rebuilt are gone: "
-              f"{', '.join(sorted(missing))}", file=sys.stderr)
+        print(f"WARNING: {len(missing)} image(s) the dump rebuilt are no longer "
+              f"in {source_dir}: {', '.join(sorted(missing))}", file=sys.stderr)
 
 
 def report_capabilities(capabilities):

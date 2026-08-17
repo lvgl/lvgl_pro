@@ -12,11 +12,10 @@ writes the equivalent XML as a ready to use LVGL Pro project.
 Below is each tab of `lv_demo_widgets` as the C application draws it, next to the
 converted XML project. Nothing was edited by hand in between. 
 
-| Original (C) | Converted (XML) |
-| --- | --- |
-| <img src="tests/reference_screenshots/lv_demo_widgets/app_tab0.png" width="400" alt="Profile tab in the C application"> | <img src="tests/reference_screenshots/lv_demo_widgets/xml_tab0.png" width="400" alt="Profile tab converted to XML"> |
-| <img src="tests/reference_screenshots/lv_demo_widgets/app_tab1.png" width="400" alt="Analytics tab in the C application"> | <img src="tests/reference_screenshots/lv_demo_widgets/xml_tab1.png" width="400" alt="Analytics tab converted to XML"> |
-| <img src="tests/reference_screenshots/lv_demo_widgets/app_tab2.png" width="400" alt="Shop tab in the C application"> | <img src="tests/reference_screenshots/lv_demo_widgets/xml_tab2.png" width="400" alt="Shop tab converted to XML"> |
+| | Profile | Analytics | Shop |
+| --- | --- | --- | --- |
+| Original (C) | <img src="screenshots/app_tab0.png" width="200" alt="Profile tab in the C application"> | <img src="screenshots/app_tab1.png" width="200" alt="Analytics tab in the C application"> | <img src="screenshots/app_tab2.png" width="200" alt="Shop tab in the C application"> |
+| Converted (XML) | <img src="screenshots/xml_tab0.png" width="200" alt="Profile tab converted to XML"> | <img src="screenshots/xml_tab1.png" width="200" alt="Analytics tab converted to XML"> | <img src="screenshots/xml_tab2.png" width="200" alt="Shop tab converted to XML"> |
 
 All the layouts, properties, and images were extracted and converted correctly, but 
 the fonts and custom functions/callbacks needs to be added by the user.

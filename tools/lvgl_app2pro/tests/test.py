@@ -99,7 +99,9 @@ APPS = [
         source=ROOT / "examples" / "lv_demo_widgets",
         tabs=3,
         # Tall enough to show every tab whole: the longest is Analytics, whose
-        # content needs 1045px under a 75px tab bar.
+        # content needs 1045px under a 75px tab bar. The screenshots in the
+        # README are a separate 800x600 set, made by hand - see its Contributing
+        # section.
         args="--width 800 --height 1150",
         # The demo uses fonts the converter cannot declare and animates a
         # needle, so its two renders are genuinely different pictures.

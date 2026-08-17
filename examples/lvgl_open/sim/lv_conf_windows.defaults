@@ -37,6 +37,7 @@ LV_FS_STDIO_LETTER      'A'
 # Asset decoders commonly produced by the Editor.
 LV_USE_LODEPNG          1
 LV_USE_TINY_TTF         1
+LV_TINY_TTF_FILE_SUPPORT 1
 
 # Widgets used by the examples that are off by default in lv_conf_template.h.
 LV_USE_QRCODE           1
@@ -51,3 +52,6 @@ LV_USE_PERF_MONITOR     0
 
 # lv_obj name is required by the C code exported from the Editor.
 LV_USE_OBJ_NAME         1
+
+# To support translations
+LV_USE_TRANSLATION 1

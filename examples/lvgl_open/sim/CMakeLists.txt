@@ -39,6 +39,10 @@ set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
 #  Fetch LVGL
 # ---------------------------------------------------------------------------
 include(FetchContent)
+# Silence the FetchContent_Populate deprecation warning (CMake >= 3.30).
+if(POLICY CMP0169)
+  cmake_policy(SET CMP0169 OLD)
+endif()
 FetchContent_Declare(
   lvgl
   GIT_REPOSITORY https://github.com/lvgl/lvgl.git
@@ -47,7 +51,7 @@ FetchContent_Declare(
 
 FetchContent_GetProperties(lvgl)
 if(NOT lvgl_POPULATED)
-  message(STATUS "Fetching LVGL ${LVGL_VERSION} ...")
+  message(STATUS "Fetching LVGL ${LVGL_VERSION}. It might take a few minutes ...")
   FetchContent_Populate(lvgl)
 endif()
 
@@ -138,7 +142,10 @@ file(READ "${UI_DIR}/project.xml" _project_xml)
 string(REGEX MATCH "<project[^>]*name=\"([^\"]+)\"" _ "${_project_xml}")
 set(UI_NAME "${CMAKE_MATCH_1}")
 if(NOT UI_NAME)
-  message(FATAL_ERROR "Could not read the project name from ${UI_DIR}/project.xml")
+  # Fall back to the parent folder's name when project.xml has no usable name.
+  get_filename_component(UI_NAME "${UI_DIR}" ABSOLUTE)
+  get_filename_component(UI_NAME "${UI_NAME}" NAME)
+  message(STATUS "No project name in ${UI_DIR}/project.xml; using folder name \"${UI_NAME}\"")
 endif()
 string(REGEX MATCH "<display[^>]*width=\"([0-9]+)\"[^>]*height=\"([0-9]+)\"" _ "${_project_xml}")
 set(UI_WIDTH "${CMAKE_MATCH_1}")

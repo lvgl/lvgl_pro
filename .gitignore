@@ -2,5 +2,16 @@
 ***/*project_local.xml
 **/*.log
 **/preview-build/
-**/preview-bin/.hash
+**/preview-bin/
 **/__pycache__/**
+
+# A template is instantiated into a folder whose name becomes the project name,
+# so a committed export would bake in the wrong one. The simulator sources are
+# hand-written, not generated, and stay.
+templates/**/*.c
+templates/**/*.h
+!templates/*/sim/*.c
+!templates/*/sim/*.h
+templates/*/CMakeLists.txt
+templates/*/file_list_gen.cmake
+templates/*/component_lib_list_gen.cmake

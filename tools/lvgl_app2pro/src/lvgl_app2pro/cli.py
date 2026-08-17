@@ -76,6 +76,12 @@ def _restore_images(dump, image_dir):
         name = info.get("file")
         if not name:
             continue
+        # A dump is a file the caller can edit, and the name goes straight into
+        # a path. Anything but a bare file name could write outside the project.
+        if name != Path(name).name:
+            print(f"WARNING: ignoring image {name!r} in the dump: it is not a "
+                  f"plain file name", file=sys.stderr)
+            continue
         source = source_dir / name
         target = image_dir / name
         if not source.exists():

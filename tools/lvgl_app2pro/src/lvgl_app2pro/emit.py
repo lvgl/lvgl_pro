@@ -8,7 +8,7 @@ state needs a named <style> because an attribute has nowhere to put a selector.
 from collections import Counter
 
 from .mapping import DIRECT_ONLY, DIRECT_PROPS, PSEUDO_TAGS, WIDGET_TAGS
-from .model import walk
+from .model import SECTION_STYLES, walk
 
 INDENT = "\t"
 
@@ -81,6 +81,14 @@ def plan_styles(screens):
                 else:
                     name = book.register(slot, screen.name)
                     node.style_refs.append((name, slot.selector))
+            # A scale section's styles have no attribute form, so they are
+            # always named. Registering them here keeps one style definition
+            # even when several sections share it.
+            for section in node.sections:
+                section["names"] = {
+                    key: book.register(slot, screen.name)
+                    for key, slot in section["styles"].items()
+                }
     return book
 
 
@@ -149,6 +157,12 @@ def render_node(node, report, depth):
             ("axis", one["axis"] if one["axis"] != "primary_y" else None),
             ("values", " ".join(str(v) for v in one["values"]) or None),
         ]) + " />")
+    for one in node.sections:
+        names = one.get("names") or {}
+        body.append(f"{pad}{INDENT}<lv_scale-section" + attrs(
+            [("min_value", one["min_value"]), ("max_value", one["max_value"])]
+            + [(key, names.get(key)) for key in SECTION_STYLES]
+        ) + " />")
     body += render_events(node, report, pad + INDENT)
     body += [line for child in node.children
              for line in render_node(child, report, depth + 1)]

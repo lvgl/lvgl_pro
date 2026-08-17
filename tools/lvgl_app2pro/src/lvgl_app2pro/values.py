@@ -128,8 +128,14 @@ def make_prop_filter(report):
                              "globals.xml and set the font here")
                 return None
         elif xml_name in ("bg_image_src", "arc_image_src", "bitmap_mask_src"):
-            if not is_symbol(value):
-                report.images.add(value)
+            if is_symbol(value):
+                # A symbol is text drawn from a font, not an image, so there is
+                # no image to declare and no name to point at. Writing the glyph
+                # itself produces C that does not compile.
+                notes.append(f"{xml_name} was the symbol U+{ord(value[0]):04X}: "
+                             "set it as an image or a label here")
+                return None
+            report.images.add(value)
 
         return (xml_name, value)
 

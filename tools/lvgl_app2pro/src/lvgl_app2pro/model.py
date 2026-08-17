@@ -12,6 +12,7 @@ from .mapping import (
     FLAGS_DEFAULT_ON,
     SELF_MANAGED,
     SKIP_CLASSES,
+    removal_selector,
     selector_to_xml,
 )
 
@@ -59,6 +60,7 @@ class Node:
     cls: str
     name: "str | None"
     coords: dict
+    addr: "str | None"
     flags: frozenset
     states: frozenset
     theme_styled: bool
@@ -67,6 +69,7 @@ class Node:
     widget_data: dict
     events: list = field(default_factory=list)
     series: list = field(default_factory=list)
+    sections: list = field(default_factory=list)
     children: list = field(default_factory=list)
     notes: list = field(default_factory=list)
     # Both filled by resolve_flags().
@@ -112,6 +115,33 @@ def _slots(raw_node, prop_filter, notes):
     return out, themed, frozenset(selectors)
 
 
+#: The section styles XML can set, in the order they read best.
+SECTION_STYLES = ("style_main", "style_indicator", "style_items")
+
+
+def _sections(raw_node, prop_filter, notes):
+    """A scale's sections, with each style turned into a slot to be named.
+
+    The styles are shared lv_style_t the application owns, so they can only
+    become named styles - there is no attribute form for a section's style.
+    """
+    out = []
+    for raw in raw_node.get("sections") or []:
+        section = {"min_value": raw.get("min_value"),
+                   "max_value": raw.get("max_value"), "styles": {}}
+        for key in SECTION_STYLES:
+            props = []
+            for prop in raw.get(key) or []:
+                pair = prop_filter(prop, notes)
+                if pair:
+                    props.append(pair)
+            if props:
+                section["styles"][key] = StyleSlot(
+                    selector="", props=tuple(sorted(props)), is_local=False)
+        out.append(section)
+    return out
+
+
 def build_node(raw, prop_filter, widget_filter):
     """Turn one dumped object, and its children, into Nodes."""
     notes = []
@@ -121,6 +151,7 @@ def build_node(raw, prop_filter, widget_filter):
         cls=cls,
         name=raw.get("name"),
         coords=raw.get("coords") or {},
+        addr=raw.get("addr"),
         # The plugin reports flag names uppercase (HIDDEN), XML wants hidden.
         flags=frozenset(_flag_name(f) for f in raw.get("flags_list") or []),
         states=frozenset(
@@ -133,6 +164,7 @@ def build_node(raw, prop_filter, widget_filter):
         widget_data=widget_filter(cls, raw.get("widget_data") or {}, notes),
         events=list(raw.get("events") or []),
         series=list(raw.get("series") or []),
+        sections=_sections(raw, prop_filter, notes),
         notes=notes,
     )
     if cls not in SELF_MANAGED:
@@ -165,6 +197,11 @@ def _tabview(node):
 
     bar, content = node.children[0], node.children[1]
 
+    # The constructor makes exactly those two. Anything after them the app
+    # added to the tabview itself - the widgets demo floats its colour changer
+    # there - and it stays a child of the tabview, after the tabs.
+    own = node.children[2:]
+
     # lv_tabview_add_tab() appends one button per tab, in order, so the first
     # N children of the bar are the tabs. Anything after them the app put
     # there itself - the widgets demo adds a logo and two labels - and it has
@@ -188,6 +225,7 @@ def _tabview(node):
     if bar.slots or extras:
         tabs.append(Node(
             cls="lv_tabview-tab_bar", name=None, coords=bar.coords,
+            addr=bar.addr,
             flags=bar.flags, states=bar.states, theme_styled=bar.theme_styled,
             theme_selectors=bar.theme_selectors, slots=bar.slots,
             widget_data={}, events=bar.events, children=extras,
@@ -199,6 +237,7 @@ def _tabview(node):
             cls="lv_tabview-tab",
             name=page.name,
             coords=page.coords,
+            addr=page.addr,
             flags=page.flags,
             states=page.states,
             theme_styled=page.theme_styled,
@@ -210,7 +249,7 @@ def _tabview(node):
             children=page.children,
             notes=page.notes,
         ))
-    node.children = tabs
+    node.children = tabs + own
 
 
 # Widgets whose runtime children do not match their XML children.
@@ -295,7 +334,44 @@ def _writable_flags(attrs, schema, report):
     return kept
 
 
-def resolve_flags(screens, class_defaults=None, schema=None, report=None):
+def _resolve_style_removal(node, theme_reference, theme_styles_this_class):
+    """Decide what the application removed, by asking what it was given.
+
+    Nothing in LVGL records that a style was removed: lv_obj_remove_style()
+    just compacts the object's style list. So the only way to see a removal is
+    to know what the theme put there, and the theme's answer depends on the
+    individual object - its parent, and sometimes its index among the parent's
+    children - not on its class. `theme_reference` holds that per-object answer,
+    read back from the theme itself.
+
+    "Has no theme styles" is not a usable test on its own, in either direction.
+    The theme gives some objects nothing at all, so an empty list is not a
+    removal; and a partial removal leaves other parts behind, so a non-empty
+    list is not proof that nothing was removed. The widgets demo has both: the
+    content area of an lv_tabview is styled with nothing, and its chart wrappers
+    remove only LV_PART_MAIN and keep the scrollbar the theme gave them.
+    """
+    given = theme_reference.get(node.addr) if theme_reference else None
+    if given is None:
+        # No per-object answer available: fall back to the weaker test, which
+        # can at least see a wholesale removal.
+        node.remove_style_all = theme_styles_this_class and not node.theme_styled
+        return
+
+    given = set(given)
+    removed = given - set(node.theme_selectors)
+    if not removed:
+        return
+    if removed == given:
+        node.remove_style_all = True
+    else:
+        node.removed_selectors = sorted(
+            {removal_selector(sel) for sel in removed}
+        )
+
+
+def resolve_flags(screens, class_defaults=None, schema=None, report=None,
+                  theme_reference=None):
     """Decide which object flags are worth writing, per widget class.
 
     Every widget class sets its own defaults in its constructor, so there is no
@@ -346,23 +422,14 @@ def resolve_flags(screens, class_defaults=None, schema=None, report=None):
             else:
                 attrs = _flag_attrs(node.flags)
             node.flag_attrs = _writable_flags(attrs, schema, report)
-            node.remove_style_all = (
-                theme_styles_this_class and not node.theme_styled
-            )
-            if reference and not node.remove_style_all:
-                # A part the theme gives this class but the object does not
-                # have means lv_obj_remove_style(obj, NULL, part) was called.
-                expected = {
-                    selector_to_xml(sel)
-                    for sel in reference.get("theme_selectors") or []
-                }
-                have = {selector_to_xml(sel) for sel in node.theme_selectors}
-                node.removed_selectors = sorted(s for s in expected - have if s)
+            _resolve_style_removal(node, theme_reference, theme_styles_this_class)
 
     for screen in screens:
         root = screen.root
         root.flag_attrs = _writable_flags(
             _flag_attrs(root.flags, parented=False), schema, report)
+        # A screen gets theme styles of its own, and can have them removed.
+        _resolve_style_removal(root, theme_reference, False)
 
 
 def _default_name(display, index, layer):

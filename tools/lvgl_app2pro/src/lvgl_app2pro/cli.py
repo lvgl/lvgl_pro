@@ -89,7 +89,7 @@ def convert(dump, out_dir, lvgl_version, number_consts, include_layers=False,
         consts_mod.apply(screens, found)
 
     model.resolve_flags(screens, dump.get("class_defaults"),
-                        report.schema, report)
+                        report.schema, report, dump.get("theme_reference"))
     book = emit.plan_styles(screens)
     written = emit.write_project(
         Path(out_dir), dump, screens, book, found, report, lvgl_version

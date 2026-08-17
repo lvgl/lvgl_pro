@@ -178,6 +178,16 @@ def style_prop_to_xml(runtime_name: str) -> "str | None":
     return xml_name if xml_name in DIRECT_ONLY else None
 
 
+def removal_selector(selector_str: str) -> str:
+    """The selector for `<remove_style selector=>`, which cannot be empty.
+
+    On a style it is right to leave main+default unwritten, because that is what
+    XML assumes. A removal has to name what it removes, so the main part is
+    spelled out; `lv_xml_style_part_to_enum()` maps "main" to LV_PART_MAIN.
+    """
+    return selector_to_xml(selector_str) or "main"
+
+
 def selector_to_xml(selector_str: str) -> str:
     """Turn the plugin's "PART|STATE" into an XML selector, "" for main+default."""
     part, _, state = selector_str.partition("|")

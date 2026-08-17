@@ -356,6 +356,34 @@ def _extra_flags(obj):
     return []
 
 
+def _theme_reference(obj, out):
+    """What the theme gives each object, asked of the theme itself.
+
+    Which styles a theme applies is not a function of the widget class alone.
+    lv_theme_default's theme_apply() reads the parent and even the child index:
+    an lv_obj directly under an lv_tabview gets nothing at all if it is child 1,
+    white background and focus styles if it is child 0, and padding plus a
+    scrollbar if its grandparent is the tabview. A stand-in object created
+    somewhere else would answer for a different object.
+
+    So ask about this object. lv_theme_apply() removes every style and re-adds
+    what the theme would give it, which is exactly the reference needed to see
+    what the application removed. It is destructive, so this runs last, once
+    everything else has been read.
+    """
+    try:
+        for child in obj.children:
+            _theme_reference(child, out)
+        gdb.parse_and_eval(f"lv_theme_apply({int(obj)})")
+        out[hex(int(obj))] = sorted({
+            slot.selector_str for slot in obj.obj_styles
+            if "theme" in (slot.flags_str or "")
+        })
+    except (gdb.error, gdb.MemoryError):
+        pass
+    return out
+
+
 def _flag_map(obj, out):
     """Map object address -> extra flags, for the whole subtree."""
     try:
@@ -431,6 +459,62 @@ def _chart_series(obj):
         return series
     except (gdb.error, gdb.MemoryError, IndexError):
         return []
+
+
+def _scale_sections(obj):
+    """The sections of a scale: their range and the three styles they apply.
+
+    Like a chart's series, a section is an entry in a linked list rather than a
+    child object. Its styles are plain lv_style_t the application owns and never
+    attaches to any widget, so they have to be read out of the style itself.
+    """
+    from lvglgdb.lvgl.misc.lv_ll import LVList
+    from lvglgdb.lvgl.misc.lv_style import LVStyle
+
+    try:
+        scale = gdb.Value(int(obj)).cast(gdb.lookup_type("lv_scale_t").pointer())
+        sections = []
+        for entry in LVList(scale["section_ll"], "lv_scale_section_t"):
+            section = {
+                "min_value": int(entry["range_min"]),
+                "max_value": int(entry["range_max"]),
+            }
+            for name, field in (("style_main", "main_style"),
+                                ("style_indicator", "indicator_style"),
+                                ("style_items", "items_style")):
+                try:
+                    style = entry[field]
+                    if not int(style):
+                        continue
+                    props = [s.as_dict() for s in LVStyle(style).snapshots()]
+                    if props:
+                        section[name] = props
+                except (gdb.error, gdb.MemoryError):
+                    continue
+            sections.append(section)
+        return sections
+    except (gdb.error, gdb.MemoryError, IndexError):
+        return []
+
+
+def _section_map(obj, out):
+    """Map object address -> scale sections, for the whole subtree."""
+    try:
+        if obj.class_name == "lv_scale":
+            sections = _scale_sections(obj)
+            if sections:
+                out[hex(int(obj))] = sections
+        for child in obj.children:
+            _section_map(child, out)
+    except (gdb.error, gdb.MemoryError):
+        pass
+    return out
+
+
+def _apply_sections(node, mapping):
+    node["sections"] = mapping.get(node.get("addr")) or []
+    for child in node.get("children") or []:
+        _apply_sections(child, mapping)
 
 
 def _roller_options(obj):
@@ -596,6 +680,7 @@ def dump():
             _apply_flags(node, _flag_map(screen, {}))
             _apply_events(node, _event_map(screen, {}))
             _apply_series(node, _series_map(screen, {}))
+            _apply_sections(node, _section_map(screen, {}))
             node["layer"] = layers.get(int(screen))
             screens.append(node)
         info["index"] = index
@@ -607,10 +692,20 @@ def dump():
         for screen in display["screens"]:
             _classes_in(screen, classes)
 
+    class_defaults = probe_class_defaults(classes)
+
+    # Destructive, so it comes after every read above: re-theming an object
+    # throws away the styles the application gave it.
+    theme_reference = {}
+    for display in lvgl.displays():
+        for screen in display.screens:
+            _theme_reference(screen, theme_reference)
+
     out = {"lvgl_version": probe_version(),
            "capabilities": capabilities, "displays": displays,
            "images": _exported,
-           "class_defaults": probe_class_defaults(classes)}
+           "theme_reference": theme_reference,
+           "class_defaults": class_defaults}
     with open(os.environ["LVGL_APP2PRO_OUT"], "w") as f:
         json.dump(out, f)
 

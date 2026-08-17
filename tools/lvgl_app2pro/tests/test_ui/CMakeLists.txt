@@ -11,6 +11,8 @@ if(NOT DEFINED LV_CONF_DIR)
 endif()
 
 set(CMAKE_C_STANDARD 99)
+# -g3 so the converter can read LVGL's version macros, the same as the example.
+add_compile_options(-g3)
 find_package(SDL2 REQUIRED SDL2)
 
 add_subdirectory(${LVGL_DIR} lvgl_build)

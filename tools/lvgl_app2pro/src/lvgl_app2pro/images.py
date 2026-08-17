@@ -122,6 +122,12 @@ def to_rgba(cf, width, height, stride, data):
                 b, g, r, a = data[i], data[i + 1], data[i + 2], data[i + 3]
                 if cf == XRGB8888:
                     a = 255
+                elif cf == ARGB8888_PREMULTIPLIED and 0 < a < 255:
+                    # PNG stores straight alpha, so undo the multiplication or
+                    # every semi-transparent pixel comes out too dark.
+                    b = min(255, b * 255 // a)
+                    g = min(255, g * 255 // a)
+                    r = min(255, r * 255 // a)
             elif cf == L8:
                 v = data[row + x]
                 r = g = b = v

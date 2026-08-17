@@ -10,6 +10,9 @@ from pathlib import Path
 
 DUMP_SCRIPT = Path(__file__).with_name("gdb_dump.py")
 
+#: What lvglgdb requires of the interpreter GDB embeds.
+PLUGIN_PYTHON = (3, 10)
+
 
 class DumpError(RuntimeError):
     pass
@@ -63,6 +66,16 @@ def check_gdb(gdb_binary="gdb"):
         raise DumpError(
             f"{gdb_binary} has no Python support, so the LVGL plugin cannot load"
         )
+    # The plugin needs 3.10, and finding that out during the dump costs a build
+    # and a run first.
+    try:
+        if tuple(int(p) for p in version.split(".")) < PLUGIN_PYTHON:
+            raise DumpError(
+                f"{gdb_binary} embeds Python {version}, and the LVGL plugin needs "
+                f"{'.'.join(str(p) for p in PLUGIN_PYTHON)} or newer"
+            )
+    except ValueError:
+        pass
     return version
 
 

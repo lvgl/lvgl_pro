@@ -67,6 +67,7 @@
         <enum name="refresh" value="37" help="Refresh requested"/>
         <enum name="ready" value="38" help="Process finished"/>
         <enum name="cancel" value="39" help="Process cancelled"/>
+        <enum name="state_changed" value="40" help="State changed"/>
         <enum name="create" value="41" help="Object created"/>
         <enum name="delete" value="42" help="Object deleted"/>
         <enum name="child_changed" value="43" help="Child changed"/>
@@ -92,21 +93,9 @@
         <enum name="flush_finish" value="63" help="Flush done"/>
         <enum name="flush_wait_start" value="64" help="Flush wait start"/>
         <enum name="flush_wait_finish" value="65" help="Flush wait done"/>
+        <enum name="update_layout_completed" value="66" help="Layout update finished"/>
         <enum name="vsync" value="67" help="Vertical sync"/>
-        <!-- Display/driver -->
-        <enum name="invalidate_area" value="54" help="Area invalidated"/>
-        <enum name="resolution_changed" value="55" help="Resolution changed"/>
-        <enum name="color_format_changed" value="56" help="Color format changed"/>
-        <enum name="refr_request" value="57" help="Refresh requested"/>
-        <enum name="refr_start" value="58" help="Refresh start"/>
-        <enum name="refr_ready" value="59" help="Refresh done"/>
-        <enum name="render_start" value="60" help="Render start"/>
-        <enum name="render_ready" value="61" help="Render done"/>
-        <enum name="flush_start" value="62" help="Flush start"/>
-        <enum name="flush_finish" value="63" help="Flush done"/>
-        <enum name="flush_wait_start" value="64" help="Flush wait start"/>
-        <enum name="flush_wait_finish" value="65" help="Flush wait done"/>
-        <enum name="vsync" value="67" help="Vertical sync"/>
+        <enum name="vsync_request" value="68" help="Vertical sync requested"/>
     </enumdef>
 
     <enumdef name="lv_align" help="Object alignment">

@@ -5,6 +5,7 @@ style properties take a `style_` prefix inline, and anything with a part or a
 state needs a named <style> because an attribute has nowhere to put a selector.
 """
 
+import re
 from collections import Counter
 
 from .mapping import DIRECT_ONLY, DIRECT_PROPS, PSEUDO_TAGS, WIDGET_TAGS
@@ -218,15 +219,23 @@ def render_screen(screen, book, report):
 
 
 def render_project(displays, lvgl_version):
-    display = (displays or [{}])[0]
-    width = display.get("hor_res", 0)
-    height = display.get("ver_res", 0)
+    """project.xml, with one target per display the application has.
+
+    The screens of every display are converted, so declaring only the first
+    display would leave the rest sized by a resolution that is not theirs.
+    """
+    targets = []
+    for index, display in enumerate(displays or [{}]):
+        targets += [
+            f'{INDENT * 2}<target name="target{index + 1}">',
+            f'{INDENT * 3}<display width="{display.get("hor_res", 0)}"'
+            f' height="{display.get("ver_res", 0)}" />',
+            f"{INDENT * 2}</target>",
+        ]
     return (
         f'<project lvgl_version="{lvgl_version}">\n'
         f"{INDENT}<targets>\n"
-        f'{INDENT * 2}<target name="target1">\n'
-        f'{INDENT * 3}<display width="{width}" height="{height}" />\n'
-        f"{INDENT * 2}</target>\n"
+        + "\n".join(targets) + "\n"
         f"{INDENT}</targets>\n"
         "</project>\n"
     )
@@ -269,6 +278,22 @@ def render_globals(book, consts, report, exported):
     return "\n".join(lines) + "\n"
 
 
+def _safe_name(name, report):
+    """A screen name that is safe as a file name and as a component name.
+
+    The name comes from lv_obj_set_name(), so it is whatever the application
+    passed: it can contain a path separator, which would write outside
+    screens/, and Pro uses the file name as the component's name, which has to
+    be an identifier.
+    """
+    safe = re.sub(r"[^A-Za-z0-9_]", "_", name or "").strip("_") or "screen"
+    if safe[0].isdigit():
+        safe = f"screen_{safe}"
+    if safe != name:
+        report.warn(f'the screen named "{name}" was written as "{safe}"')
+    return safe
+
+
 def write_project(out_dir, dump, screens, book, consts, report, lvgl_version):
     """Write the whole project and return the list of files written."""
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -289,8 +314,9 @@ def write_project(out_dir, dump, screens, book, consts, report, lvgl_version):
 
     used = Counter()
     for screen in screens:
-        used[screen.name] += 1
-        name = screen.name if used[screen.name] == 1 else f"{screen.name}_{used[screen.name]}"
+        safe = _safe_name(screen.name, report)
+        used[safe] += 1
+        name = safe if used[safe] == 1 else f"{safe}_{used[safe]}"
         path = out_dir / "screens" / f"{name}.xml"
         path.write_text(render_screen(screen, book, report))
         written.append(path)

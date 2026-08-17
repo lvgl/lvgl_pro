@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import shutil
 import sys
 from pathlib import Path
 
@@ -15,7 +16,9 @@ def build_parser():
         prog="lvgl_app2pro",
         description="Convert a running LVGL Open app into an LVGL Pro XML project.",
     )
-    parser.add_argument("app", help="the compiled application to inspect")
+    parser.add_argument("app", nargs="?",
+                        help="the compiled application to inspect, unless "
+                             "--from-dump is given")
     parser.add_argument("-o", "--out", default="pro_project",
                         help="output directory (default: pro_project)")
     parser.add_argument("--lvgl", metavar="DIR",
@@ -30,8 +33,10 @@ def build_parser():
     parser.add_argument("--gdb", default="gdb", help="the GDB binary to use")
     parser.add_argument("--timeout", type=int, default=300,
                         help="seconds to wait for the app to reach the stop point")
-    parser.add_argument("--lvgl-version", default="9.5.0",
-                        help="value for project.xml's lvgl_version")
+    parser.add_argument("--lvgl-version", metavar="X.Y.Z",
+                        help="override the LVGL version read out of the "
+                             "application, which decides the schemas to convert "
+                             "against and what project.xml declares")
     parser.add_argument("--number-consts", type=int, default=3, metavar="N",
                         help="make a const of any number used N or more times, "
                              "0 to keep numbers inline (default: 3)")
@@ -49,6 +54,36 @@ def build_parser():
     parser.add_argument("--from-dump", metavar="FILE",
                         help="convert a saved JSON dump instead of running the app")
     return parser
+
+
+#: Only used when the application does not report its own LVGL version.
+FALLBACK_VERSION = "9.5.0"
+
+
+def _restore_images(dump, image_dir):
+    """Put the images a saved dump rebuilt into this run's project.
+
+    A dump records where each image was written, which is the previous run's
+    output directory. Converting the same dump into a new --out would reference
+    images that are not there.
+    """
+    missing = []
+    for info in (dump.get("images") or {}).values():
+        source = info.get("file")
+        if not source:
+            continue
+        source = Path(source)
+        target = image_dir / source.name
+        if target.exists():
+            continue
+        if not source.exists():
+            missing.append(source.name)
+            continue
+        image_dir.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, target)
+    if missing:
+        print(f"WARNING: {len(missing)} image(s) the dump rebuilt are gone: "
+              f"{', '.join(sorted(missing))}", file=sys.stderr)
 
 
 def report_capabilities(capabilities):
@@ -103,6 +138,9 @@ def main(argv=None):
     try:
         if args.from_dump:
             dump = json.loads(Path(args.from_dump).read_text())
+            _restore_images(dump, Path(args.out) / "images")
+        elif not args.app:
+            raise DumpError("give an application to convert, or --from-dump FILE")
         else:
             gdb_python = check_gdb(args.gdb)
             print(f"GDB Python: {gdb_python}")
@@ -117,8 +155,18 @@ def main(argv=None):
         for problem in report_capabilities(dump.get("capabilities") or {}):
             print(f"WARNING: {problem}", file=sys.stderr)
 
+        # The application's own LVGL version decides which schemas describe it.
+        # --lvgl-version is the override, not the source.
+        version = args.lvgl_version or dump.get("lvgl_version")
+        if not version:
+            version = FALLBACK_VERSION
+            print(f"WARNING: the application does not say which LVGL it was built "
+                  f"against; converting as {version}", file=sys.stderr)
+        print(f"LVGL version: {version}"
+              + ("" if args.lvgl_version is None else " (from --lvgl-version)"))
+
         screens, found, book, report, written = convert(
-            dump, args.out, args.lvgl_version, args.number_consts,
+            dump, args.out, version, args.number_consts,
             args.include_layers, args.schema, args.keep_fonts,
         )
     except DumpError as e:

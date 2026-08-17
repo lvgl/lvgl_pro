@@ -73,31 +73,18 @@ def _load_plugin():
 def probe_version():
     """The target's LVGL version, as "9.6.0-dev", or None.
 
-    lv_version_major() and friends are `static inline`, so whether each one
-    survives into the binary depends on the build; the version macros cover
-    what is missing but need -g3.
+    Asking the target which LVGL it is belongs to the plugin, which tries the
+    version functions, the version macros and lv_version.h in turn.
     """
-    def read(expression):
-        try:
-            return gdb.parse_and_eval(expression)
-        except gdb.error:
-            return None
-
-    parts = []
-    for name in ("major", "minor", "patch"):
-        value = read(f"lv_version_{name}()")
-        if value is None:
-            value = read(f"LVGL_VERSION_{name.upper()}")
-        if value is None:
-            return None
-        parts.append(int(value))
-
-    info = read("lv_version_info()") or read("LVGL_VERSION_INFO")
     try:
-        suffix = f"-{info.string()}" if info is not None and info.string() else ""
-    except gdb.error:
-        suffix = ""
-    return "%d.%d.%d%s" % (*parts, suffix)
+        from lvglgdb.cmds.misc.lv_version import lvgl_version
+    except ImportError:
+        return None
+
+    major, minor, patch, info = lvgl_version()
+    if major is None or minor is None or patch is None:
+        return None
+    return "%d.%d.%d%s" % (major, minor, patch, f"-{info}" if info else "")
 
 
 def probe_capabilities():

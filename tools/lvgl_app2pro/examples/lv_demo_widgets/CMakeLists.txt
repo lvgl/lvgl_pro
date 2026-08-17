@@ -14,12 +14,15 @@ project(lv_demo_widgets C CXX)
 
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_CXX_STANDARD 17)
-# The converter reads the application's debug info, so -g is not optional -
-# and it has to reach LVGL itself, not just this file.
+# The converter reads the application's debug info, so debug symbols are not
+# optional - and they have to reach LVGL itself, not just this file. -g3 rather
+# than -g because LVGL's version is only readable through its macros:
+# lv_version_major() is `static inline` and is not emitted unless something
+# calls it.
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug CACHE STRING "build type" FORCE)
 endif()
-add_compile_options(-g)
+add_compile_options(-g3)
 
 # Build-time defaults; the binary also takes --width, --height and --tab.
 set(DEMO_WIDTH  800 CACHE STRING "window width")

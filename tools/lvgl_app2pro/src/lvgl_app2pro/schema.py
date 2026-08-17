@@ -74,13 +74,29 @@ def parse_version(text):
     return tuple(int(part or 0) for part in match.groups())
 
 
+_ENUM_WITH_VALUE = re.compile(r'<enum\s[^>]*\bvalue="')
+
+
+def has_enum_values(directory):
+    """Whether a schema set carries the runtime value on its enum members.
+
+    A set without them is no use here: every enum a widget declares would have
+    to be guessed from declaration order, which is wrong for the bitmasks and
+    for anything with an alias. The v9.4.0 set shipped in this repository is
+    like that, so it is not offered.
+    """
+    return any(_ENUM_WITH_VALUE.search(p.read_text(errors="ignore"))
+               for p in Path(directory).glob("*.xml"))
+
+
 def available_versions():
-    """The schema sets shipped here, oldest first."""
+    """The schema sets shipped here that can actually be used, oldest first."""
     if not SCHEMA_ROOT.is_dir():
         return []
     found = [(parse_version(p.name), p)
              for p in SCHEMA_ROOT.iterdir() if p.is_dir()]
-    return [(version, path) for version, path in sorted(found) if version]
+    return [(version, path) for version, path in sorted(found)
+            if version and has_enum_values(path)]
 
 
 def find_schema_dir(version=None):

@@ -18,6 +18,11 @@ from .mapping import (
 
 _ENUM_NAME = re.compile(r"^[A-Z][A-Z0-9_]*(\|[A-Z][A-Z0-9_]*)*$")
 
+#: Style properties whose value is a C symbol rather than an enum member.
+_SYMBOL_VALUED = frozenset({
+    "text_font", "bg_image_src", "arc_image_src", "bitmap_mask_src",
+})
+
 # LV_SYMBOL_* are glyphs in a font's private use area, not image files.
 _SYMBOL_RANGE = range(0xE000, 0xF900)
 
@@ -114,7 +119,10 @@ def make_prop_filter(report):
                 notes.append(f"unknown layout id {value}")
                 return None
             value = name
-        elif _ENUM_NAME.match(value):
+        elif _ENUM_NAME.match(value) and xml_name not in _SYMBOL_VALUED:
+            # An all-caps value is an enum member to lowercase - unless the
+            # property holds a C symbol, where the name has to survive exactly
+            # as the image was exported and declared.
             value = value.lower()
 
         if xml_name == "text_font":

@@ -117,6 +117,12 @@ def run(command, **kwargs):
     if done.returncode != 0:
         raise Failure(f"{' '.join(str(c) for c in command)}\n"
                       f"{done.stdout[-4000:]}{done.stderr[-4000:]}")
+    # A warning on stderr means the converter could not do something. Hiding it
+    # on success is how a broken version probe went unnoticed. GDB's own
+    # complaints about system libraries it has no debug info for are not that.
+    for line in done.stderr.splitlines():
+        if line.strip() and ".gnu_debugaltlink" not in line:
+            print(f"  {line}")
     return done.stdout
 
 

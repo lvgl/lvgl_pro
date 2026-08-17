@@ -4,10 +4,20 @@ Every table here is copied from a source of truth in the LVGL repos, named
 above the table. When the two disagree, the runtime is right.
 """
 
-# Style properties the XML engine accepts, from lv_xml_style_prop_to_enum()
-# in lv_xml/src/lv_xml_base_types.c. The XML name is the lowercased runtime
-# name for all 105, so this set doubles as the whitelist: a property missing
-# here cannot be expressed in XML and has to be reported instead of guessed.
+# Style properties the XML engine accepts, from lv_xml_style_prop_to_enum() in
+# lv_xml/src/lv_xml_base_types.c. The XML name is the lowercased runtime name,
+# so this set doubles as the whitelist: a property missing here cannot be
+# expressed in XML and has to be reported instead of guessed.
+#
+# It has to be the runtime's list, not the schema's. The schema declares seven
+# setter shorthands - pad_all, pad_hor, pad_ver, pad_gap, margin_all,
+# margin_hor, margin_ver - that lv_xml_style_prop_to_enum() rejects, and omits
+# two, bg_grad and color_filter_opa, that it accepts. To re-read it from a
+# checkout of lv_xml:
+#
+#   sed -n '/lv_style_prop_t lv_xml_style_prop_to_enum/,/^}/p' \
+#       src/lv_xml_base_types.c | grep -o 'lv_streq(txt, "[a-z_0-9]*"' \
+#       | cut -d'"' -f2 | sort
 STYLE_PROPS = frozenset("""
 width min_width max_width height min_height max_height length radius
 radial_offset align
@@ -15,13 +25,18 @@ pad_left pad_right pad_top pad_bottom pad_row pad_column pad_radial
 margin_left margin_right margin_top margin_bottom
 base_dir clip_corner
 bg_opa bg_color bg_grad_dir bg_grad_color bg_main_stop bg_grad_stop bg_grad
-bg_image_src bg_image_tiled bg_image_recolor bg_image_recolor_opa
+bg_main_opa bg_grad_opa
+bg_image_src bg_image_tiled bg_image_recolor bg_image_recolor_opa bg_image_opa
 border_color border_width border_opa border_side border_post
 outline_color outline_width outline_opa outline_pad
 shadow_width shadow_color shadow_offset_x shadow_offset_y shadow_spread
 shadow_opa
+drop_shadow_color drop_shadow_offset_x drop_shadow_offset_y drop_shadow_opa
+drop_shadow_radius drop_shadow_quality
+blur_radius blur_quality blur_backdrop
 text_color text_font text_opa text_align text_letter_space text_line_space
 text_decor
+text_outline_stroke_color text_outline_stroke_opa text_outline_stroke_width
 image_opa image_recolor image_recolor_opa
 line_color line_opa line_width line_dash_width line_dash_gap line_rounded
 arc_color arc_opa arc_width arc_rounded arc_image_src

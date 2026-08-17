@@ -91,8 +91,8 @@ run on your PC.
 First, you will need this repository to run the converter:
 
 ```bash
-git clone https://github.com/lvgl/lvgl_editor
-cd lvgl_editor/tools/lvgl_app2pro
+git clone https://github.com/lvgl/lvgl_pro
+cd lvgl_pro/tools/lvgl_app2pro
 ```
 
 Next, you will need a compiled LVGL application. Make sure it's compiled with no

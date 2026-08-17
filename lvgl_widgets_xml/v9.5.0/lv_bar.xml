@@ -6,15 +6,15 @@ Example
 <widget>
     <api>
         <enumdef name="lv_bar_mode" help="How the bar grows with values">
-            <enum name="normal" help="Make the bar grow from minimum toward maximum"/>
-            <enum name="symmetrical" help="Make the bar grow symmetrically from the midpoint"/>
-            <enum name="range" help="Make the bar show values between start and end points"/>
+            <enum name="normal" value="0" help="Make the bar grow from minimum toward maximum"/>
+            <enum name="symmetrical" value="1" help="Make the bar grow symmetrically from the midpoint"/>
+            <enum name="range" value="2" help="Make the bar show values between start and end points"/>
         </enumdef>
 
         <enumdef name="lv_bar_orientation" help="How the bar is oriented">
-            <enum name="auto" help="Choose orientation automatically based on widget size"/>
-            <enum name="horizontal" help="Make the bar fill left to right"/>
-            <enum name="vertical" help="Make the bar fill bottom to top"/>
+            <enum name="auto" value="0" help="Choose orientation automatically based on widget size"/>
+            <enum name="horizontal" value="1" help="Make the bar fill left to right"/>
+            <enum name="vertical" value="2" help="Make the bar fill bottom to top"/>
         </enumdef>
 
         <prop name="min_value" type="int" help="Set the minimum value of the bar. . If `min_value` > `max_value` fills from the right."/>

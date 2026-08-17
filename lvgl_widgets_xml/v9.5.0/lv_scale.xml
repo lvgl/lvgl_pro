@@ -7,12 +7,12 @@
 <widget>
     <api>
         <enumdef name="lv_scale_mode" help="How the scale is drawn">
-            <enum name="horizontal_top" help="Ticks on top"/>
-            <enum name="horizontal_bottom" help="Ticks on bottom"/>
-            <enum name="vertical_left" help="Ticks on left"/>
-            <enum name="vertical_right" help="Ticks on right"/>
-            <enum name="round_inner" help="Circular, ticks inside"/>
-            <enum name="round_outer" help="Circular, ticks outside"/>
+            <enum name="horizontal_top" value="0" help="Ticks on top"/>
+            <enum name="horizontal_bottom" value="1" help="Ticks on bottom"/>
+            <enum name="vertical_left" value="2" help="Ticks on left"/>
+            <enum name="vertical_right" value="4" help="Ticks on right"/>
+            <enum name="round_inner" value="8" help="Circular, ticks inside"/>
+            <enum name="round_outer" value="16" help="Circular, ticks outside"/>
         </enumdef>
 
         <prop name="mode" type="enum:lv_scale_mode" help="Set the scale mode"/>

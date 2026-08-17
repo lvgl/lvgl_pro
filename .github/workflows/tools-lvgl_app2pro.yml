@@ -1,0 +1,75 @@
+name: lvgl_app2pro
+
+# Builds the two test apps, converts them with GDB, and checks the XML against
+# tests/reference_xml_projects. The screenshot comparison needs the Pro CLI and
+# is skipped here; run it locally with `tests/test.py --cli <path>`.
+
+on:
+  pull_request:
+    paths:
+      - 'tools/lvgl_app2pro/**'
+      - 'lvgl_widgets_xml/**'
+      - '.github/workflows/tools-lvgl_app2pro.yml'
+  push:
+    branches:
+      - master
+    paths:
+      - 'tools/lvgl_app2pro/**'
+      - 'lvgl_widgets_xml/**'
+      - '.github/workflows/tools-lvgl_app2pro.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # The floor is what the GDB plugin requires.
+        python-version: ['3.10', '3.12']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install what the example and GDB need
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gdb libsdl2-dev
+          python -m pip install --upgrade pip Pillow
+
+      - name: Check GDB can run Python
+        # Without it the plugin cannot load, and every later step would fail
+        # with something much less obvious.
+        run: gdb -batch -ex "python import sys; print(sys.version)"
+
+      - name: Cache the LVGL checkout the example builds against
+        uses: actions/cache@v4
+        with:
+          path: tools/lvgl_app2pro/tests/.work/lvgl
+          key: lvgl-${{ hashFiles('tools/lvgl_app2pro/tests/test.py') }}
+
+      - name: Build, convert and compare
+        working-directory: tools/lvgl_app2pro
+        run: python3 tests/test.py
+
+      - name: Show what changed if the comparison failed
+        if: failure()
+        working-directory: tools/lvgl_app2pro
+        run: |
+          for app in test_ui lv_demo_widgets; do
+            diff -ru "tests/reference_xml_projects/$app" \
+                     "tests/.work/$app/converted" || true
+          done
+
+      - name: Keep the converted projects for inspection
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: converted-${{ matrix.python-version }}
+          path: |
+            tools/lvgl_app2pro/tests/.work/*/converted
+            tools/lvgl_app2pro/tests/.work/*/*.png

@@ -5,15 +5,32 @@ description: lvgl_app2pro converts a running LVGL application into an LVGL Pro X
 
 `lvgl_app2pro` turns an existing LVGL application into an LVGL Pro XML project.
 
-It does not read your C files. It starts your compiled application under GDB,
-stops it once the UI is up, and reads the real widget tree out of the running
-process using [LVGL's GDB plugin](https://docs.lvgl.io/master/debugging/gdb_plugin.html).
-Once the screens, widgets, properties, images and styles are known, it writes
-the equivalent XML.
+It needs an LVGL application that runs on your PC. No source code is needed: it
+starts the app under GDB, stops it once the UI is up, and reads the real widget
+tree out of the process with
+[LVGL's GDB plugin](https://docs.lvgl.io/master/debugging/gdb_plugin.html). Once
+the screens, widgets, properties, images and styles are known, it writes the
+equivalent XML as a ready to use LVGL Pro project.
 
-The tool lives in the [lvgl_pro repository](https://github.com/lvgl/lvgl_pro)  in `tools/lvgl_app2pro`. 
-There is nothing to install, jsut clone the repository and run converter from there.
+The tool lives in the
+[lvgl_pro repository](https://github.com/lvgl/lvgl_pro) in `tools/lvgl_app2pro`.
+There is nothing to install: clone the repository and run the converter from
+there.
 
+## What the result looks like
+
+Each tab of `lv_demo_widgets` as the C application draws it, next to the
+converted XML project. Nothing was edited by hand in between.
+
+| Original (C) | Converted (XML) |
+| --- | --- |
+| <img src="/_static/images/migration/app2pro_c_tab0.png" width="400" alt="Profile tab in the C application" /> | <img src="/_static/images/migration/app2pro_xml_tab0.png" width="400" alt="Profile tab converted to XML" /> |
+| <img src="/_static/images/migration/app2pro_c_tab1.png" width="400" alt="Analytics tab in the C application" /> | <img src="/_static/images/migration/app2pro_xml_tab1.png" width="400" alt="Analytics tab converted to XML" /> |
+| <img src="/_static/images/migration/app2pro_c_tab2.png" width="400" alt="Shop tab in the C application" /> | <img src="/_static/images/migration/app2pro_xml_tab2.png" width="400" alt="Shop tab converted to XML" /> |
+
+All the layouts, properties and images were extracted and converted correctly.
+The fonts and the custom functions and callbacks need to be added by you —
+see [Improvement options](#improvement-options).
 
 ## Why read a running app
 
@@ -27,49 +44,67 @@ what the running program already knows.
   as such at runtime, so widths convert to `50%` and `content` rather than
   frozen pixel values. Flex and grid convert as layouts, with their tracks.
 - **The theme is left behind.** On a typical screen about three quarters of all
-  style properties come from the default theme. Those are dropped, so the XML
+  style properties come from the default theme. Those are ignored, so the XML
   describes your design and LVGL Pro applies its own theme underneath.
 - **Images are recovered.** An image compiled into your binary as a C array is
   decoded out of memory and written next to the project as a PNG.
 - **Nothing is dropped in silence.** Anything that cannot be expressed in XML
-  becomes a `TODO` in the file and a line in the summary.
+  becomes a `TODO` in the file and a line in the report the run prints.
 
 ## Requirements
 
 - **GDB.** It usually embeds Python as well. Check that its interpreter is at
   least 3.10 with `gdb -batch -ex "python import sys; print(sys.version)"`.
-- **Python 3.10** or newer to run the converter itself. This is a different
+- **Python 3.10** or newer to run the converter itself. This is a separate
   interpreter from the one inside GDB, and the versions need not match.
-- Your application, running on your PC and built with debug symbols
-  (`-O0 -g3`), LVGL included.
+- An LVGL application that runs on your PC, built with no optimization (`-O0`)
+  and debug symbols (`-g3`), LVGL included.
+- **CMake** and **SDL2**, only to build the example in the repository.
 
-On Debian and Ubuntu, `sudo apt install gdb python3` covers it; add
-`build-essential cmake libsdl2-dev` to build the bundled example. On Windows,
-use [MSYS2](https://www.msys2.org) and install the same tools in its MinGW64
-shell. On macOS, GDB is not usable out of the box — it has to be code-signed to
-control another process, and it does not support Apple Silicon — so convert on
-Linux or Windows, or in a container.
+On Debian and Ubuntu:
+
+```bash
+sudo apt install gdb python3 build-essential cmake libsdl2-dev
+```
+
+On Windows, use [MSYS2](https://www.msys2.org) and install the same tools in its
+MinGW64 shell:
+
+```bash
+pacman -S mingw-w64-x86_64-gdb mingw-w64-x86_64-python mingw-w64-x86_64-gcc \
+          mingw-w64-x86_64-cmake mingw-w64-x86_64-SDL2
+```
+
+On macOS, GDB is not usable out of the box: it has to be code-signed to control
+another process, and it does not support Apple Silicon. Convert on Linux or
+Windows, or in a container, for now.
 
 ## Quick start
+
+First, get the repository that holds the converter:
 
 ```bash
 git clone https://github.com/lvgl/lvgl_editor
 cd lvgl_editor/tools/lvgl_app2pro
 ```
 
-If you do not have an application at hand, build the example in the repository,
-which creates a UI from `lv_demo_widgets`:
+Next you need a compiled LVGL application. If you want to try the tool before
+pointing it at your own, build the example in the repository, which creates a UI
+from `lv_demo_widgets`:
 
 ```bash
 cmake -B examples/lv_demo_widgets/build -S examples/lv_demo_widgets
 cmake --build examples/lv_demo_widgets/build -j
 ```
 
-Then convert it:
+Then convert it — replace the path with your own application's when you switch:
 
 ```bash
 python3 lvgl_app2pro.py examples/lv_demo_widgets/build/lv_demo_widgets -o widgets_demo
 ```
+
+The terminal output is the report of what happened, and it is worth reading
+before anything else:
 
 ```
 GDB Python: 3.12
@@ -88,7 +123,8 @@ Wrote 3 files to widgets_demo
     ...
 ```
 
-The result is a project you can open in the Editor straight away:
+Out comes a project you can open in the
+[Editor](../editor/overview) straight away:
 
 ```
 widgets_demo/
@@ -98,7 +134,7 @@ widgets_demo/
   images/*.png       images recovered from the binary
 ```
 
-Abbreviated, the widgets demo converts to this:
+A snippet from the resulting XML:
 
 ```xml
 <lv_tabview active="0" tab_bar_position="top" style_layout="flex" style_flex_flow="column">
@@ -108,98 +144,109 @@ Abbreviated, the widgets demo converts to this:
     <lv_tabview-tab text="Profile" style_layout="grid"
                     style_grid_column_dsc_array="content 5 content 2fr 1fr 1fr">
         <lv_label text="Elena Smith" />
-        <lv_slider width="95%" min_value="0" max_value="100" value="0" />
-    </lv_tabview-tab>
-</lv_tabview>
+        ...
 ```
 
-Check and render it with the [CLI](../cli):
+If your application takes a command line, pass it through with `--app-args`.
 
-```bash
-lved validate widgets_demo
-lved generate widgets_demo
-lved screenshot widgets_demo screens/screen_1.xml --out shot.png
-```
+## Features and limitations
 
-Your own application is converted the same way. If it takes a command line,
-pass it through with `--app-args`.
+**What converts**
 
-## What the result looks like
+- ✅ Every screen, from one stop
+- ✅ The widget tree, with each widget's properties, states and flags
+- ✅ Elements of complex widgets, like chart series, tabview tabs and scale
+  sections
+- ✅ [Flex](../syntax/styles) and Grid layouts
+- ✅ `LV_PCT()` and `LV_SIZE_CONTENT`, as `50%` and `content`
+- ✅ [Styles](../syntax/styles): local ones as inline attributes, shared ones as
+  named styles in `globals.xml`. Theme styles are ignored.
+- ✅ [Images](../syntax/images) stored as a C array are recreated as PNG
+- ✅ Colors and repeated numbers are turned into
+  [consts](../syntax/constants)
+- ✅ [Event](../syntax/events) hooks, as `<event_cb>` with the callback name and
+  trigger
 
-The busiest tab of the widgets demo, as the C application draws it and as the
-converted XML project renders, with nothing edited by hand in between:
+**Limitations**
 
-| Original (C) | Converted (XML) |
-| --- | --- |
-| <img src="/_static/images/migration/widgets_demo_c.png" width="400" alt="The Analytics tab drawn by the C application" /> | <img src="/_static/images/migration/widgets_demo_xml.png" width="400" alt="The same tab rendered from the converted XML" /> |
+- ❌ Only LVGL v9.5 is supported
+- ❌ No [components](../syntax/components) are created. Each screen contains all
+  its widgets in one screen XML file.
+- ❌ Event callback code needs to be added manually. See the `TODO` comments in
+  the XML.
+- ❌ [Animations](../syntax/animations) are ignored. If a value was being
+  animated, the value it had when the UI was read is used on the widget.
+- ❌ [Fonts](../syntax/fonts) cannot be restored from the app. The names are
+  reported where possible, but the fonts have to be added to `globals.xml`
+  manually.
+- ❌ [Subjects and bindings](../syntax/data-binding)
+- ❌ [Translations](../syntax/translations)
+- ❌ Timers
+- ❌ Compressed and indexed images are reported but not restored
+- ❌ Screens that do not exist yet, but are created later. Only the screens
+  available initially are converted.
+- ❌ Constant and define names are not kept; generated names are used instead.
 
-The layout, the panels, the charts with their series, the scales with their
-custom labels and the images all come across. The text is in the default font,
-because a font compiled into a binary cannot be declared, and the needle sits
-still, because animations do not convert. Both are covered below.
+## Improvement options
 
-## What comes across, and what you finish by hand
+The converted project opens and renders as it is, so everything below is
+optional polish. Do it yourself, or hand the project and the report to an AI
+agent:
 
-| | |
-| --- | --- |
-| Widget tree, properties, states, flags | Converted |
-| Layouts, including grid tracks | Converted |
-| Local and shared styles, with parts and states | Converted |
-| Chart series, scale sections and custom scale labels | Converted |
-| Colors and repeated numbers | Lifted into `globals.xml` consts |
-| Images compiled into the binary | Decoded to PNG |
-| Event callbacks, custom events included | Declared with a `TODO`; you write the body |
-| Animations | Not converted; the animated value is frozen where it was |
-| Fonts | Named in the summary; declare them and set `text_font` |
-| Subjects, bindings, translations | Not in the widget tree, so not converted |
+1. **Read the report** the run printed, to see what could not be converted.
+2. **Open the project in the LVGL Pro Editor**, where the
+   [preview](../syntax/preview) shows every change as you make it.
+3. **Add the fonts** in `globals.xml`, then set `text_font` where the `TODO`
+   comments point.
+4. **Add the events** in `<project_name>.c`, using the callback names and
+   triggers the XML already declares.
+5. **Add the animations, timers and data bindings** the app had.
+6. **Create XML components** from the repeating widget subtrees, so the screens
+   stop repeating themselves.
 
-Event handlers are the main thing left to do. The hook is preserved, so the
-work is writing the body, not finding where it belonged:
+## How does it work?
 
-```xml
-<!-- TODO: implement slider_event_cb() -->
-<event_cb callback="slider_event_cb" trigger="all" />
-```
+1. The app is started under GDB with
+   [LVGL's plugin](https://docs.lvgl.io/master/debugging/gdb_plugin.html)
+   loaded, and stopped at the **second** `lv_timer_handler()` call. By then LVGL
+   has run a full cycle, so layouts are calculated and coordinates are real.
+2. Every screen is dumped from that one stop. `lv_display_t` keeps them all in
+   `screens[]`, so they are alive at the same time and `act_scr` only says which
+   is shown.
+3. Each widget is read for its properties, styles, states, flags and events, and
+   compiled-in image data is pulled out of memory.
+4. The result is written as XML, using the widget schemas that ship with the
+   tool to decide which properties a widget has, what type each one is, and what
+   its enum values are named.
 
-<Callout type="info">
-A font compiled into a binary is only glyph bitmaps; the original TTF is not in
-there, and a font must have a source file to be declared in `globals.xml`. The
-tool therefore lists the fonts it saw and leaves `text_font` unset, so the
-project still builds. Add the font files, declare them, and set the property.
-</Callout>
+Two things are measured rather than assumed. The version of LVGL the app was
+built against is read out of the binary and used to pick the matching schemas,
+so the XML only uses properties and enum values that version has. And class
+defaults are probed by creating one widget of each class in the running process,
+reading what LVGL's constructor and theme gave it, then deleting it — everything
+written out is a difference from that, which is why a converted checkbox is not
+littered with the flags every checkbox has.
 
-## Choosing where to stop
+### Where to stop
 
-The application is stopped once, at the second `lv_timer_handler()` call by
-default. By then LVGL has run a full cycle, so layouts are calculated and
-coordinates are real.
-
-If yours builds screens later, stop later:
+The application is stopped once, and by default that is the second
+`lv_timer_handler()` call. If yours builds its screens later than that, say so:
 
 ```bash
 python3 lvgl_app2pro.py ./my_app --stop-at my_ui.c:412
 ```
 
-Every screen is reached from that single stop: LVGL keeps them all in
-`lv_display_t`'s `screens[]` array, so they are alive at the same time and only
-`act_scr` says which is shown. Two cases cannot be reached and are reported
+Every screen is reached from that single stop, because LVGL keeps them all alive
+in `screens[]` at the same time. Two cases cannot be reached and are reported
 rather than hidden: screens built lazily when the user first navigates to them,
 and screens freed with `lv_screen_load_and_delete()`.
-
-## LVGL versions
-
-The version of LVGL your application was built against is read out of the
-binary and used to pick the matching widget schemas, so the XML only uses
-properties and enum values that version has. Schemas for **v9.4** and **v9.5**
-ship with the tool; an application built against anything newer converts
-against the newest set available, and the run says which one it used.
 
 ## Options
 
 | Option | |
 | --- | --- |
 | `--stop-at LOCATION` | Any GDB location. Default `lv_timer_handler` |
-| `--app-args ARGS` | Command line to start your application with |
+| `--app-args ARGS` | Command line to start the app with, if it takes one |
 | `--lvgl DIR` | Load `scripts/gdb` from an LVGL checkout instead of the plugin shipped with the tool |
 | `--schema DIR` | Widget schemas to use, if not the ones shipped with the tool |
 | `--number-consts N` | Name numbers used N or more times. `0` keeps them inline. Default 3 |
@@ -211,6 +258,5 @@ against the newest set available, and the run says which one it used.
 
 Open an issue with the C code that built it and the XML you got. A widget that
 converts badly makes a good bug report, because it becomes a test case: the
-tool's own test suite builds two applications, converts them through GDB and
-compares both the XML and the rendered screenshots against committed
-references.
+tool's own test suite builds two applications, converts them through GDB, and
+compares both the XML and the rendered screenshots against committed references.

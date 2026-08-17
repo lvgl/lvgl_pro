@@ -104,12 +104,13 @@ def main(argv=None):
         if args.from_dump:
             dump = json.loads(Path(args.from_dump).read_text())
         else:
-            print(f"GDB Python: {check_gdb(args.gdb)}")
+            gdb_python = check_gdb(args.gdb)
+            print(f"GDB Python: {gdb_python}")
             print(f"Running {args.app} to {args.stop_at} ...")
             dump = dump_app(args.app, lvgl_dir=args.lvgl, stop_at=args.stop_at,
                             gdb_binary=args.gdb, timeout=args.timeout,
                             image_dir=Path(args.out) / "images",
-                            app_args=args.app_args)
+                            app_args=args.app_args, gdb_python=gdb_python)
         if args.dump:
             Path(args.dump).write_text(json.dumps(dump, indent=1))
 

@@ -52,7 +52,22 @@ def _load_plugin():
     try:
         import lvglgdb  # noqa: F401
     except ImportError as e:
-        _fail(f"cannot import lvglgdb inside GDB ({e})")
+        missing = getattr(e, "name", "") or ""
+        hint = ""
+        if missing in ("numpy", "PIL"):
+            # lvglgdb imports both at module level, so they are not optional
+            # even for a run that touches no images. They have to be installed
+            # for the interpreter GDB embeds, which is usually the system one.
+            version = os.environ.get("LVGL_APP2PRO_GDB_PYTHON") or "?"
+            package = "python3-numpy" if missing == "numpy" else "python3-pil"
+            hint = (f"\n  lvglgdb needs it. Install it for the Python {version} "
+                    f"that GDB embeds, not for the one running this tool - on "
+                    f"Debian and Ubuntu that is `sudo apt install {package}`.")
+        elif missing == "math":
+            hint = ("\n  GDB cannot find its own standard library, which means it "
+                    "loaded the wrong libpython. Unset LD_LIBRARY_PATH, "
+                    "PYTHONHOME and PYTHONPATH and try again.")
+        _fail(f"cannot import lvglgdb inside GDB ({e}){hint}")
 
 
 def probe_version():

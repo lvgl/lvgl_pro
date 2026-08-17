@@ -15,14 +15,35 @@ class DumpError(RuntimeError):
     pass
 
 
-def _host_site_packages():
+def _host_site_packages(gdb_python=None):
     """Where this process's packages live, so GDB's own Python can find them.
 
-    GDB embeds its own interpreter and does not see a virtualenv, so lvglgdb
-    is imported from here instead.
+    GDB embeds its own interpreter and does not see a virtualenv, so a venv
+    install is offered to it from here.
+
+    Only when the two interpreters are the same minor version, though: numpy
+    and Pillow are compiled extensions, and handing 3.10 builds to GDB's 3.12
+    fails to import at best. If they differ, GDB has to have its own copies.
     """
+    host = "%d.%d" % sys.version_info[:2]
+    if gdb_python and gdb_python != host:
+        return []
     paths = {sysconfig.get_paths().get("purelib"), sysconfig.get_paths().get("platlib")}
     return [p for p in paths if p and os.path.isdir(p)]
+
+
+def _clean_env():
+    """The environment for GDB, without this interpreter's leaking into it.
+
+    A venv, pyenv or actions/setup-python leaves LD_LIBRARY_PATH and friends
+    pointing at its own Python. GDB then loads that libpython instead of the one
+    it was built against and cannot even find its own standard library, failing
+    with something as unhelpful as "No module named 'math'".
+    """
+    env = dict(os.environ)
+    for name in ("LD_LIBRARY_PATH", "PYTHONHOME", "PYTHONPATH"):
+        env.pop(name, None)
+    return env
 
 
 def check_gdb(gdb_binary="gdb"):
@@ -31,7 +52,7 @@ def check_gdb(gdb_binary="gdb"):
         done = subprocess.run(
             [gdb_binary, "-batch", "-nx", "-ex",
              "python import sys; print('%d.%d' % sys.version_info[:2])"],
-            capture_output=True, text=True, timeout=60,
+            capture_output=True, text=True, timeout=60, env=_clean_env(),
         )
     except FileNotFoundError:
         raise DumpError(f"{gdb_binary} not found")
@@ -46,17 +67,18 @@ def check_gdb(gdb_binary="gdb"):
 
 
 def dump_app(app, lvgl_dir=None, stop_at="lv_timer_handler", gdb_binary="gdb",
-             timeout=300, image_dir=None, app_args=None):
+             timeout=300, image_dir=None, app_args=None, gdb_python=None):
     """Run `app` under GDB, stop once, and return the parsed dump."""
     app = Path(app).resolve()
     if not app.exists():
         raise DumpError(f"{app} does not exist")
 
-    env = dict(os.environ)
+    env = _clean_env()
     env["LVGL_APP2PRO_BREAK"] = stop_at
     if app_args:
         env["LVGL_APP2PRO_ARGS"] = app_args
-    env["LVGL_APP2PRO_SYSPATH"] = json.dumps(_host_site_packages())
+    env["LVGL_APP2PRO_SYSPATH"] = json.dumps(_host_site_packages(gdb_python))
+    env["LVGL_APP2PRO_GDB_PYTHON"] = gdb_python or ""
     if lvgl_dir:
         env["LVGL_APP2PRO_LVGL"] = str(Path(lvgl_dir).resolve())
     if image_dir:

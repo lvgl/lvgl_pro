@@ -21,30 +21,32 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        # The floor is what the GDB plugin requires.
-        python-version: ['3.10', '3.12']
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python-version }}
+      # 3.10 is the documented floor for running the converter. It is
+      # deliberately not the interpreter GDB uses: GDB embeds its own, so this
+      # combination is also what most users have.
+      - name: Set up Python 3.10
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: '3.10'
 
       - name: Install what the example and GDB need
+        # numpy and Pillow have to be installed for the interpreter GDB embeds,
+        # which is the system one - lvglgdb imports both at module level, so it
+        # cannot be loaded without them. Installing them with pip would put them
+        # where the 3.10 above can see them and GDB cannot.
         run: |
           sudo apt-get update
-          sudo apt-get install -y gdb libsdl2-dev
-          python -m pip install --upgrade pip Pillow
+          sudo apt-get install -y gdb libsdl2-dev python3-numpy python3-pil
 
-      - name: Check GDB can run Python
-        # Without it the plugin cannot load, and every later step would fail
-        # with something much less obvious.
-        run: gdb -batch -ex "python import sys; print(sys.version)"
+      - name: Check GDB can run Python, and that the plugin can load
+        # Without this the failure surfaces much later and much less clearly.
+        run: |
+          gdb -batch -ex "python import sys; print('GDB Python:', sys.version)"
+          gdb -batch -ex "python import numpy, PIL; print('numpy and Pillow OK')"
 
       - name: Cache the LVGL checkout the example builds against
         uses: actions/cache@v4
@@ -69,7 +71,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: converted-${{ matrix.python-version }}
+          name: converted
           path: |
             tools/lvgl_app2pro/tests/.work/*/converted
             tools/lvgl_app2pro/tests/.work/*/*.png

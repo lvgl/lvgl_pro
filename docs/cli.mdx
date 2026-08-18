@@ -201,7 +201,7 @@ jobs:
               run: npm install --global @lvgl/lvglpro
 
             - name: Generate code
-              run: lvglpro generate examples -s
+              run: lvglpro generate examples
 
             - name: Compile to run tests
               run: lvglpro compile examples --target cli

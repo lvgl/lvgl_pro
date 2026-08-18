@@ -1,58 +1,58 @@
 name: Pull Request Check
 
 on:
-  pull_request:
-    types: [opened, edited, synchronize, reopened]
-  push:
-    branches:
-      - master
+    pull_request:
+        types: [opened, edited, synchronize, reopened]
+    push:
+        branches:
+            - master
 
 jobs:
-  pr-check:
-    runs-on: ubuntu-latest
-    env:
-      LVGL_CLI_TOKEN: ${{ secrets.LVGL_CLI_TOKEN }}
-
-    steps:
-      - name: Check token
+    pr-check:
+        runs-on: ubuntu-latest
         env:
-          LVGL_CLI_TOKEN: ${{ secrets.LVGL_CLI_TOKEN }}
-        run: |
-          if [ -z "$LVGL_CLI_TOKEN" ]; then
-            echo "LVGL_CLI_TOKEN is not set. Skipping..."
-            exit 0
-          fi
+            LVGLPRO_CLI_TOKEN: ${{ secrets.LVGL_CLI_TOKEN }}
 
-      - name: Checkout current repository
-        uses: actions/checkout@v4
+        steps:
+            - name: Check token
+              env:
+                  LVGLPRO_CLI_TOKEN: ${{ secrets.LVGL_CLI_TOKEN }}
+              run: |
+                  if [ -z "$LVGLPRO_CLI_TOKEN" ]; then
+                    echo "LVGLPRO_CLI_TOKEN is not set. Skipping..."
+                    exit 0
+                  fi
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22.13.0"
+            - name: Checkout current repository
+              uses: actions/checkout@v4
 
-      - name: Setup emsdk
-        uses: mymindstorm/setup-emsdk@v14
-        with:
-          version: 4.0.6
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '22.13.0'
 
-      - name: Remove Generated Files
-        run: find examples/lvgl_open -path examples/lvgl_open/images -prune -o -type f \( -name '*.c' -o -name '*.h' \) -print | xargs rm -f
+            - name: Setup emsdk
+              uses: mymindstorm/setup-emsdk@v14
+              with:
+                  version: 4.0.6
 
-      - name: Download CLI
-        run: curl -L https://github.com/lvgl/lvgl_pro/releases/download/v2.0.0/LVGL_Pro_CLI-2.0.0-linux.zip -o lvgl-cli.zip
+            - name: Remove Generated Files
+              run: find examples/lvgl_open -path examples/lvgl_open/images -prune -o -type f \( -name '*.c' -o -name '*.h' \) -print | xargs rm -f
 
-      - name: Unzip CLI
-        run: unzip lvgl-cli.zip -d lvgl-cli
+            - name: Download CLI
+              run: curl -L https://github.com/lvgl/lvgl_pro/releases/download/v2.0.2/LVGL_Pro_CLI-2.0.2-linux.zip -o lvglpro.zip
 
-      - name: Generate Code
-        run: |
-          node ./lvgl-cli/lved-cli.js generate examples/lvgl_open
+            - name: Unzip CLI
+              run: unzip lvglpro.zip -d lvglpro
 
-      - name: Compile Code
-        run: |
-          node ./lvgl-cli/lved-cli.js compile examples/lvgl_open --target cli
+            - name: Generate Code
+              run: |
+                  node ./lvglpro/lved-cli.js generate examples/lvgl_open
 
-      - name: Run tests
-        run: |
-          node ./lvgl-cli/lved-cli.js run-all-tests examples/lvgl_open
+            - name: Compile Code
+              run: |
+                  node ./lvglpro/lved-cli.js compile examples/lvgl_open --target cli
+
+            - name: Run tests
+              run: |
+                  node ./lvglpro/lved-cli.js run-all-tests examples/lvgl_open

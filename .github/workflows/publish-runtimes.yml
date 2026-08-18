@@ -26,43 +26,43 @@ jobs:
 
             - name: Get the previews branch
               run: |
-                git fetch origin
-                git branch lvgl-previews remotes/origin/lvgl-previews
+                  git fetch origin
+                  git branch lvgl-previews remotes/origin/lvgl-previews
 
             - name: Configure Git
               run: |
-                git config user.name "${{ github.actor }}"
-                git config user.email "${{ github.actor }}@users.noreply.github.com"
+                  git config user.name "${{ github.actor }}"
+                  git config user.email "${{ github.actor }}@users.noreply.github.com"
 
             - name: Download the LVGL CLI tool
               run: |
-                # download the LVGL CLI tool
-                curl -OL https://github.com/lvgl/lvgl_pro/releases/download/v.0.3.0/LVGL_CLI-0.3.0-linux-mac.zip
-                # unzip the downloaded file
-                unzip LVGL_CLI-0.3.0-linux-mac.zip
-                # run it to show the version
-                ./lved-cli.js -V
+                  # download the LVGL CLI tool
+                  curl -OL https://github.com/lvgl/lvgl_pro/releases/download/v2.0.0/LVGL_CLI-2.0.0-linux-mac.zip -o lvglpro.zip
+                  # unzip the downloaded file
+                  unzip lvglpro.zip
+                  # run it to show the version
+                  ./lvglpro.js -V
 
             - name: Compile the preview runtime
               run: |
-                # compile the project
-                ./lved-cli.js compile ${{ github.event.inputs.subfolder }}
+                  # compile the project
+                  ./lvglpro.js compile ${{ github.event.inputs.subfolder }}
 
             - name: Commit the runtime to branch 'lvgl-previews' and push
               run: |
-                cd ${{ github.event.inputs.subfolder }}
-                git worktree add -f ~/runtimes-branch lvgl-previews
-                CURRENT_BRANCH=$(git branch --show-current)
-                DEST=~/runtimes-branch/branches/${CURRENT_BRANCH}/${{ github.event.inputs.subfolder }}
-                mkdir -p ${DEST}
-                cp runtime/lved-runtime.js ${DEST}/lved-runtime.*
-                cd ${DEST}
-                git add lved-runtime.js
-                git status
+                  cd ${{ github.event.inputs.subfolder }}
+                  git worktree add -f ~/runtimes-branch lvgl-previews
+                  CURRENT_BRANCH=$(git branch --show-current)
+                  DEST=~/runtimes-branch/branches/${CURRENT_BRANCH}/${{ github.event.inputs.subfolder }}
+                  mkdir -p ${DEST}
+                  cp runtime/lved-runtime.js ${DEST}/lved-runtime.*
+                  cd ${DEST}
+                  git add lved-runtime.js
+                  git status
 
-                echo Committing changes...
-                git add .
-                git commit -m "Automated commit by ${{ github.actor }}"
+                  echo Committing changes...
+                  git add .
+                  git commit -m "Automated commit by ${{ github.actor }}"
 
-                echo Pushing changes to the 'lvgl-previews' branch...
-                git push origin lvgl-previews
+                  echo Pushing changes to the 'lvgl-previews' branch...
+                  git push origin lvgl-previews

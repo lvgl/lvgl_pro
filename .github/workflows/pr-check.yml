@@ -11,15 +11,15 @@ jobs:
     pr-check:
         runs-on: ubuntu-latest
         env:
-            LVGLPRO_CLI_TOKEN: ${{ secrets.LVGL_CLI_TOKEN }}
+            LVGL_CLI_TOKEN: ${{ secrets.LVGL_CLI_TOKEN }}
 
         steps:
             - name: Check token
               env:
-                  LVGLPRO_CLI_TOKEN: ${{ secrets.LVGL_CLI_TOKEN }}
+                  LVGL_CLI_TOKEN: ${{ secrets.LVGL_CLI_TOKEN }}
               run: |
-                  if [ -z "$LVGLPRO_CLI_TOKEN" ]; then
-                    echo "LVGLPRO_CLI_TOKEN is not set. Skipping..."
+                  if [ -z "$LVGL_CLI_TOKEN" ]; then
+                    echo "LVGL_CLI_TOKEN is not set. Skipping..."
                     exit 0
                   fi
 

@@ -34,8 +34,8 @@ Tests are XML files named `test*.xml`. Run them headlessly — no Editor needed,
 which is what makes them useful in CI and for AI agents:
 
 ```bash
-lved run-all-tests .
-lved run-test . tests/test_slider_drag.xml
+lvglpro run-all-tests .
+lvglpro run-test . tests/test_slider_drag.xml
 ```
 
 See [`tests/README.md`](tests/README.md) for the step reference and the

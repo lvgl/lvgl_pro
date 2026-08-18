@@ -4,9 +4,9 @@ Headless UI tests written in XML. Full reference:
 <https://lvgl.io/docs/pro/syntax/testing>.
 
 ```bash
-lved run-all-tests .                        # every test in the project
-lved run-test . tests/test_slider_drag.xml  # just one
-lved run-all-tests . --slowdown 5           # slow it down to watch it
+lvglpro run-all-tests .                        # every test in the project
+lvglpro run-test . tests/test_slider_drag.xml  # just one
+lvglpro run-all-tests . --slowdown 5           # slow it down to watch it
 ```
 
 Any file named `test*.xml` anywhere in the project is picked up by

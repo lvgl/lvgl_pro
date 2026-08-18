@@ -6,7 +6,7 @@ How to write LVGL Pro XML. This is the UI language of LVGL Pro: HTML-like markup
 
 1. **Never invent an attribute.** Every widget's exact API lives in `lvgl_widgets_xml/<version>/lv_*.xml`. Read it before writing. Style properties and enums are in `globals.xml` in the same folder.
 2. **Match the project's LVGL version.** If `project.xml` declares `lvgl_version="9.5.0"` use the `v9.5.0/` schema folder.
-3. **Validate what you write.** `node lvglpro.js validate <project>` gives precise errors. Then `screenshot` to see it. Guessing is not the same as knowing.
+3. **Validate what you write.** `lvglpro validate <project>` gives precise errors. Then `screenshot` to see it. Guessing is not the same as knowing.
 4. **Reuse before you create.** Look at the project's existing components and `globals.xml` first. A design system usually already has the button, the card, and the spacing scale you were about to reinvent.
 
 ## The three file kinds
@@ -250,31 +250,31 @@ The slot target is `<component_name-slot_name>`, and you can set normal object p
 
 ### Getting the CLI
 
-The CLI is a self-contained Node script, `lvglpro.js`. It is not part of a UI project, so download it once and reuse it:
-
-1. Grab the archive for your platform from the [LVGL Pro releases page](https://github.com/lvgl/lvgl_pro/releases), named `LVGL_Pro_CLI-<version>-<platform>.zip`.
-2. Unzip it anywhere and run it with Node 18 or newer (CI uses 22).
-3. Set `LVGLPRO_CLI_TOKEN` to a Product or Platform license token, or pass `--token`. Prefer the environment variable so the token stays out of shell history and logs, and never commit it.
+Install it once, globally, with npm:
 
 ```bash
-curl -L https://github.com/lvgl/lvgl_pro/releases/latest/download/LVGL_Pro_CLI-linux.zip -o cli.zip
-unzip cli.zip -d lvglpro
-export LVGLPRO_CLI_TOKEN="..."
-node lvglpro/lvglpro.js --help
+npm install --global @lvgl/lvglpro
 ```
 
-Check the releases page for the exact asset name; it carries the version number.
+This puts `lvglpro` on your `PATH`. Node 18 or newer is required (CI uses 22).
+
+Set `LVGLPRO_CLI_TOKEN` to a Product or Platform license token, or pass `--token`. Prefer the environment variable so the token stays out of shell history and logs, and never commit it.
+
+```bash
+export LVGLPRO_CLI_TOKEN="..."
+lvglpro --help
+```
 
 ### Running it
 
 ```bash
-node lvglpro.js validate   <project> --errorlimit 25
-node lvglpro.js generate   <project>
-node lvglpro.js screenshot <project> screens/home.xml --out /tmp/home.png --delay 200
-node lvglpro.js run-all-tests <project>
+lvglpro validate   <project> --errorlimit 25
+lvglpro generate   <project>
+lvglpro screenshot <project> screens/home.xml --out /tmp/home.png --delay 200
+lvglpro run-all-tests <project>
 ```
 
-Every command needs the token. If it isn't set, say the XML is unverified rather than implying it was checked. `node lvglpro.js <command> --help` lists the current options for any command.
+Every command needs the token. If it isn't set, say the XML is unverified rather than implying it was checked. `lvglpro <command> --help` lists the current options for any command.
 
 Tests are XML too, a `<test>` root with a `<view>` and a `<steps>` block of `click_at`, `wait`, `subject_set`, `subject_compare`, and `screenshot_compare`.
 

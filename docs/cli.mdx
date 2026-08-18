@@ -5,7 +5,7 @@ description: The LVGL Pro command-line tool generates and compiles C code, valid
 
 The CLI, along with the [Editor](./editor/overview), [Figma plugin](./figma), and [online viewer](./online-viewer), is part of **LVGL Pro**, a professional toolkit to develop embedded UIs.
 
-The LVGL Pro CLI is a command line tool bringing the great power of the Editor to the terminal. It's a Node script, `lvglpro.js`, that generates and compiles C code from your XML, validates projects, runs headless UI tests, and captures screenshots, all without opening the GUI.
+The LVGL Pro CLI is a command line tool bringing the great power of the Editor to the terminal. It's an npm-installed `lvglpro` command that generates and compiles C code from your XML, validates projects, runs headless UI tests, and captures screenshots, all without opening the GUI.
 
 Because it's scriptable and headless, the CLI is the bridge between LVGL Pro and your automation: continuous integration, regression testing, and AI agents that write, validate, and visually verify UI on their own.
 
@@ -33,16 +33,17 @@ Because it's scriptable and headless, the CLI is the bridge between LVGL Pro and
 
 ## Installation
 
-The CLI ships as a self-contained Node script.
-
-1. **Download** the latest CLI archive from the [Releases page](https://github.com/lvgl/lvgl_pro/releases) and unzip it.
-2. **Install Node.js** 18 or newer (CI is tested on Node 22).
-3. **Run commands** to test, validate, build, etc the UI project
-
-Run it directly with Node:
+1. **Install Node.js** 18 or newer (CI is tested on Node 22).
+2. **Install the CLI** globally with npm:
 
 ```bash
-node lvglpro.js --help
+npm install --global @lvgl/lvglpro
+```
+
+This puts `lvglpro` on your `PATH`.
+
+```bash
+lvglpro --help
 ```
 
 ### Authentication
@@ -55,10 +56,10 @@ The CLI requires a Product or Platform license token. Provide it in one of two w
 ```bash
 # Picked up automatically from the environment
 export LVGLPRO_CLI_TOKEN="your-token"
-node lvglpro.js generate path/to/project
+lvglpro generate path/to/project
 
 # Or pass it explicitly
-node lvglpro.js generate path/to/project --token "your-token"
+lvglpro generate path/to/project --token "your-token"
 ```
 
 <Callout type="warn">
@@ -70,16 +71,16 @@ node lvglpro.js generate path/to/project --token "your-token"
 
 ```bash
 # Generate C and H files from your XML project
-node lvglpro.js generate path/to/project
+lvglpro generate path/to/project
 
 # Validate XML and report problems
-node lvglpro.js validate path/to/project
+lvglpro validate path/to/project
 
 # Compile and run all UI tests headlessly
-node lvglpro.js run-all-tests path/to/project
+lvglpro run-all-tests path/to/project
 
 # Capture a screen as a PNG
-node lvglpro.js screenshot path/to/project screens/home.xml --out home.png
+lvglpro screenshot path/to/project screens/home.xml --out home.png
 ```
 
 ## Commands
@@ -96,14 +97,14 @@ node lvglpro.js screenshot path/to/project screens/home.xml --out home.png
 | `screenshot`    | Capture a screen as a PNG                    |
 | `compare`       | Compare generated code against a reference   |
 
-Run `node lvglpro.js <command> --help` for the full, up-to-date options of any command.
+Run `lvglpro <command> --help` for the full, up-to-date options of any command.
 
 ### generate
 
 Generate C and H code from the project's XML files.
 
 ```bash
-node lvglpro.js generate <project-path> [options]
+lvglpro generate <project-path> [options]
 ```
 
 | Option            | Description           |
@@ -118,7 +119,7 @@ Compile the project into a runnable binary (runtime) for previewing or testing.
 The runtime contains the compiled LVGL, the C code of the UI project, and some editor-specific C code. It is required to run the UI in the Editor or in the CLI.
 
 ```bash
-node lvglpro.js compile <project-path> [options]
+lvglpro compile <project-path> [options]
 ```
 
 | Option                   | Description                                                                                            |
@@ -130,7 +131,7 @@ node lvglpro.js compile <project-path> [options]
 Check the project's XML for errors and report them. Exits non-zero on failure, so it doubles as a gate in CI and a fast feedback signal for AI agents.
 
 ```bash
-node lvglpro.js validate <project-path> [options]
+lvglpro validate <project-path> [options]
 ```
 
 | Option                 | Description                       |
@@ -142,8 +143,8 @@ node lvglpro.js validate <project-path> [options]
 Run headless UI interaction tests defined in XML. `run-test` runs one file; `run-all-tests` discovers and runs every test in the project.
 
 ```bash
-node lvglpro.js run-test <project-path> <testing-file> [options]
-node lvglpro.js run-all-tests <project-path> [options]
+lvglpro run-test <project-path> <testing-file> [options]
+lvglpro run-all-tests <project-path> [options]
 ```
 
 | Option           | Description                                                             |
@@ -157,7 +158,7 @@ node lvglpro.js run-all-tests <project-path> [options]
 Render a screen and save it as a PNG. Perfect for visual diffs and AI vision feedback.
 
 ```bash
-node lvglpro.js screenshot <project-path> <screen> [options]
+lvglpro screenshot <project-path> <screen> [options]
 ```
 
 | Option         | Description                                                         |
@@ -172,7 +173,7 @@ node lvglpro.js screenshot <project-path> <screen> [options]
 Compare two project directories by file presence and normalized content. Use it to assert that generated output matches a known-good reference.
 
 ```bash
-node lvglpro.js compare <generated-path> <reference-path>
+lvglpro compare <generated-path> <reference-path>
 ```
 
 ## Use case: CI/CD pipelines
@@ -196,23 +197,18 @@ jobs:
               with:
                   node-version: '22'
 
-            - name: Download CLI
-              # Latest Linux/macOS CLI build; see https://github.com/lvgl/lvgl_pro/releases for all assets
-              run: |
-                  curl -L https://github.com/lvgl/lvgl_pro/releases/download/nightly/LVGL_Pro_CLI-nightly-linux-mac.zip -o lvglpro.zip
-                  unzip lvglpro.zip -d lvglpro
+            - name: Install CLI
+              run: npm install --global @lvgl/lvglpro
 
             - name: Generate code
-              run: node ./lvglpro/lvglpro.js generate examples -s
+              run: lvglpro generate examples -s
 
             - name: Compile to run tests
-              run: node ./lvglpro/lvglpro.js compile examples --target cli
+              run: lvglpro compile examples --target cli
 
             - name: Run UI tests
-              run: node ./lvglpro/lvglpro.js run-all-tests examples
+              run: lvglpro run-all-tests examples
 ```
-
-A full, working example lives in the [project's PR-check workflow](https://github.com/lvgl/lvgl_pro/blob/master/.github/workflows/pr-check.yml).
 
 ## Use case: AI-driven UI development
 
@@ -226,9 +222,9 @@ The CLI gives an AI agent two things a language model otherwise lacks: **objecti
 
 ```bash
 # 1–2: write XML, then check it
-node lvglpro.js validate path/to/project --errorlimit 25
-node lvglpro.js generate path/to/project
+lvglpro validate path/to/project --errorlimit 25
+lvglpro generate path/to/project
 
 # 3: render what the user will actually see
-node lvglpro.js screenshot path/to/project screens/home.xml --out home.png --delay 200
+lvglpro screenshot path/to/project screens/home.xml --out home.png --delay 200
 ```

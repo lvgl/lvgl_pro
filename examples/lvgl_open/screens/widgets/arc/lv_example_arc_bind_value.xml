@@ -25,7 +25,7 @@
 			height="130"
 		>
 			<bind_flag_if_gt flag="hidden" subject="subject_value" ref_value="60" />
-			<lv_label align="center" text="{base}" />
+			<lv_label align="center" text="{'' . base}" />
 		</lv_arc>
 
 		<lv_slider name="slider" width="220" bind_value="subject_value" y="200" />

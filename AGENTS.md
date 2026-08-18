@@ -6,16 +6,16 @@ How to write LVGL Pro XML. This is the UI language of LVGL Pro: HTML-like markup
 
 1. **Never invent an attribute.** Every widget's exact API lives in `lvgl_widgets_xml/<version>/lv_*.xml`. Read it before writing. Style properties and enums are in `globals.xml` in the same folder.
 2. **Match the project's LVGL version.** If `project.xml` declares `lvgl_version="9.5.0"` use the `v9.5.0/` schema folder.
-3. **Validate what you write.** `node lved-cli.js validate <project>` gives precise errors. Then `screenshot` to see it. Guessing is not the same as knowing.
+3. **Validate what you write.** `lvglpro validate <project>` gives precise errors. Then `screenshot` to see it. Guessing is not the same as knowing.
 4. **Reuse before you create.** Look at the project's existing components and `globals.xml` first. A design system usually already has the button, the card, and the spacing scale you were about to reinvent.
 
 ## The three file kinds
 
-| Root tag | What it is | Can hold |
-| --- | --- | --- |
-| `<component>` | Reusable UI element, pure XML, no C. The workhorse. | `animations`, `consts`, `api`, `styles`, `view`, `previews` |
-| `<screen>` | A full screen. Created as-is, no parameters. | `consts`, `styles`, `view` (no `api`, no `previews`) |
-| `<widget>` | A widget backed by handwritten C. Needs a C parser, cannot be loaded from XML at runtime, and needs a recompile of the preview. | `consts`, `api`, `styles`, `view`, `previews` |
+| Root tag      | What it is                                                                                                                      | Can hold                                                    |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| `<component>` | Reusable UI element, pure XML, no C. The workhorse.                                                                             | `animations`, `consts`, `api`, `styles`, `view`, `previews` |
+| `<screen>`    | A full screen. Created as-is, no parameters.                                                                                    | `consts`, `styles`, `view` (no `api`, no `previews`)        |
+| `<widget>`    | A widget backed by handwritten C. Needs a C parser, cannot be loaded from XML at runtime, and needs a recompile of the preview. | `consts`, `api`, `styles`, `view`, `previews`               |
 
 One file per element, and the filename becomes the name you use as a tag. `my_button.xml` is used as `<my_button/>`.
 
@@ -64,11 +64,11 @@ my_project/
 
 ### The three sigils
 
-| Prefix | Means | Example |
-| --- | --- | --- |
-| `$name` | An `<api>` property of this element | `<lv_label text="$title"/>` |
-| `#name` | A constant from `<consts>` or `globals.xml` | `pad="#space_md"` |
-| `{ ... }` | An expression, evaluated once at creation | `hidden="{!icon}"` |
+| Prefix    | Means                                       | Example                     |
+| --------- | ------------------------------------------- | --------------------------- |
+| `$name`   | An `<api>` property of this element         | `<lv_label text="$title"/>` |
+| `#name`   | A constant from `<consts>` or `globals.xml` | `pad="#space_md"`           |
+| `{ ... }` | An expression, evaluated once at creation   | `hidden="{!icon}"`          |
 
 Inside `{ }` you write bare identifiers, no `$` or `#`.
 
@@ -96,12 +96,12 @@ XML reserved characters must be escaped in values. `value="I'm here"` is invalid
 
 Arrays come in four forms. Items are separated by spaces, and string items are wrapped in `'`.
 
-| Form | Meaning | Real example |
-| --- | --- | --- |
-| `int[3]` | Fixed number of elements | |
-| `string[NULL]` | Terminated by an element. The terminator can be any token, e.g. `grid_dsc[LV_GRID_TEMPLATE_LAST]` | `lv_buttonmatrix` `map` |
-| `int[count]` | Length is passed as a separate parameter in C | `lv_chart` `values`, `lv_line` `points` |
-| `string[]` | No terminator and no count | |
+| Form           | Meaning                                                                                           | Real example                            |
+| -------------- | ------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| `int[3]`       | Fixed number of elements                                                                          |                                         |
+| `string[NULL]` | Terminated by an element. The terminator can be any token, e.g. `grid_dsc[LV_GRID_TEMPLATE_LAST]` | `lv_buttonmatrix` `map`                 |
+| `int[count]`   | Length is passed as a separate parameter in C                                                     | `lv_chart` `values`, `lv_line` `points` |
+| `string[]`     | No terminator and no count                                                                        |                                         |
 
 ## Styling
 
@@ -132,13 +132,14 @@ Prefix style names with `style_`. Selectors combine parts and states with `|`.
 ```xml
 <style name="style_main" border_width="$thickness"/>   <!-- invalid -->
 ```
+
 But constants can be used:
 
 ```xml
 <style name="style_main" border_width="#thickness"/>   <!-- valid -->
 ```
 
-Pass the property to a *local* style property instead: `<lv_slider style_border_width-knob="$thickness"/>`.
+Pass the property to a _local_ style property instead: `<lv_slider style_border_width-knob="$thickness"/>`.
 
 ## Data binding
 
@@ -249,40 +250,40 @@ The slot target is `<component_name-slot_name>`, and you can set normal object p
 
 ### Getting the CLI
 
-The CLI is a self-contained Node script, `lved-cli.js`. It is not part of a UI project, so download it once and reuse it:
-
-1. Grab the archive for your platform from the [LVGL Pro releases page](https://github.com/lvgl/lvgl_pro/releases), named `LVGL_Pro_CLI-<version>-<platform>.zip`.
-2. Unzip it anywhere and run it with Node 18 or newer (CI uses 22).
-3. Set `LVGL_CLI_TOKEN` to a Product or Platform license token, or pass `--token`. Prefer the environment variable so the token stays out of shell history and logs, and never commit it.
+Install it once, globally, with npm:
 
 ```bash
-curl -L https://github.com/lvgl/lvgl_pro/releases/latest/download/LVGL_Pro_CLI-linux.zip -o cli.zip
-unzip cli.zip -d lvgl-cli
-export LVGL_CLI_TOKEN="..."
-node lvgl-cli/lved-cli.js --help
+npm install --global @lvgl/lvglpro
 ```
 
-Check the releases page for the exact asset name; it carries the version number.
+This puts `lvglpro` on your `PATH`. Node 18 or newer is required (CI uses 22).
+
+Set `LVGLPRO_CLI_TOKEN` to a Product or Platform license token, or pass `--token`. Prefer the environment variable so the token stays out of shell history and logs, and never commit it.
+
+```bash
+export LVGLPRO_CLI_TOKEN="..."
+lvglpro --help
+```
 
 ### Running it
 
 ```bash
-node lved-cli.js validate   <project> --errorlimit 25
-node lved-cli.js generate   <project>
-node lved-cli.js screenshot <project> screens/home.xml --out /tmp/home.png --delay 200
-node lved-cli.js run-all-tests <project>
+lvglpro validate   <project> --errorlimit 25
+lvglpro generate   <project>
+lvglpro screenshot <project> screens/home.xml --out /tmp/home.png --delay 200
+lvglpro run-all-tests <project>
 ```
 
-Every command needs the token. If it isn't set, say the XML is unverified rather than implying it was checked. `node lved-cli.js <command> --help` lists the current options for any command.
+Every command needs the token. If it isn't set, say the XML is unverified rather than implying it was checked. `lvglpro <command> --help` lists the current options for any command.
 
 Tests are XML too, a `<test>` root with a `<view>` and a `<steps>` block of `click_at`, `wait`, `subject_set`, `subject_compare`, and `screenshot_compare`.
 
 ## Where to look things up
 
-| Question | Answer |
-| --- | --- |
-| What can this tag accept? | `lvgl_widgets_xml/<version>/lv_*.xml` |
-| What style properties and enums exist? | `lvgl_widgets_xml/<version>/globals.xml` |
-| How does feature X work? | `docs/syntax/*.mdx` |
-| What does real, good XML look like? | `templates/basic/`, `examples/lvgl_open/`, `tutorials/` |
-| Anything about LVGL itself | The LVGL MCP server at `https://lvgl.mcp.kapa.ai/`, preconfigured in each project's `.mcp.json`. Prefer it over recalling LVGL APIs from memory. |
+| Question                               | Answer                                                                                                                                           |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| What can this tag accept?              | `lvgl_widgets_xml/<version>/lv_*.xml`                                                                                                            |
+| What style properties and enums exist? | `lvgl_widgets_xml/<version>/globals.xml`                                                                                                         |
+| How does feature X work?               | `docs/syntax/*.mdx`                                                                                                                              |
+| What does real, good XML look like?    | `templates/basic/`, `examples/lvgl_open/`, `tutorials/`                                                                                          |
+| Anything about LVGL itself             | The LVGL MCP server at `https://lvgl.mcp.kapa.ai/`, preconfigured in each project's `.mcp.json`. Prefer it over recalling LVGL APIs from memory. |

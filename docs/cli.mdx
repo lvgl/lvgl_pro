@@ -5,105 +5,111 @@ description: The LVGL Pro command-line tool generates and compiles C code, valid
 
 The CLI, along with the [Editor](./editor/overview), [Figma plugin](./figma), and [online viewer](./online-viewer), is part of **LVGL Pro**, a professional toolkit to develop embedded UIs.
 
-The LVGL Pro CLI is a command line tool bringing the great power of the Editor to the terminal. It's a Node script, `lved-cli.js`, that generates and compiles C code from your XML, validates projects, runs headless UI tests, and captures screenshots, all without opening the GUI.
+The LVGL Pro CLI is a command line tool bringing the great power of the Editor to the terminal. It's an npm-installed `lvglpro` command that generates and compiles C code from your XML, validates projects, runs headless UI tests, and captures screenshots, all without opening the GUI.
 
 Because it's scriptable and headless, the CLI is the bridge between LVGL Pro and your automation: continuous integration, regression testing, and AI agents that write, validate, and visually verify UI on their own.
 
 <Callout type="warn">
-The CLI is a **Professional feature** and is **not available with the Community and Evaluation licenses**. See [pricing and plans](https://pro.lvgl.io/pricing) to unlock it.
+    The CLI is a **Professional feature** and is **not available with the Community and Evaluation licenses**. See
+    [pricing and plans](https://pro.lvgl.io/pricing) to unlock it.
 </Callout>
 
 ## Why use the CLI?
 
 <Cards>
-  <Card title="Run in CI/CD">
-    Generate C code, compile, and run UI tests on every push. Catch regressions before they merge, no GUI, no manual steps.
-  </Card>
-  <Card title="Close the AI loop">
-    Let an AI write XML, then `validate` it for instant, machine-readable feedback and `screenshot` it so a vision model can see the result and iterate.
-  </Card>
-  <Card title="Reproducible builds">
-    The same command produces the same C code locally and on your build server. `compare` it against a reference to guarantee deterministic output.
-  </Card>
+    <Card title="Run in CI/CD">
+        Generate C code, compile, and run UI tests on every push. Catch regressions before they merge, no GUI, no manual
+        steps.
+    </Card>
+    <Card title="Close the AI loop">
+        Let an AI write XML, then `validate` it for instant, machine-readable feedback and `screenshot` it so a vision
+        model can see the result and iterate.
+    </Card>
+    <Card title="Reproducible builds">
+        The same command produces the same C code locally and on your build server. `compare` it against a reference to
+        guarantee deterministic output.
+    </Card>
 </Cards>
 
 ## Installation
 
-The CLI ships as a self-contained Node script.
-
-1. **Download** the latest CLI archive from the [Releases page](https://github.com/lvgl/lvgl_pro/releases) and unzip it.
-2. **Install Node.js** 18 or newer (CI is tested on Node 22).
-3. **Run commands** to test, validate, build, etc the UI project
-
-Run it directly with Node:
+1. **Install Node.js** 18 or newer (CI is tested on Node 22).
+2. **Install the CLI** globally with npm:
 
 ```bash
-node lved-cli.js --help
+npm install --global @lvgl/lvglpro
+```
+
+This puts `lvglpro` on your `PATH`.
+
+```bash
+lvglpro --help
 ```
 
 ### Authentication
 
 The CLI requires a Product or Platform license token. Provide it in one of two ways:
 
-- **Environment variable (recommended):** set `LVGL_CLI_TOKEN` and the CLI picks it up automatically. This is the best fit for CI, where you'd store the token as an encrypted secret.
+- **Environment variable (recommended):** set `LVGLPRO_CLI_TOKEN` and the CLI picks it up automatically. This is the best fit for CI, where you'd store the token as an encrypted secret.
 - **Command-line flag:** pass `--token <your-token>` on any command.
 
 ```bash
 # Picked up automatically from the environment
-export LVGL_CLI_TOKEN="your-token"
-node lved-cli.js generate path/to/project
+export LVGLPRO_CLI_TOKEN="your-token"
+lvglpro generate path/to/project
 
 # Or pass it explicitly
-node lved-cli.js generate path/to/project --token "your-token"
+lvglpro generate path/to/project --token "your-token"
 ```
 
 <Callout type="warn">
-Treat the token like a password. Prefer `LVGL_CLI_TOKEN` over `--token` so it doesn't leak into shell history or CI logs, and never commit it to your repository.
+    Treat the token like a password. Prefer `LVGLPRO_CLI_TOKEN` over `--token` so it doesn't leak into shell history or
+    CI logs, and never commit it to your repository.
 </Callout>
 
 ## Quick start
 
 ```bash
 # Generate C and H files from your XML project
-node lved-cli.js generate path/to/project
+lvglpro generate path/to/project
 
 # Validate XML and report problems
-node lved-cli.js validate path/to/project
+lvglpro validate path/to/project
 
 # Compile and run all UI tests headlessly
-node lved-cli.js run-all-tests path/to/project
+lvglpro run-all-tests path/to/project
 
 # Capture a screen as a PNG
-node lved-cli.js screenshot path/to/project screens/home.xml --out home.png
+lvglpro screenshot path/to/project screens/home.xml --out home.png
 ```
 
 ## Commands
 
 ### Reference
 
-| Command | Purpose |
-| --- | --- |
-| `generate` | Generate C/H code from XML |
-| `compile` | Compile the project (`--target editor\|cli`) |
-| `validate` | Validate XML and report errors |
-| `run-test` | Run a single UI test |
-| `run-all-tests` | Run all UI tests |
-| `screenshot` | Capture a screen as a PNG |
-| `compare` | Compare generated code against a reference |
+| Command         | Purpose                                      |
+| --------------- | -------------------------------------------- |
+| `generate`      | Generate C/H code from XML                   |
+| `compile`       | Compile the project (`--target editor\|cli`) |
+| `validate`      | Validate XML and report errors               |
+| `run-test`      | Run a single UI test                         |
+| `run-all-tests` | Run all UI tests                             |
+| `screenshot`    | Capture a screen as a PNG                    |
+| `compare`       | Compare generated code against a reference   |
 
-Run `node lved-cli.js <command> --help` for the full, up-to-date options of any command.
+Run `lvglpro <command> --help` for the full, up-to-date options of any command.
 
 ### generate
 
 Generate C and H code from the project's XML files.
 
 ```bash
-node lved-cli.js generate <project-path> [options]
+lvglpro generate <project-path> [options]
 ```
 
-| Option | Description |
-| --- | --- |
-| `--ignore-fonts` | Skip font conversion |
+| Option            | Description           |
+| ----------------- | --------------------- |
+| `--ignore-fonts`  | Skip font conversion  |
 | `--ignore-images` | Skip image conversion |
 
 ### compile
@@ -113,11 +119,11 @@ Compile the project into a runnable binary (runtime) for previewing or testing.
 The runtime contains the compiled LVGL, the C code of the UI project, and some editor-specific C code. It is required to run the UI in the Editor or in the CLI.
 
 ```bash
-node lved-cli.js compile <project-path> [options]
+lvglpro compile <project-path> [options]
 ```
 
-| Option | Description |
-| --- | --- |
+| Option                   | Description                                                                                            |
+| ------------------------ | ------------------------------------------------------------------------------------------------------ |
 | `--target <editor\|cli>` | Build target: `editor` creates a runtime for the Editor application, `cli` one to be used for testing. |
 
 ### validate
@@ -125,11 +131,11 @@ node lved-cli.js compile <project-path> [options]
 Check the project's XML for errors and report them. Exits non-zero on failure, so it doubles as a gate in CI and a fast feedback signal for AI agents.
 
 ```bash
-node lved-cli.js validate <project-path> [options]
+lvglpro validate <project-path> [options]
 ```
 
-| Option | Description |
-| --- | --- |
+| Option                 | Description                       |
+| ---------------------- | --------------------------------- |
 | `-l, --errorlimit <n>` | Maximum number of errors to print |
 
 ### run-test / run-all-tests
@@ -137,12 +143,12 @@ node lved-cli.js validate <project-path> [options]
 Run headless UI interaction tests defined in XML. `run-test` runs one file; `run-all-tests` discovers and runs every test in the project.
 
 ```bash
-node lved-cli.js run-test <project-path> <testing-file> [options]
-node lved-cli.js run-all-tests <project-path> [options]
+lvglpro run-test <project-path> <testing-file> [options]
+lvglpro run-all-tests <project-path> [options]
 ```
 
-| Option | Description |
-| --- | --- |
+| Option           | Description                                                             |
+| ---------------- | ----------------------------------------------------------------------- |
 | `--slowdown <n>` | Slow execution down N times for debugging (`0` = no delay, the default) |
 
 `<testing-file>` is the path to a test XML, relative to `<project-path>`.
@@ -152,12 +158,12 @@ node lved-cli.js run-all-tests <project-path> [options]
 Render a screen and save it as a PNG. Perfect for visual diffs and AI vision feedback.
 
 ```bash
-node lved-cli.js screenshot <project-path> <screen> [options]
+lvglpro screenshot <project-path> <screen> [options]
 ```
 
-| Option | Description |
-| --- | --- |
-| `--out <file>` | Output file name for the screenshot |
+| Option         | Description                                                         |
+| -------------- | ------------------------------------------------------------------- |
+| `--out <file>` | Output file name for the screenshot                                 |
 | `--delay <ms>` | Wait before capturing, e.g. to let animations settle (default: `0`) |
 
 `<screen>` is the path of the screen to capture, relative to `<project-path>`.
@@ -167,7 +173,7 @@ node lved-cli.js screenshot <project-path> <screen> [options]
 Compare two project directories by file presence and normalized content. Use it to assert that generated output matches a known-good reference.
 
 ```bash
-node lved-cli.js compare <generated-path> <reference-path>
+lvglpro compare <generated-path> <reference-path>
 ```
 
 ## Use case: CI/CD pipelines
@@ -179,35 +185,30 @@ name: LVGL Pro Check
 on: [push, pull_request]
 
 jobs:
-  ui-check:
-    runs-on: ubuntu-latest
-    env:
-      # Store your Pro license token as an encrypted repository secret
-      LVGL_CLI_TOKEN: ${{ secrets.LVGL_CLI_TOKEN }}
-    steps:
-      - uses: actions/checkout@v4
+    ui-check:
+        runs-on: ubuntu-latest
+        env:
+            # Store your Pro license token as an encrypted repository secret
+            LVGLPRO_CLI_TOKEN: ${{ secrets.LVGLPRO_CLI_TOKEN }}
+        steps:
+            - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: '22'
 
-      - name: Download CLI
-        # Latest Linux/macOS CLI build; see https://github.com/lvgl/lvgl_pro/releases for all assets
-        run: |
-          curl -L https://github.com/lvgl/lvgl_pro/releases/download/nightly/LVGL_Pro_CLI-nightly-linux-mac.zip -o lvgl-cli.zip
-          unzip lvgl-cli.zip -d lvgl-cli
+            - name: Install CLI
+              run: npm install --global @lvgl/lvglpro
 
-      - name: Generate code
-        run: node ./lvgl-cli/lved-cli.js generate examples -s
+            - name: Generate code
+              run: lvglpro generate examples
 
-      - name: Compile to run tests
-        run: node ./lvgl-cli/lved-cli.js compile examples --target cli
+            - name: Compile to run tests
+              run: lvglpro compile examples --target cli
 
-      - name: Run UI tests
-        run: node ./lvgl-cli/lved-cli.js run-all-tests examples
+            - name: Run UI tests
+              run: lvglpro run-all-tests examples
 ```
-
-A full, working example lives in the [project's PR-check workflow](https://github.com/lvgl/lvgl_pro/blob/master/.github/workflows/pr-check.yml).
 
 ## Use case: AI-driven UI development
 
@@ -221,10 +222,9 @@ The CLI gives an AI agent two things a language model otherwise lacks: **objecti
 
 ```bash
 # 1–2: write XML, then check it
-node lved-cli.js validate path/to/project --errorlimit 25
-node lved-cli.js generate path/to/project
+lvglpro validate path/to/project --errorlimit 25
+lvglpro generate path/to/project
 
 # 3: render what the user will actually see
-node lved-cli.js screenshot path/to/project screens/home.xml --out home.png --delay 200
+lvglpro screenshot path/to/project screens/home.xml --out home.png --delay 200
 ```
-

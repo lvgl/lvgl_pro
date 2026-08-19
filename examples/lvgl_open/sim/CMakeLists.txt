@@ -36,9 +36,12 @@ set(ENABLE_ASAN AUTO CACHE STRING
     "AddressSanitizer: ON, OFF, or AUTO (on when the toolchain supports it)")
 set_property(CACHE ENABLE_ASAN PROPERTY STRINGS AUTO ON OFF)
 
-if(ENABLE_ASAN)
-  string(TOUPPER "${ENABLE_ASAN}" _enable_asan)
+string(TOUPPER "${ENABLE_ASAN}" _enable_asan)
 
+# AUTO is not one of CMake's boolean words. `if(ENABLE_ASAN)` is already true
+# for it — any value that is not OFF/0/FALSE/NO/empty is true — but naming it
+# spells out the default path instead of leaving it to that rule.
+if(_enable_asan STREQUAL "AUTO" OR ENABLE_ASAN)
   # Probe by compiling *and* linking: MinGW-w64 reports itself as GNU but often
   # ships no libasan. The cached result is dropped first so every configure
   # re-probes and a toolchain change is picked up.

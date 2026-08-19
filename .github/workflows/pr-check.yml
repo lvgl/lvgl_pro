@@ -18,6 +18,36 @@ jobs:
             - name: Check the common template files
               run: .github/scripts/check-common-template-files.sh
 
+    # The widget API tables in docs/built_in_widgets are generated from the XML
+    # schemas, so a schema edit without a regenerated page silently ships stale
+    # docs. Regenerate here and fail if anything moved.
+    widget-api-docs:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout current repository
+              uses: actions/checkout@v4
+
+            # Node 24, not the 22.13.0 the pr-check job uses: this script is
+            # TypeScript run directly, and only Node >= 23.6 strips the types
+            # without --experimental-strip-types.
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '24'
+
+            - name: Regenerate the widget API docs
+              run: node docs/scripts/gen_widget_api.ts
+
+            - name: Fail if the committed docs are out of date
+              run: |
+                  if ! git diff --exit-code -- docs/built_in_widgets; then
+                    echo
+                    echo "docs/built_in_widgets is out of date with lvgl_widgets_xml."
+                    echo "Run 'node docs/scripts/gen_widget_api.ts' and commit the result."
+                    exit 1
+                  fi
+
     # A job-level `if` cannot read `secrets`, which is why this is a separate job:
     # it publishes "is the token there" as an output that pr-check can be gated on.
     # Checking inside pr-check cannot work, because a step that exits 0 ends only

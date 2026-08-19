@@ -4,8 +4,10 @@
 #
 # The Editor instantiates templates/empty, templates/basic, examples/lvgl_open and
 # tutorials as standalone user projects, so their build and tooling files are the same
-# file kept in four places. Nothing generates them, so they drift quietly: a fix lands
-# in one project and the other three keep the old version.
+# file kept in several places. examples/lvgl_pro is not instantiated, but it is an
+# ordinary project with the same simulator, so it is held to the same files.
+# Nothing generates any of them, so they drift quietly: a fix lands in one project and
+# the others keep the old version.
 #
 # This only reports. Fix a finding by copying the right version across. If two projects
 # are supposed to differ, add the path to DIFFER_ON_PURPOSE below together with the
@@ -17,7 +19,7 @@ set -eu
 
 # The project every other one is compared against.
 REFERENCE='templates/empty'
-OTHERS='templates/basic examples/lvgl_open tutorials'
+OTHERS='templates/basic examples/lvgl_open examples/lvgl_pro tutorials'
 
 # Every file under these folders must match, in every project.
 COMMON_DIRS='sim .vscode'

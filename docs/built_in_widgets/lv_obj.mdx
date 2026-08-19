@@ -31,10 +31,10 @@ Properties below are the widget's XML [`<api>`](../syntax/api); see [API](../syn
 | Property | Type | Description |
 | --- | --- | --- |
 | `name` | `string` | Object name (for lv_obj_find_by_name or debugging) |
-| `x` | `coords` | Set X position (px or %) |
-| `y` | `coords` | Set Y position (px or %) |
-| `height` | `coords` | Set height (px, % or content) |
-| `width` | `coords` | Set width (px, % or content) |
+| `x` | `px\|%` | Set X position (px or %) |
+| `y` | `px\|%` | Set Y position (px or %) |
+| `height` | `px\|%\|content` | Set height (px, % or content) |
+| `width` | `px\|%\|content` | Set width (px, % or content) |
 | `align` | `enum:lv_align` | Align on parent |
 | `ext_click_area` | `int` | Extra clickable area around object in px |
 | `scroll_snap_x` | `enum:lv_scroll_snap` | Snap children horizontally |
@@ -42,6 +42,7 @@ Properties below are the widget's XML [`<api>`](../syntax/api); see [API](../syn
 | `scrollbar_mode` | `enum:lv_scrollbar_mode` | Set the scrollbar mode |
 | `flex_grow` | `int` | Set flex grow to fill the available space in the track |
 | `flex_flow` | `enum:lv_flex_flow` | Set flex flow direction (row, column, etc.) |
+| `radio_button` | `bool` | Allow only one radio_button sibling to be checked |
 
 ### Flags
 
@@ -73,7 +74,6 @@ Boolean object flags — set as `flag="true"` / `"false"`.
 | `floating` | Do not scroll the object when the parent scrolls and ignore layout |
 | `send_draw_task_events` | Send `LV_EVENT_DRAW_TASK_ADDED` events |
 | `overflow_visible` | Do not clip the children to the parent's ext draw size |
-| `radio_button` | Allow only one radio_button sibling to be checked |
 | `flex_in_new_track` | Start a new flex track on this item |
 
 ### State flags
@@ -194,7 +194,7 @@ _access `add`_
 | Name | Kind | Type | Description |
 | --- | --- | --- | --- |
 | `trigger` | arg | `lv_event` | Trigger event (default: `clicked`) |
-| `target` | arg | `lv_obj` | Timeline target |
+| `target` | arg | `lv_obj\|self` | Timeline target |
 | `timeline` | arg | `timeline` | Timeline to play |
 | `delay` | arg | `int` | Start delay (ms) (default: `0`) |
 | `reverse` | arg | `bool` | Play in reverse (default: `false`) |

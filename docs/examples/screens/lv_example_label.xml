@@ -1,0 +1,48 @@
+<!--
+ @title Label
+ @brief Recoloring, a long-text mode and a value bound to a subject.
+
+ A plain heading sits on top. Below it, one label uses `recolor="true"` so
+ `#hex text#` spans change colour inline. The next is given a fixed width with
+ `long_mode="scroll_circular"` so the over-long text scrolls continuously. The
+ last uses `bind_text` with a `bind_text-fmt` printf string to track
+ `subject_value` live.
+-->
+<screen>
+	<styles>
+		<style
+			name="style_box"
+			bg_color="0x1f2937"
+			bg_opa="100%"
+			radius="8"
+			pad_all="10"
+			text_color="0xe5e7eb"
+			width="260"
+		/>
+	</styles>
+
+	<view
+		flex_flow="column"
+		style_pad_row="12"
+		style_flex_cross_place="center"
+		style_flex_main_place="center"
+		style_flex_track_place="center"
+	>
+		<!-- 💡 The scrolling label's text is wider than its fixed width, so it loops. -->
+
+		<!-- Per-word recoloring -->
+		<lv_label recolor="true" text="Status: #16a34a OK# / #dc2626 ERROR#">
+			<style name="style_box" />
+		</lv_label>
+
+		<!-- Fixed width + circular scroll for overflow -->
+		<lv_label width="200" long_mode="scroll_circular" text="This text is too long to fit so it scrolls around.">
+			<style name="style_box" />
+		</lv_label>
+
+		<!-- Live value bound to a subject -->
+		<lv_label bind_text="subject_value" bind_text-fmt="Bound value: %d %%">
+			<style name="style_box" />
+		</lv_label>
+	</view>
+</screen>

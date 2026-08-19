@@ -1,0 +1,15 @@
+<!--
+ @title GIF
+ @brief An animated GIF played from a registered file source.
+
+ `src` points at the GIF registered in globals.xml (as a `<file>`).
+ `loop_count` sets how many times it repeats; leave it unset to use the
+ count stored in the GIF itself.
+-->
+<screen>
+	<view>
+		<!-- 
+		<lv_gif src="img_bulb" loop_count="10" align="center"/>
+		-->
+	</view>
+</screen>

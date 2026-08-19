@@ -1,0 +1,58 @@
+<!--
+ @title Button
+ @brief A normal, a toggleable and a disabled button with per-state styling.
+
+ Button itself adds no properties over the Base Widget — its behaviour comes
+ from flags and styling. The middle button uses `checked="true"` so it stays
+ toggled, and a `selector="checked"` style recolours it. The third uses
+ `disabled="true"` to show the muted, non-interactive state.
+-->
+<screen>
+	<styles>
+		<!-- Shared button look -->
+		<style
+			name="style_btn"
+			bg_color="0x3b82f6"
+			bg_opa="100%"
+			radius="8"
+			pad_hor="18"
+			pad_ver="10"
+			text_color="0xffffff"
+		/>
+		<!-- Pressed: darken -->
+		<style name="style_btn_pressed" bg_color="0x1d4ed8" />
+		<!-- Checked: accent -->
+		<style name="style_btn_checked" bg_color="0x16a34a" />
+	</styles>
+
+	<view
+		flex_flow="column"
+		style_pad_row="14"
+		style_flex_cross_place="center"
+		style_flex_main_place="center"
+		style_flex_track_place="center"
+	>
+		<!-- 💡 Tap the middle button: it keeps its checked colour until tapped again. -->
+
+		<!-- Plain action button -->
+		<lv_button>
+			<style name="style_btn" />
+			<style name="style_btn_pressed" selector="pressed" />
+			<lv_label text="Action" />
+		</lv_button>
+
+		<!-- Toggle button: starts checked, keeps its state -->
+		<lv_button checked="true">
+			<style name="style_btn" />
+			<style name="style_btn_pressed" selector="pressed" />
+			<style name="style_btn_checked" selector="checked" />
+			<lv_label text="Toggle" />
+		</lv_button>
+
+		<!-- Disabled button: not clickable, dimmed -->
+		<lv_button disabled="true" style_bg_opa="40%">
+			<style name="style_btn" />
+			<lv_label text="Disabled" />
+		</lv_button>
+	</view>
+</screen>

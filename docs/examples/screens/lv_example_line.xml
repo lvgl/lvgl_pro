@@ -1,0 +1,31 @@
+<!--
+ @title Line
+ @brief A styled poly-line, and the same points with y_invert.
+
+ `points` is a list of coordinate pairs the Line connects in order. The
+ line look comes from the `line_*` style properties (width, colour,
+ rounded ends). The second Line uses the same points with `y_invert="true"`
+ so y=0 is the bottom, flipping the shape vertically.
+-->
+<screen>
+	<styles>
+		<style name="style_line" line_width="4" line_color="0x3b82f6" line_rounded="true" />
+		<style name="style_line2" line_width="4" line_color="0xf59e0b" line_rounded="true" />
+		<style name="style_panel" bg_color="0x0f172a" bg_opa="100%" radius="8" />
+	</styles>
+
+	<view flex_flow="column" style_pad_row="14" style_pad_all="16" style_flex_cross_place="center">
+		<!--
+		<lv_line width="220" height="70" points="(0 10) (60 50) (120 5) (200 45)">
+			<style name="style_panel" />
+			<style name="style_line" />
+		</lv_line>
+
+		<lv_line width="220" height="70" y_invert="true"
+			points="(0 10) (60 50) (120 5) (200 45)">
+			<style name="style_panel" />
+			<style name="style_line2" />
+		</lv_line>
+	-->
+	</view>
+</screen>

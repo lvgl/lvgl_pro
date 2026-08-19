@@ -1,0 +1,24 @@
+<!--
+ @title LED
+ @brief A row of LEDs with different colors and brightness levels.
+
+ `color` sets the LED hue (used for its fill, border and glow) and
+ `brightness` (an opacity 0–255 or %) controls how dark or bright it
+ appears. The same colour at low vs. high brightness shows the dimming
+ effect.
+-->
+<screen>
+	<view
+		flex_flow="row"
+		style_pad_column="32"
+		style_flex_cross_place="center"
+		style_flex_main_place="center"
+		style_flex_track_place="center"
+	>
+		<lv_led width="36" height="36" color="0x22c55e" brightness="60" />
+		<lv_led width="36" height="36" color="0x22c55e" brightness="180" />
+		<lv_led width="36" height="36" color="0x22c55e" brightness="255" />
+		<lv_led width="36" height="36" color="0xef4444" brightness="255" />
+		<lv_led width="36" height="36" color="0x3b82f6" brightness="200" />
+	</view>
+</screen>

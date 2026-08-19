@@ -1,0 +1,32 @@
+<!--
+ @title QR code
+ @brief Two QR codes with custom colours, size and quiet zone.
+
+ `data` is the encoded UTF-8 string and `size` sets the square side in
+ pixels. `dark_color`/`light_color` recolour the modules and background,
+ and `quiet_zone="true"` adds the recommended margin so scanners read it
+ reliably.
+-->
+<screen>
+	<view>
+		<lv_qrcode
+			size="120"
+			align="center"
+			x="-100"
+			dark_color="0x1f2937"
+			light_color="0xffffff"
+			quiet_zone="true"
+			data="https://lvgl.io"
+		/>
+
+		<lv_qrcode
+			size="100"
+			align="center"
+			x="100"
+			dark_color="0x2563eb"
+			light_color="0xeff6ff"
+			quiet_zone="true"
+			data="https://lvgl.io"
+		/>
+	</view>
+</screen>

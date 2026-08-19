@@ -4,32 +4,56 @@
 Generator output (`screenN_gen.c`) is verbose — section-banner comments, an
 empty `style_inited` block, `LV_TRACE_OBJ_CREATE` traces, redundant
 `lv_obj_set_name` calls, etc. — and this script post-processes those files
-into the hand-written-looking examples we ship in `examples/lvgl_pro/`.
+into the hand-written-looking examples the docs show.
+
+Two directories are involved, and they are not the same one:
+
+* the **project**, `examples/lvgl_pro/`, a normal LVGL Pro project. Only read
+  from, for the declarations in its `globals.xml`.
+* the **docs copy**, `docs/examples/`, written by `generate_examples.py` and
+  the tree this script rewrites in place.
+
+Keeping them apart is what lets `examples/lvgl_pro/` be an ordinary project
+with an ordinary export, instead of a folder whose committed C is the result
+of a transformation nothing in CI reruns.
 
 Each `.c` file that has a sibling `.xml` of the same basename is run through
 `TRANSFORMATIONS` in order; each transform is `(source, path) -> str` and
 pure, so the runner only writes back when the final text differs. Every
 transform is idempotent — safe to re-run on already-processed output without
 duplicating content.
+
+USAGE
+-----
+    python docs/scripts/cleanup_examples.py [--project DIR] [--out DIR]
+
+Normally you do not run this directly; `generate_examples.py` calls `run()`.
 """
 
 from __future__ import annotations
 
+import argparse
 import os
 import re
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-# Repo root = two levels above `docs/scripts/`. Used to (a) locate the
-# `examples/lvgl_pro/` tree and (b) compute the relative path to its
-# `lv_examples.h` for include rewriting.
+# Repo root = two levels above `docs/scripts/`.
 REPO_ROOT = Path(__file__).resolve().parents[2]
-EXAMPLES_DIR = REPO_ROOT / "examples" / "lvgl_pro"
+
+# The LVGL Pro project the examples come from. Only read from: its `globals.xml`
+# supplies the subject, image and font declarations.
+PROJECT_DIR = REPO_ROOT / "examples" / "lvgl_pro"
+
+# The tree being cleaned, which is a copy of the project's generated output.
+# `lv_examples.h` sits at its root, so include rewriting is relative to this.
+# Equal to PROJECT_DIR only when cleaning a project in place.
+OUTPUT_DIR = REPO_ROOT / "docs" / "examples"
 
 # Subjects declared at the project level (one source of truth) so each example
 # can pull the names/types/initial-values it actually references.
-GLOBALS_XML_PATH = EXAMPLES_DIR / "globals.xml"
+GLOBALS_XML_PATH = PROJECT_DIR / "globals.xml"
 
 # Fixed buffer size used for string subjects when promoted into example-local
 # inits. The project's gen header uses `UI_SUBJECT_STRING_LENGTH = 256`; the
@@ -40,6 +64,59 @@ SUBJECT_STRING_BUF_SIZE = 256
 # =============================================================================
 # Generator boilerplate removal
 # =============================================================================
+
+# The generator wraps the whole body in a compile-target guard:
+#
+#     lv_obj_t * the_root = NULL;
+#
+#     #if LVGL_PRO_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_PRO_EXAMPLES_TARGET_ALL)
+#     if (lvgl_pro_examples_check_target(LVGL_PRO_EXAMPLES_TARGET_ALL)) {
+#         ...the actual example...
+#         the_root = lv_obj_0;
+#     }
+#     #endif
+#
+#     return the_root;
+#
+# None of it can survive into a docs example. The macros are named after the
+# project and defined in its `_gen.h`, which `replace_includes_with_lv_examples`
+# strips, and `rename_create_function` makes the function `void`, so the
+# `return` would not compile either. The examples project declares one target,
+# so the guard is always true: keep the body, drop the scaffolding.
+#
+# The names carry the project's prefix, so match `\w+_CHECK_COMPILE_TARGET`
+# rather than a literal — renaming the project must not silently disable this.
+TARGET_GUARD_RE = re.compile(
+    r"[ \t]*lv_obj_t \* the_root = NULL;[ \t]*\n"
+    r"(?:[ \t]*\n)*"
+    r"[ \t]*\#if[ \t]+\w+_CHECK_COMPILE_TARGET\([^)\n]*\)[ \t]*\n"
+    r"[ \t]*if[ \t]*\(\w+_check_target\([^)\n]*\)\)[ \t]*\{[ \t]*\n"
+    r"(?P<body>.*?)"
+    r"(?:[ \t]*\n)*"
+    r"[ \t]*the_root[ \t]*=[ \t]*\w+;[ \t]*\n"
+    r"[ \t]*\}[ \t]*\n"
+    r"[ \t]*\#endif[ \t]*\n"
+    r"(?:[ \t]*\n)*"
+    r"[ \t]*return[ \t]+the_root;[ \t]*\n",
+    re.DOTALL,
+)
+
+
+def unwrap_target_guard(source: str, path: Path) -> str:
+    """Replace the compile-target guard with the body it wrapped, dedented.
+
+    Idempotent: the unwrapped body has no `the_root` left to match.
+    """
+
+    def replace(match: re.Match) -> str:
+        body = match.group("body")
+        dedented = [
+            line[4:] if line.startswith("    ") else line for line in body.split("\n")
+        ]
+        return "\n".join(dedented).rstrip() + "\n"
+
+    return TARGET_GUARD_RE.sub(replace, source)
+
 
 # Matches the empty style-init scaffold the generator always emits:
 #
@@ -212,7 +289,7 @@ INCLUDE_BLOCK_RE = re.compile(
 
 def replace_includes_with_lv_examples(source: str, path: Path) -> str:
     # Relative path is recomputed per file so this works for any directory depth.
-    rel = os.path.relpath(EXAMPLES_DIR / "lv_examples.h", path.parent)
+    rel = os.path.relpath(OUTPUT_DIR / "lv_examples.h", path.parent)
     return INCLUDE_BLOCK_RE.sub(f'#include "{rel}"\n', source, count=1)
 
 
@@ -1142,12 +1219,18 @@ def cast_ored_enum_flags(source: str) -> str:
 #   * `remove_blank_after_open_brace` runs last so it can clean up blanks
 #     left by everything else.
 TRANSFORMATIONS = [
+    # Traces first: the generator emits `LV_TRACE_OBJ_CREATE("finished")`
+    # between the guard's `#endif` and its `return`, so the guard is only one
+    # contiguous block once the traces are gone.
+    lambda s, p: remove_lv_trace_obj_create(s),
+    # Then the guard: everything below assumes the body sits at one indent
+    # level inside the function, which is only true once it is unwrapped.
+    unwrap_target_guard,
     # Subject decls/inits — must run before the empty-block removal so the
     # block isn't yet "empty" when we want to fill it.
     init_subjects,
     # Generator boilerplate.
     lambda s, p: remove_empty_style_inited(s),
-    lambda s, p: remove_lv_trace_obj_create(s),
     lambda s, p: remove_lv_obj_set_name(s),
     # Code modernization.
     lambda s, p: root_obj_to_screen(s),
@@ -1216,8 +1299,27 @@ def process(path: Path) -> bool:
     return False
 
 
-def main(argv: list[str]) -> int:
-    examples_dir = EXAMPLES_DIR
+def configure(project_dir: Path, output_dir: Path) -> None:
+    """Point the transforms at a project and at the copy being cleaned.
+
+    The transforms read these as module state, so this is how a caller redirects
+    them. The `globals.xml` caches are dropped as well, otherwise a second run in
+    the same process would keep the first project's declarations.
+    """
+    global PROJECT_DIR, OUTPUT_DIR, GLOBALS_XML_PATH
+    PROJECT_DIR = project_dir
+    OUTPUT_DIR = output_dir
+    GLOBALS_XML_PATH = project_dir / "globals.xml"
+    for loader in (_load_globals_subjects, _load_globals_images, _load_globals_fonts):
+        if hasattr(loader, "_cache"):
+            delattr(loader, "_cache")
+
+
+def run(project_dir: Path, output_dir: Path) -> int:
+    """Clean every example in `output_dir`, reading declarations from `project_dir`."""
+    configure(project_dir, output_dir)
+
+    examples_dir = OUTPUT_DIR
     if not examples_dir.is_dir():
         print(f"examples directory not found: {examples_dir}", file=sys.stderr)
         return 1
@@ -1239,6 +1341,26 @@ def main(argv: list[str]) -> int:
         print(f"asset: {asset.relative_to(REPO_ROOT)}")
 
     return 0
+
+
+def main(argv: list[str]) -> int:
+    parser = argparse.ArgumentParser(
+        description="Clean the generated C in the docs copy of the examples."
+    )
+    parser.add_argument(
+        "--project",
+        type=Path,
+        default=PROJECT_DIR,
+        help=f"LVGL Pro project the examples come from (default: {PROJECT_DIR.relative_to(REPO_ROOT)})",
+    )
+    parser.add_argument(
+        "--out",
+        type=Path,
+        default=OUTPUT_DIR,
+        help=f"tree to clean (default: {OUTPUT_DIR.relative_to(REPO_ROOT)})",
+    )
+    args = parser.parse_args(argv)
+    return run(args.project.resolve(), args.out.resolve())
 
 
 if __name__ == "__main__":

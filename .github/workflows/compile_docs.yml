@@ -112,6 +112,10 @@ jobs:
 
           rm -rf /tmp/pro-docs-latest/latest/src/scripts
 
+          # The docs site checks out docs/examples straight from this repo, so
+          # shipping a second copy inside the deployed content is dead weight.
+          rm -rf /tmp/pro-docs-latest/latest/src/examples
+
           cd /tmp/pro-docs-latest
           git config user.name lvgl-bot
           git config user.email lvgl-bot@users.noreply.github.com

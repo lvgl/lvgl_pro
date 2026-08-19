@@ -747,12 +747,13 @@ def init_subjects(source: str, path: Path) -> str:
 # `LV_SYMBOL_OK` — are skipped because those are string macros, not C-array
 # image descriptors.
 
-# Captures the `lv_image_set_src(obj, [&]name)` call. Groups:
+# Captures the `lv_image_set_src(obj, [&]name)` call, and `lv_gif_set_src`,
+# which takes the same `const void *` and so needs the same `&`. Groups:
 #   1 = call prefix up to and including the `,`/whitespace before the arg
 #   2 = optional `&` already present (idempotency)
 #   3 = the image identifier
 LV_IMAGE_SET_SRC_RE = re.compile(
-    r"(lv_image_set_src\s*\(\s*[A-Za-z_]\w*\s*,\s*)(&?)([A-Za-z_]\w*)"
+    r"(lv_(?:image|gif)_set_src\s*\(\s*[A-Za-z_]\w*\s*,\s*)(&?)([A-Za-z_]\w*)"
 )
 
 # A registered image can also reach a style by name through the image-src

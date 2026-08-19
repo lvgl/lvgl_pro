@@ -40,7 +40,8 @@ if(ENABLE_ASAN)
   string(TOUPPER "${ENABLE_ASAN}" _enable_asan)
 
   # Probe by compiling *and* linking: MinGW-w64 reports itself as GNU but often
-  # ships no libasan. Not cached, so a toolchain change is picked up.
+  # ships no libasan. The cached result is dropped first so every configure
+  # re-probes and a toolchain change is picked up.
   include(CheckCSourceCompiles)
   unset(HAVE_ASAN CACHE)
   set(CMAKE_REQUIRED_FLAGS -fsanitize=address)

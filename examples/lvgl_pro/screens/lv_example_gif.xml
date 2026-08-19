@@ -1,11 +1,11 @@
 <!--
  @title GIF
- @brief An animated GIF played from an image registered in globals.xml.
+ @brief An animated GIF, embedded as a raw C array.
 
- `src` points at the GIF registered in globals.xml as
- `<data ... color_format="raw"/>`, so it is embedded as a C array rather than
- read from a file. `loop_count` sets how many times it repeats; leave it unset
- to use the count stored in the GIF itself.
+ `src` names an image from `globals.xml`, registered there with
+ `color_format="raw"`, so the export embeds the GIF file itself instead of
+ converting it. `loop_count` sets how many times it repeats; leave it unset to
+ use the count stored in the GIF.
 -->
 <screen>
 	<view>

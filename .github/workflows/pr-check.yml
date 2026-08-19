@@ -18,21 +18,36 @@ jobs:
             - name: Check the common template files
               run: .github/scripts/check-common-template-files.sh
 
-    pr-check:
+    # A job-level `if` cannot read `secrets`, which is why this is a separate job:
+    # it publishes "is the token there" as an output that pr-check can be gated on.
+    # Checking inside pr-check cannot work, because a step that exits 0 ends only
+    # itself and the CLI steps after it still run.
+    token:
         runs-on: ubuntu-latest
-        env:
-            LVGL_CLI_TOKEN: ${{ secrets.LVGL_CLI_TOKEN }}
+        outputs:
+            available: ${{ steps.probe.outputs.available }}
 
         steps:
-            - name: Check token
+            - name: Look for the CLI token
+              id: probe
               env:
-                  LVGL_CLI_TOKEN: ${{ secrets.LVGL_CLI_TOKEN }}
+                  LVGLPRO_CLI_TOKEN: ${{ secrets.LVGLPRO_CLI_TOKEN }}
               run: |
-                  if [ -z "$LVGL_CLI_TOKEN" ]; then
-                    echo "LVGL_CLI_TOKEN is not set. Skipping..."
-                    exit 0
+                  if [ -n "$LVGLPRO_CLI_TOKEN" ]; then
+                    echo 'available=true' >>"$GITHUB_OUTPUT"
+                  else
+                    echo 'available=false' >>"$GITHUB_OUTPUT"
+                    echo 'LVGLPRO_CLI_TOKEN is not set, so pr-check will be skipped.'
                   fi
 
+    pr-check:
+        needs: token
+        if: needs.token.outputs.available == 'true'
+        runs-on: ubuntu-latest
+        env:
+            LVGLPRO_CLI_TOKEN: ${{ secrets.LVGLPRO_CLI_TOKEN }}
+
+        steps:
             - name: Checkout current repository
               uses: actions/checkout@v4
 
@@ -49,20 +64,17 @@ jobs:
             - name: Remove Generated Files
               run: find examples/lvgl_open -path examples/lvgl_open/images -prune -o -type f \( -name '*.c' -o -name '*.h' \) -print | xargs rm -f
 
-            - name: Download CLI
-              run: curl -L https://github.com/lvgl/lvgl_pro/releases/download/v2.0.2/LVGL_Pro_CLI-2.0.2-linux.zip -o lvglpro.zip
-
-            - name: Unzip CLI
-              run: unzip lvglpro.zip -d lvglpro
+            - name: Install CLI
+              run: npm install --global @lvgl/lvglpro
 
             - name: Generate Code
               run: |
-                  node ./lvglpro/lved-cli.js generate examples/lvgl_open
+                  lvglpro generate examples/lvgl_open
 
             - name: Compile Code
               run: |
-                  node ./lvglpro/lved-cli.js compile examples/lvgl_open --target cli
+                  lvglpro compile examples/lvgl_open --target cli
 
             - name: Run tests
               run: |
-                  node ./lvglpro/lved-cli.js run-all-tests examples/lvgl_open
+                  lvglpro run-all-tests examples/lvgl_open

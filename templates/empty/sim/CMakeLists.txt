@@ -24,6 +24,44 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
 endif()
 
+# AddressSanitizer. On wherever the toolchain can build with it, because this
+# is a debugging simulator and lv_conf_*.defaults sets
+# LV_USE_STDLIB_MALLOC = LV_STDLIB_CLIB, so ASAN sees every LVGL allocation.
+# It reports buffer overflows and use-after-free as they happen.
+#
+#   cmake -S sim -B build -DENABLE_ASAN=OFF   # turn it off
+#   cmake -S sim -B build -DENABLE_ASAN=ON    # fail if it cannot be used
+#
+# The flags are set here, before LVGL and the UI are added below, because every
+# object in the program has to be built with them.
+set(ENABLE_ASAN AUTO CACHE STRING
+    "AddressSanitizer: ON, OFF, or AUTO (on when the toolchain supports it)")
+set_property(CACHE ENABLE_ASAN PROPERTY STRINGS AUTO ON OFF)
+
+if(ENABLE_ASAN)
+  # Compile *and* link a test program: MinGW-w64 reports itself as GNU but
+  # often ships no libasan, so asking the compiler is not enough.
+  include(CheckCSourceCompiles)
+  set(CMAKE_REQUIRED_FLAGS -fsanitize=address)
+  set(CMAKE_REQUIRED_LINK_OPTIONS -fsanitize=address)
+  check_c_source_compiles("int main(void){return 0;}" HAVE_ASAN)
+  unset(CMAKE_REQUIRED_FLAGS)
+  unset(CMAKE_REQUIRED_LINK_OPTIONS)
+
+  if(HAVE_ASAN)
+    # Without the frame pointer the reported stack traces are unusable.
+    add_compile_options(-fsanitize=address -fno-omit-frame-pointer)
+    add_link_options(-fsanitize=address)
+    message(STATUS "AddressSanitizer enabled")
+  elseif(ENABLE_ASAN STREQUAL "AUTO")
+    message(STATUS "AddressSanitizer unavailable; building without it")
+  else()
+    message(FATAL_ERROR
+            "ENABLE_ASAN=${ENABLE_ASAN} but this toolchain cannot build with "
+            "-fsanitize=address")
+  endif()
+endif()
+
 # LVGL version to fetch (any git tag or branch from https://github.com/lvgl/lvgl)
 set(LVGL_VERSION "v9.5.0" CACHE STRING "LVGL version (git tag or branch)")
 

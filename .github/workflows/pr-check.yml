@@ -8,6 +8,16 @@ on:
             - master
 
 jobs:
+    common-template-files:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout current repository
+              uses: actions/checkout@v4
+
+            - name: Check the common template files
+              run: .github/scripts/check-common-template-files.sh
+
     pr-check:
         runs-on: ubuntu-latest
         env:

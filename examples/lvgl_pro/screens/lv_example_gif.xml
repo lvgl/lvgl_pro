@@ -8,8 +8,6 @@
 -->
 <screen>
 	<view>
-		<!-- 
 		<lv_gif src="img_bulb" loop_count="10" align="center"/>
-		-->
 	</view>
 </screen>

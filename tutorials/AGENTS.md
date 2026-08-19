@@ -5,17 +5,16 @@ the Editor or the CLI turns into plain LVGL C code. You do not hand-write the C.
 
 ## Ground rules
 
-1. **Never invent an attribute.** Every widget's exact API is defined by a schema file,
-   one per widget, and the schema is not part of a UI project. Read it before you write:
-   inside the `lvgl/lvgl_pro` repo it is `lvgl_widgets_xml/v<version>/lv_slider.xml`,
-   and from anywhere else fetch it from
-   `raw.githubusercontent.com/lvgl/lvgl_pro/master/lvgl_widgets_xml/v<version>/` — so
-   `.../v9.5.0/lv_slider.xml` for a 9.5.0 project. Style properties and enums are in
-   `globals.xml` in the same folder. The
-   [Built-in widgets](https://lvgl.io/docs/pro/built_in_widgets) docs carry the same API
-   as readable pages.
-2. **Match this project's LVGL version.** Read `lvgl_version` out of `project.xml` and
-   use that schema folder. Mind the `v`: `lvgl_version="9.5.0"` is the folder `v9.5.0`.
+1. **Never invent an attribute.** Each widget's API is defined by a schema file, and the
+   schema is not part of a UI project. Read it before you write — fetch
+   `raw.githubusercontent.com/lvgl/lvgl_pro/master/lvgl_widgets_xml/v<version>/lv_slider.xml`
+   for `lv_slider`, or read `lvgl_widgets_xml/` directly if you are in the
+   [lvgl_pro](https://github.com/lvgl/lvgl_pro) repo. Style properties and enums are in
+   `globals.xml` in the same folder, and
+   [Built-in widgets](https://lvgl.io/docs/pro/built_in_widgets) has the same API as
+   readable pages.
+2. **Match this project's LVGL version.** Read `lvgl_version` from `project.xml` and use
+   that schema folder — `lvgl_version="9.5.0"` is the folder `v9.5.0`.
 3. **Validate what you write.** Guessing is not the same as knowing. See *Verifying*.
 4. **Reuse before you create.** Read `globals.xml` and `components/` first. The
    constant, the style and the button you were about to invent are often already there.
@@ -97,8 +96,9 @@ data binding against a subject declared in `globals.xml`:
 <bind_state_if_gt subject="subject_temp" state="checked" ref_value="30"/>
 ```
 
-`bind_flag_*` takes a `flag`, `bind_state_*` takes a `state`. Both come in `_eq`,
-`_not_eq`, `_gt`, `_ge`, `_lt`, `_le`. Subjects can be `int`, `string` or `float`.
+`bind_flag_*` takes a `flag`, `bind_state_*` takes a `state`. Both come in `if_eq`,
+`if_not_eq`, `if_gt`, `if_ge`, `if_lt`, `if_le`. Subjects can be `int`, `string` or
+`float`.
 
 **Binding beats callbacks.** A radio group, a theme switch or a value readout needs no C
 at all: write the subject with `subject_set_int_event`, read it with `bind_state_if_eq`.
@@ -128,9 +128,8 @@ characters must be escaped: `value="I'm here"` is invalid, write `I&apos;m here`
 **In the Editor.** The preview renders as you type. **Ctrl+B** exports the C and
 compiles it, **F5** runs the simulator.
 
-**With the CLI.** It is an npm package, not part of this project. Install it once,
-globally, and set `LVGLPRO_CLI_TOKEN` to a license token — prefer the environment
-variable so it stays out of shell history, and never commit it.
+**With the CLI.** An npm package, not part of this project. Set `LVGLPRO_CLI_TOKEN` to a
+license token — use the environment variable, never commit it.
 
 ```bash
 npm install --global @lvgl/lvglpro
@@ -138,20 +137,20 @@ export LVGLPRO_CLI_TOKEN="..."
 
 lvglpro validate   . --errorlimit 25
 lvglpro generate   .
-lvglpro screenshot . screens/home.xml --out /tmp/home.png --delay 200
+lvglpro screenshot . screens/<your_screen>.xml --out /tmp/shot.png --delay 200
 lvglpro run-all-tests .
 ```
 
 Node 18 or newer. Every command needs the token; without it, say the XML is unverified
-rather than implying it was checked. `lvglpro <command> --help` lists the current
-options.
+rather than implying it was checked. `lvglpro <command> --help` lists the options.
 
 Tests are XML too: a `<test>` root with a `<view>` and a `<steps>` block of `click_at`,
 `wait`, `subject_set`, `subject_compare` and `screenshot_compare`.
 
-**In the simulator.** `cmake -S sim -B build && cmake --build build`. AddressSanitizer
-is on by default, so a memory error aborts the run with a stack trace — that is the tool
-working, not a broken build. `-DENABLE_ASAN=OFF` turns it off.
+**In the simulator.** `cmake -S sim -B build && cmake --build build --target run`.
+AddressSanitizer is on where the toolchain supports it, so a memory error aborts the run
+with a stack trace — that is the tool working, not a broken build. `-DENABLE_ASAN=OFF`
+turns it off.
 
 ## Where to look things up
 

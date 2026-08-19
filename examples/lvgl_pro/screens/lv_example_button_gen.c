@@ -78,6 +78,7 @@ lv_obj_t * lv_example_button_create(void)
         lv_label_set_text(lv_label_0, "Action");
 
         lv_obj_t * lv_button_1 = lv_button_create(lv_obj_0);
+        lv_obj_set_flag(lv_button_1, LV_OBJ_FLAG_CHECKABLE, true);
         lv_obj_set_state(lv_button_1, LV_STATE_CHECKED, true);
         lv_obj_add_style(lv_button_1, &style_btn, 0);
         lv_obj_add_style(lv_button_1, &style_btn_pressed, LV_STATE_PRESSED);

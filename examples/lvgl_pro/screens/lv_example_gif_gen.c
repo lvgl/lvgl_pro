@@ -42,6 +42,11 @@ lv_obj_t * lv_example_gif_create(void)
         lv_obj_t * lv_obj_0 = lv_obj_create(NULL);
         lv_obj_set_name_static(lv_obj_0, "lv_example_gif_#");
 
+        lv_obj_t * lv_gif_0 = lv_gif_create(lv_obj_0);
+        lv_gif_set_src(lv_gif_0, img_bulb);
+        lv_gif_set_loop_count(lv_gif_0, 10);
+        lv_obj_set_align(lv_gif_0, LV_ALIGN_CENTER);
+
         the_root = lv_obj_0;
     }
     #endif

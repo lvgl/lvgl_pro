@@ -1299,6 +1299,17 @@ def process(path: Path) -> bool:
     return False
 
 
+def display(path: Path) -> str:
+    """Path for messages: repo-relative when it is inside the repo, else absolute.
+
+    `--out` may point anywhere, and `relative_to` raises for paths outside the repo.
+    """
+    try:
+        return str(path.relative_to(REPO_ROOT))
+    except ValueError:
+        return str(path)
+
+
 def configure(project_dir: Path, output_dir: Path) -> None:
     """Point the transforms at a project and at the copy being cleaned.
 
@@ -1333,12 +1344,12 @@ def run(project_dir: Path, output_dir: Path) -> int:
     for path in targets:
         if process(path):
             changed += 1
-            print(f"updated: {path.relative_to(REPO_ROOT)}")
+            print(f"updated: {display(path)}")
 
     print(f"\n{changed} of {len(targets)} files changed.")
 
     for asset in strip_data_suffix_from_assets(examples_dir):
-        print(f"asset: {asset.relative_to(REPO_ROOT)}")
+        print(f"asset: {display(asset)}")
 
     return 0
 
@@ -1351,13 +1362,13 @@ def main(argv: list[str]) -> int:
         "--project",
         type=Path,
         default=PROJECT_DIR,
-        help=f"LVGL Pro project the examples come from (default: {PROJECT_DIR.relative_to(REPO_ROOT)})",
+        help=f"LVGL Pro project the examples come from (default: {display(PROJECT_DIR)})",
     )
     parser.add_argument(
         "--out",
         type=Path,
         default=OUTPUT_DIR,
-        help=f"tree to clean (default: {OUTPUT_DIR.relative_to(REPO_ROOT)})",
+        help=f"tree to clean (default: {display(OUTPUT_DIR)})",
     )
     args = parser.parse_args(argv)
     return run(args.project.resolve(), args.out.resolve())

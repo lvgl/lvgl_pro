@@ -46,5 +46,22 @@ void lv_example_line(void)
     lv_obj_set_style_pad_row(screen, 14, 0);
     lv_obj_set_style_pad_all(screen, 16, 0);
     lv_obj_set_style_flex_cross_place(screen, LV_FLEX_ALIGN_CENTER, 0);
+    lv_obj_set_style_flex_main_place(screen, LV_FLEX_ALIGN_CENTER, 0);
+    lv_obj_set_style_flex_track_place(screen, LV_FLEX_ALIGN_CENTER, 0);
+
+    lv_obj_t * lv_line_0 = lv_line_create(screen);
+    lv_obj_set_size(lv_line_0, 220, 70);
+    static const lv_point_precise_t lv_line_0_points_0[] = {{0, 10}, {60, 50}, {120, 5}, {200, 45}};
+    lv_line_set_points(lv_line_0, lv_line_0_points_0, 4);
+    lv_obj_add_style(lv_line_0, &style_panel, 0);
+    lv_obj_add_style(lv_line_0, &style_line, 0);
+
+    lv_obj_t * lv_line_1 = lv_line_create(screen);
+    lv_obj_set_size(lv_line_1, 220, 70);
+    lv_line_set_y_invert(lv_line_1, true);
+    static const lv_point_precise_t lv_line_1_points_0[] = {{0, 10}, {60, 50}, {120, 5}, {200, 45}};
+    lv_line_set_points(lv_line_1, lv_line_1_points_0, 4);
+    lv_obj_add_style(lv_line_1, &style_panel, 0);
+    lv_obj_add_style(lv_line_1, &style_line2, 0);
 }
 

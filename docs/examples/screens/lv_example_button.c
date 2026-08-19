@@ -9,9 +9,10 @@
  * @brief A normal, a toggleable and a disabled button with per-state styling.
  *
  * Button itself adds no properties over the Base Widget — its behaviour comes
- * from flags and styling. The middle button uses `checked="true"` so it stays
- * toggled, and a `selector="checked"` style recolours it. The third uses
- * `disabled="true"` to show the muted, non-interactive state.
+ * from flags and styling. The middle button is `checkable="true"` so a tap
+ * toggles it, starts `checked="true"`, and a `selector="checked"` style
+ * recolours it. The third uses `disabled="true"` to show the muted,
+ * non-interactive state.
  */
 void lv_example_button(void)
 {
@@ -56,6 +57,7 @@ void lv_example_button(void)
 
     /* Toggle button: starts checked, keeps its state */
     lv_obj_t * lv_button_1 = lv_button_create(screen);
+    lv_obj_set_flag(lv_button_1, LV_OBJ_FLAG_CHECKABLE, true);
     lv_obj_set_state(lv_button_1, LV_STATE_CHECKED, true);
     lv_obj_add_style(lv_button_1, &style_btn, 0);
     lv_obj_add_style(lv_button_1, &style_btn_pressed, LV_STATE_PRESSED);

@@ -14,6 +14,13 @@
  */
 void lv_example_gif(void)
 {
-    lv_screen_active();
+    LV_IMAGE_DECLARE(img_bulb);
+
+    lv_obj_t * screen = lv_screen_active();
+
+    lv_obj_t * lv_gif_0 = lv_gif_create(screen);
+    lv_gif_set_src(lv_gif_0, img_bulb);
+    lv_gif_set_loop_count(lv_gif_0, 10);
+    lv_obj_set_align(lv_gif_0, LV_ALIGN_CENTER);
 }
 

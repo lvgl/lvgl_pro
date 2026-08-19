@@ -106,6 +106,17 @@ extern "C" {{
 """
 
 
+def display(path: Path) -> str:
+    """Path for messages: repo-relative when it is inside the repo, else absolute.
+
+    `--out` may point anywhere, and `relative_to` raises for paths outside the repo.
+    """
+    try:
+        return str(path.relative_to(REPO_ROOT))
+    except ValueError:
+        return str(path)
+
+
 def resolve_cli(cli_arg: str | None) -> str:
     """Resolve the CLI. Use --cli if given, else find `lvglpro` on PATH."""
     if cli_arg:
@@ -186,7 +197,7 @@ def main(argv: list[str]) -> int:
         "--out",
         type=Path,
         default=DEFAULT_OUT_DIR,
-        help=f"where to write the docs copy (default: {DEFAULT_OUT_DIR.relative_to(REPO_ROOT)})",
+        help=f"where to write the docs copy (default: {display(DEFAULT_OUT_DIR)})",
     )
     parser.add_argument(
         "--cli",
@@ -195,9 +206,16 @@ def main(argv: list[str]) -> int:
     args = parser.parse_args(argv)
 
     out_dir = args.out.resolve()
-    if out_dir == PROJECT_DIR:
+    # `copy_to_out` clears the destination first, so any path that overlaps the
+    # project would delete the source. Equality is not enough: a subfolder of the
+    # project, or a parent that contains it, would take the project with it.
+    if (
+        out_dir == PROJECT_DIR
+        or PROJECT_DIR in out_dir.parents
+        or out_dir in PROJECT_DIR.parents
+    ):
         sys.exit(
-            "--out must not be the project itself; the docs copy is a separate tree."
+            f"--out must not overlap {PROJECT_DIR}; the docs copy is a separate tree."
         )
 
     cli_path = resolve_cli(args.cli)
@@ -208,13 +226,13 @@ def main(argv: list[str]) -> int:
         return 1
 
     copied = copy_to_out(out_dir)
-    print(f"copied {len(copied)} examples to {out_dir.relative_to(REPO_ROOT)}/screens")
+    print(f"copied {len(copied)} examples to {display(out_dir)}/screens")
 
     print("cleaning the copy via cleanup_examples.py")
     rc = cleanup_examples.run(PROJECT_DIR, out_dir)
 
     header = write_examples_header(out_dir, copied)
-    print(f"wrote header: {header.relative_to(REPO_ROOT)}")
+    print(f"wrote header: {display(header)}")
     return rc
 
 

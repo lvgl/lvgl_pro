@@ -81,6 +81,9 @@ for project in $OTHERS; do
 
         # A file added to one project only is drift too, so look the other way round.
         find "$project/$directory" -type f | sed "s|^$project/||" | while read -r relative; do
+            if is_exception "$relative"; then
+                continue
+            fi
             if [ ! -f "$REFERENCE/$relative" ]; then
                 echo "$project/$relative exists but $REFERENCE/$relative does not" >>"$problems"
             fi

@@ -24,6 +24,49 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
 endif()
 
+# AddressSanitizer, on where the toolchain supports it. `lv_conf_*.defaults`
+# uses LV_STDLIB_CLIB, so ASAN sees every LVGL allocation.
+#
+#   cmake -S sim -B build -DENABLE_ASAN=OFF   # off
+#   cmake -S sim -B build -DENABLE_ASAN=ON    # fail if unavailable
+#
+# Set before LVGL and the UI are added below: every object needs the flags.
+# GCC and Clang only; MSVC's /fsanitize=address is not wired up.
+set(ENABLE_ASAN AUTO CACHE STRING
+    "AddressSanitizer: ON, OFF, or AUTO (on when the toolchain supports it)")
+set_property(CACHE ENABLE_ASAN PROPERTY STRINGS AUTO ON OFF)
+
+string(TOUPPER "${ENABLE_ASAN}" _enable_asan)
+
+# AUTO is not one of CMake's boolean words. `if(ENABLE_ASAN)` is already true
+# for it — any value that is not OFF/0/FALSE/NO/empty is true — but naming it
+# spells out the default path instead of leaving it to that rule.
+if(_enable_asan STREQUAL "AUTO" OR ENABLE_ASAN)
+  # Probe by compiling *and* linking: MinGW-w64 reports itself as GNU but often
+  # ships no libasan. The cached result is dropped first so every configure
+  # re-probes and a toolchain change is picked up.
+  include(CheckCSourceCompiles)
+  unset(HAVE_ASAN CACHE)
+  set(CMAKE_REQUIRED_FLAGS -fsanitize=address)
+  set(CMAKE_REQUIRED_LINK_OPTIONS -fsanitize=address)
+  check_c_source_compiles("int main(void){return 0;}" HAVE_ASAN)
+  unset(CMAKE_REQUIRED_FLAGS)
+  unset(CMAKE_REQUIRED_LINK_OPTIONS)
+
+  if(HAVE_ASAN)
+    # Frame pointers keep the stack traces readable.
+    add_compile_options(-fsanitize=address -fno-omit-frame-pointer)
+    add_link_options(-fsanitize=address)
+    message(STATUS "AddressSanitizer enabled")
+  elseif(_enable_asan STREQUAL "AUTO")
+    message(STATUS "AddressSanitizer unavailable; building without it")
+  else()
+    message(FATAL_ERROR
+            "ENABLE_ASAN=${ENABLE_ASAN} but this toolchain cannot build with "
+            "-fsanitize=address")
+  endif()
+endif()
+
 # LVGL version to fetch (any git tag or branch from https://github.com/lvgl/lvgl)
 set(LVGL_VERSION "v9.5.0" CACHE STRING "LVGL version (git tag or branch)")
 
@@ -39,6 +82,10 @@ set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
 #  Fetch LVGL
 # ---------------------------------------------------------------------------
 include(FetchContent)
+# Silence the FetchContent_Populate deprecation warning (CMake >= 3.30).
+if(POLICY CMP0169)
+  cmake_policy(SET CMP0169 OLD)
+endif()
 FetchContent_Declare(
   lvgl
   GIT_REPOSITORY https://github.com/lvgl/lvgl.git
@@ -47,7 +94,7 @@ FetchContent_Declare(
 
 FetchContent_GetProperties(lvgl)
 if(NOT lvgl_POPULATED)
-  message(STATUS "Fetching LVGL ${LVGL_VERSION} ...")
+  message(STATUS "Fetching LVGL ${LVGL_VERSION}. It might take a few minutes ...")
   FetchContent_Populate(lvgl)
 endif()
 
@@ -138,7 +185,10 @@ file(READ "${UI_DIR}/project.xml" _project_xml)
 string(REGEX MATCH "<project[^>]*name=\"([^\"]+)\"" _ "${_project_xml}")
 set(UI_NAME "${CMAKE_MATCH_1}")
 if(NOT UI_NAME)
-  message(FATAL_ERROR "Could not read the project name from ${UI_DIR}/project.xml")
+  # Fall back to the parent folder's name when project.xml has no usable name.
+  get_filename_component(UI_NAME "${UI_DIR}" ABSOLUTE)
+  get_filename_component(UI_NAME "${UI_NAME}" NAME)
+  message(STATUS "No project name in ${UI_DIR}/project.xml; using folder name \"${UI_NAME}\"")
 endif()
 string(REGEX MATCH "<display[^>]*width=\"([0-9]+)\"[^>]*height=\"([0-9]+)\"" _ "${_project_xml}")
 set(UI_WIDTH "${CMAKE_MATCH_1}")

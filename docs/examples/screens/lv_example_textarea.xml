@@ -1,0 +1,53 @@
+<!--
+ @title Text area
+ @brief A one-line field, a password field, and a multi-line area.
+
+ The first uses `one_line="true"` with `placeholder_text` shown while
+ empty. The second adds `password_mode="true"` so characters are masked
+ (briefly revealed for `password_show_time` ms). The third is a normal
+ multi-line area with starting `text` that wraps and scrolls.
+-->
+<screen>
+	<styles>
+		<style
+			name="style_ta"
+			bg_color="0x111827"
+			bg_opa="100%"
+			text_color="0xf3f4f6"
+			radius="8"
+			pad_all="10"
+			border_color="0x3b82f6"
+			border_width="1"
+		/>
+		<style name="style_cursor" border_color="0xf3f4f6" />
+	</styles>
+
+	<view
+		flex_flow="column"
+		style_pad_row="12"
+		style_flex_cross_place="center"
+		style_flex_main_place="center"
+		style_flex_track_place="center"
+	>
+		<!-- 💡 The middle field masks input; the others show plain and wrapped text. -->
+
+		<lv_textarea width="240" one_line="true" placeholder_text="Type your name ...">
+			<style name="style_ta" />
+			<style name="style_cursor" selector="cursor|focused" />
+		</lv_textarea>
+
+		<lv_textarea width="240" one_line="true" password_mode="true" password_show_time="500" text="secret">
+			<style name="style_ta" />
+			<style name="style_cursor" selector="cursor|focused" />
+		</lv_textarea>
+
+		<lv_textarea
+			width="240"
+			height="64"
+			text="A multi-line text area wraps long lines and scrolls when the content grows."
+		>
+			<style name="style_ta" />
+			<style name="style_cursor" selector="cursor|focused" />
+		</lv_textarea>
+	</view>
+</screen>

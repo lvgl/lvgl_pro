@@ -24,10 +24,11 @@ int main(void)
     hal_init(UI_WIDTH, UI_HEIGHT);
     UI_INIT("A:");      /* "A:" = file-system drive for file-based assets */
 
-    /* Load a screen from your project*/
+    /* Load a screen from your project, e.g.:
+     * lv_screen_load(my_screen_create()); */
 
     lv_screen_load(screen_hello_world_create());
-    
+
     lv_unlock();
 
     while(1) {

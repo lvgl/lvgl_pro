@@ -1,0 +1,134 @@
+<!--
+ @title Slider
+ @brief Bound, range, reversed-with-gradient and vertical sliders.
+
+ Like a bar but draggable via its knob. The first slider is bound to
+ `subject_value` and overlays a live readout. The second uses `mode="range"`
+ with a `start_value` and `value` to show a span. The third sets `min_value`
+ above `max_value` so it fills right-to-left, with a gradient indicator. The
+ last two are vertical, the second of them also reversed.
+-->
+<screen>
+	<consts>
+		<int name="thickness" value="16" />
+	</consts>
+	<styles>
+		<style
+			name="style_bar"
+			bg_color="0xdee2e7"
+			bg_opa="100%"
+			radius="8"
+			outline_width="1"
+			outline_color="0x3b82f6"
+			outline_opa="90%"
+		/>
+
+		<style name="style_bar_ind" bg_color="0x3b82f6" radius="6" />
+		<style
+			name="style_bar_knob"
+			bg_color="0x3b82f6"
+			radius="100"
+			pad_all="8"
+			border_color="0xfff"
+			border_width="2"
+			shadow_width="8"
+			shadow_offset_y="4"
+			shadow_opa="30%"
+		/>
+	</styles>
+
+	<view>
+		<!-- Bound, normal mode, with an overlaid readout -->
+		<lv_label
+			align="left_mid"
+			y="-65"
+			x="20"
+			bind_text="subject_value"
+			bind_text-fmt="%d %%"
+			style_text_color="0x192e4f"
+		/>
+
+		<lv_slider
+			width="240"
+			height="#thickness"
+			bind_value="subject_value"
+			align="left_mid"
+			y="-40"
+			x="20"
+			ext_click_area="8"
+		>
+			<style name="style_bar" />
+			<style name="style_bar_ind" selector="indicator" />
+			<style name="style_bar_knob" selector="knob" />
+		</lv_slider>
+
+		<!-- Range: indicator spans start_value..value -->
+		<lv_slider
+			width="240"
+			height="#thickness"
+			mode="range"
+			value="80"
+			start_value="10"
+			align="left_mid"
+			x="20"
+			ext_click_area="8"
+		>
+			<style name="style_bar" />
+			<style name="style_bar_ind" selector="indicator" />
+			<style name="style_bar_knob" selector="knob" />
+		</lv_slider>
+
+		<!-- Right to left fill when max_value < min_value with gradient -->
+		<lv_slider
+			width="240"
+			height="#thickness"
+			min_value="100"
+			max_value="0"
+			value="80"
+			align="left_mid"
+			x="20"
+			y="40"
+			ext_click_area="8"
+			style_bg_color-indicator="0x04f"
+			style_bg_grad_color-indicator="0xa8f"
+			style_bg_grad_dir-indicator="hor"
+		>
+			<style name="style_bar" />
+			<style name="style_bar_ind" selector="indicator" />
+			<style name="style_bar_knob" selector="knob" />
+		</lv_slider>
+
+		<!-- Vertical orientation -->
+		<lv_slider
+			width="#thickness"
+			height="160"
+			orientation="vertical"
+			value="65"
+			align="right_mid"
+			y="0"
+			x="-60"
+			ext_click_area="8"
+		>
+			<style name="style_bar" />
+			<style name="style_bar_ind" selector="indicator" />
+			<style name="style_bar_knob" selector="knob" />
+		</lv_slider>
+
+		<lv_slider
+			width="#thickness"
+			height="160"
+			orientation="vertical"
+			min_value="100"
+			max_value="0"
+			value="65"
+			align="right_mid"
+			y="0"
+			x="-20"
+			ext_click_area="8"
+		>
+			<style name="style_bar" />
+			<style name="style_bar_ind" selector="indicator" />
+			<style name="style_bar_knob" selector="knob" />
+		</lv_slider>
+	</view>
+</screen>

@@ -1,0 +1,50 @@
+<!--
+ @title Chart
+ @brief A line chart with two series, division lines, an axis range and a cursor.
+
+ `type` and `point_count` configure the plot. Each `<lv_chart-series>`
+ element adds a data series with its own colour and axis; `<lv_chart-axis>`
+ sets the value range of the primary Y axis, and `<lv_chart-cursor>` marks
+ a point of interest.
+-->
+<screen>
+	<styles>
+		<style
+			name="style_chart"
+			bg_color="0x0f172a"
+			bg_opa="100%"
+			radius="8"
+			pad_all="10"
+			line_color="0x334155"
+			border_width="0"
+		/>
+		<style name="style_chart_cursor" line_dash_gap="10" line_dash_width="5" />
+	</styles>
+
+	<view>
+		<!-- 💡 Two series share the primary Y axis (0..100); the cursor pins one point. -->
+
+		<lv_chart
+			width="300"
+			height="220"
+			align="center"
+			type="line"
+			point_count="6"
+			hor_div_line_count="5"
+			ver_div_line_count="6"
+		>
+			<style name="style_chart" />
+			<style name="style_chart_cursor" selector="cursor" />
+
+			<!-- Fix the primary Y axis range so both series share a scale -->
+			<lv_chart-axis axis="primary_y" min_value="0" max_value="100" />
+
+			<!-- Two data series -->
+			<lv_chart-series color="0x3b82f6" axis="primary_y" values="20 45 30 70 55 90" />
+			<lv_chart-series color="0xf59e0b" axis="primary_y" values="80 60 65 40 50 25" />
+
+			<!-- A cursor showing on a line -->
+			<lv_chart-cursor color="0xef4444" dir="hor" pos_y="70" />
+		</lv_chart>
+	</view>
+</screen>

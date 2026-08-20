@@ -3,5 +3,6 @@
   "cmake.buildDirectory": "${workspaceFolder}/build",
   "files.associations": {
     "*.h": "c"
-  }
+  },
+  "debug.onTaskErrors": "abort"
 }

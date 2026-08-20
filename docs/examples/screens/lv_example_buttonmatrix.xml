@@ -1,0 +1,31 @@
+<!--
+ @title Button matrix
+ @brief A keypad from a single map, with per-button width and a disabled key.
+
+ `map` lists the button labels; `'\n'` starts a new row. `ctrl_map` gives
+ one control entry per button (in order): here the last row's `0` takes
+ `width_2` to span double, and `Clear` is `disabled`. Buttons are drawn
+ virtually, so the whole pad is one lightweight widget.
+-->
+<screen>
+	<styles>
+		<style name="style_bm" bg_color="0x0f172a" bg_opa="100%" radius="8" pad_all="8" />
+		<!-- The individual buttons (the "items" part) -->
+		<style name="style_keys" bg_color="0x313d51" text_color="0xe2e8f0" radius="6" shadow_width="4" />
+		<style name="style_keys_pr" bg_color="0x3b82f6" />
+	</styles>
+
+	<view style_flex_cross_place="center" style_pad_all="14">
+		<lv_buttonmatrix
+			width="260"
+			height="170"
+			align="center"
+			map="'7' '8' '9' '&#10;' '4' '5' '6' '&#10;' '1' '2' '3' '&#10;' '0' 'Clear'"
+			ctrl_map="none none none none none none none none none width_2 disabled"
+		>
+			<style name="style_bm" />
+			<style name="style_keys" selector="items" />
+			<style name="style_keys_pr" selector="items|pressed" />
+		</lv_buttonmatrix>
+	</view>
+</screen>

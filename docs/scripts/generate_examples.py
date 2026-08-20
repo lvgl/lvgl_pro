@@ -1,22 +1,37 @@
 #!/usr/bin/env python3
-"""Generate C files for the XML examples by driving `lved-cli.js`.
+"""Build the docs copy of the XML examples.
 
-`examples/lvgl_pro/` is itself a valid LVGL Pro project (`project.xml`,
-`globals.xml`, `screens/*.xml`). A single CLI run converts every screen XML into
-a sibling `lv_example_<name>_gen.{c,h}`. This script then:
+`examples/lvgl_pro/` is an ordinary LVGL Pro project (`project.xml`,
+`globals.xml`, `screens/*.xml`) with an ordinary export. The docs need
+something different from that export: no `_gen` suffixes, no per-example
+headers, one shared `lv_examples.h`, and C that reads as if a person wrote it.
 
-1. Runs `lved-cli.js generate examples/lvgl_pro` to (re)create those `_gen` files.
-2. Drops the `_gen` suffix from each per-example `screens/lv_example_*_gen.c`
-   and deletes the per-example `_gen.h` headers (the project-level `*_gen.*`
-   scaffolding at the project root is left alone, it's part of the build).
-3. Runs the `cleanup_examples.py` transformations so the result reads like a
-   hand-written example.
-4. Writes a single `examples/lvgl_pro/lv_examples.h` declaring every example's
-   prototype (the header each cleaned `.c` includes via `../lv_examples.h`).
+So this script **copies** the export into `docs/examples/` and transforms the
+copy. The project is only read from. That separation matters: the whole
+`docs/examples/` folder is dropped into an emscripten checkout as lvgl's own
+`examples/` directory by `build_html_examples.sh`, so it must contain nothing
+but examples — no `sim/`, no `CMakeLists.txt`, no `_gen` files.
+
+Steps:
+
+1. Run `lvglpro generate examples/lvgl_pro`, producing the project's normal
+   export in place.
+2. Copy into `docs/examples/`: every `screens/*.xml`, each
+   `screens/lv_example_*_gen.c` as `lv_example_*.c`, and the generated font and
+   image data.
+3. Run the `cleanup_examples.py` transformations over the copy.
+4. Write `docs/examples/lv_examples.h` declaring every example's prototype —
+   the header each cleaned `.c` includes via `../lv_examples.h`.
+
+Nothing under `examples/lvgl_pro/` is renamed or deleted, so `git status` stays
+clean there apart from the export itself.
 
 USAGE
 -----
-    python docs/scripts/generate_examples.py [--cli /path/to/lved-cli.js]
+    python docs/scripts/generate_examples.py [--out DIR] [--cli lvglpro]
+
+The CLI is the `lvglpro` binary from `npm install --global @lvgl/lvglpro`, and
+it needs `LVGLPRO_CLI_TOKEN` in the environment.
 """
 
 from __future__ import annotations
@@ -32,9 +47,17 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import cleanup_examples  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-EXAMPLES_DIR = REPO_ROOT / "examples" / "lvgl_pro"
-SCREENS_DIR = EXAMPLES_DIR / "screens"
-EXAMPLES_HEADER = EXAMPLES_DIR / "lv_examples.h"
+
+# The project, read from only.
+PROJECT_DIR = REPO_ROOT / "examples" / "lvgl_pro"
+PROJECT_SCREENS_DIR = PROJECT_DIR / "screens"
+
+# The docs copy, written by this script.
+DEFAULT_OUT_DIR = REPO_ROOT / "docs" / "examples"
+
+# Folders holding generated asset data that the examples link against. Copied
+# from the project as-is; `cleanup_examples.py` drops the `_data` suffix.
+ASSET_DIRS = ("fonts", "images")
 
 # Shared header listing every example prototype. `cleanup_examples.py`
 # collapses each example's includes to a single `../lv_examples.h`, so this is
@@ -83,55 +106,76 @@ extern "C" {{
 """
 
 
+def display(path: Path) -> str:
+    """Path for messages: repo-relative when it is inside the repo, else absolute.
+
+    `--out` may point anywhere, and `relative_to` raises for paths outside the repo.
+    """
+    try:
+        return str(path.relative_to(REPO_ROOT))
+    except ValueError:
+        return str(path)
+
+
 def resolve_cli(cli_arg: str | None) -> str:
-    """Resolve the lved-cli.js path. Use --cli if given, else search PATH."""
+    """Resolve the CLI. Use --cli if given, else find `lvglpro` on PATH."""
     if cli_arg:
-        p = Path(cli_arg).expanduser().resolve()
-        if not p.exists():
-            sys.exit(f"--cli path does not exist: {p}")
-        return str(p)
-    found = shutil.which("lved-cli.js")
+        return cli_arg
+    found = shutil.which("lvglpro")
     if found:
         return found
-    sys.exit("lved-cli.js not found on PATH; pass --cli /path/to/lved-cli.js")
+    sys.exit(
+        "lvglpro not found on PATH. Install it with "
+        "`npm install --global @lvgl/lvglpro`, or pass --cli."
+    )
 
 
 def generate(cli_path: str) -> bool:
-    """Run `lved-cli.js generate examples/lvgl_pro` against the examples project."""
+    """Run `lvglpro generate examples/lvgl_pro` against the examples project."""
     result = subprocess.run(
-        ["node", cli_path, "generate", str(EXAMPLES_DIR.relative_to(REPO_ROOT))],
+        [cli_path, "generate", str(PROJECT_DIR.relative_to(REPO_ROOT))],
         cwd=REPO_ROOT,
     )
     return result.returncode == 0
 
 
-def strip_gen_suffix() -> list[Path]:
-    """Normalize the per-example files the CLI emitted into `screens/`.
+def copy_to_out(out_dir: Path) -> list[Path]:
+    """Copy the parts of the export the docs need into `out_dir`.
 
-    Renames each `lv_example_*_gen.c` to drop the `_gen` suffix and deletes
-    the matching `_gen.h` (every prototype lives in the shared
-    `lv_examples.h` instead). Scoped to the per-example files in `screens/`,
-    so the project-level `examples_gen.*` / `*_list_gen.cmake` scaffolding at
-    the project root keeps its name.
+    Per-example `.c` files lose the `_gen` suffix on the way over, and the
+    `_gen.h` headers are not copied at all — every prototype lives in the shared
+    `lv_examples.h`. The `.xml` beside each example comes too, because the docs
+    site renders it as the XML tab.
 
-    Returns the renamed `.c` paths.
+    The destination is cleared first, so an example deleted from the project
+    does not linger here. Returns the copied `.c` paths.
     """
-    # No per-example header survives — every prototype lives in the shared
-    # `lv_examples.h`. Remove both the freshly generated `_gen.h` and any
-    # stale plain `.h` left by an earlier run.
-    for header in SCREENS_DIR.glob("lv_example_*.h"):
-        header.unlink()
+    if out_dir.exists():
+        shutil.rmtree(out_dir)
 
-    renamed: list[Path] = []
-    for src in sorted(SCREENS_DIR.glob("lv_example_*_gen.c")):
-        dst = src.with_name(src.stem[: -len("_gen")] + src.suffix)
-        src.replace(dst)
-        renamed.append(dst)
-    return renamed
+    screens_out = out_dir / "screens"
+    screens_out.mkdir(parents=True)
+
+    copied: list[Path] = []
+    for src in sorted(PROJECT_SCREENS_DIR.glob("lv_example_*_gen.c")):
+        dst = screens_out / (src.stem[: -len("_gen")] + src.suffix)
+        shutil.copyfile(src, dst)
+        copied.append(dst)
+
+    for xml in sorted(PROJECT_SCREENS_DIR.glob("*.xml")):
+        shutil.copyfile(xml, screens_out / xml.name)
+
+    for asset_dir in ASSET_DIRS:
+        for data_c in sorted((PROJECT_DIR / asset_dir).glob("*.c")):
+            dst_dir = out_dir / asset_dir
+            dst_dir.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(data_c, dst_dir / data_c.name)
+
+    return copied
 
 
-def write_examples_header(example_cs: list[Path]) -> None:
-    """Write `examples/lvgl_pro/lv_examples.h` with a prototype per example `.c`.
+def write_examples_header(out_dir: Path, example_cs: list[Path]) -> Path:
+    """Write `<out_dir>/lv_examples.h` with a prototype per example `.c`.
 
     Each `screens/lv_example_<name>.c` defines `void lv_example_<name>(void)`;
     the function name is the file stem, so prototypes derive straight from the
@@ -140,37 +184,55 @@ def write_examples_header(example_cs: list[Path]) -> None:
     prototypes = "\n".join(
         f"void {c.stem}(void);" for c in sorted(example_cs, key=lambda p: p.stem)
     )
-    EXAMPLES_HEADER.write_text(
-        EXAMPLES_HEADER_TEMPLATE.format(prototypes=prototypes)
-    )
+    header = out_dir / "lv_examples.h"
+    header.write_text(EXAMPLES_HEADER_TEMPLATE.format(prototypes=prototypes))
+    return header
 
 
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(
-        description="Generate C files for the XML examples via lved-cli.js."
+        description="Build the docs copy of the XML examples."
+    )
+    parser.add_argument(
+        "--out",
+        type=Path,
+        default=DEFAULT_OUT_DIR,
+        help=f"where to write the docs copy (default: {display(DEFAULT_OUT_DIR)})",
     )
     parser.add_argument(
         "--cli",
-        help="path to lved-cli.js (defaults to a PATH lookup)",
+        help="path to the lvglpro binary (defaults to a PATH lookup)",
     )
     args = parser.parse_args(argv)
 
+    out_dir = args.out.resolve()
+    # `copy_to_out` clears the destination first, so any path that overlaps the
+    # project would delete the source. Equality is not enough: a subfolder of the
+    # project, or a parent that contains it, would take the project with it.
+    if (
+        out_dir == PROJECT_DIR
+        or PROJECT_DIR in out_dir.parents
+        or out_dir in PROJECT_DIR.parents
+    ):
+        sys.exit(
+            f"--out must not overlap {PROJECT_DIR}; the docs copy is a separate tree."
+        )
+
     cli_path = resolve_cli(args.cli)
 
-    print("generating C from examples/lvgl_pro/ via lved-cli.js")
+    print("generating C from examples/lvgl_pro/ via lvglpro")
     if not generate(cli_path):
-        sys.stderr.write("  ! lved-cli generation failed\n")
+        sys.stderr.write("  ! lvglpro generation failed\n")
         return 1
 
-    renamed = strip_gen_suffix()
-    for p in renamed:
-        print(f"  renamed: {p.relative_to(REPO_ROOT)}")
+    copied = copy_to_out(out_dir)
+    print(f"copied {len(copied)} examples to {display(out_dir)}/screens")
 
-    print("cleaning generated C via cleanup_examples.py")
-    rc = cleanup_examples.main([])
+    print("cleaning the copy via cleanup_examples.py")
+    rc = cleanup_examples.run(PROJECT_DIR, out_dir)
 
-    write_examples_header(renamed)
-    print(f"wrote header: {EXAMPLES_HEADER.relative_to(REPO_ROOT)}")
+    header = write_examples_header(out_dir, copied)
+    print(f"wrote header: {display(header)}")
     return rc
 
 

@@ -1,0 +1,43 @@
+<!--
+ @title Table
+ @brief A small table with a header row, set column widths and a merged cell.
+
+ `row_count`/`column_count` size the grid. `<lv_table-column>` sets a
+ column's width; `<lv_table-cell>` writes a cell's text by row/column and
+ can take `ctrl` flags — here `merge_right` spans the footer across two
+ columns.
+-->
+<screen>
+	<styles>
+		<style name="style_table" bg_color="0x111827" bg_opa="100%" radius="8" pad_all="8" />
+		<!-- Header row cells (the "items" part in selected/first row) -->
+		<style
+			name="style_items"
+			bg_opa="100%"
+			bg_color="0x4b5362"
+			border_side="full"
+			text_color="0xe5e7eb"
+			border_color="0x111827"
+		/>
+	</styles>
+
+	<view>
+		<lv_table row_count="4" column_count="2" align="center">
+			<style name="style_table" />
+			<style name="style_items" selector="items" />
+
+			<lv_table-column column="0" width="150" />
+			<lv_table-column column="1" width="90" />
+
+			<lv_table-cell row="0" column="0" value="Sensor" />
+			<lv_table-cell row="0" column="1" value="Value" />
+			<lv_table-cell row="1" column="0" value="Temperature" />
+			<lv_table-cell row="1" column="1" value="22 °C" />
+			<lv_table-cell row="2" column="0" value="Humidity" />
+			<lv_table-cell row="2" column="1" value="48 %" />
+
+			<!-- Footer spanning both columns -->
+			<lv_table-cell row="3" column="0" value="All readings nominal" ctrl="merge_right" />
+		</lv_table>
+	</view>
+</screen>

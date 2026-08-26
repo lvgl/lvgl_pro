@@ -101,11 +101,10 @@ set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
 set(LV_BUILD_CONF_PATH "${LV_CONF_PATH}" CACHE PATH "" FORCE)
 
 # ---------------------------------------------------------------------------
-#  Add LVGL (keep the build minimal: skip bundled demos/examples/ThorVG)
+#  Add LVGL (keep the build minimal: skip bundled demos/examples)
 # ---------------------------------------------------------------------------
 set(CONFIG_LV_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(CONFIG_LV_BUILD_DEMOS OFF CACHE BOOL "" FORCE)
-set(CONFIG_LV_USE_THORVG_INTERNAL OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(${lvgl_SOURCE_DIR} ${lvgl_BINARY_DIR})
 

@@ -8,9 +8,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJ_PATH="$(cd "$SCRIPT_DIR/../.." && pwd)"
 STARTER_PATH="$(dirname "$PROJ_PATH")"
 
-# The LVGL Pro examples used by the docs. `examples/lvgl_open` is the set shared
-# with the LVGL Open docs and is not built here.
-EXAMPLES_PATH=$PROJ_PATH/examples/lvgl_pro
+# The docs copy of the LVGL Pro examples, written by generate_examples.py from
+# the examples/lvgl_pro project. It holds nothing but examples, because the whole
+# folder is dropped into the emscripten checkout as lvgl's own examples/ below.
+# (`examples/lvgl_open` is the set shared with the LVGL Open docs, built elsewhere.)
+EXAMPLES_PATH=$PROJ_PATH/docs/examples
 
 export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
 

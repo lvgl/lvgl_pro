@@ -20,10 +20,13 @@ my_project/
 ├── images/              ← .png assets referenced by globals.xml
 ├── widgets/             ← custom <widget> XMLs (one file per widget)
 ├── components/          ← reusable <component> XMLs (one file per component)
-└── screens/             ← <screen> XMLs (one file per screen)
+├── screens/             ← <screen> XMLs (one file per screen)
+└── custom_data/         ← optional, arbitrary files copied into the Editor preview
 ```
 
-The three XML files (`project.xml`, `globals.xml`, `translations.xml`) sit at the project root; the five sub-folders hold everything else. Any of the sub-folders can be omitted if the project doesn't use that category.
+The three XML files (`project.xml`, `globals.xml`, `translations.xml`) sit at the project root; the sub-folders hold everything else. Any of the sub-folders can be omitted if the project doesn't use that category.
+
+Any files placed in a `custom_data/` folder are copied into the Editor preview as-is. This is useful for shipping arbitrary application or test data (e.g. a JSON fixture or a data file read by a widget at runtime) alongside the UI.
 
 ## Minimal Example
 
@@ -35,7 +38,7 @@ The simplest valid project file declares a `name`, the LVGL version, and at leas
         <target name="target1">
             <display width="800" height="480"/>
         </target>
-    </targets>    
+    </targets>
 </project>
 ```
 
@@ -44,7 +47,7 @@ supports a whole lot of useful features. Keep reading to learn them all.
 
 ## Multiple Targets
 
-To preview Screens at multiple resolutions of real hardware, declare multiple `<target>` elements inside `<targets>`. 
+To preview Screens at multiple resolutions of real hardware, declare multiple `<target>` elements inside `<targets>`.
 Each target contains a `<display>` describing the screen size.
 
 ```xml
@@ -60,11 +63,11 @@ Each target contains a `<display>` describing the screen size.
 </project>
 ```
 
-When a Screen is open in the Editor, the Preview panel shows one entry per `<target>`. 
+When a Screen is open in the Editor, the Preview panel shows one entry per `<target>`.
 This is also how the Editor knows how to size a Screen's `<view>`.
 
-It's also possible to conditionally use assets, styles or even views based on selected target. 
-It's a great way to manage assets and the appearance of components separately for different targets. 
+It's also possible to conditionally use assets, styles or even views based on selected target.
+It's a great way to manage assets and the appearance of components separately for different targets.
 Learn more at [Targets](./targets)
 
 
@@ -79,6 +82,32 @@ TODO add images
 To set a theme use `<project theme="simple">` or `<project theme="default">`.
 If the theme is not set, `default` will be used.
 
+
+## Including Other Projects
+
+A project can include other projects — for example a shared component library, or a common folder used by several projects. Declare them with a `<folders>` element in `project.xml`:
+
+```xml
+<project name="ui" lvgl_version="9.5.0">
+    <folders>
+        <!-- Specifying root project is optional, but allows for controlling the precedence of globals -->
+        <folder path="."/>
+        <folder path="./lib"/>
+        <folder path="../common"/>
+    </folders>
+    ...
+</project>
+```
+
+Each `<folder path="…">` points at another project folder (i.e. a folder containing its own `project.xml`/`globals.xml`). Its widgets, components, and globals become available to the including project.
+
+<Callout type="info">
+Included projects may themselves declare `<folders>` to include further projects, but those nested inclusions are ignored — this feature is only one level deep. If root project A includes project B, and B includes project C, C is skipped and B will likely not function correctly.
+</Callout>
+
+<Callout type="warning">
+**Breaking change:** existing projects that use a component library must be updated to include it explicitly with a `<folder path="./lib"/>` entry (adjusted to the library's actual path).
+</Callout>
 
 ## Relation to Other Files
 

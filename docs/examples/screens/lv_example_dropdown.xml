@@ -1,0 +1,43 @@
+<!--
+ @title Drop-down list
+ @brief Options, a preselected item, a styled list, and subject binding.
+
+ `options` is a newline-separated string; `selected` picks the initial
+ index. `bind_value="subject_index"` two-ways the selection, and the label
+ below reads the same subject. The `<lv_dropdown-list>` element styles the
+ open list (the popup) separately from the closed button.
+-->
+<screen>
+	<styles>
+		<style name="style_dd" bg_color="0x1f2937" bg_opa="100%" text_color="0xf3f4f6" radius="8" pad_all="10" />
+		<!-- The opened list popup -->
+		<style
+			name="style_dd_list"
+			bg_color="0x111827"
+			text_color="0xe5e7eb"
+			border_color="0x3b82f6"
+			border_width="1"
+		/>
+		<style name="style_dd_list_selected" bg_color="0xa93bf5" text_color="0xffffff" />
+		<style name="style_dd_list_pressed" bg_color="0xcc98f1" text_color="0xffffff" />
+	</styles>
+
+	<view>
+		<lv_dropdown
+			width="200"
+			align="center"
+			options="Celsius&#10;Fahrenheit&#10;Kelvin"
+			selected="1"
+			bind_value="subject_index"
+		>
+			<style name="style_dd" />
+			<lv_dropdown-list>
+				<style name="style_dd_list" />
+				<style name="style_dd_list_selected" selector="selected|checked" />
+				<style name="style_dd_list_pressed" selector="selected|pressed" />
+			</lv_dropdown-list>
+		</lv_dropdown>
+
+		<lv_label bind_text="subject_index" bind_text-fmt="Selected index: %d" align="center" y="-40" />
+	</view>
+</screen>

@@ -1,0 +1,79 @@
+<!--
+ @title Bar
+ @brief Bound, range, reversed-with-gradient and vertical bars.
+
+ The first bar is bound to `subject_value` and overlays a live readout. The
+ second uses `mode="range"` with a `start_value` and `value` to show a span.
+ The third sets `min_value` above `max_value` so it fills right-to-left, with
+ a gradient indicator. The last two are vertical, the second of them also
+ reversed.
+-->
+<screen>
+	<styles>
+		<style
+			name="style_bar"
+			bg_color="0xdee2e7"
+			bg_opa="100%"
+			radius="8"
+			outline_width="1"
+			outline_color="0x3b82f6"
+			outline_opa="90%"
+			pad_all="3"
+		/>
+		<style name="style_bar_ind" bg_color="0x3b82f6" radius="6" />
+	</styles>
+
+	<view>
+		<!-- Bound, normal mode, with an overlaid readout -->
+		<lv_bar width="240" height="22" bind_value="subject_value" align="left_mid" y="-40" x="20">
+			<style name="style_bar" />
+			<style name="style_bar_ind" selector="indicator" />
+			<lv_label align="center" bind_text="subject_value" bind_text-fmt="%d %%" style_text_color="0x192e4f" />
+		</lv_bar>
+
+		<!-- Range: indicator spans start_value..value -->
+		<lv_bar width="240" height="20" mode="range" value="80" start_value="10" align="left_mid" x="20">
+			<style name="style_bar" />
+			<style name="style_bar_ind" selector="indicator" />
+		</lv_bar>
+
+		<!-- Right to left fill when max_value < min_value with gradient -->
+		<lv_bar
+			width="240"
+			height="20"
+			min_value="100"
+			max_value="0"
+			value="80"
+			align="left_mid"
+			x="20"
+			y="40"
+			style_bg_color-indicator="0x04f"
+			style_bg_grad_color-indicator="0xa8f"
+			style_bg_grad_dir-indicator="hor"
+		>
+			<style name="style_bar" />
+			<style name="style_bar_ind" selector="indicator" />
+		</lv_bar>
+
+		<!-- Vertical orientation -->
+		<lv_bar width="20" height="160" orientation="vertical" value="65" align="right_mid" y="0" x="-60">
+			<style name="style_bar" />
+			<style name="style_bar_ind" selector="indicator" />
+		</lv_bar>
+
+		<lv_bar
+			width="20"
+			height="160"
+			orientation="vertical"
+			min_value="100"
+			max_value="0"
+			value="65"
+			align="right_mid"
+			y="0"
+			x="-20"
+		>
+			<style name="style_bar" />
+			<style name="style_bar_ind" selector="indicator" />
+		</lv_bar>
+	</view>
+</screen>

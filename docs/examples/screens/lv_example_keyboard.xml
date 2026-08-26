@@ -1,0 +1,46 @@
+<!--
+ @title Keyboard
+ @brief A keyboard paired with a text area, with key popovers enabled.
+
+ Keyboard and Text Area share the screen; LVGL's default focus group
+ routes key presses to the focused input, so typing lands in the field
+ above. `mode` selects the starting layout and `popovers="true"` shows the
+ enlarged key preview while a key is pressed.
+-->
+<screen>
+	<styles>
+		<style
+			name="style_bg"
+			bg_color="0x111827"
+			text_color="0xf3f4f6"
+			radius="8"
+			pad_all="8"
+			border_color="0x3b82f6"
+			border_width="1"
+		/>
+
+		<style name="style_btn_normal" bg_color="0x515e7b" text_color="0xf3f4f6" radius="6" />
+
+		<style name="style_btn_checked" bg_color="0x3b82f6" text_color="0xf3f4f6" radius="6" />
+	</styles>
+
+	<view>
+		<!-- 💡 Tap keys — they type into the field above and show a popover preview. -->
+		<lv_textarea
+			name="ta_input"
+			width="300"
+			one_line="true"
+			placeholder_text="Tap the keyboard ..."
+			align="top_mid"
+			y="30"
+		>
+			<style name="style_bg" />
+		</lv_textarea>
+
+		<lv_keyboard width="320" height="160" mode="text_lower" popovers="true" textarea="ta_input" align="bottom_mid">
+			<style name="style_bg" />
+			<style name="style_btn_normal" selector="items" />
+			<style name="style_btn_checked" selector="items|checked" />
+		</lv_keyboard>
+	</view>
+</screen>

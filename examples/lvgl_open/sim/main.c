@@ -25,9 +25,10 @@ int main(void)
     UI_INIT("A:");      /* "A:" = file-system drive for file-based assets */
 
     /* Load a screen from your project, e.g.:
-     *     lv_screen_load(my_screen_create()); */
+     * lv_screen_load(my_screen_create()); */
 
-    lv_screen_load(lv_example_dropdown_text_create()); 
+    lv_screen_load(lv_example_dropdown_text_create());
+
     lv_unlock();
 
     while(1) {

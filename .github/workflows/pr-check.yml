@@ -1,58 +1,110 @@
 name: Pull Request Check
 
 on:
-  pull_request:
-    types: [opened, edited, synchronize, reopened]
-  push:
-    branches:
-      - master
+    pull_request:
+        types: [opened, edited, synchronize, reopened]
+    push:
+        branches:
+            - master
 
 jobs:
-  pr-check:
-    runs-on: ubuntu-latest
-    env:
-      LVGL_CLI_TOKEN: ${{ secrets.LVGL_CLI_TOKEN }}
+    common-template-files:
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: Check token
+        steps:
+            - name: Checkout current repository
+              uses: actions/checkout@v4
+
+            - name: Check the common template files
+              run: .github/scripts/check-common-template-files.sh
+
+    # The widget API tables in docs/built_in_widgets are generated from the XML
+    # schemas, so a schema edit without a regenerated page silently ships stale
+    # docs. Regenerate here and fail if anything moved.
+    widget-api-docs:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout current repository
+              uses: actions/checkout@v4
+
+            # Node 24, not the 22.13.0 the pr-check job uses: this script is
+            # TypeScript run directly, and only Node >= 23.6 strips the types
+            # without --experimental-strip-types.
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '24'
+
+            - name: Regenerate the widget API docs
+              run: node docs/scripts/gen_widget_api.ts
+
+            - name: Fail if the committed docs are out of date
+              run: |
+                  if ! git diff --exit-code -- docs/built_in_widgets; then
+                    echo
+                    echo "docs/built_in_widgets is out of date with lvgl_widgets_xml."
+                    echo "Run 'node docs/scripts/gen_widget_api.ts' and commit the result."
+                    exit 1
+                  fi
+
+    # A job-level `if` cannot read `secrets`, which is why this is a separate job:
+    # it publishes "is the token there" as an output that pr-check can be gated on.
+    # Checking inside pr-check cannot work, because a step that exits 0 ends only
+    # itself and the CLI steps after it still run.
+    token:
+        runs-on: ubuntu-latest
+        outputs:
+            available: ${{ steps.probe.outputs.available }}
+
+        steps:
+            - name: Look for the CLI token
+              id: probe
+              env:
+                  LVGLPRO_CLI_TOKEN: ${{ secrets.LVGLPRO_CLI_TOKEN }}
+              run: |
+                  if [ -n "$LVGLPRO_CLI_TOKEN" ]; then
+                    echo 'available=true' >>"$GITHUB_OUTPUT"
+                  else
+                    echo 'available=false' >>"$GITHUB_OUTPUT"
+                    echo 'LVGLPRO_CLI_TOKEN is not set, so pr-check will be skipped.'
+                  fi
+
+    pr-check:
+        needs: token
+        if: needs.token.outputs.available == 'true'
+        runs-on: ubuntu-latest
         env:
-          LVGL_CLI_TOKEN: ${{ secrets.LVGL_CLI_TOKEN }}
-        run: |
-          if [ -z "$LVGL_CLI_TOKEN" ]; then
-            echo "LVGL_CLI_TOKEN is not set. Skipping..."
-            exit 0
-          fi
+            LVGLPRO_CLI_TOKEN: ${{ secrets.LVGLPRO_CLI_TOKEN }}
 
-      - name: Checkout current repository
-        uses: actions/checkout@v4
+        steps:
+            - name: Checkout current repository
+              uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22.13.0"
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '22.13.0'
 
-      - name: Setup emsdk
-        uses: mymindstorm/setup-emsdk@v14
-        with:
-          version: 4.0.6
+            - name: Setup emsdk
+              uses: mymindstorm/setup-emsdk@v14
+              with:
+                  version: 4.0.6
 
-      - name: Remove Generated Files
-        run: find examples/lvgl_open -path examples/lvgl_open/images -prune -o -type f \( -name '*.c' -o -name '*.h' \) -print | xargs rm -f
+            - name: Remove Generated Files
+              run: find examples/lvgl_open -path examples/lvgl_open/images -prune -o -type f \( -name '*.c' -o -name '*.h' \) -print | xargs rm -f
 
-      - name: Download CLI
-        run: curl -L https://github.com/lvgl/lvgl_pro/releases/download/v2.0.0/LVGL_Pro_CLI-2.0.0-linux.zip -o lvgl-cli.zip
+            - name: Install CLI
+              run: npm install --global @lvgl/lvglpro
 
-      - name: Unzip CLI
-        run: unzip lvgl-cli.zip -d lvgl-cli
+            - name: Generate Code
+              run: |
+                  lvglpro generate examples/lvgl_open
 
-      - name: Generate Code
-        run: |
-          node ./lvgl-cli/lved-cli.js generate examples/lvgl_open
+            - name: Compile Code
+              run: |
+                  lvglpro compile examples/lvgl_open --target cli
 
-      - name: Compile Code
-        run: |
-          node ./lvgl-cli/lved-cli.js compile examples/lvgl_open --target cli
-
-      - name: Run tests
-        run: |
-          node ./lvgl-cli/lved-cli.js run-all-tests examples/lvgl_open
+            - name: Run tests
+              run: |
+                  lvglpro run-all-tests examples/lvgl_open

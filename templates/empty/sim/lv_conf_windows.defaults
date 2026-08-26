@@ -53,7 +53,5 @@ LV_USE_PERF_MONITOR     0
 # lv_obj name is required by the C code exported from the Editor.
 LV_USE_OBJ_NAME         1
 
-
 # To support translations
 LV_USE_TRANSLATION 1
-

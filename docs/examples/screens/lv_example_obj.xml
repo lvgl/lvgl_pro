@@ -1,0 +1,60 @@
+<!--
+ @title Base widget
+ @brief A plain lv_obj used as a styled, scrollable, flex container.
+
+ lv_obj has no widget-specific properties — it is the styling, layout,
+ scrolling and state engine every widget inherits. Here one lv_obj is a flex
+ column with a scrollbar holding five rows; a `<bind_style>` swaps its look
+ when `subject_checked` is 1, and the switch above toggles that subject.
+-->
+<screen>
+	<styles>
+		<style name="style_box" bg_color="0x1e293b" bg_opa="100%" radius="10" pad_all="14" text_color="0xe2e8f0" />
+		<!-- Swapped in when subject_checked == 1 -->
+		<style name="style_box_alt" bg_color="0x5b1db7" />
+		<style
+			name="style_row"
+			bg_color="0x334155"
+			border_color="0x5a697e"
+			bg_opa="100%"
+			radius="6"
+			pad_all="10"
+			height="content"
+			width="100%"
+			text_color="0xe2e8f0"
+		/>
+		<style name="style_scrollbar" bg_color="0x9a80c1" bg_opa="100%" width="6" pad_ver="14" />
+	</styles>
+
+	<view>
+		<lv_switch bind_checked="subject_checked" x="92" y="11" />
+		<lv_label text="Switch theme" x="163" y="19" />
+
+		<!-- The base widget as a scrollable flex container -->
+		<lv_obj width="300" height="200" align="center" flex_flow="column" style_pad_row="8" scrollbar_mode="active">
+			<style name="style_box" />
+			<bind_style name="style_box_alt" subject="subject_checked" ref_value="1" />
+			<style name="style_scrollbar" selector="scrollbar" />
+			<lv_obj>
+				<style name="style_row" />
+				<lv_label text="Row 1 . Scroll down" />
+			</lv_obj>
+			<lv_obj>
+				<style name="style_row" />
+				<lv_label text="Row 2" />
+			</lv_obj>
+			<lv_obj>
+				<style name="style_row" />
+				<lv_label text="Row 3" />
+			</lv_obj>
+			<lv_obj>
+				<style name="style_row" />
+				<lv_label text="Row 4" />
+			</lv_obj>
+			<lv_obj>
+				<style name="style_row" />
+				<lv_label text="Row 5 - I'm the last" />
+			</lv_obj>
+		</lv_obj>
+	</view>
+</screen>

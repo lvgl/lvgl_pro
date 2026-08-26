@@ -1,0 +1,50 @@
+<!--
+ @title Switch
+ @brief A checked and a disabled switch, plus a two-way bound pair.
+
+ The first switch starts `checked="true"`, the second is `disabled="true"`.
+ The third uses `bind_checked="subject_checked"`; the fourth binds to the
+ same subject, so toggling either one moves both — the classic two-way
+ binding pattern.
+-->
+<screen>
+	<styles>
+		<style name="style_sw" bg_color="0xcbd5e1" bg_opa="100%" />
+		<style name="style_sw_on" bg_color="0x16a34a" />
+		<style name="style_knob" bg_color="0xffffff" />
+	</styles>
+
+	<view
+		flex_flow="column"
+		style_pad_row="16"
+		style_pad_all="18"
+		style_flex_cross_place="center"
+		style_flex_track_place="center"
+		style_flex_main_place="center"
+	>
+		<!-- On by default -->
+		<lv_switch checked="true">
+			<style name="style_sw" />
+			<style name="style_sw_on" selector="checked|indicator" />
+			<style name="style_knob" selector="knob" />
+		</lv_switch>
+
+		<!-- Disabled -->
+		<lv_switch disabled="true" style_bg_opa="40%">
+			<style name="style_sw" />
+			<style name="style_knob" selector="knob" />
+		</lv_switch>
+
+		<!-- Two switches bound to the same subject -->
+		<lv_switch bind_checked="subject_checked">
+			<style name="style_sw" />
+			<style name="style_sw_on" selector="checked|indicator" />
+			<style name="style_knob" selector="knob" />
+		</lv_switch>
+		<lv_switch bind_checked="subject_checked">
+			<style name="style_sw" />
+			<style name="style_sw_on" selector="checked|indicator" />
+			<style name="style_knob" selector="knob" />
+		</lv_switch>
+	</view>
+</screen>

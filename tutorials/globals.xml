@@ -43,10 +43,11 @@
 			symbols="°äü"
 		/>
 
-		<!-- <bin as_file="true"> means to create bin file they can be loaded at runtime-->
+		<!-- <bin as_file="true"> means to create a bin file that can be loaded at runtime.
+		     Kept "false" here because this tutorial ships no filesystem to load the .bin from. -->
 		<bin
 			name="montserrat_16_bin_file"
-			as_file="true"
+			as_file="false"
 			bpp="2"
 			src_path="fonts/Montserrat_Medium.ttf"
 			size="16"

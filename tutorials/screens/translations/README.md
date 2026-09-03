@@ -64,9 +64,9 @@ labels use `montserrat_14_c_array`. In `globals.xml` that font is declared as:
      src_path="fonts/Montserrat_Medium.ttf" size="14" range="0x20-0x7f" symbols="°äü" />
 ```
 
-`range="0x20-0x7f"` is ASCII only, which does not include `ü`, `ö` or `ä`. Those are
-added by hand through `symbols="°äü"`, which is what lets `gemütlich` and `Lächeln`
-render. Drop them from `symbols` and the German text loses those characters.
+`range="0x20-0x7f"` is ASCII only, which does not include `ü` or `ä`. Those are added by
+hand through `symbols="°äü"`, which is what lets `gemütlich` and `Lächeln` render. Note
+that `ö` is not in the list, so a translation using it would need it added first. Drop them from `symbols` and the German text loses those characters.
 
 Adding a language usually means auditing the font as well: Cyrillic, Greek or CJK need
 their own ranges, and CJK is where a `<tiny_ttf>` font starts to look attractive over a

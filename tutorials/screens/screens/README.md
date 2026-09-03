@@ -83,9 +83,11 @@ it has reset to zero.
 text="I'm on a permanent screen,&#10; so my state will stay"
 ```
 
-XML attributes cannot hold a literal newline, so `&#10;` is used. The same escaping
-applies to the other reserved characters: `&amp;`, `&lt;`, `&gt;`, `&quot;` and
-`&apos;`. An apostrophe inside a double-quoted attribute is fine, as above.
+`&#10;` is the character reference for a newline. A literal line break inside an
+attribute is allowed by XML but normalized to a space by the parser, so writing it out
+would not break the label. The reserved characters need escaping for a different reason,
+because they would end the attribute or start a tag: `&amp;`, `&lt;`, `&gt;`, `&quot;`
+and `&apos;`. An apostrophe inside a double-quoted attribute is fine, as above.
 
 ## Try it
 

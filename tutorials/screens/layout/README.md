@@ -29,8 +29,9 @@ not built-in widgets. Each is a bare container with `layout="flex"` and a `flex_
 already set, so the markup stays short. The same result written out by hand would be
 `<lv_obj flex_flow="column">`.
 
-The outer `column` is the screen's only direct child and holds the three bands: header,
-content, footer.
+The outer `column` holds the three bands (header, content, footer) and is the only child
+that takes part in the screen's layout. The floating button at the end of the file is the
+screen's other direct child, and it sits outside the column on purpose.
 
 ### 2. Placing children along the flex axis
 
@@ -91,9 +92,10 @@ coordinates offset inward from the alignment corner.
 
 ### 5. Scrolling
 
-Nothing on this screen enables scrolling. The inner `column` simply contains more
-checkboxes than fit, and an LVGL container scrolls its overflowing content on its own.
-Delete a few checkboxes and the scrollbar disappears.
+Nothing on this screen enables scrolling. The inner `column` is `height="content"`, so it
+grows to fit all twelve checkboxes and pushes the outer column past the bottom of the
+display. The **screen** is the container that scrolls, because an LVGL object scrolls its
+overflowing children on its own. Delete a few checkboxes and the scrollbar disappears.
 
 ## Try it
 

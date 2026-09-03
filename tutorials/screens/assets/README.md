@@ -34,7 +34,7 @@ to be touched.
 	<bin name="montserrat_14_c_array" as_file="false" bpp="2"
 	     src_path="fonts/Montserrat_Medium.ttf" size="14" range="0x20-0x7f" symbols="°äü" />
 
-	<bin name="montserrat_16_bin_file" as_file="true" bpp="2"
+	<bin name="montserrat_16_bin_file" as_file="false" bpp="2"
 	     src_path="fonts/Montserrat_Medium.ttf" size="16" range="0x20-0x7f" symbols="°" />
 
 	<tiny_ttf name="montserrat_18_tiny_ttf_data" as_file="false" size="18"
@@ -55,6 +55,10 @@ to be touched.
 The `<bin>` forms convert glyphs at build time, so a size is baked in and the size
 attribute is required. The `<tiny_ttf>` forms carry the outlines, so one source can
 serve any size, at the cost of runtime rendering work.
+
+Despite its name, `montserrat_16_bin_file` is declared `as_file="false"` here, so it is
+compiled in as a C array like the first one. This tutorial ships no filesystem, and a
+`.bin` font has nowhere to be loaded from. Set it to `true` in a project that has one.
 
 `bpp="2"` is bits per pixel of anti-aliasing: `1`, `2`, `4` or `8`, trading file size
 for smoothness.

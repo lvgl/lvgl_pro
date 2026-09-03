@@ -107,6 +107,7 @@ observer on the subject, and write the subject back when the selection changes.
 ```c
 lv_obj_t * wd_segment_add_button(lv_obj_t * wd_segment, const char * text)
 {
+    wd_segment_t * widget = (wd_segment_t *)wd_segment;
     lv_obj_t * segment_item = segment_item_create(wd_segment, text);
     lv_obj_set_flex_grow(segment_item, 1);
     lv_obj_add_event_cb(segment_item, segment_selected_cb, LV_EVENT_CLICKED, widget);
@@ -115,7 +116,7 @@ lv_obj_t * wd_segment_add_button(lv_obj_t * wd_segment, const char * text)
 ```
 
 Note `segment_item_create`. The individual buttons are a plain **component**,
-`components/widget_items/segment_item.xml`, with its own `style_base` and
+`components/widget_items/segment_item/segment_item.xml`, with its own `style_base` and
 `style_checked` sheets. The C only creates it and sets flex grow, and the appearance
 stays in XML where it belongs.
 
@@ -148,7 +149,7 @@ because the preview has to run new C. Press **Ctrl+B** to regenerate and recompi
 1. Add a fourth `<wd_segment-button text="Option 4" />` to the screen.
 2. Open the **Subjects** panel and set `subject_segment` to `2`. The control follows,
    which is `value_observer_cb` at work.
-3. Change the colors in `components/widget_items/segment_item.xml` and press Ctrl+B.
+3. Change the colors in `components/widget_items/segment_item/segment_item.xml` and press Ctrl+B.
 4. Add `<arg name="icon" type="string" />` to the `button` element, then extend
    `wd_segment_add_button` to take it. Notice the signature in `_gen.h` changes.
 5. Set `selected="1"` on `<wd_segment>` in the screen instead of using `bind_value`.

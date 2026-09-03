@@ -39,16 +39,14 @@ lv_obj_t * column_create(lv_obj_t * parent)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if TUTORIALS_CHECK_COMPILE_TARGET(TUTORIALS_TARGET_ALL)
-        if (tutorials_check_target(TUTORIALS_TARGET_ALL)) {
-            lv_style_init(&style_base);
-            lv_style_set_width(&style_base, LV_SIZE_CONTENT);
-            lv_style_set_height(&style_base, LV_SIZE_CONTENT);
-            lv_style_set_layout(&style_base, LV_LAYOUT_FLEX);
-            lv_style_set_flex_flow(&style_base, LV_FLEX_FLOW_COLUMN);
+        /*Init all styles*/
+        lv_style_init(&style_base);
 
-        }
-        #endif
+        lv_style_set_width(&style_base, LV_SIZE_CONTENT);
+        lv_style_set_height(&style_base, LV_SIZE_CONTENT);
+        lv_style_set_layout(&style_base, LV_LAYOUT_FLEX);
+        lv_style_set_flex_flow(&style_base, LV_FLEX_FLOW_COLUMN);
+
         style_inited = true;
     }
 

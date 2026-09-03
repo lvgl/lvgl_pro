@@ -2,8 +2,8 @@
  * @file segment_item_gen.h
  */
 
-#ifndef SEGMENT_ITEM_H
-#define SEGMENT_ITEM_H
+#ifndef LVGL_PRO_SEGMENT_ITEM_GEN_H
+#define LVGL_PRO_SEGMENT_ITEM_GEN_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,7 +21,7 @@ extern "C" {
     #include "lvgl/lvgl_private.h"
 #endif
 
-#ifdef LV_USE_XML
+#if defined(LV_USE_XML) && LV_USE_XML
     #include "lv_xml/lv_xml.h"
 #endif
 
@@ -47,4 +47,4 @@ lv_obj_t * segment_item_create(lv_obj_t * parent, const char * text);
 } /*extern "C"*/
 #endif
 
-#endif /*SEGMENT_ITEM_H*/
+#endif /*LVGL_PRO_SEGMENT_ITEM_GEN_H*/

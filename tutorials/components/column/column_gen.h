@@ -2,8 +2,8 @@
  * @file column_gen.h
  */
 
-#ifndef COLUMN_H
-#define COLUMN_H
+#ifndef LVGL_PRO_COLUMN_GEN_H
+#define LVGL_PRO_COLUMN_GEN_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,7 +21,7 @@ extern "C" {
     #include "lvgl/lvgl_private.h"
 #endif
 
-#ifdef LV_USE_XML
+#if defined(LV_USE_XML) && LV_USE_XML
     #include "lv_xml/lv_xml.h"
 #endif
 
@@ -47,4 +47,4 @@ lv_obj_t * column_create(lv_obj_t * parent);
 } /*extern "C"*/
 #endif
 
-#endif /*COLUMN_H*/
+#endif /*LVGL_PRO_COLUMN_GEN_H*/

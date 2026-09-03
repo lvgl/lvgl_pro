@@ -45,15 +45,13 @@ lv_obj_t * sliderbox_create(lv_obj_t * parent, const char * title, lv_subject_t 
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if TUTORIALS_CHECK_COMPILE_TARGET(TUTORIALS_TARGET_ALL)
-        if (tutorials_check_target(TUTORIALS_TARGET_ALL)) {
-            lv_style_init(&style_dark);
-            lv_style_set_bg_color(&style_dark, lv_color_hex3(0x333));
-            lv_style_set_text_color(&style_dark, lv_color_hex3(0xfff));
-            lv_style_set_border_color(&style_dark, lv_color_hex3(0x111));
+        /*Init all styles*/
+        lv_style_init(&style_dark);
 
-        }
-        #endif
+        lv_style_set_bg_color(&style_dark, lv_color_hex3(0x333));
+        lv_style_set_text_color(&style_dark, lv_color_hex3(0xfff));
+        lv_style_set_border_color(&style_dark, lv_color_hex3(0x111));
+
         style_inited = true;
     }
 

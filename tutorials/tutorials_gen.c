@@ -8,7 +8,7 @@
 
 #include "tutorials_gen.h"
 
-#if LV_USE_XML
+#if defined(LV_USE_XML) && LV_USE_XML
 #include "widgets/wd_segment/wd_segment_private_gen.h"
 #endif /* LV_USE_XML */
 
@@ -64,7 +64,6 @@ lv_obj_t * screen_main = NULL;
 lv_font_t * montserrat_14_c_array;
 extern lv_font_t montserrat_14_c_array_data;
 lv_font_t * montserrat_16_bin_file;
-extern lv_font_t montserrat_16_bin_file_data;
 lv_font_t * montserrat_18_tiny_ttf_data;
 extern uint8_t Montserrat_Medium_ttf_data[];
 extern size_t Montserrat_Medium_ttf_data_size;
@@ -122,8 +121,9 @@ void tutorials_init_gen(const char * asset_path)
         }
         if (!montserrat_16_bin_file) {
             /* montserrat_16_bin_file */
-            /* get font 'montserrat_16_bin_file' from a C array */
-            montserrat_16_bin_file = &montserrat_16_bin_file_data;
+            /* create bin font 'montserrat_16_bin_file' from file */
+            lv_snprintf(buf, 256, "%s%s", asset_path, "fonts/montserrat_16_bin_file.bin");
+            montserrat_16_bin_file = lv_binfont_create(buf);
 
         }
         if (!montserrat_18_tiny_ttf_data) {
@@ -182,7 +182,7 @@ void tutorials_init_gen(const char * asset_path)
         lv_translation_set_language(translation_languages[0]);
     #endif
 
-#if LV_USE_XML
+#if defined(LV_USE_XML) && LV_USE_XML
     /* Register widgets */
     wd_segment_register();
 
@@ -211,13 +211,13 @@ void tutorials_init_gen(const char * asset_path)
 
     /* Register all the global assets so that they won't be created again when globals.xml is parsed.
      * While running in the editor skip this step to update the preview when the XML changes */
-#if LV_USE_XML && !defined(LV_EDITOR_PREVIEW)
+#if defined(LV_USE_XML) && LV_USE_XML && !defined(LV_EDITOR_PREVIEW)
     /* Register images */
     lv_xml_register_image(NULL, "flower_data", flower_data);
     lv_xml_register_image(NULL, "flower_file", flower_file);
 #endif
 
-#if LV_USE_XML == 0
+#if !defined(LV_USE_XML) || LV_USE_XML == 0
     /*--------------------
      *  Permanent screens
      *-------------------*/

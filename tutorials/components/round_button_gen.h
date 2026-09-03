@@ -2,8 +2,8 @@
  * @file round_button_gen.h
  */
 
-#ifndef ROUND_BUTTON_H
-#define ROUND_BUTTON_H
+#ifndef LVGL_PRO_ROUND_BUTTON_GEN_H
+#define LVGL_PRO_ROUND_BUTTON_GEN_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,7 +21,7 @@ extern "C" {
     #include "lvgl/lvgl_private.h"
 #endif
 
-#ifdef LV_USE_XML
+#if defined(LV_USE_XML) && LV_USE_XML
     #include "lv_xml/lv_xml.h"
 #endif
 
@@ -47,4 +47,4 @@ lv_obj_t * round_button_create(lv_obj_t * parent, const char * text, lv_subject_
 } /*extern "C"*/
 #endif
 
-#endif /*ROUND_BUTTON_H*/
+#endif /*LVGL_PRO_ROUND_BUTTON_GEN_H*/

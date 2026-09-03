@@ -2,8 +2,8 @@
  * @file screen_assets_gen.h
  */
 
-#ifndef SCREEN_ASSETS_H
-#define SCREEN_ASSETS_H
+#ifndef LVGL_PRO_SCREEN_ASSETS_GEN_H
+#define LVGL_PRO_SCREEN_ASSETS_GEN_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,7 +21,7 @@ extern "C" {
     #include "lvgl/lvgl_private.h"
 #endif
 
-#ifdef LV_USE_XML
+#if defined(LV_USE_XML) && LV_USE_XML
     #include "lv_xml/lv_xml.h"
 #endif
 
@@ -49,4 +49,4 @@ lv_obj_t * screen_assets_create(void);
 } /*extern "C"*/
 #endif
 
-#endif /*SCREEN_ASSETS_H*/
+#endif /*LVGL_PRO_SCREEN_ASSETS_GEN_H*/

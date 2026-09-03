@@ -16,7 +16,7 @@
     #include "lvgl/lvgl_private.h"
 #endif
 
-#ifdef LV_USE_XML
+#if defined(LV_USE_XML) && LV_USE_XML
     #include "lv_xml/lv_xml.h"
 #endif
 #include "../../tutorials.h"
@@ -85,20 +85,18 @@ static void wd_segment_constructor(const lv_obj_class_t * class_p, lv_obj_t * ob
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if TUTORIALS_CHECK_COMPILE_TARGET(TUTORIALS_TARGET_ALL)
-        if (tutorials_check_target(TUTORIALS_TARGET_ALL)) {
-            lv_style_init(&style_base);
-            lv_style_set_width(&style_base, 200);
-            lv_style_set_height(&style_base, 40);
-            lv_style_set_bg_opa(&style_base, (255 * 100 / 100));
-            lv_style_set_bg_color(&style_base, lv_color_hex(0xa2a2a2));
-            lv_style_set_radius(&style_base, 10);
-            lv_style_set_layout(&style_base, LV_LAYOUT_FLEX);
-            lv_style_set_flex_flow(&style_base, LV_FLEX_FLOW_ROW);
-            lv_style_set_clip_corner(&style_base, true);
+        /*Init all styles*/
+        lv_style_init(&style_base);
 
-        }
-        #endif
+        lv_style_set_width(&style_base, 200);
+        lv_style_set_height(&style_base, 40);
+        lv_style_set_bg_opa(&style_base, (255 * 100 / 100));
+        lv_style_set_bg_color(&style_base, lv_color_hex(0xa2a2a2));
+        lv_style_set_radius(&style_base, 10);
+        lv_style_set_layout(&style_base, LV_LAYOUT_FLEX);
+        lv_style_set_flex_flow(&style_base, LV_FLEX_FLOW_ROW);
+        lv_style_set_clip_corner(&style_base, true);
+
         style_inited = true;
     }
 

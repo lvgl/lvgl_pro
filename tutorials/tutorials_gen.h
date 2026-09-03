@@ -2,8 +2,8 @@
  * @file tutorials_gen.h
  */
 
-#ifndef TUTORIALS_GEN_H
-#define TUTORIALS_GEN_H
+#ifndef LVGL_PRO_TUTORIALS_GEN_H
+#define LVGL_PRO_TUTORIALS_GEN_H
 
 #ifndef UI_SUBJECT_STRING_LENGTH
 #define UI_SUBJECT_STRING_LENGTH 256
@@ -25,7 +25,7 @@ extern "C" {
     #include "lvgl/lvgl_private.h"
 #endif
 
-#ifdef LV_USE_XML
+#if defined(LV_USE_XML) && LV_USE_XML
     #include "lv_xml/lv_xml.h"
 #endif
 
@@ -159,4 +159,4 @@ void tutorials_init_gen(const char * asset_path);
 } /*extern "C"*/
 #endif
 
-#endif /*TUTORIALS_GEN_H*/
+#endif /*LVGL_PRO_TUTORIALS_GEN_H*/

@@ -3,8 +3,8 @@
  *
  */
 
-#ifndef WD_SEGMENT_GEN_H
-#define WD_SEGMENT_GEN_H
+#ifndef LVGL_PRO_WD_SEGMENT_GEN_H
+#define LVGL_PRO_WD_SEGMENT_GEN_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,7 +22,7 @@ extern "C" {
     #include "lvgl/lvgl_private.h"
 #endif
 
-#ifdef LV_USE_XML
+#if defined(LV_USE_XML) && LV_USE_XML
     #include "lv_xml/lv_xml.h"
 #endif
 
@@ -75,4 +75,4 @@ lv_obj_t * wd_segment_add_button(lv_obj_t * wd_segment, const char * text);
 } /*extern "C"*/
 #endif
 
-#endif /*WD_SEGMENT_GEN_H*/
+#endif /*LVGL_PRO_WD_SEGMENT_GEN_H*/

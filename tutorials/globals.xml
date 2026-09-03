@@ -46,7 +46,7 @@
 		<!-- <bin as_file="true"> means to create bin file they can be loaded at runtime-->
 		<bin
 			name="montserrat_16_bin_file"
-			as_file="false"
+			as_file="true"
 			bpp="2"
 			src_path="fonts/Montserrat_Medium.ttf"
 			size="16"

@@ -11,7 +11,6 @@ list(
   ${CMAKE_CURRENT_LIST_DIR}/components/sliderbox_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/components/widget_items/segment_item/segment_item_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/fonts/montserrat_14_c_array_data.c
-  ${CMAKE_CURRENT_LIST_DIR}/fonts/montserrat_16_bin_file_data.c
   ${CMAKE_CURRENT_LIST_DIR}/fonts/Montserrat_Medium_ttf_data.c
   ${CMAKE_CURRENT_LIST_DIR}/images/flower_data_data.c
   ${CMAKE_CURRENT_LIST_DIR}/screens/animations/screen_animations_gen.c

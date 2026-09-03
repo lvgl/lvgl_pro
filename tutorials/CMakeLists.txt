@@ -16,15 +16,15 @@ if(DEFINED LVGL_COMPONENT_LIB_NAME)
 else()
   set(LIB_NAME lib-ui)
 endif()
+
 # Include user source files
 include(${CMAKE_CURRENT_LIST_DIR}/user_config.cmake)
 set(LV_EDITOR_USER_SOURCES ${LV_EDITOR_PROJECT_SOURCES})
 # Reset project sources
 set(LV_EDITOR_PROJECT_SOURCES)
-# Include any component libraries
-include(${CMAKE_CURRENT_LIST_DIR}/component_lib_list_gen.cmake)
 # Include generated list of .c files
 include(${CMAKE_CURRENT_LIST_DIR}/file_list_gen.cmake)
+
 # Create the UI sources as a library
 add_library(${LIB_NAME} ${LV_EDITOR_PROJECT_SOURCES})
 if(LV_EDITOR_USER_SOURCES)
@@ -34,12 +34,19 @@ endif()
 if(DEFINED LV_EDITOR_COMPONENT_LIB_LIST)
   target_link_libraries(${LIB_NAME} PUBLIC ${LV_EDITOR_COMPONENT_LIB_LIST})
 endif()
+if(DEFINED LV_EDITOR_COMPONENT_INCLUDE_DIRS)
+  target_include_directories(${LIB_NAME} PUBLIC ${LV_EDITOR_COMPONENT_INCLUDE_DIRS})
+  if(LV_EDITOR_USER_SOURCES)
+    target_include_directories(${LIB_NAME}_user PRIVATE ${LV_EDITOR_COMPONENT_INCLUDE_DIRS})
+  endif()
+endif()
 if(TARGET lvgl)
   target_link_libraries(${LIB_NAME} PUBLIC lvgl)
   if(LV_EDITOR_USER_SOURCES)
     target_link_libraries(${LIB_NAME}_user PUBLIC lvgl)
   endif()
 endif()
+
 # Add the project folder as include folder
 target_include_directories(${LIB_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 # Set include directories for the project This will include the LVGL includes

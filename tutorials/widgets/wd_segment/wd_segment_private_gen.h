@@ -3,8 +3,8 @@
  *
  */
 
-#ifndef WD_SEGMENT_PRIVATE_H
-#define WD_SEGMENT_PRIVATE_H
+#ifndef LVGL_PRO_WD_SEGMENT_PRIVATE_GEN_H
+#define LVGL_PRO_WD_SEGMENT_PRIVATE_GEN_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -45,7 +45,7 @@ extern const lv_obj_class_t wd_segment_class;
  * GLOBAL PROTOTYPES
  **********************/
 
-#if LV_USE_XML
+#if defined(LV_USE_XML) && LV_USE_XML
     void wd_segment_register(void);
 #endif
 
@@ -57,4 +57,4 @@ extern const lv_obj_class_t wd_segment_class;
 } /*extern "C"*/
 #endif
 
-#endif /*WD_SEGMENT_PRIVATE_H*/
+#endif /*LVGL_PRO_WD_SEGMENT_PRIVATE_GEN_H*/

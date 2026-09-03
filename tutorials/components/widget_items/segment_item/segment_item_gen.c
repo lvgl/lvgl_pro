@@ -40,22 +40,19 @@ lv_obj_t * segment_item_create(lv_obj_t * parent, const char * text)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if TUTORIALS_CHECK_COMPILE_TARGET(TUTORIALS_TARGET_ALL)
-        if (tutorials_check_target(TUTORIALS_TARGET_ALL)) {
-            lv_style_init(&style_base);
-            lv_style_set_width(&style_base, 100);
-            lv_style_set_height(&style_base, lv_pct(100));
-            lv_style_set_bg_color(&style_base, lv_color_hex(0x545454));
-            lv_style_set_border_width(&style_base, 0);
-            lv_style_set_text_color(&style_base, lv_color_hex(0xffffff));
-            lv_style_set_radius(&style_base, 0);
+        /*Init all styles*/
+        lv_style_init(&style_base);
+        lv_style_init(&style_checked);
 
-            lv_style_init(&style_checked);
-            lv_style_set_bg_color(&style_checked, lv_color_hex(0xd3d3d3));
-            lv_style_set_text_color(&style_checked, lv_color_hex(0x000000));
+        lv_style_set_width(&style_base, 100);
+        lv_style_set_height(&style_base, lv_pct(100));
+        lv_style_set_bg_color(&style_base, lv_color_hex(0x545454));
+        lv_style_set_border_width(&style_base, 0);
+        lv_style_set_text_color(&style_base, lv_color_hex(0xffffff));
+        lv_style_set_radius(&style_base, 0);
+        lv_style_set_bg_color(&style_checked, lv_color_hex(0xd3d3d3));
+        lv_style_set_text_color(&style_checked, lv_color_hex(0x000000));
 
-        }
-        #endif
         style_inited = true;
     }
 

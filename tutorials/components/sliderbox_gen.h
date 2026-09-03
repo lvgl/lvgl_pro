@@ -2,8 +2,8 @@
  * @file sliderbox_gen.h
  */
 
-#ifndef SLIDERBOX_H
-#define SLIDERBOX_H
+#ifndef LVGL_PRO_SLIDERBOX_GEN_H
+#define LVGL_PRO_SLIDERBOX_GEN_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,7 +21,7 @@ extern "C" {
     #include "lvgl/lvgl_private.h"
 #endif
 
-#ifdef LV_USE_XML
+#if defined(LV_USE_XML) && LV_USE_XML
     #include "lv_xml/lv_xml.h"
 #endif
 
@@ -47,4 +47,4 @@ lv_obj_t * sliderbox_create(lv_obj_t * parent, const char * title, lv_subject_t 
 } /*extern "C"*/
 #endif
 
-#endif /*SLIDERBOX_H*/
+#endif /*LVGL_PRO_SLIDERBOX_GEN_H*/

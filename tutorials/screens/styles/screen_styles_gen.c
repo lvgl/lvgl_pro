@@ -46,27 +46,22 @@ lv_obj_t * screen_styles_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if TUTORIALS_CHECK_COMPILE_TARGET(TUTORIALS_TARGET_ALL)
-        if (tutorials_check_target(TUTORIALS_TARGET_ALL)) {
-            lv_style_init(&style_main);
-            lv_style_set_bg_color(&style_main, lv_color_hex3(0x333));
-            lv_style_set_bg_opa(&style_main, (255 * 30 / 100));
-            lv_style_set_radius(&style_main, 2);
+        /*Init all styles*/
+        lv_style_init(&style_main);
+        lv_style_init(&style_main_dark);
+        lv_style_init(&style_indicator);
+        lv_style_init(&style_knob);
 
-            lv_style_init(&style_main_dark);
-            lv_style_set_bg_color(&style_main_dark, MAIN_COLOR);
+        lv_style_set_bg_color(&style_main, lv_color_hex3(0x333));
+        lv_style_set_bg_opa(&style_main, (255 * 30 / 100));
+        lv_style_set_radius(&style_main, 2);
+        lv_style_set_bg_color(&style_main_dark, MAIN_COLOR);
+        lv_style_set_bg_color(&style_indicator, MAIN_COLOR);
+        lv_style_set_radius(&style_indicator, 2);
+        lv_style_set_bg_color(&style_knob, MAIN_COLOR);
+        lv_style_set_radius(&style_knob, 4);
+        lv_style_set_pad_all(&style_knob, 6);
 
-            lv_style_init(&style_indicator);
-            lv_style_set_bg_color(&style_indicator, MAIN_COLOR);
-            lv_style_set_radius(&style_indicator, 2);
-
-            lv_style_init(&style_knob);
-            lv_style_set_bg_color(&style_knob, MAIN_COLOR);
-            lv_style_set_radius(&style_knob, 4);
-            lv_style_set_pad_all(&style_knob, 6);
-
-        }
-        #endif
         style_inited = true;
     }
 

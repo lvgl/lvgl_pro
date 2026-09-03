@@ -39,13 +39,11 @@ lv_obj_t * screen_hello_world_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if TUTORIALS_CHECK_COMPILE_TARGET(TUTORIALS_TARGET_ALL)
-        if (tutorials_check_target(TUTORIALS_TARGET_ALL)) {
-            lv_style_init(&style_main);
-            lv_style_set_bg_color(&style_main, lv_color_hex(0x00688a));
+        /*Init all styles*/
+        lv_style_init(&style_main);
 
-        }
-        #endif
+        lv_style_set_bg_color(&style_main, lv_color_hex(0x00688a));
+
         style_inited = true;
     }
 

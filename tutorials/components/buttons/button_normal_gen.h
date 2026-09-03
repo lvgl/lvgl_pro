@@ -2,8 +2,8 @@
  * @file button_normal_gen.h
  */
 
-#ifndef BUTTON_NORMAL_H
-#define BUTTON_NORMAL_H
+#ifndef LVGL_PRO_BUTTON_NORMAL_GEN_H
+#define LVGL_PRO_BUTTON_NORMAL_GEN_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,7 +21,7 @@ extern "C" {
     #include "lvgl/lvgl_private.h"
 #endif
 
-#ifdef LV_USE_XML
+#if defined(LV_USE_XML) && LV_USE_XML
     #include "lv_xml/lv_xml.h"
 #endif
 
@@ -60,4 +60,4 @@ lv_anim_timeline_t * button_normal_get_timeline(lv_obj_t * obj, button_normal_ti
 } /*extern "C"*/
 #endif
 
-#endif /*BUTTON_NORMAL_H*/
+#endif /*LVGL_PRO_BUTTON_NORMAL_GEN_H*/

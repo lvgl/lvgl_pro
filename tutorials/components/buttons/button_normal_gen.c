@@ -43,24 +43,21 @@ lv_obj_t * button_normal_create(lv_obj_t * parent, const char * label_text)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if TUTORIALS_CHECK_COMPILE_TARGET(TUTORIALS_TARGET_ALL)
-        if (tutorials_check_target(TUTORIALS_TARGET_ALL)) {
-            lv_style_init(&style_base);
-            lv_style_set_bg_opa(&style_base, (255 * 100 / 100));
-            lv_style_set_bg_color(&style_base, DARK_BLUE);
-            lv_style_set_width(&style_base, LV_SIZE_CONTENT);
-            lv_style_set_height(&style_base, LV_SIZE_CONTENT);
-            lv_style_set_radius(&style_base, UNIT_MEDIUM);
-            lv_style_set_pad_hor(&style_base, UNIT_LARGE);
-            lv_style_set_pad_ver(&style_base, UNIT_MEDIUM);
-            lv_style_set_text_color(&style_base, lv_color_hex3(0xfff));
+        /*Init all styles*/
+        lv_style_init(&style_base);
+        lv_style_init(&style_pressed);
 
-            lv_style_init(&style_pressed);
-            lv_style_set_recolor(&style_pressed, lv_color_hex3(0xfff));
-            lv_style_set_recolor_opa(&style_pressed, (255 * 20 / 100));
+        lv_style_set_bg_opa(&style_base, (255 * 100 / 100));
+        lv_style_set_bg_color(&style_base, DARK_BLUE);
+        lv_style_set_width(&style_base, LV_SIZE_CONTENT);
+        lv_style_set_height(&style_base, LV_SIZE_CONTENT);
+        lv_style_set_radius(&style_base, UNIT_MEDIUM);
+        lv_style_set_pad_hor(&style_base, UNIT_LARGE);
+        lv_style_set_pad_ver(&style_base, UNIT_MEDIUM);
+        lv_style_set_text_color(&style_base, lv_color_hex3(0xfff));
+        lv_style_set_recolor(&style_pressed, lv_color_hex3(0xfff));
+        lv_style_set_recolor_opa(&style_pressed, (255 * 20 / 100));
 
-        }
-        #endif
         style_inited = true;
     }
 

@@ -15,7 +15,9 @@
 # ===========================================================================
 
 cmake_minimum_required(VERSION 3.16)
-project(lvgl_simulator C)
+# CXX is here for ThorVG, which the lv_conf defaults enable. Nothing in this
+# folder is C++, but the executable is linked with the C++ driver below.
+project(lvgl_simulator C CXX)
 
 # Build with debug symbols by default (so breakpoints work) unless the user
 # picked a build type. Multi-config generators (Visual Studio) ignore this and
@@ -144,11 +146,10 @@ set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
 set(LV_BUILD_CONF_PATH "${LV_CONF_PATH}" CACHE PATH "" FORCE)
 
 # ---------------------------------------------------------------------------
-#  Add LVGL (keep the build minimal: skip bundled demos/examples/ThorVG)
+#  Add LVGL (keep the build minimal: skip bundled demos/examples)
 # ---------------------------------------------------------------------------
 set(CONFIG_LV_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(CONFIG_LV_BUILD_DEMOS OFF CACHE BOOL "" FORCE)
-set(CONFIG_LV_USE_THORVG_INTERNAL OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(${lvgl_SOURCE_DIR} ${lvgl_BINARY_DIR})
 
@@ -204,6 +205,10 @@ endif()
 add_executable(${PROJECT_NAME} main.c hal.c)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE lib-ui lvgl ${BACKEND_LIBS})
+
+# ThorVG is C++. Every source here is C, so CMake would pick the C driver and
+# leave the C++ standard library out of the link.
+set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 
 # Guard the sim/ files (so a glob-based embedded build skips them) and pass the
 # exported UI's header, init function and window size to main.c.

@@ -1,12 +1,12 @@
 # Assets
 
-Four labels in four differently built fonts and the same PNG loaded two different ways.
-The interesting part of this tutorial is in `globals.xml`, not in the screen.
+Four labels in differently built fonts and the same PNG loaded two different ways. The
+interesting part of this tutorial is in `globals.xml`, not in the screen.
 
 ## What you'll learn
 
 - Declaring fonts and images in `globals.xml` and referring to them by name
-- The four ways to get a font into a build, and what each costs
+- The four ways to get a font into a build, three of which this screen shows
 - Limiting a font to the characters you need with `range` and `symbols`
 - C array assets vs runtime files
 - What `memory="int_flash"` is for
@@ -57,8 +57,15 @@ attribute is required. The `<tiny_ttf>` forms carry the outlines, so one source 
 serve any size, at the cost of runtime rendering work.
 
 Despite its name, `montserrat_16_bin_file` is declared `as_file="false"` here, so it is
-compiled in as a C array like the first one. This tutorial ships no filesystem, and a
-`.bin` font has nowhere to be loaded from. Set it to `true` in a project that has one.
+compiled in as a C array like the first row and this screen really demonstrates three of
+the four methods. The `.bin` file it would otherwise load is a build artifact that this
+project does not carry, so switching it to `true` needs the `.bin` generated and placed
+next to the other assets first.
+
+The other two file-backed assets on this screen, `montserrat_20_tiny_ttf_file` and
+`flower_file`, do load at runtime, because their sources (`fonts/Montserrat_Medium.ttf`
+and `images/orange-flower.png`) are committed. Both are resolved against the
+`asset_path` passed to `tutorials_init()`.
 
 `bpp="2"` is bits per pixel of anti-aliasing: `1`, `2`, `4` or `8`, trading file size
 for smoothness.

@@ -44,7 +44,7 @@
 		/>
 
 		<!-- <bin as_file="true"> means to create a bin file that can be loaded at runtime.
-		     Kept "false" here because this tutorial ships no filesystem to load the .bin from. -->
+		     Kept "false" here because the .bin is not shipped with this project. -->
 		<bin
 			name="montserrat_16_bin_file"
 			as_file="false"

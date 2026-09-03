@@ -39,6 +39,14 @@ LV_TINY_TTF_FILE_SUPPORT 1
 
 # Widgets used by the examples that are off by default in lv_conf_template.h.
 LV_USE_QRCODE           1
+LV_USE_GIF              1
+
+# Vector graphics, drawn by the ThorVG copy bundled with LVGL. Each option here
+# is required by the one below it, so all four have to be on together.
+LV_USE_FLOAT            1
+LV_USE_MATRIX           1
+LV_USE_VECTOR_GRAPHIC   1
+LV_USE_THORVG_INTERNAL  1
 
 # A handful of built-in fonts.
 LV_FONT_MONTSERRAT_14   1

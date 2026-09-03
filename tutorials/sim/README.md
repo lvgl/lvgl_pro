@@ -35,7 +35,7 @@ cmake --build build --target run
 
 ## Dependencies
 
-- **All platforms:** CMake (≥ 3.16), Python 3, a C compiler and a debugger
+- **All platforms:** CMake (≥ 3.16), Python 3, a C and a C++ compiler, and a debugger
 - **Linux / macOS additionally:** SDL2
 
 ```bash

@@ -1,0 +1,22 @@
+[project]
+name = "lvgl-app2pro"
+version = "0.1.0"
+description = "Convert a running LVGL Open application into an LVGL Pro XML project"
+readme = "README.md"
+requires-python = ">=3.10"
+
+dependencies = [
+    "lvglgdb",
+]
+
+[project.scripts]
+lvgl_app2pro = "lvgl_app2pro.cli:main"
+
+[project.urls]
+Homepage = "https://lvgl.io"
+
+[tool.setuptools]
+packages = ["lvgl_app2pro"]
+
+[tool.setuptools.package-dir]
+"" = "src"

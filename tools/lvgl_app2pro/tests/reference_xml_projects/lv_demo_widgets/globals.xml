@@ -1,0 +1,45 @@
+<globals>
+	<consts>
+		<color name="color_009688" value="0x009688" />
+		<color name="color_1976d2" value="0x1976d2" />
+		<color name="color_2196f3" value="0x2196f3" />
+		<color name="color_388e3c" value="0x388e3c" />
+		<color name="color_4caf50" value="0x4caf50" />
+		<color name="color_607d8b" value="0x607d8b" />
+		<color name="color_9c27b0" value="0x9c27b0" />
+		<color name="color_f44336" value="0xf44336" />
+		<color name="color_ff9800" value="0xff9800" />
+		<color name="color_ffffff" value="0xffffff" />
+		<int name="num_2" value="2" />
+		<int name="num_3" value="3" />
+		<int name="num_4" value="4" />
+		<int name="num_5" value="5" />
+		<int name="num_6" value="6" />
+		<int name="num_10" value="10" />
+		<int name="num_11" value="11" />
+		<int name="num_13" value="13" />
+		<int name="num_15" value="15" />
+		<int name="num_20" value="20" />
+		<int name="num_30" value="30" />
+		<int name="num_40" value="40" />
+		<int name="num_127" value="127" />
+		<int name="num_196" value="196" />
+		<int name="num_300" value="300" />
+		<int name="num_32767" value="32767" />
+	</consts>
+
+	<styles>
+	</styles>
+
+	<images>
+		<data name="img_clothes" src_path="images/img_clothes.png" color_format="argb8888" />
+		<data name="img_demo_widgets_avatar" src_path="images/img_demo_widgets_avatar.png" color_format="argb8888" />
+		<data name="img_demo_widgets_needle" src_path="images/img_demo_widgets_needle.png" color_format="argb8888" />
+		<data name="img_lvgl_logo" src_path="images/img_lvgl_logo.png" color_format="argb8888" />
+	</images>
+
+	<fonts>
+		<!-- TODO: supply a source for lv_font_montserrat_16 -->
+		<!-- TODO: supply a source for lv_font_montserrat_24 -->
+	</fonts>
+</globals>

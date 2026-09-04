@@ -1,247 +1,236 @@
 <api>
     <enumdef name="lv_state" help="Widget states">
-        <enum name="default" help="Normal state"/>
-        <enum name="pressed" help="Being pressed"/>
-        <enum name="checked" help="Toggled or checked"/>
-        <enum name="hovered" help="Pointer over widget"/>
-        <enum name="scrolled" help="Being scrolled"/>
-        <enum name="disabled" help="Disabled, no interaction"/>
-        <enum name="focused" help="Has input focus"/>
-        <enum name="focus_key" help="Focused by keyboard"/>
-        <enum name="edited" help="Being edited"/>
-        <enum name="user_1" help="User state 1"/>
-        <enum name="user_2" help="User state 2"/>
-        <enum name="user_3" help="User state 3"/>
-        <enum name="user_4" help="User state 4"/>
+        <enum name="default" value="0" help="Normal state"/>
+        <enum name="checked" value="4" help="Toggled or checked"/>
+        <enum name="focused" value="8" help="Has input focus"/>
+        <enum name="focus_key" value="16" help="Focused by keyboard"/>
+        <enum name="edited" value="32" help="Being edited"/>
+        <enum name="hovered" value="64" help="Pointer over widget"/>
+        <enum name="pressed" value="128" help="Being pressed"/>
+        <enum name="scrolled" value="256" help="Being scrolled"/>
+        <enum name="disabled" value="512" help="Disabled, no interaction"/>
+        <enum name="user_1" value="4096" help="User state 1"/>
+        <enum name="user_2" value="8192" help="User state 2"/>
+        <enum name="user_3" value="16384" help="User state 3"/>
+        <enum name="user_4" value="32768" help="User state 4"/>
     </enumdef>
 
     <enumdef name="lv_part" help="Widget parts">
-        <enum name="main" help="Main body"/>
-        <enum name="scrollbar" help="Scrollbar"/>
-        <enum name="indicator" help="Indicator (e.g. bar fill)"/>
-        <enum name="knob" help="Knob or handle"/>
-        <enum name="selected" help="Selected item or region"/>
-        <enum name="cursor" help="Cursor (e.g. in text area)"/>
-        <enum name="items" help="Items (e.g. chart series or table cells)"/>
-        <enum name="textarea_placeholder" help="Placeholder text in text area"/>
+        <enum name="main" value="0" help="Main body"/>
+        <enum name="scrollbar" value="65536" help="Scrollbar"/>
+        <enum name="indicator" value="131072" help="Indicator (e.g. bar fill)"/>
+        <enum name="knob" value="196608" help="Knob or handle"/>
+        <enum name="selected" value="262144" help="Selected item or region"/>
+        <enum name="items" value="327680" help="Items (e.g. chart series or table cells)"/>
+        <enum name="cursor" value="393216" help="Cursor (e.g. in text area)"/>
+        <enum name="textarea_placeholder" value="524288" help="Placeholder text in text area"/>
     </enumdef>
 
     <enumdef name="lv_event" help="Widget events">
-        <enum name="all" help="Match all events"/>
-
-        <!-- Input device -->
-        <enum name="pressed" help="Pressed"/>
-        <enum name="pressing" help="Being pressed"/>
-        <enum name="press_lost" help="Press lost (pointer moved)"/>
-        <enum name="short_clicked" help="Short click + release"/>
-        <enum name="single_clicked" help="First short click"/>
-        <enum name="double_clicked" help="Second short click"/>
-        <enum name="triple_clicked" help="Third short click"/>
-        <enum name="long_pressed" help="Long pressed"/>
-        <enum name="long_pressed_repeat" help="Repeat while long pressed"/>
-        <enum name="clicked" help="Released without scroll"/>
-        <enum name="released" help="Released in all cases"/>
-        <enum name="scroll_begin" help="Scroll begins"/>
-        <enum name="scroll_throw_begin" help="Scroll continues after throw"/>
-        <enum name="scroll_end" help="Scroll ends"/>
-        <enum name="scroll" help="Scrolling"/>
-        <enum name="gesture" help="Gesture detected"/>
-        <enum name="key" help="Key sent to widget"/>
-        <enum name="rotary" help="Rotary encoder turned"/>
-        <enum name="focused" help="Got focus"/>
-        <enum name="defocused" help="Lost focus"/>
-        <enum name="leave" help="Focus/pointer left"/>
-        <enum name="hit_test" help="Hit testing"/>
-        <enum name="indev_reset" help="Input device reset"/>
-        <enum name="hover_over" help="Pointer hovers"/>
-        <enum name="hover_leave" help="Pointer stops hovering"/>
-
-        <!-- Drawing -->
-        <enum name="cover_check" help="Check full cover"/>
-        <enum name="refr_ext_draw_size" help="Get extra draw size"/>
-        <enum name="draw_main_begin" help="Start main draw"/>
-        <enum name="draw_main" help="Main draw"/>
-        <enum name="draw_main_end" help="End main draw"/>
-        <enum name="draw_post_begin" help="Start post draw"/>
-        <enum name="draw_post" help="Post draw"/>
-        <enum name="draw_post_end" help="End post draw"/>
-        <enum name="draw_task_added" help="Draw task added"/>
-
-        <!-- Special -->
-        <enum name="value_changed" help="Value changed"/>
-        <enum name="insert" help="Text inserted"/>
-        <enum name="refresh" help="Refresh requested"/>
-        <enum name="ready" help="Process finished"/>
-        <enum name="cancel" help="Process cancelled"/>
-
-        <!-- Object + children -->
-        <enum name="create" help="Object created"/>
-        <enum name="delete" help="Object deleted"/>
-        <enum name="child_changed" help="Child changed"/>
-        <enum name="child_created" help="Child created"/>
-        <enum name="child_deleted" help="Child deleted"/>
-
-        <!-- Screen -->
-        <enum name="screen_unload_start" help="Screen unload start"/>
-        <enum name="screen_load_start" help="Screen load start"/>
-        <enum name="screen_loaded" help="Screen loaded"/>
-        <enum name="screen_unloaded" help="Screen unloaded"/>
-
-        <!-- Layout + style -->
-        <enum name="size_changed" help="Size changed"/>
-        <enum name="style_changed" help="Style changed"/>
-        <enum name="layout_changed" help="Layout changed"/>
-        <enum name="get_self_size" help="Request widget size"/>
-
-        <!-- Display/driver -->
-        <enum name="invalidate_area" help="Area invalidated"/>
-        <enum name="resolution_changed" help="Resolution changed"/>
-        <enum name="color_format_changed" help="Color format changed"/>
-        <enum name="refr_request" help="Refresh requested"/>
-        <enum name="refr_start" help="Refresh start"/>
-        <enum name="refr_ready" help="Refresh done"/>
-        <enum name="render_start" help="Render start"/>
-        <enum name="render_ready" help="Render done"/>
-        <enum name="flush_start" help="Flush start"/>
-        <enum name="flush_finish" help="Flush done"/>
-        <enum name="flush_wait_start" help="Flush wait start"/>
-        <enum name="flush_wait_finish" help="Flush wait done"/>
-        <enum name="vsync" help="Vertical sync"/>
+        <enum name="all" value="0" help="Match all events"/>
+        <enum name="pressed" value="1" help="Pressed"/>
+        <enum name="pressing" value="2" help="Being pressed"/>
+        <enum name="press_lost" value="3" help="Press lost (pointer moved)"/>
+        <enum name="short_clicked" value="4" help="Short click + release"/>
+        <enum name="single_clicked" value="5" help="First short click"/>
+        <enum name="double_clicked" value="6" help="Second short click"/>
+        <enum name="triple_clicked" value="7" help="Third short click"/>
+        <enum name="long_pressed" value="8" help="Long pressed"/>
+        <enum name="long_pressed_repeat" value="9" help="Repeat while long pressed"/>
+        <enum name="clicked" value="10" help="Released without scroll"/>
+        <enum name="released" value="11" help="Released in all cases"/>
+        <enum name="scroll_begin" value="12" help="Scroll begins"/>
+        <enum name="scroll_throw_begin" value="13" help="Scroll continues after throw"/>
+        <enum name="scroll_end" value="14" help="Scroll ends"/>
+        <enum name="scroll" value="15" help="Scrolling"/>
+        <enum name="gesture" value="16" help="Gesture detected"/>
+        <enum name="key" value="17" help="Key sent to widget"/>
+        <enum name="rotary" value="18" help="Rotary encoder turned"/>
+        <enum name="focused" value="19" help="Got focus"/>
+        <enum name="defocused" value="20" help="Lost focus"/>
+        <enum name="leave" value="21" help="Focus/pointer left"/>
+        <enum name="hit_test" value="22" help="Hit testing"/>
+        <enum name="indev_reset" value="23" help="Input device reset"/>
+        <enum name="hover_over" value="24" help="Pointer hovers"/>
+        <enum name="hover_leave" value="25" help="Pointer stops hovering"/>
+        <enum name="cover_check" value="26" help="Check full cover"/>
+        <enum name="refr_ext_draw_size" value="27" help="Get extra draw size"/>
+        <enum name="draw_main_begin" value="28" help="Start main draw"/>
+        <enum name="draw_main" value="29" help="Main draw"/>
+        <enum name="draw_main_end" value="30" help="End main draw"/>
+        <enum name="draw_post_begin" value="31" help="Start post draw"/>
+        <enum name="draw_post" value="32" help="Post draw"/>
+        <enum name="draw_post_end" value="33" help="End post draw"/>
+        <enum name="draw_task_added" value="34" help="Draw task added"/>
+        <enum name="value_changed" value="35" help="Value changed"/>
+        <enum name="insert" value="36" help="Text inserted"/>
+        <enum name="refresh" value="37" help="Refresh requested"/>
+        <enum name="ready" value="38" help="Process finished"/>
+        <enum name="cancel" value="39" help="Process cancelled"/>
+        <enum name="state_changed" value="40" help="State changed"/>
+        <enum name="create" value="41" help="Object created"/>
+        <enum name="delete" value="42" help="Object deleted"/>
+        <enum name="child_changed" value="43" help="Child changed"/>
+        <enum name="child_created" value="44" help="Child created"/>
+        <enum name="child_deleted" value="45" help="Child deleted"/>
+        <enum name="screen_unload_start" value="46" help="Screen unload start"/>
+        <enum name="screen_load_start" value="47" help="Screen load start"/>
+        <enum name="screen_loaded" value="48" help="Screen loaded"/>
+        <enum name="screen_unloaded" value="49" help="Screen unloaded"/>
+        <enum name="size_changed" value="50" help="Size changed"/>
+        <enum name="style_changed" value="51" help="Style changed"/>
+        <enum name="layout_changed" value="52" help="Layout changed"/>
+        <enum name="get_self_size" value="53" help="Request widget size"/>
+        <enum name="invalidate_area" value="54" help="Area invalidated"/>
+        <enum name="resolution_changed" value="55" help="Resolution changed"/>
+        <enum name="color_format_changed" value="56" help="Color format changed"/>
+        <enum name="refr_request" value="57" help="Refresh requested"/>
+        <enum name="refr_start" value="58" help="Refresh start"/>
+        <enum name="refr_ready" value="59" help="Refresh done"/>
+        <enum name="render_start" value="60" help="Render start"/>
+        <enum name="render_ready" value="61" help="Render done"/>
+        <enum name="flush_start" value="62" help="Flush start"/>
+        <enum name="flush_finish" value="63" help="Flush done"/>
+        <enum name="flush_wait_start" value="64" help="Flush wait start"/>
+        <enum name="flush_wait_finish" value="65" help="Flush wait done"/>
+        <enum name="update_layout_completed" value="66" help="Layout update finished"/>
+        <enum name="vsync" value="67" help="Vertical sync"/>
+        <enum name="vsync_request" value="68" help="Vertical sync requested"/>
     </enumdef>
 
     <enumdef name="lv_align" help="Object alignment">
-        <enum name="default" help="Top-left"/>
-        <enum name="top_left" help="Top-left"/>
-        <enum name="top_mid" help="Top-center"/>
-        <enum name="top_right" help="Top-right"/>
-        <enum name="bottom_left" help="Bottom-left"/>
-        <enum name="bottom_mid" help="Bottom-center"/>
-        <enum name="bottom_right" help="Bottom-right"/>
-        <enum name="left_mid" help="Left-center"/>
-        <enum name="right_mid" help="Right-center"/>
-        <enum name="center" help="Center"/>
+        <enum name="default" value="0" help="Top-left"/>
+        <enum name="top_left" value="1" help="Top-left"/>
+        <enum name="top_mid" value="2" help="Top-center"/>
+        <enum name="top_right" value="3" help="Top-right"/>
+        <enum name="bottom_left" value="4" help="Bottom-left"/>
+        <enum name="bottom_mid" value="5" help="Bottom-center"/>
+        <enum name="bottom_right" value="6" help="Bottom-right"/>
+        <enum name="left_mid" value="7" help="Left-center"/>
+        <enum name="right_mid" value="8" help="Right-center"/>
+        <enum name="center" value="9" help="Center"/>
     </enumdef>
 
     <enumdef name="lv_dir" help="Direction flags">
-        <enum name="none" help="No direction"/>
-        <enum name="top" help="Top"/>
-        <enum name="bottom" help="Bottom"/>
-        <enum name="left" help="Left"/>
-        <enum name="right" help="Right"/>
-        <enum name="hor" help="Horizontal (L+R)"/>
-        <enum name="ver" help="Vertical (T+B)"/>
-        <enum name="all" help="All directions"/>
+        <enum name="none" value="0" help="No direction"/>
+        <enum name="left" value="1" help="Left"/>
+        <enum name="right" value="2" help="Right"/>
+        <enum name="hor" value="3" help="Horizontal (L+R)"/>
+        <enum name="top" value="4" help="Top"/>
+        <enum name="bottom" value="8" help="Bottom"/>
+        <enum name="ver" value="12" help="Vertical (T+B)"/>
+        <enum name="all" value="15" help="All directions"/>
     </enumdef>
 
     <enumdef name="lv_layout" help="Layout modes">
-        <enum name="none" help="No layout"/>
-        <enum name="flex" help="Flexbox layout"/>
-        <enum name="grid" help="Grid layout"/>
+        <enum name="none" value="0" help="No layout"/>
+        <enum name="flex" value="1" help="Flexbox layout"/>
+        <enum name="grid" value="2" help="Grid layout"/>
     </enumdef>
 
     <enumdef name="lv_flex_flow" help="Flex flow">
-        <enum name="row" help="Row"/>
-        <enum name="row_wrap" help="Row wrap"/>
-        <enum name="row_reverse" help="Row reverse"/>
-        <enum name="row_wrap_reverse" help="Row wrap reverse"/>
-        <enum name="column" help="Column"/>
-        <enum name="column_wrap" help="Column wrap"/>
-        <enum name="column_reverse" help="Column reverse"/>
-        <enum name="column_wrap_reverse" help="Column wrap reverse"/>
+        <enum name="row" value="0" help="Row"/>
+        <enum name="column" value="1" help="Column"/>
+        <enum name="row_wrap" value="4" help="Row wrap"/>
+        <enum name="column_wrap" value="5" help="Column wrap"/>
+        <enum name="row_reverse" value="8" help="Row reverse"/>
+        <enum name="column_reverse" value="9" help="Column reverse"/>
+        <enum name="row_wrap_reverse" value="12" help="Row wrap reverse"/>
+        <enum name="column_wrap_reverse" value="13" help="Column wrap reverse"/>
     </enumdef>
 
     <enumdef name="lv_flex_align" help="Flex alignment">
-        <enum name="center" help="Center"/>
-        <enum name="start" help="Start"/>
-        <enum name="end" help="End"/>
-        <enum name="space_around" help="Space around"/>
-        <enum name="space_between" help="Space between"/>
-        <enum name="space_evenly" help="Space evenly"/>
+        <enum name="start" value="0" help="Start"/>
+        <enum name="end" value="1" help="End"/>
+        <enum name="center" value="2" help="Center"/>
+        <enum name="space_evenly" value="3" help="Space evenly"/>
+        <enum name="space_around" value="4" help="Space around"/>
+        <enum name="space_between" value="5" help="Space between"/>
     </enumdef>
 
     <enumdef name="lv_grid_align" help="Grid alignment">
-        <enum name="center" help="Center of cell"/>
-        <enum name="start" help="Start of cell"/>
-        <enum name="end" help="End of cell"/>
-        <enum name="stretch" help="Stretch to fill"/>
-        <enum name="space_around" help="Space around"/>
-        <enum name="space_between" help="Space between"/>
-        <enum name="space_evenly" help="Space evenly"/>
+        <enum name="start" value="0" help="Start of cell"/>
+        <enum name="center" value="1" help="Center of cell"/>
+        <enum name="end" value="2" help="End of cell"/>
+        <enum name="stretch" value="3" help="Stretch to fill"/>
+        <enum name="space_evenly" value="4" help="Space evenly"/>
+        <enum name="space_around" value="5" help="Space around"/>
+        <enum name="space_between" value="6" help="Space between"/>
     </enumdef>
 
     <enumdef name="lv_text_align" help="Text alignment">
-        <enum name="center" help="Center"/>
-        <enum name="left" help="Left"/>
-        <enum name="right" help="Right"/>
-        <enum name="auto" help="Auto (based on dir)"/>
+        <enum name="auto" value="0" help="Auto (based on dir)"/>
+        <enum name="left" value="1" help="Left"/>
+        <enum name="center" value="2" help="Center"/>
+        <enum name="right" value="3" help="Right"/>
     </enumdef>
 
     <enumdef name="lv_text_decor" help="Text decoration">
-        <enum name="none" help="None"/>
-        <enum name="underline" help="Underline"/>
-        <enum name="strikethrough" help="Strikethrough"/>
+        <enum name="none" value="0" help="None"/>
+        <enum name="underline" value="1" help="Underline"/>
+        <enum name="strikethrough" value="2" help="Strikethrough"/>
     </enumdef>
 
     <enumdef name="lv_blend_mode" help="Blend modes">
-        <enum name="normal" help="Normal overwrite"/>
-        <enum name="additive" help="Add colors"/>
-        <enum name="subtractive" help="Subtract colors"/>
-        <enum name="multiply" help="Multiply colors"/>
-        <enum name="difference" help="Color difference"/>
+        <enum name="normal" value="0" help="Normal overwrite"/>
+        <enum name="additive" value="1" help="Add colors"/>
+        <enum name="subtractive" value="2" help="Subtract colors"/>
+        <enum name="multiply" value="3" help="Multiply colors"/>
+        <enum name="difference" value="4" help="Color difference"/>
     </enumdef>
 
     <enumdef name="lv_base_dir" help="Base text direction">
-        <enum name="ltr" help="Left-to-right"/>
-        <enum name="rtl" help="Right-to-left"/>
-        <enum name="auto" help="Auto detect"/>
+        <enum name="ltr" value="0" help="Left-to-right"/>
+        <enum name="rtl" value="1" help="Right-to-left"/>
+        <enum name="auto" value="2" help="Auto detect"/>
     </enumdef>
 
     <enumdef name="lv_grad_dir" help="Gradient direction">
-        <enum name="none" help="No gradient"/>
-        <enum name="hor" help="Horizontal"/>
-        <enum name="ver" help="Vertical"/>
+        <enum name="none" value="0" help="No gradient"/>
+        <enum name="ver" value="1" help="Vertical"/>
+        <enum name="hor" value="2" help="Horizontal"/>
     </enumdef>
 
     <enumdef name="lv_border_side" help="Border sides">
-        <enum name="none" help="No border"/>
-        <enum name="left" help="Left side"/>
-        <enum name="right" help="Right side"/>
-        <enum name="top" help="Top side"/>
-        <enum name="bottom" help="Bottom side"/>
-        <enum name="full" help="All sides"/>
+        <enum name="none" value="0" help="No border"/>
+        <enum name="bottom" value="1" help="Bottom side"/>
+        <enum name="top" value="2" help="Top side"/>
+        <enum name="left" value="4" help="Left side"/>
+        <enum name="right" value="8" help="Right side"/>
+        <enum name="full" value="15" help="All sides"/>
     </enumdef>
 
     <enumdef name="lv_scroll_snap" help="Scroll snapping">
-        <enum name="none" help="No snap"/>
-        <enum name="start" help="Align to start of the parent"/>
-        <enum name="end" help="Align to end of the parent"/>
-        <enum name="center" help="Align to center of the parent"/>
+        <enum name="none" value="0" help="No snap"/>
+        <enum name="start" value="1" help="Align to start of the parent"/>
+        <enum name="end" value="2" help="Align to end of the parent"/>
+        <enum name="center" value="3" help="Align to center of the parent"/>
     </enumdef>
 
     <enumdef name="lv_scrollbar_mode" help="How to display scrollbars">
-        <enum name="off" help="Never show the scrollbars"/>
-        <enum name="on" help="Always show the scrollbars"/>
-        <enum name="active" help="Show scrollbars while the widget is being scrolled"/>
-        <enum name="auto" help="Show scrollbars when the content is large enough to be scrolled"/>
+        <enum name="off" value="0" help="Never show the scrollbars"/>
+        <enum name="on" value="1" help="Always show the scrollbars"/>
+        <enum name="active" value="2" help="Show scrollbars while the widget is being scrolled"/>
+        <enum name="auto" value="3" help="Show scrollbars when the content is large enough to be scrolled"/>
     </enumdef>
 
     <enumdef name="lv_screen_load_anim" help="Screen load animations">
-        <enum name="none" help="No animation"/>
-        <enum name="over_left" help="Slide in from left"/>
-        <enum name="over_right" help="Slide in from right"/>
-        <enum name="over_top" help="Slide in from top"/>
-        <enum name="over_bottom" help="Slide in from bottom"/>
-        <enum name="move_left" help="Move out left, new enters"/>
-        <enum name="move_right" help="Move out right, new enters"/>
-        <enum name="move_top" help="Move out up, new enters"/>
-        <enum name="move_bottom" help="Move out down, new enters"/>
-        <enum name="fade_in" help="Fade in new"/>
-        <enum name="fade_on" help="Fade on top"/>
-        <enum name="fade_out" help="Fade out old"/>
-        <enum name="out_left" help="Slide out left"/>
-        <enum name="out_right" help="Slide out right"/>
-        <enum name="out_top" help="Slide out top"/>
-        <enum name="out_bottom" help="Slide out bottom"/>
+        <enum name="none" value="0" help="No animation"/>
+        <enum name="over_left" value="1" help="Slide in from left"/>
+        <enum name="over_right" value="2" help="Slide in from right"/>
+        <enum name="over_top" value="3" help="Slide in from top"/>
+        <enum name="over_bottom" value="4" help="Slide in from bottom"/>
+        <enum name="move_left" value="5" help="Move out left, new enters"/>
+        <enum name="move_right" value="6" help="Move out right, new enters"/>
+        <enum name="move_top" value="7" help="Move out up, new enters"/>
+        <enum name="move_bottom" value="8" help="Move out down, new enters"/>
+        <enum name="fade_in" value="9" help="Fade in new"/>
+        <enum name="fade_on" value="9" help="Fade on top"/>
+        <enum name="fade_out" value="10" help="Fade out old"/>
+        <enum name="out_left" value="11" help="Slide out left"/>
+        <enum name="out_right" value="12" help="Slide out right"/>
+        <enum name="out_top" value="13" help="Slide out top"/>
+        <enum name="out_bottom" value="14" help="Slide out bottom"/>
     </enumdef>
 
     <styledef>

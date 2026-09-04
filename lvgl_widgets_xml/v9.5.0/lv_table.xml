@@ -9,12 +9,12 @@
 <widget>
     <api>
         <enumdef name="lv_table_cell_ctrl" help="Cell control flags">
-            <enum name="merge_right" help="Merge with right cell"/>
-            <enum name="text_crop" help="Crop text if too long"/>
-            <enum name="custom_1" help="User flag 1"/>
-            <enum name="custom_2" help="User flag 2"/>
-            <enum name="custom_3" help="User flag 3"/>
-            <enum name="custom_4" help="User flag 4"/>
+            <enum name="merge_right" value="1" help="Merge with right cell"/>
+            <enum name="text_crop" value="2" help="Crop text if too long"/>
+            <enum name="custom_1" value="16" help="User flag 1"/>
+            <enum name="custom_2" value="32" help="User flag 2"/>
+            <enum name="custom_3" value="64" help="User flag 3"/>
+            <enum name="custom_4" value="128" help="User flag 4"/>
         </enumdef>
 
         <prop name="row_count" type="int" help="Set row count"/>

@@ -6,15 +6,15 @@ Example
 <widget>
     <api>
         <enumdef name="lv_keyboard_mode" help="Keyboard layout modes">
-            <enum name="text_upper" help="Show uppercase letters"/>
-            <enum name="text_lower" help="Show lowercase letters"/>
-            <enum name="text_arabic" help="Show Arabic characters"/>
-            <enum name="special" help="Show special characters and symbols"/>
-            <enum name="number" help="Show numeric keys"/>
-            <enum name="user_1" help="User-defined layout 1"/>
-            <enum name="user_2" help="User-defined layout 2"/>
-            <enum name="user_3" help="User-defined layout 3"/>
-            <enum name="user_4" help="User-defined layout 4"/>
+            <enum name="text_lower" value="0" help="Show lowercase letters"/>
+            <enum name="text_upper" value="1" help="Show uppercase letters"/>
+            <enum name="special" value="2" help="Show special characters and symbols"/>
+            <enum name="number" value="3" help="Show numeric keys"/>
+            <enum name="user_1" value="4" help="User-defined layout 1"/>
+            <enum name="user_2" value="5" help="User-defined layout 2"/>
+            <enum name="user_3" value="6" help="User-defined layout 3"/>
+            <enum name="user_4" value="7" help="User-defined layout 4"/>
+            <enum name="text_arabic" value="8" help="Show Arabic characters"/>
         </enumdef>
 
         <prop name="mode" type="enum:lv_keyboard_mode" help="Set the keyboard layout"/>

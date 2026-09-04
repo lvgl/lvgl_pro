@@ -1,0 +1,27 @@
+# Only what the example UI needs; lv_conf.h is generated from this and LVGL's
+# template by scripts/generate_lv_conf.py.
+
+LV_COLOR_DEPTH          32
+
+# malloc rather than a fixed pool: lv_snapshot_take() of an 800x480 ARGB8888
+# screen alone needs 1.5 MB.
+LV_USE_STDLIB_MALLOC    LV_STDLIB_CLIB
+LV_USE_STDLIB_STRING    LV_STDLIB_CLIB
+LV_USE_STDLIB_SPRINTF   LV_STDLIB_CLIB
+
+# The window and input devices the example runs in
+LV_USE_SDL              1
+
+# The test renders the screen with lv_snapshot_take()
+LV_USE_SNAPSHOT         1
+
+# The example uses the built-in font only, so the two screenshots can be
+# compared directly: a font the converter cannot declare would not be applied
+# on the XML side.
+LV_FONT_MONTSERRAT_14   1
+
+# The example shows the LVGL logo, which ships as an asset of the widgets
+# demo and is compiled only when the demo is enabled.
+LV_USE_DEMO_WIDGETS     1
+
+LV_USE_LOG              0

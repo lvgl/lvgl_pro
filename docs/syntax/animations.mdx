@@ -123,6 +123,8 @@ int32_t my_easing(const lv_anim_t * a)
 
 The exported code calls this function directly, so it can't be `static` and it has to be visible where the generated file is compiled.
 
+Like every value in `<animations>`, `easing` is resolved before any instance exists. A constant works there, an [`<api>`](./api) `<prop>` does not.
+
 ### Include External Timelines
 
 The `include_timeline` element can be used in a `<timeline>` to reference animations from another timeline. For example, if `my_icon` defines a `"show_up"` timeline that fades in and enlarges the icon, you can include that timeline in other animations without duplicating the code.

@@ -49,13 +49,13 @@ my_project/
   </consts>
 
   <styles>
-    <style name="style_row" bg_opa="0" pad_all="#space_md"/>
+    <style name="style_row" bg_opa="0" pad_all="{space_md}"/>
   </styles>
 
   <view extends="lv_obj" flex_flow="row" width="100%">
     <style name="style_row"/>
     <style name="style_row_pressed" selector="pressed"/>
-    <lv_label text="$title"/>
+    <lv_label text="{title}"/>
     <lv_label text="{title . ' with expression'}"/>
     <lv_obj name="trailing"/>
   </view>
@@ -66,13 +66,14 @@ my_project/
 
 | Prefix | Means | Example |
 | --- | --- | --- |
-| `$name` | An `<api>` property of this element | `<lv_label text="$title"/>` |
-| `#name` | A constant from `<consts>` or `globals.xml` | `pad="#space_md"` |
 | `{ ... }` | An expression, evaluated once at creation | `hidden="{!icon}"` |
 | `@{ ... }` | The same expression as a binding: re-evaluated whenever a subject or variant in it changes | `hidden="@{subject_count == 0}"` |
+| `$name` | Legacy: an `<api>` property of this element | `<lv_label text="$title"/>` |
+| `#name` | Legacy: a constant from `<consts>` or `globals.xml` | `pad="#space_md"` |
 
+Inside `{ }` and `@{ }` you write bare identifiers, no `$` or `#`. Prefer the braces: `$` and `#` take a single name, so they can't be part of a larger expression.
 
-Inside `{ }` and `@{ }` you write bare identifiers, no `$` or `#`.
+A `name="..."` is the one attribute with no bindings: a literal or `{ }`, never `@{ }`. The Editor has to resolve the name to check that the style, font or image exists.
 
 ### `view` and `extends`
 
@@ -112,7 +113,7 @@ Three ways, in order of preference:
 ```xml
 <!-- 1. Named style, defined once, reused -->
 <styles>
-  <style name="style_card" bg_color="#color_panel" radius="#radius_default"/>
+  <style name="style_card" bg_color="{color_panel}" radius="{radius_default}"/>
 </styles>
 <view>
   <style name="style_card"/>
@@ -123,44 +124,46 @@ Three ways, in order of preference:
 <!-- 2. Local style property, for one-off values -->
 <lv_slider style_bg_opa-indicator-pressed="200"/>
 
-<!-- 3. Bound style, applied when a subject matches -->
-<bind_style name="style_dark" subject="subject_dark_theme_on" ref_value="1"/>
-
-<!-- 3b. Bound style, applied while an expression is true (no @{} wrapper) -->
-<bind_style name="style_warning" if="subject_temp > 10 and subject_temp &lt;= 30"/>
-
 <!-- 2b. Computed local style property -->
 <lv_label style_text_color-pressed="@{subject_error ? 0xf00 : 0xaaa}"/>
+
+<!-- 3. Conditional style, switched by an expression -->
+<style name="style_warning" enabled="@{subject_temp > 10 and subject_temp &lt;= 30}"/>
 ```
+
+`enabled` takes `{ }` (decided once, at creation) or `@{ }` (a binding). The legacy
+`<bind_style name="style_dark" subject="subject_dark_theme_on" ref_value="1"/>` compares one
+subject to one value and still works, but `enabled` does the same with a full expression.
 
 Prefix style names with `style_`. Selectors combine parts and states with `|`.
 
-**Styles are initialized once, so `$api_props` cannot go into a `<style>`.** This fails:
+**Styles are initialized once, before any instance exists, so an `<api>` property cannot go into a `<style>`.** With `thickness` a `<prop>`, both of these fail:
 
 ```xml
 <style name="style_main" border_width="$thickness"/>   <!-- invalid -->
+<style name="style_main" border_width="{thickness}"/>  <!-- invalid, same reason -->
 ```
 
-But constants can be used:
+Constants and literals do have a value there, so an expression of them works:
 
 ```xml
-<style name="style_main" border_width="#thickness"/>   <!-- valid -->
+<style name="style_main" border_width="{border_thin * 2}"/>   <!-- valid, a const -->
 ```
 
-Pass the property to a _local_ style property instead: `<lv_slider style_border_width-knob="$thickness"/>`.
+Pass a property to a *local* style property instead: `<lv_slider style_border_width-knob="{thickness}"/>`.
 
 A `<transition>` child animates a style's properties on state changes. It animates *into* the state of the style holding it, so for both directions add one to the default style too:
 
 ```xml
-<style name="style_card" bg_color="#color_panel">
+<style name="style_card" bg_color="{color_panel}">
   <transition props="bg_color" duration="300" easing="ease_out"/>
 </style>
-<style name="style_card_pressed" bg_color="#color_panel_pressed">
+<style name="style_card_pressed" bg_color="{color_panel_pressed}">
   <transition props="bg_color" duration="80"/>
 </style>
 ```
 
-One transition per style, numeric and color properties only, and `<bind_style>` never animates.
+One transition per style, numeric and color properties only. Switching a style on and off, with `enabled` or `<bind_style>`, is not a state change, so it never animates.
 
 ## Data binding
 
@@ -173,7 +176,9 @@ Subjects are the interface between the UI and the application. Define them in `g
 </subjects>
 ```
 
-Only `int`, `string` and `float` are supported.
+The types are `int`, `float`, `string`, `color` and `pointer` (which holds a **name**, e.g. an image name). `int` and `float` take `min_value`/`max_value`, and every write is clamped to them.
+
+A `<subjects>` section in a component or screen instead of `globals.xml` declares **per-instance** subjects: each instance gets its own, it can't be set from outside, and it shadows a global of the same name.
 
 ```xml
 <!-- Simple: attribute binding -->
@@ -194,11 +199,19 @@ Only `int`, `string` and `float` are supported.
 States: `default`, `checked`, `focused`, `focus_key`, `edited`, `hovered`, `pressed`, `scrolled`, `disabled`.
 Common flags: `hidden`, `clickable`, `checkable`, `scrollable`, `floating`, `ignore_layout`.
 
-`@{ }` is `{ }` that re-runs whenever a referenced subject or variant changes. It works on **widget** attributes (including `style_*` locals) and on a component instance's **variant** attributes. Not in `<styles>` (initialized once) and not on a component's own props or slots. It must reference at least one subject or variant, and inside it only `type="subject"` props may appear; other props are an error. A failed re-evaluation (e.g. `/0`) keeps the previous value.
+`@{ }` is `{ }` that re-runs whenever a referenced subject or variant changes. It works on **widget** attributes (including `style_*` locals), and on a component instance's **variant** attributes and `bindable` props. Not in `<styles>` (initialized once) and not on a plain prop or a slot. It must reference at least one subject or variant, or it is reported and dropped. A failed re-evaluation (e.g. `/0`) keeps the previous value.
 
-To give each instance its own data, declare `<prop name="temp" type="subject"/>` and pass a subject name at the call site: `<room_card temp="subject_kitchen"/>`.
+Inside `@{ }` a **plain prop is snapshotted**: frozen at creation, like a const. That is what lets an instance identify itself, `<tab index="2" .../>` with `hidden="@{active_tab != index}"` in `tab.xml`. It never tracks the prop afterwards.
 
-**Binding beats callbacks.** A radio group, a theme switch, or a value readout needs no C at all: write the subject with `subject_set_int_event`, read it with `bind_state_if_eq`.
+Three ways to give each instance its own changing data:
+
+```xml
+<prop name="reading" type="int" bindable="true"/>  <!-- a per-instance subject; generates set/get -->
+<prop name="temp" type="subject"/>                 <!-- names the subject to follow: <room_card temp="subject_kitchen"/> -->
+<subjects><int name="taps" value="0"/></subjects>  <!-- private to the instance -->
+```
+
+**Binding beats callbacks.** A radio group, a theme switch, or a value readout needs no C at all: write the subject with `set_subject_event`, read it with a `@{ }` binding.
 
 ## Variants
 
@@ -213,30 +226,41 @@ A component's named visual states, declared in `<api>`. Per-instance and reactiv
 </api>
 <view extends="lv_button">
   <style name="style_normal"/>
-  <bind_style name="style_danger" subject="tone" ref_value="danger"/>
-  <bind_style name="style_large"  subject="size" ref_value="large"/>
+  <style name="style_danger" enabled="@{tone == danger}"/>
+  <style name="style_large"  enabled="@{size == large}"/>
   <lv_label text="Subtitle" hidden="@{size == small}"/>
 </view>
 ```
 
-Read a variant with `<bind_style subject="<variant>" ref_value="<option>">` (preferred for anything visual) or in `@{ }`, where the variant name is the current option and an option name is a constant.
+Read a variant with `<style enabled="@{…}">` (preferred for anything visual) or in any other `@{ }`, where the variant name is the current option and an option name is a constant.
 
 Pick an option on the instance, `<my_badge size="large" tone="@{subject_level > 100 ? danger : normal}"/>`, or from C with the exported `my_badge_set_size(obj, MY_BADGE_SIZE_LARGE)` (`lv_xml_set_variant(obj, "size", "large")` at runtime). An unknown option on the instance falls back to `default` with a warning; in `lv_xml_set_variant()` it's refused and the option is left unchanged. Option names must be unique across a component's variants, a variant name shadows a same-named prop/const/subject, and reordering `options` breaks already exported C.
 
 ## Events
 
-All are children of a widget, all take `trigger` (`clicked`, `long_pressed`, `value_changed`, ...):
+All are children of a widget, all take `trigger`:
 
 ```xml
 <event_cb callback="my_handler" trigger="clicked" user_data="ctx"/>
 <screen_load_event   screen="settings" trigger="clicked" anim_type="fade_in" duration="300"/>
 <screen_create_event screen="about"    trigger="long_pressed"/>
-<subject_set_int_event subject="subject_lamp" value="2" trigger="clicked"/>
-<subject_increment_event subject="subject_vol" step="-5" min_value="0" max_value="100"/>
+<set_subject_event subject="subject_lamp" value="2"/>                    <!-- set -->
+<set_subject_event subject="subject_open" value="!subject_open"/>        <!-- toggle -->
+<set_subject_event subject="subject_vol"  value="subject_vol - 5"/>      <!-- increment -->
 <play_timeline_event timeline="timeline_load" target="self" trigger="clicked"/>
 ```
 
-`screen_load_event` needs `<screen permanent="true">` on the target; `screen_create_event` needs `permanent="false"` (the default). `event_cb` assumes you implement `void my_handler(lv_event_t * e)` in C.
+`trigger` takes three things:
+
+| Form | Means |
+| --- | --- |
+| `clicked` | an LVGL event name. The default, and the usual case |
+| `@{expr}` | a condition. Fires on every **false-to-true** edge, and immediately if it's already true at creation. Needs at least one subject |
+| `{expr}` | decided once: true runs the action immediately, false attaches nothing |
+
+`set_subject_event`'s `value` is an expression re-evaluated on **every** fire, written **without** braces (`{}` there would freeze it at creation). The subject's own `min_value`/`max_value` clamp the result. The older `subject_set_*_event`, `subject_toggle_event` and `subject_increment_event` still work, but their `trigger` takes an event name only; `subject_increment_event` is the only one with `rollover`.
+
+`screen_load_event` needs `<screen permanent="true">` on the target; `screen_create_event` needs `permanent="false"` (the default). `event_cb` assumes you implement `void my_handler(lv_event_t * e)` in C, and with a `@{ }` trigger there is no real LVGL event, so don't read the event code in it.
 
 ## Expressions
 
@@ -295,10 +319,12 @@ The slot target is `<component_name-slot_name>`, and you can set normal object p
 - Inventing an attribute instead of reading `lvgl_widgets_xml/`.
 - Putting `$prop` into a `<style>`. Use a local style property.
 - Expecting `{ }` to update at runtime. It does not, write `@{ }` for that.
-- Putting a non-subject `$prop` inside `@{ }`, or `@{ }` on a component's own prop or in a `<style>`. None of them can update.
+- Expecting a plain prop inside `@{ }` to update. It is snapshotted at creation; add `bindable="true"` if it has to change.
+- `@{ }` in a `<style>`, or on a plain prop of a component instance. Neither can update.
+- Wrapping `set_subject_event`'s `value` in `{ }`, which freezes it at creation.
 - Using `bind_state_*` with a `flag=` attribute, or `bind_flag_*` with `state=`.
 - `screen_load_event` on a screen that isn't `permanent="true"`.
-- Hard-coding `pad="8"` and `bg_color="0x1E232E"` when `#space_md` and `#color_dark_panel` already exist in `globals.xml`.
+- Hard-coding `pad="8"` and `bg_color="0x1E232E"` when `{space_md}` and `{color_dark_panel}` already exist in `globals.xml`.
 - Building a component whose only job is one styled widget. Extend it instead: `<view extends="lv_label" style_text_font="font_h3"/>`.
 - Reaching for `<widget>` and C when composition plus binding would do.
 - Centering with flex and forgetting `style_flex_track_place="center"`, which centers the tracks themselves.

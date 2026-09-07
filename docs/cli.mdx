@@ -5,7 +5,7 @@ description: The LVGL Pro command-line tool generates and compiles C code, valid
 
 The CLI, along with the [Editor](./editor/overview), [Figma plugin](./figma), and [online viewer](./online-viewer), is part of **LVGL Pro**, a professional toolkit to develop embedded UIs.
 
-The LVGL Pro CLI is a command line tool bringing the great power of the Editor to the terminal. It's an npm-installed `lvglpro` command that generates and compiles C code from your XML, validates projects, runs headless UI tests, and captures screenshots, all without opening the GUI.
+The LVGL Pro CLI is a command line tool bringing the great power of the Editor to the terminal. It's an npm package, [`@lvgl/lvglpro`](https://www.npmjs.com/package/@lvgl/lvglpro), that generates and compiles C code from your XML, validates projects, runs headless UI tests, and captures screenshots, all without opening the GUI.
 
 Because it's scriptable and headless, the CLI is the bridge between LVGL Pro and your automation: continuous integration, regression testing, and AI agents that write, validate, and visually verify UI on their own.
 
@@ -46,12 +46,28 @@ This puts `lvglpro` on your `PATH`.
 lvglpro --help
 ```
 
+That gives you the `lvglpro` command:
+
+```bash
+lvglpro --help
+```
+
+The package carries its own `lvgl-resources.zip`. On the first run the CLI extracts it into a local cache, so later runs start faster:
+
+| Platform | Cache |
+| --- | --- |
+| Linux | `~/.config/lvgl-editor/resources` |
+| macOS | `~/Library/Application Support/lvgl-editor/resources` |
+| Windows | `%APPDATA%\lvgl-editor\resources` |
+
+`generate` and `compile` take `--skip-resources` to skip the hash check and the copy when the cache is already prepared.
+
 ### Authentication
 
-The CLI requires a Product or Platform license token. Provide it in one of two ways:
+The CLI requires a Product or Platform license token, which you can get from your [lvgl.io/pro](https://lvgl.io/pro) dashboard. Provide it in one of two ways:
 
 - **Environment variable (recommended):** set `LVGLPRO_CLI_TOKEN` and the CLI picks it up automatically. This is the best fit for CI, where you'd store the token as an encrypted secret.
-- **Command-line flag:** pass `--token <your-token>` on any command.
+- **Command-line flag:** pass `--token <your-token>` on any command. It takes precedence over the environment variable.
 
 ```bash
 # Picked up automatically from the environment
@@ -63,8 +79,7 @@ lvglpro generate path/to/project --token "your-token"
 ```
 
 <Callout type="warn">
-    Treat the token like a password. Prefer `LVGLPRO_CLI_TOKEN` over `--token` so it doesn't leak into shell history or
-    CI logs, and never commit it to your repository.
+Treat the token like a password. Prefer `LVGLPRO_CLI_TOKEN` over `--token` so it doesn't leak into shell history or CI logs, and never commit it to your repository.
 </Callout>
 
 ## Quick start
@@ -185,30 +200,33 @@ name: LVGL Pro Check
 on: [push, pull_request]
 
 jobs:
-    ui-check:
-        runs-on: ubuntu-latest
-        env:
-            # Store your Pro license token as an encrypted repository secret
-            LVGLPRO_CLI_TOKEN: ${{ secrets.LVGLPRO_CLI_TOKEN }}
-        steps:
-            - uses: actions/checkout@v4
+  ui-check:
+    runs-on: ubuntu-latest
+    env:
+      # Store your Pro license token as an encrypted repository secret
+      LVGLPRO_CLI_TOKEN: ${{ secrets.LVGLPRO_CLI_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
 
             - uses: actions/setup-node@v4
               with:
                   node-version: '22'
 
-            - name: Install CLI
-              run: npm install --global @lvgl/lvglpro
+      - name: Install CLI
+        run: npm install --global @lvgl/lvglpro
 
-            - name: Generate code
-              run: lvglpro generate examples
+      - name: Generate code
+        run: lvglpro generate examples
 
-            - name: Compile to run tests
-              run: lvglpro compile examples --target cli
+      - name: Compile to run tests
+        run: lvglpro compile examples --target cli
 
-            - name: Run UI tests
-              run: lvglpro run-all-tests examples
+      - name: Run UI tests
+        run: lvglpro run-all-tests examples
 ```
+
+The [project's own PR-check workflow](https://github.com/lvgl/lvgl_pro/blob/master/.github/workflows/pr-check.yml) runs the same steps against a real project.
+
 
 ## Use case: AI-driven UI development
 

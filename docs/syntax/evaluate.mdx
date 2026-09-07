@@ -7,7 +7,7 @@ description: Compute attribute values from arithmetic, comparisons, ternaries, a
 This feature requires [LVGL Pro Editor v2.0](https://github.com/lvgl/lvgl_pro/releases) or higher.
 </Callout>
 
-Any XML attribute value can be an **expression** wrapped in `{ }`. Instead of writing a fixed value, you let the Editor compute it from numbers, colors, strings, constants, and parameters **when the instance is created**.
+Any XML attribute value can be an **expression** wrapped in `{ }`. Instead of writing a fixed value, you let LVGL compute it from numbers, colors, strings, constants, and parameters **when the instance is created**.
 
 ```xml
 <lv_obj width="{base_width * 2}"/>
@@ -37,7 +37,7 @@ A few important properties to keep in mind:
     Expressions are exported into the generated C code, not pre-computed to a fixed literal. They are re-evaluated every time the element is created, including when you create a component manually from C, using the parameter values passed at that moment.
 </Callout>
 
-The same expression engine is used in `<bind_style if="...">` too. There no `@{ }` wrapping is needed, as that attribute is always treated as a binding.
+An expression works on a `<style>` element's `enabled` attribute too, so a whole style can be switched on and off. See [Conditional styles](./styles#conditional-styles).
 
 ## Basic syntax
 
@@ -47,18 +47,17 @@ An expression is the whole attribute value, wrapped into `{ }` (one time evaluat
 <lv_obj width="{10 + 20}"/>   <!-- becomes width="30" -->
 ```
 
-Inside the braces you can use the following data:
+Inside the braces you can use literals, operators, constants, [`<prop>`](./api)s, [subjects](./data-binding), and [variants](./variants). In a `{ }` one time evaluation every one of them is simply read once, so their later changes are ignored.
 
-- In a `{ }` one time evaluation: literals, operators, constants, API `<prop>`s, subjects, and variants. Subjects and variants are read once, so their later changes are ignored.
-- In an `@{ }` binding: the same, except that API `<prop>`s cannot be used. They are not stored per instance, they only exist during creation. The one exception is a `type="subject"` `<prop>`, which names a subject the binding can follow.
+An `@{ }` binding needs to know what to follow, so it reads some of those names differently: a subject or a variant is followed, while a plain `<prop>` is frozen at creation. It also has to reference at least one subject, or it could never update. [Data binding](./data-binding#generic-bindings-with-expressions) covers all of that.
 
 Names are written as **bare identifiers**, without the `$` or `#` prefixes used elsewhere in XML. They are resolved in this order:
 
-1. **Variants** declared in the element's [`<api>`](./api), the value is the currently selected option of that [variant](./variants).
-2. **Parameters** declared in the element's [`<api>`](./api) as `<prop>`.
+1. **Per-instance names**: a [variant](./variants), a `bindable` [`<prop>`](./api), or a local [subject](./data-binding). Each instance has its own, and it shadows a shared name.
+2. **Properties** declared in the element's [`<api>`](./api) as `<prop>`: the value passed at the call site, or the declared `default`.
 3. **Constants** from [`<consts>`](./constants): the type is inferred from the constant's value.
 4. **Variant option names**: an integer constant, the option's index in its variant.
-5. **Subjects** from `globals.xml`.
+5. **Subjects**: the component's own `<subjects>` first, then those in `globals.xml`.
 6. **Other named items** the XML processor resolves later (a font, image, or screen name).
 
 ```xml
@@ -113,7 +112,9 @@ Note that `$` and `#` are not used in expressions to reference properties and co
 </animations>
 ```
 
-A **property**, **subject** or **variant** has no value at that point: a property has no instance to take it from, and a subject or variant would have to be read again later, which these sections can't do. Using one is reported.
+A **property**, **subject** or **variant** has no value at that point: a property has no instance to take it from, and a subject or variant would have to be read again later, which these sections can't do. Referencing one gives no useful result, and usually an `Invalid expression` warning.
+
+For the same reason `@{ }` does not work in these sections. They are processed once, so there is nothing to re-evaluate. To make a style react to a subject, put the binding on the `<style>` element in the `<view>` instead, as `enabled="@{...}"` or as a local style property.
 
 An `if_target` block is filtered before its content is processed, so an expression there sees the constants of the current target.
 
@@ -136,6 +137,7 @@ Notes:
 - **Colors** accept both the full `0xRRGGBB` form and the `0xRGB` shorthand, which expands like CSS (`0xf00` → `0xff0000`).
 - **Strings** use **single quotes** (`'...'`), since double quotes already delimit the XML attribute.
 - **Floats** require `LV_USE_FLOAT`. Without it, a float degrades to its integer part. Float results are serialized with two decimals in texts (e.g. `3.50`).
+- **The result always reaches the attribute as text**: an int as `42`, a float as `3.50`, a bool as `true` or `false`, a color as `0xRRGGBB`. So a number works directly on a text attribute, and `<lv_label text="{count}"/>` shows `42` without any concatenation.
 
 ## Operators
 
@@ -193,7 +195,7 @@ Both sides are **always evaluated**. There is no short-circuiting, just like wit
 
 ### String concatenation
 
-The `.` operator joins values into a single string. Each operand is automatically stringified — integers and floats as decimals, bools as `true`/`false`, colors as `0xRRGGBB`.
+The `.` operator joins values into a single string. Each operand is automatically stringified: integers and floats as decimals, bools as `true`/`false`, colors as `0xRRGGBB`.
 
 ```xml
 <lv_label text="{'Battery: ' . level . '%'}"/>

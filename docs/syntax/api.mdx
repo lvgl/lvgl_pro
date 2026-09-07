@@ -5,7 +5,7 @@ description: Learn how to define custom APIs for widgets and components in LVGL 
 
 The `<api>` tag can be a child of [`<widget>`](./widgets) and [`<component>`](./components) tags. Screens don't support custom APIs.
 
-Both Widgets and Components support having `<prop>` (properties) in the `<api>` tag to describe their interface. However, since Widgets and Components work very differently — Widgets have C code while Components are pure XML — properties are interpreted differently in each context.
+Both Widgets and Components support having `<prop>` (properties) in the `<api>` tag to describe their interface. Widgets and Components work very differently, though: Widgets have C code while Components are pure XML, so properties are interpreted differently in each context.
 
 ## Components
 
@@ -13,7 +13,7 @@ Both Widgets and Components support having `<prop>` (properties) in the `<api>` 
 
 While Widgets can have complex `set`/`get` APIs, Components are very simple.
 
-When a component's XML is converted to C files, only a `create` function is generated, where all the `prop`s are arguments. For example:
+When a component's XML is converted to C files, a `create` function is generated, where all the `prop`s are arguments. For example:
 
 ```xml
 <api>
@@ -43,9 +43,34 @@ LVGL's UI Editor can generate code from the component's XML. Depending on the `a
 lv_obj_t * my_component_create(lv_obj_t * parent, int32_t prop1, const char * prop2);
 ```
 
-These properties are set once at creation time, and there are no specific `set` functions to modify the property later. LVGL's general API can still be used to modify any widget in the component, but no dedicated API functions are generated.
+A plain property is set once at creation time, and gets no `set` function. LVGL's general API can still be used to modify any widget in the component, but no dedicated API functions are generated.
 
-For a value that has to change after creation, use a [variant](./variants) (a named set of options declared in `<api>`, with a generated setter) or a [subject](./data-binding).
+### Bindable Properties
+
+Adding `bindable="true"` to a `<prop>` makes it a value that can change:
+
+```xml
+<api>
+  <prop name="reading" type="int" default="20" bindable="true"/>
+</api>
+```
+
+Every instance gets a [subject](./data-binding) of its own holding the property, which means:
+
+- it can be read in the Component's own bindings, as `@{reading}`
+- it can be bound where the Component is used, as `<thermostat reading="@{subject_kitchen_temp}"/>`
+- it gets a generated setter and getter
+
+```c
+void thermostat_set_reading(lv_obj_t * obj, int32_t reading);
+int32_t thermostat_get_reading(lv_obj_t * obj);
+```
+
+Both take the Component instance.
+
+A **plain** property can still be used inside `@{ }`, but it is frozen there at creation. See [Bindable properties](./data-binding#bindable-properties) for what that means in practice.
+
+When the values that can change have names, like `normal` and `danger`, use a [variant](./variants) instead. When several parts of the UI share the value, use a global [subject](./data-binding).
 
 ### Slots
 
@@ -101,7 +126,7 @@ The example below shows it in practice:
 
 ### Variants
 
-Besides `<prop>`s, a Component can declare **variants**: named lists of options that can be changed after creation. Unlike properties, a variant keeps its value per instance, so `<bind_style>` and [data bindings](./data-binding) can follow it at runtime.
+Besides `<prop>`s, a Component can declare **variants**: named lists of options that can be changed after creation. Like a `bindable` property, a variant keeps its value per instance, so [styles](./styles#conditional-styles) and [data bindings](./data-binding) can follow it at runtime. Use a variant when the states have names, and a `bindable` property when the value is a number, a string, or a color.
 
 `badge.xml`
 
@@ -118,7 +143,7 @@ Besides `<prop>`s, a Component can declare **variants**: named lists of options 
   </styles>
 
   <view extends="lv_obj" width="content" height="content">
-    <bind_style name="style_danger" if="tone == danger"/>
+    <style name="style_danger" enabled="@{tone == danger}"/>
     <lv_label name="label" text="Ready"/>
     <lv_image name="alert_icon" src="img_alert" hidden="@{tone == normal}"/>
   </view>
@@ -248,6 +273,7 @@ Element `access` types control how elements are created and accessed:
 - `add` - Create multiple elements dynamically (for example, tabview tabs)
 - `get` - Access implicitly created elements (for example, dropdown lists)
 - `set` - Access indexed parts (for example, table cells)
+- `add_set` - Add something, then set properties on that same thing (for example `lv_obj`'s own `<style>` element)
 - `custom` - Map custom C functions to XML (for example, `bind_state_is_eq`)
 
 #### Element Types and Return Values
@@ -355,6 +381,43 @@ LVGL's UI Editor generates:
 void my_widget_set_item_icon(lv_obj_t * parent, int32_t index, const void * icon_src);
 void my_widget_set_item_color(lv_obj_t * parent, int32_t index, lv_color_t color);
 ```
+
+#### access="add_set"
+
+Used when one element both adds something and sets properties on that same thing.
+
+The difference from `add` is what the `add` call gives back. An `add` element returns the created object, and the `set` functions take that object. An `add_set` element returns nothing, so every `set` call has to name the added thing again by repeating the `arg`s.
+
+`lv_obj`'s own `<style>` element works like this. A style is added with `lv_obj_add_style(obj, style, selector)`, which returns nothing, so setting `enabled` on it means repeating both the style and the selector:
+
+```xml
+<api>
+  <element name="style" access="add_set" type="void" help="Add a style to the widget">
+    <arg name="name" type="style"/>
+    <arg name="selector" type="selector+" default="0"/>
+    <prop name="enabled" type="bool"/>
+  </element>
+</api>
+```
+
+Used in a view:
+
+```xml
+<view>
+  <lv_obj>
+    <style name="style_red" selector="pressed" enabled="false"/>
+  </lv_obj>
+</view>
+```
+
+LVGL's UI Editor generates:
+
+```c
+lv_obj_add_style(obj, &style_red, LV_STATE_PRESSED);
+lv_obj_set_style_enabled(obj, &style_red, LV_STATE_PRESSED, false);
+```
+
+The `prop`s are optional, so the element is complete with its args alone.
 
 #### access="custom"
 

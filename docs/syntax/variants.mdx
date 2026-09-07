@@ -26,15 +26,15 @@ A variant is a named list of options, declared in the Component's [`<api>`](./ap
 ```
 
 - `name` - The name of the variant. It becomes an attribute of the Component, set like a property where the Component is used.
-- `options` - Space separated list of the option names.
+- `options` - Space separated list of the option names. Keep them unique across the Component's variants: an option name is read bare in an expression, so it carries no hint about which variant it belongs to. A repeated name is reported and resolves to the first variant that declares it.
 - `default` - The option to use when the instance doesn't set one. If it's missing or unknown, the first option is used.
 
-A variant is not an [`<api>`](./api) `<prop>`, so `$variant_name` doesn't read it. Use `{variant_name}` or `@{variant_name}`, or [`<bind_style>`](./styles#style-binding), as shown below.
+A variant is not an [`<api>`](./api) `<prop>`, so `$variant_name` doesn't read it. Use `{variant_name}` or `@{variant_name}`, as shown below. A variant name is looked up before properties, constants, and subjects, so it shadows anything else with the same name.
 
 Each variant is **per-instance reactive state**: ten instances of the same Component can be in ten different states, and switching one of them updates only that instance. This makes variants the Component-level counterpart of [subjects](./data-binding), which are global.
 
 <Callout type="info">
-Variants are useful when a Component's *appearance* has a fixed set of named states. For free-form data (a temperature, a user name) use a subject as an [`<api>`](./api) property instead.
+Variants are useful when a Component's *appearance* has a fixed set of named states. For free-form data (a temperature, a user name) use a [`bindable` property](./api#bindable-properties) instead.
 </Callout>
 
 ## Reacting to a variant
@@ -43,7 +43,7 @@ A variant is meaningless until something reads it. There are two ways to do it.
 
 ### Switching styles
 
-`<bind_style>` attaches a style while a condition is true, so a variant can select the styles of an option:
+A [style](./styles) has an `enabled` attribute, so a variant can select the styles of an option:
 
 ```xml
 <component>
@@ -63,9 +63,9 @@ A variant is meaningless until something reads it. There are two ways to do it.
 
   <view extends="lv_button">
     <style name="style_normal"/>
-    <bind_style name="style_danger" if="tone == danger"/>
-    <bind_style name="style_small" if="size == small"/>
-    <bind_style name="style_large" if="size == large"/>
+    <style name="style_danger" enabled="@{tone == danger}"/>
+    <style name="style_small" enabled="@{size == small}"/>
+    <style name="style_large" enabled="@{size == large}"/>
 
     <lv_label name="title" text="Title"/>
   </view>
@@ -73,6 +73,8 @@ A variant is meaningless until something reads it. There are two ways to do it.
 ```
 
 This is the recommended way to express the **visual difference** between options. The styles stay declarative, and only the selection changes at runtime.
+
+The condition is an ordinary binding, so it isn't limited to one option: `enabled="@{size == large or tone == danger}"` works too. See [Conditional styles](./styles#conditional-styles).
 
 ### In expressions
 
@@ -126,6 +128,14 @@ void my_badge_set_size(lv_obj_t * obj, my_badge_size_t size);
 my_badge_size_t my_badge_get_size(lv_obj_t * obj);
 ```
 
-When calling the `set` function, every style and data binding that reads the variant is re-evaluated automatically.
+Both functions take the Component instance. When calling the `set` function, every style and data binding that reads the variant is re-evaluated automatically.
 
 The option order in `options` defines the value of each enum field, so reordering them changes the exported C API. Adding new options at the end is safe.
+
+When the XML is loaded at runtime instead of exported, the same thing is done by name:
+
+```c
+lv_xml_set_variant(obj, "size", "large");
+```
+
+It returns `LV_RESULT_INVALID` and changes nothing if the variant or the option doesn't exist.

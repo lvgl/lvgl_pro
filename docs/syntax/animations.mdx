@@ -70,7 +70,7 @@ Within each `timeline`, add individual `<animation>` elements to describe each s
 - `early_apply` - If `true`, the start value is applied immediately, even during the delay. Default is `false`.
 - `easing` - The animation path, e.g. `ease_out`. See below. Default is `linear`.
 
-`start`, `end`, `duration` and `delay` accept constants and [expressions](./evaluate#outside-the-view) of them:
+`start`, `end`, `duration` and `delay` accept constants and [expressions](./expressions#outside-the-view) of them:
 
 ```xml
 <consts>
@@ -139,7 +139,50 @@ To include a timeline, use the following properties:
 
 Timelines can be triggered by events (such as clicks) using the `<play_timeline_event>` element as a child of any widget.
 
+```xml
+<lv_button>
+  <lv_label text="Open"/>
+  <play_timeline_event timeline="timeline_open" target="self" trigger="clicked"/>
+</lv_button>
+```
+
 Learn more about it in [Events](./events) section.
+
+### Playing without a click
+
+`trigger` also takes a `{ }` condition, which fires on every **false-to-true** change. That covers the cases an input event cannot.
+
+<Callout type="info">
+Condition triggers require **LVGL Pro Editor v2.1** and **LVGL v9.6**.
+</Callout>
+
+`{true}` never changes, so it fires once, right after creation — which is how a timeline plays as soon as the element appears:
+
+```xml
+<!-- Runs on creation, every time -->
+<play_timeline_event timeline="timeline_intro" target="self" trigger="{true}"/>
+
+<!-- Runs on creation, but only where the instance asked for it
+     (`autoplay` is a <prop> of this Component) -->
+<play_timeline_event timeline="timeline_intro" target="self" trigger="{autoplay}"/>
+```
+
+A condition on a [subject](./expressions) keeps watching. The same timeline `reverse`d on the inverted condition gives a continuous in and out:
+
+```xml
+<play_timeline_event timeline="timeline_open" target="self" trigger="{subject_menu_open}"/>
+<play_timeline_event timeline="timeline_open" target="self" trigger="{!subject_menu_open}" reverse="true"/>
+```
+
+The condition can be any expression, so a threshold or a comparison against the Component's own property works just as well:
+
+```xml
+<!-- Shake the card when the reading goes over the limit -->
+<play_timeline_event timeline="timeline_shake" target="self" trigger="{subject_temperature > 80}"/>
+
+<!-- `index` is a plain <prop>, so each page reacts to its own number coming up -->
+<play_timeline_event timeline="timeline_show" target="self" trigger="{subject_active_page == index}"/>
+```
 
 ## Under the Hood
 

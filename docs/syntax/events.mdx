@@ -25,24 +25,25 @@ This is the usual case: the name of an LVGL event, mapped straight from its enum
 
 ### A condition
 
-Wrapping an [expression](./evaluate) in `@{ }` watches the expression instead of an event. The action runs on every change from **false to true**:
+An [expression](./expressions) that reads a [subject](./expressions) is watched instead of an event. The action runs on every change from **false to true**:
 
 ```xml
 <!-- Show the alarm screen as soon as the temperature goes over 30 -->
-<screen_load_event trigger="@{subject_temp > 30}" screen="screen_alarm"/>
+<screen_load_event trigger="{subject_temp > 30}" screen="screen_alarm"/>
 ```
 
-Three things to keep in mind:
+<Callout type="info">
+Condition triggers require **LVGL Pro Editor v2.1** and **LVGL v9.6**.
+</Callout>
+
+Two things to keep in mind:
 
 - Only the rising edge fires. Going back to false does nothing, and neither does a change that leaves the condition true.
 - A condition that is **already true when the element is created fires right away**. The remembered previous state starts as false, so subscribing counts as the first rising edge.
-- The expression has to reference at least one subject. `@{10 > 20}` could never fire, so it is reported and the element does nothing.
-
-`trigger` is special in one more way. A binding normally works on a **property**, because a property is something the widget can be told again later. An `<arg>` is different: it is consumed when the element is created, so there is nothing to re-apply, and `@{ }` is not allowed on one. `trigger` is the single exception, since re-evaluating it means firing the action rather than setting a value. See [Elements](./api#elements) for what an `arg` is.
 
 ### A one time switch
 
-A plain `{ }` [expression](./evaluate) is decided once, when the element is created. What it decides depends on what it evaluates to.
+An expression that reads no subject can't change, so it is decided once, when the element is created. What it decides depends on what it evaluates to.
 
 A **boolean** switches the whole element on or off:
 
@@ -52,6 +53,9 @@ A **boolean** switches the whole element on or off:
 ```xml
 <!-- Load the home screen at creation, but only when this instance asked for it -->
 <screen_load_event trigger="{auto_open}" screen="screen_home"/>
+
+<!-- `{true}` never changes, so this is simply "run once, on creation" -->
+<event_cb callback="on_ready" trigger="{true}"/>
 ```
 
 Anything else is used as an **event name**, so an expression can pick which event to listen to:
@@ -60,8 +64,6 @@ Anything else is used as an **event name**, so an expression can pick which even
 <!-- Fire on a long press in compact mode, on a plain click otherwise -->
 <event_cb callback="my_handler" trigger="{compact ? long_pressed : clicked}"/>
 ```
-
-Use `{ }` for something a property or constant decides at creation, and `@{ }` for something that has to be watched.
 
 ## Call Function
 
@@ -150,12 +152,12 @@ Here is an example of both load and create events:
 
 ## Set a Subject Value
 
-`<set_subject_event>` writes a [subject](./data-binding) when the trigger fires:
+`<set_subject_event>` writes a [subject](./expressions) when the trigger fires:
 
 ```xml
 <view>
  <lv_button width="200" height="100">
-  <set_subject_event subject="subject_count" value="subject_count + 1" trigger="clicked"/>
+  <set_subject_event subject="subject_count" value="{subject_count + 1}" trigger="clicked"/>
   <lv_label text="One more"/>
  </lv_button>
 </view>
@@ -164,31 +166,27 @@ Here is an example of both load and create events:
 It takes three attributes:
 
 - `subject` - The subject to write. Mandatory.
-- `value` - An [expression](./evaluate), re-evaluated **every time** the trigger fires. Mandatory. Write it **without** `{ }` or `@{ }`.
+- `value` - The value to write: a literal, or a `{ }` [expression](./expressions) re-evaluated **every time** the trigger fires. Mandatory.
 - `trigger` - See [Triggers](#triggers). Default: `"clicked"`.
 
 Because `value` is a fresh expression on every fire, one element covers setting, toggling, and incrementing:
 
 ```xml
-<!-- Set -->
-<set_subject_event subject="subject_name" value="'Anna'"/>
+<!-- Set: a literal, like any other attribute -->
+<set_subject_event subject="subject_name" value="Anna"/>
 
 <!-- Toggle -->
-<set_subject_event subject="subject_menu_open" value="!subject_menu_open"/>
+<set_subject_event subject="subject_menu_open" value="{!subject_menu_open}"/>
 
 <!-- Increment, and decrement with a negative step -->
-<set_subject_event subject="subject_count" value="subject_count + 1"/>
-<set_subject_event subject="subject_count" value="subject_count - 1"/>
+<set_subject_event subject="subject_count" value="{subject_count + 1}"/>
+<set_subject_event subject="subject_count" value="{subject_count - 1}"/>
 
 <!-- Anything else an expression can say -->
-<set_subject_event subject="subject_page" value="subject_page + 1" trigger="@{subject_next_pressed}"/>
+<set_subject_event subject="subject_page" value="{subject_page + 1}" trigger="{subject_next_pressed}"/>
 ```
 
 The subject's declared type decides how the value is written, and `true` and `false` become 1 and 0 in an `int` subject. To keep a value in range, give the **subject** a `min_value` and a `max_value`: every write is clamped to them.
-
-<Callout type="warn">
-Don't wrap `value` in braces. `value="{count + 1}"` is evaluated once, at creation, so the subject would be set to the same number on every fire. `@{ }` doesn't belong there either: `value` is an argument, not a binding.
-</Callout>
 
 ### Older subject events
 
@@ -204,7 +202,7 @@ Before `<set_subject_event>` there was one element per operation. They still wor
 
 `subject_increment_event` is the only one with something `<set_subject_event>` can't do: `rollover="true"` wraps the value to the other end at the `min_value`/`max_value` boundary instead of stopping there.
 
-These elements take an **event name** only. A `{ }` or `@{ }` condition in their `trigger` doesn't work, so use `<set_subject_event>` when you need one.
+These elements take an **event name** only. A `{ }` condition in their `trigger` doesn't work, so use `<set_subject_event>` when you need one.
 
 ## Play Animation
 

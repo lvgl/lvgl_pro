@@ -109,11 +109,11 @@ Instead of adding a style unconditionally, let an expression decide whether it a
 </styles>
 
 <view extends="lv_obj">
-  <style name="style_warning" enabled="@{subject_temp > 10 and subject_temp &lt;= 30}"/>
+  <style name="style_warning" enabled="{subject_temp > 10 and subject_temp &lt;= 30}"/>
 </view>
 ```
 
-`enabled` takes the same two forms as any other attribute value: `{ ... }` is an [expression](./evaluate) evaluated once, when the widget is created, and `@{ ... }` is a [binding](./data-binding), re-evaluated whenever a [subject](./data-binding) or [variant](./variants) in it changes. So the style above turns itself on and off as the temperature moves, while `enabled="{is_compact}"` decides once and stays that way.
+`enabled` takes an [expression](./expressions) like any other attribute value. Reading a [subject](./expressions) or a [variant](./variants) in it makes the style turn itself on and off as that value moves, as above; an expression built from constants and properties, like `enabled="{is_compact}"`, decides once at creation and stays that way.
 
 A typical use case is light/dark theme switching:
 
@@ -126,7 +126,7 @@ A typical use case is light/dark theme switching:
 
  <view extends="lv_button">
   <style name="style_base" />
-  <style name="style_dark" enabled="@{subject_dark_theme_on}"/>
+  <style name="style_dark" enabled="{subject_dark_theme_on}"/>
   <lv_label text="Apply"/>
  </view>
 </component>
@@ -134,9 +134,9 @@ A typical use case is light/dark theme switching:
 
 A few details:
 
-- The condition doesn't have to be a comparison. Anything but `false`, `0`, and empty text counts as enabled, so `enabled="@{subject_error}"` is enough for an int subject. A float is the exception: `0.00` is not the text `0`, so compare it, as in `enabled="@{subject_level > 0}"`.
+- The condition doesn't have to be a comparison. Anything but `false`, `0`, and empty text counts as enabled, so `enabled="{subject_error}"` is enough for an int subject. A float is the exception: `0.00` is not the text `0`, so compare it, as in `enabled="{subject_level > 0}"`.
 - `enabled="false"` works too, for a style that starts off.
-- A binding that references no subject can never update, so it is reported and dropped. The style then keeps whatever `enabled` state it had, which is on.
+- An expression reading no subject is decided at creation, so the style stays that way for the life of the widget.
 - One `enabled` binding per style and selector. Two bindings on the same pair fight over the same switch, and only one of them wins.
 
 <Callout type="info">
@@ -171,11 +171,11 @@ Selectors are also supported for local style properties:
 
 ### Local Style Binding
 
-A local style property takes an expression like any other attribute, selectors included. `{ }` computes it once, `@{ }` keeps it up to date. See [Data binding](./data-binding#generic-bindings-with-expressions).
+A local style property takes an expression like any other attribute, selectors included, and reading a subject in it keeps the property up to date. See [Data binding](./expressions#where-the-values-come-from).
 
 ```xml
-<lv_label style_text_color-pressed="@{subject_error_mode ? 0xff0000 : 0xaaaaaa}"/>
-<lv_slider style_bg_opa-knob="@{subject_brightness * 2}"/>
+<lv_label style_text_color-pressed="{subject_error_mode ? 0xff0000 : 0xaaaaaa}"/>
+<lv_slider style_bg_opa-knob="{subject_brightness * 2}"/>
 ```
 
 `<bind_style_prop>` is the older way. It copies one subject's value into one property as-is, with no expression:
@@ -226,7 +226,7 @@ Since styles are initialized only once, it's not possible to pass API `<prop>`s 
 </component>
 ```
 
-[Constants](./constants) do have a value there, so a style property can be computed from them with an [expression](./evaluate#outside-the-view):
+[Constants](./constants) do have a value there, so a style property can be computed from them with an [expression](./expressions#outside-the-view):
 
 ```xml
 <consts>

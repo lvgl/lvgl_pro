@@ -15,8 +15,8 @@ LVGL Pro Editor uses standard XML syntax with special conventions for property n
   - Hex without prefix: `112233`
   - Short hex: `0x123`, `#123`, or `123` (all equivalent to `#112233`)
 - **LVGL API alignment**: Follow LVGL naming conventions (e.g., `align="center"`, `bg_color="0xff0000"`)
-- **References**: Use `{ }` to reference anything by name: a `<prop>`, a constant, a subject, or a variant (e.g. `width="{card_width}"`). Inside the braces the name is written plain, and it can be part of a larger [expression](./evaluate)
-- **Bindings**: `@{ }` is the same expression kept alive. It is re-evaluated whenever a [subject](./data-binding) or [variant](./variants) it reads changes, while `{ }` is evaluated once, when the element is created
+- **References**: Use `{ }` to reference anything by name: a `<prop>`, a constant, a subject, or a variant (e.g. `width="{card_width}"`). Inside the braces the name is written plain, and it can be part of a larger [expression](./expressions)
+- **Bindings**: the same expression, reading a [subject](./expressions) or a [variant](./variants). It is re-evaluated whenever one of them changes; an expression without one is evaluated once, when the element is created
 - **Legacy references**: `$param_name` for a `<prop>` and `#const_name` for a constant. Each takes a single name, so it can't be part of an expression
 
 ## Names and Scopes
@@ -30,7 +30,7 @@ A name is looked up in the local scope first, and in the global scope only after
 
 Keeping names unique **within one scope is your responsibility**. Nothing reports a collision, so give every style, constant, subject, timeline, and widget `name="..."` a distinct name. Two cases make a collision easy to miss:
 
-- In an [expression](./evaluate) a bare name is resolved in a fixed order: per-instance names (a variant, a `bindable` property, a local subject), then property, constant, variant option, subject. The first match wins, so a constant named `temperature` hides a subject of the same name.
+- In an [expression](./expressions) a bare name is resolved in a fixed order: per-instance names (a variant, a `bindable` property, a local subject), then property, constant, variant option, subject. The first match wins, so a constant named `temperature` hides a subject of the same name.
 - A `name="..."` is found by searching the widget tree and the first match is used, so two widgets with the same name make animation targets and `lv_obj_find_by_name()` ambiguous.
 
 A prefix per kind keeps them apart: `style_card`, `subject_temperature`, `timeline_load`.
@@ -122,7 +122,7 @@ A **style** prop names a style of the Component that passes it, and it is resolv
 ```
 
 <Callout type="warn">
-A `name` is a literal or a `{ }` expression, never a `@{ }` binding. The Editor has to resolve the name to check that the style, font, image, and so on exists, and a binding has no value until it runs.
+A `name` is a literal or a `{ }` expression of properties and constants. The Editor has to resolve the name to check that the style, font, image, and so on exists, so it can't wait for a subject.
 </Callout>
 
 **Automatic binding** occurs for:

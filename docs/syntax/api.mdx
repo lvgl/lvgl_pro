@@ -55,10 +55,10 @@ Adding `bindable="true"` to a `<prop>` makes it a value that can change:
 </api>
 ```
 
-Every instance gets a [subject](./data-binding) of its own holding the property, which means:
+Every instance gets a [subject](./expressions) of its own holding the property, which means:
 
-- it can be read in the Component's own bindings, as `@{reading}`
-- it can be bound where the Component is used, as `<thermostat reading="@{subject_kitchen_temp}"/>`
+- it can be read in the Component's own bindings, as `{reading}`
+- it can be bound where the Component is used, as `<thermostat reading="{subject_kitchen_temp}"/>`
 - it gets a generated setter and getter
 
 ```c
@@ -68,9 +68,9 @@ int32_t thermostat_get_reading(lv_obj_t * obj);
 
 Both take the Component instance.
 
-A **plain** property can still be used inside `@{ }`, but it is frozen there at creation. See [Bindable properties](./data-binding#bindable-properties) for what that means in practice.
+A **plain** property can still be used inside an expression, but it is frozen there at creation. See [Bindable properties](./expressions#bindable-properties) for what that means in practice.
 
-When the values that can change have names, like `normal` and `danger`, use a [variant](./variants) instead. When several parts of the UI share the value, use a global [subject](./data-binding).
+When the values that can change have names, like `normal` and `danger`, use a [variant](./variants) instead. When several parts of the UI share the value, use a global [subject](./expressions).
 
 ### Slots
 
@@ -126,7 +126,7 @@ The example below shows it in practice:
 
 ### Variants
 
-Besides `<prop>`s, a Component can declare **variants**: named lists of options that can be changed after creation. Like a `bindable` property, a variant keeps its value per instance, so [styles](./styles#conditional-styles) and [data bindings](./data-binding) can follow it at runtime. Use a variant when the states have names, and a `bindable` property when the value is a number, a string, or a color.
+Besides `<prop>`s, a Component can declare **variants**: named lists of options that can be changed after creation. Like a `bindable` property, a variant keeps its value per instance, so [styles](./styles#conditional-styles) and [data bindings](./expressions) can follow it at runtime. Use a variant when the states have names, and a `bindable` property when the value is a number, a string, or a color.
 
 `badge.xml`
 
@@ -143,9 +143,9 @@ Besides `<prop>`s, a Component can declare **variants**: named lists of options 
   </styles>
 
   <view extends="lv_obj" width="content" height="content">
-    <style name="style_danger" enabled="@{tone == danger}"/>
+    <style name="style_danger" enabled="{tone == danger}"/>
     <lv_label name="label" text="Ready"/>
-    <lv_image name="alert_icon" src="img_alert" hidden="@{tone == normal}"/>
+    <lv_image name="alert_icon" src="img_alert" hidden="{tone == normal}"/>
   </view>
 </component>
 ```
@@ -157,7 +157,7 @@ Besides `<prop>`s, a Component can declare **variants**: named lists of options 
   <view flex_flow="row">
     <badge/>                 <!-- `normal`, the default -->
     <badge tone="danger"/>
-    <badge tone="@{subject_alarm_count > 0 ? danger : normal}"/>
+    <badge tone="{subject_alarm_count > 0 ? danger : normal}"/>
   </view>
 </screen>
 ```

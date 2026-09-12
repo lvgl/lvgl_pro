@@ -56,19 +56,66 @@ As shown in the example, parts and states can be set using `selector`.
     It's recommended to prefix style names with `style_` to avoid name collisions.
 </Callout>
 
-## Style Binding
+### Transitions
 
-Instead of directly adding styles to UI elements, you can add them conditionally when a subject's value equals a reference value. This enables dynamic styling at runtime, allowing you to change appearance or layout based on conditions.
+By default the properties of a style are applied immediately when the widget's state changes. A `<transition>` child of a `<style>` animates the listed properties instead:
 
-See [Data-bindings](./data-binding) for more information.
+```xml
+<styles>
+    <style name="style_button" bg_color="0x0088ff" transform_scale_x="256">
+        <transition props="bg_color transform_scale_x" duration="300"/>
+    </style>
 
-A typical use case is light/dark theme switching, which requires:
+    <style name="style_button_pressed" bg_color="0x004488" transform_scale_x="230">
+        <transition props="bg_color transform_scale_x" duration="80"/>
+    </style>
+</styles>
 
-- A subject such as `subject_dark_theme_on`
-- Default styles added normally with the `style` tag
-- Dark styles with the required color adjustments
+<view extends="lv_button">
+    <style name="style_button"/>
+    <style name="style_button_pressed" selector="pressed"/>
+</view>
+```
 
-Here is an example:
+`<transition>` supports these properties:
+
+- `props` - Space separated list of the style properties to animate. Mandatory. Use `remove` to delete a previously set transition.
+- `duration` - Duration of the animation in milliseconds. Mandatory.
+- `delay` - Delay before the animation starts in milliseconds. Default is `0`.
+- `easing` - The animation path, e.g. `ease_out`. See [Easing](./animations#easing). Default is `linear`.
+
+A transition describes how to animate **into** the state of the style that contains it. In the above example pressing the button uses the 80 ms transition of `style_button_pressed`, and releasing it uses the 300 ms transition of `style_button`.
+
+This means that to animate in both directions, a `<transition>` needs to be added to the default state's style too. If only the pressed style has one, the button animates when it's pressed, but snaps back when it's released.
+
+<Callout>
+Only state changes (`pressed`, `checked`, `disabled`, `focused`, ...) start a transition. Switching a style on and off, with [`enabled`](#conditional-styles) or with [`<bind_style>`](#legacy-bind_style), is not a state change, so those styles are applied without animation.
+</Callout>
+
+Keep these limitations in mind:
+
+- A style can store only one transition. To use different durations for different properties, split them into two styles.
+- Only numeric (including opacity) and color properties can be animated. Properties referencing other data (`text_font`, `bg_image_src`, `bg_grad`, ...) and most enums and booleans (`flex_flow`, `text_align`, `clip_corner`, ...) are ignored with a warning.
+- The composite names are expanded, so e.g. `props="pad_all"` transitions all the four paddings.
+- Like in any other style property, constants and `{ }` expressions of them can be used, but API `<prop>`s can't.
+
+## Conditional Styles
+
+Instead of adding a style unconditionally, let an expression decide whether it applies. Add the style as usual and give it an `enabled` attribute:
+
+```xml
+<styles>
+  <style name="style_warning" bg_color="0xff8800"/>
+</styles>
+
+<view extends="lv_obj">
+  <style name="style_warning" enabled="{subject_temp > 10 and subject_temp &lt;= 30}"/>
+</view>
+```
+
+`enabled` takes an [expression](./expressions) like any other attribute value. Reading a [subject](./expressions) or a [variant](./variants) in it makes the style turn itself on and off as that value moves, as above; an expression built from constants and properties, like `enabled="{is_compact}"`, decides once at creation and stays that way.
+
+A typical use case is light/dark theme switching:
 
 ```xml
 <component>
@@ -79,11 +126,32 @@ Here is an example:
 
  <view extends="lv_button">
   <style name="style_base" />
-  <bind_style name="style_dark" subject="subject_dark_theme_on" ref_value="1"/>
+  <style name="style_dark" enabled="{subject_dark_theme_on}"/>
   <lv_label text="Apply"/>
  </view>
 </component>
 ```
+
+A few details:
+
+- The condition doesn't have to be a comparison. Anything but `false`, `0`, and empty text counts as enabled, so `enabled="{subject_error}"` is enough for an int subject. A float is the exception: `0.00` is not the text `0`, so compare it, as in `enabled="{subject_level > 0}"`.
+- `enabled="false"` works too, for a style that starts off.
+- An expression reading no subject is decided at creation, so the style stays that way for the life of the widget.
+- One `enabled` binding per style and selector. Two bindings on the same pair fight over the same switch, and only one of them wins.
+
+<Callout type="info">
+`enabled` doesn't add or remove the style, it only switches it. The style keeps its place among the widget's other styles, no matter how often the condition flips.
+</Callout>
+
+### Legacy: `bind_style`
+
+Before `enabled` existed, a style was switched by comparing one subject to one reference value:
+
+```xml
+<bind_style name="style_dark" subject="subject_dark_theme_on" ref_value="1"/>
+```
+
+It still works and accepts the same `selector` as `<style>`, but `enabled` does the same thing with a full expression, so prefer that in new XML.
 
 ## Local Styles
 
@@ -103,7 +171,14 @@ Selectors are also supported for local style properties:
 
 ### Local Style Binding
 
-Instead of setting local style properties directly, you can bind them to subject values for dynamic behavior:
+A local style property takes an expression like any other attribute, selectors included, and reading a subject in it keeps the property up to date. See [Data binding](./expressions#where-the-values-come-from).
+
+```xml
+<lv_label style_text_color-pressed="{subject_error_mode ? 0xff0000 : 0xaaaaaa}"/>
+<lv_slider style_bg_opa-knob="{subject_brightness * 2}"/>
+```
+
+`<bind_style_prop>` is the older way. It copies one subject's value into one property as-is, with no expression:
 
 ```xml
 <component>
@@ -125,16 +200,16 @@ In the values of style properties constants can be used as well.
     </consts>
 
     <styles>
-        <!-- Global constants can be used as well, e.g. #muted below  --> 
-        <style name="style_main" border_width="#thin" bg_color="#dark" bg_opa="#muted"/>
+        <!-- Global constants can be used as well, e.g. `muted` below  --> 
+        <style name="style_main" border_width="{thin}" bg_color="{dark}" bg_opa="{muted}"/>
     </styles>
 </component>
 ```
 
 
-## Relation to API Properties
+## Relation to API `<prop>`s
 
-Since styles are initialized only once, it's not possible to pass API properties to them when the instances ar created. So this is invalid:
+Since styles are initialized only once, it's not possible to pass API `<prop>`s to them when the instances are created. So this is invalid:
 
 ```xml
 <component>
@@ -143,14 +218,28 @@ Since styles are initialized only once, it's not possible to pass API properties
     </api>
 
     <styles>
-       <!-- ❌ CAN'T DO THIS -->
+       <!-- ❌ CAN'T DO THIS. `{thickness}` doesn't work either: a style is
+            initialized before any instance exists, so a <prop> has no value -->
        <style name="style_main" border_width="$thickness"/>
     </styles>
     
 </component>
 ```
 
-However you can pass [`<api>`](./api) properties to local style properties:
+[Constants](./constants) do have a value there, so a style property can be computed from them with an [expression](./expressions#outside-the-view):
+
+```xml
+<consts>
+    <int name="thin" value="2"/>
+</consts>
+
+<styles>
+    <!-- ✅ Constants and literals work -->
+    <style name="style_main" border_width="{thin * 2}"/>
+</styles>
+```
+
+And you can pass [`<api>`](./api) `<prop>`s to local style properties:
 
 ```xml
 <component>
@@ -159,9 +248,9 @@ However you can pass [`<api>`](./api) properties to local style properties:
         <prop name="bg_color" type="color"/>
     </api>
 
-    <view style_bg_color="$bg_color">
+    <view style_bg_color="{bg_color}">
        <!-- ✅ Passing api properties to local styles work -->
-       <lv_slider style_border_width-knob="$thickness"/>
+       <lv_slider style_border_width-knob="{thickness}"/>
     </view>
 </component>
 ```

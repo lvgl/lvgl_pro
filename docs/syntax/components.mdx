@@ -79,7 +79,7 @@ where `component_name` is the name of the  Component's XML file name.
 
 When a Component is used in another Component's XML code and the code is exported, this `create` function will be called. This means Components do not have a detailed set/get API but are created with a fixed set of parameters.
 
-If you need to access or modify values dynamically, it is recommended to use [data bindings via Subject](./data-binding). You can also call these `..._create()` functions at any time from application code to create new Components on demand.
+If you need to access or modify values dynamically, it is recommended to use [data bindings via Subject](./expressions). You can also call these `..._create()` functions at any time from application code to create new Components on demand.
 
 ## Defining Custom Properties
 
@@ -99,7 +99,7 @@ However, you can also define custom properties in the [`api` tag](./api). These 
   </api>
 
   <view extends="lv_button">
-    <lv_label text="$btn_text"/>
+    <lv_label text="{btn_text}"/>
   </view>
 </component>
 ```
@@ -154,13 +154,13 @@ The following examples demonstrate parameter passing, styles, and constants in C
   </consts>
 
   <styles>
-    <style name="pressed_style" border_width="#thin" border_color="0xff0000"/>
+    <style name="pressed_style" border_width="{thin}" border_color="0xff0000"/>
   </styles>
 
   <view extends="lv_button" style_radius="0" style_bg_color="0xff0000">
     <style name="pressed_style" selector="pressed"/>
     <h3 text="Some text"/>
-    <h3 text="$btn_text" y="40"/>
+    <h3 text="{btn_text}" y="40"/>
   </view>
 </component>
 ```

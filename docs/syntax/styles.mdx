@@ -113,7 +113,7 @@ Instead of adding a style unconditionally, let an expression decide whether it a
 </view>
 ```
 
-`enabled` takes an [expression](./expressions) like any other attribute value. Reading a [subject](./expressions) or a [variant](./variants) in it makes the style turn itself on and off as that value moves, as above; an expression built from constants and properties, like `enabled="{is_compact}"`, decides once at creation and stays that way.
+`enabled` takes an [expression](./expressions) like any other attribute value. Reading a [subject](./expressions#global-and-local-subjects) or a [variant](./api#variants) in it makes the style turn itself on and off as that value moves, as above; an expression built from constants and properties, like `enabled="{is_compact}"`, decides once at creation and stays that way.
 
 A typical use case is light/dark theme switching:
 
@@ -171,7 +171,7 @@ Selectors are also supported for local style properties:
 
 ### Local Style Binding
 
-A local style property takes an expression like any other attribute, selectors included, and reading a subject in it keeps the property up to date. See [Data binding](./expressions#where-the-values-come-from).
+A local style property takes an expression like any other attribute, selectors included, and reading a subject in it keeps the property up to date. See [Data bindings](./expressions#data-bindings).
 
 ```xml
 <lv_label style_text_color-pressed="{subject_error_mode ? 0xff0000 : 0xaaaaaa}"/>
@@ -226,7 +226,7 @@ Since styles are initialized only once, it's not possible to pass API `<prop>`s 
 </component>
 ```
 
-[Constants](./constants) do have a value there, so a style property can be computed from them with an [expression](./expressions#outside-the-view):
+[Constants](./constants) do have a value there, so a style property can be computed from them with an [expression](./expressions#where-expressions-work):
 
 ```xml
 <consts>

@@ -55,7 +55,7 @@ Adding `bindable="true"` to a `<prop>` makes it a value that can change:
 </api>
 ```
 
-Every instance gets a [subject](./expressions) of its own holding the property, which means:
+Every instance gets a [subject](./expressions#global-and-local-subjects) of its own holding the property, which means:
 
 - it can be read in the Component's own bindings, as `{reading}`
 - it can be bound where the Component is used, as `<thermostat reading="{subject_kitchen_temp}"/>`
@@ -68,9 +68,9 @@ int32_t thermostat_get_reading(lv_obj_t * obj);
 
 Both take the Component instance.
 
-A **plain** property can still be used inside an expression, but it is frozen there at creation. See [Bindable properties](./expressions#bindable-properties) for what that means in practice.
+A **plain** property can still be used inside an expression, but it is frozen there at creation. See [Properties in expressions](./expressions#properties-in-expressions) for what that means in practice.
 
-When the values that can change have names, like `normal` and `danger`, use a [variant](./variants) instead. When several parts of the UI share the value, use a global [subject](./expressions).
+When the values that can change have names, like `normal` and `danger`, use a [variant](#variants) instead. When several parts of the UI share the value, use a global [subject](./expressions#global-and-local-subjects).
 
 ### Slots
 
@@ -124,9 +124,40 @@ The example below shows it in practice:
 </component>
 ```
 
+### Local subjects
+
+<Callout type="info">
+Requires **LVGL Pro Editor v2.1** and **LVGL v9.6**.
+</Callout>
+
+
+Components and Screens can declare local subjects to hold their own internal state and bind properties to it. Each instance gets its own copy, so two instances never share it.
+
+```xml
+<component>
+  <subjects>
+    <int name="count" value="0"/>
+  </subjects>
+
+  <view flex_flow="column">
+    <lv_button>
+      <set_subject_event trigger="clicked" subject="count" value="{count + 1}"/>
+      <lv_label text="{'Clicked ' . count . ' times'}"/>
+    </lv_button>
+    <lv_label hidden="{count &lt; 5}" text="Too many clicks"/>
+  </view>
+</component>
+```
+
+Learn more about data binding and expressions on the [Expressions page](./expressions).
+
+
 ### Variants
 
-Besides `<prop>`s, a Component can declare **variants**: named lists of options that can be changed after creation. Like a `bindable` property, a variant keeps its value per instance, so [styles](./styles#conditional-styles) and [data bindings](./expressions) can follow it at runtime. Use a variant when the states have names, and a `bindable` property when the value is a number, a string, or a color.
+A variant has a name and a list of options. The name is exposed as a property of the Component, so it can be set on an instance and read in an [expression](./expressions) inside the Component.
+
+Under the hood a variant is an int-typed [local subject](#local-subjects) whose values have names, so it can be used in data bindings too.
+
 
 `badge.xml`
 
@@ -162,7 +193,25 @@ Besides `<prop>`s, a Component can declare **variants**: named lists of options 
 </screen>
 ```
 
-Learn more about variants on their [dedicated page](./variants).
+Every variant also gets an exported C API: an enum for its options, and a setter and getter pair.
+
+```c
+typedef enum {
+    BADGE_TONE_NORMAL = 0,
+    BADGE_TONE_DANGER = 1
+} badge_tone_t;
+
+void badge_set_tone(lv_obj_t * obj, badge_tone_t tone);
+badge_tone_t badge_get_tone(lv_obj_t * obj);
+```
+
+`obj` can be the Component instance, or any widget inside it. Setting a variant notifies everything that reads it, so the styles and expressions built on it update right away.
+
+<Callout type="warn">
+The option's index is part of the exported enum, so **reordering `options` breaks already exported C code**. Add new options at the end.
+</Callout>
+
+For XML loaded at runtime there is no generated setter, so use `lv_xml_set_variant(obj, "tone", "danger")` instead. It refuses an unknown variant or option and leaves the current one unchanged.
 
 ### Limitations
 

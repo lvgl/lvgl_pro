@@ -6,74 +6,80 @@ How to write LVGL Pro XML. This is the UI language of LVGL Pro: HTML-like markup
 
 1. **Never invent an attribute.** Every widget's exact API lives in `lvgl_widgets_xml/<version>/lv_*.xml`. Read it before writing. Style properties and enums are in `globals.xml` in the same folder.
 2. **Match the project's LVGL version.** If `project.xml` declares `lvgl_version="9.5.0"` use the `v9.5.0/` schema folder.
-3. **Validate what you write.** `lvglpro validate <project>` gives precise errors. Then `screenshot` to see it. Guessing is not the same as knowing.
+3. **Validate what you write.** `lvglpro validate <project>` gives precise errors. Then `screenshot` to see it. Guessing is not the same as knowing. See how to install it below.
 4. **Reuse before you create.** Look at the project's existing components and `globals.xml` first. A design system usually already has the button, the card, and the spacing scale you were about to reinvent.
-
-## The three file kinds
-
-| Root tag      | What it is                                                                                                                      | Can hold                                                    |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| `<component>` | Reusable UI element, pure XML, no C. The workhorse.                                                                             | `animations`, `consts`, `api`, `styles`, `view`, `previews` |
-| `<screen>`    | A full screen. Created as-is, no parameters.                                                                                    | `consts`, `styles`, `view` (no `api`, no `previews`)        |
-| `<widget>`    | A widget backed by handwritten C. Needs a C parser, cannot be loaded from XML at runtime, and needs a recompile of the preview. | `consts`, `api`, `styles`, `view`, `previews`               |
-
-One file per element, and the filename becomes the name you use as a tag. `my_button.xml` is used as `<my_button/>`.
-
-**Write components unless you truly need C.** Widgets require a C implementation plus an XML parser; reach for one only when the behavior cannot be expressed as composition plus data binding.
+5. **Read how a feature works before you use it.** `docs/syntax/*.mdx` explains each one. For the shape of real, working XML read `templates/basic/`, `examples/lvgl_open/` and `tutorials/`.
+6. **Ask the LVGL MCP server about LVGL itself.** It is at `https://lvgl.mcp.kapa.ai/`, preconfigured in each project's `.mcp.json`. Prefer it over recalling LVGL APIs from memory.
 
 ## Project layout
 
 ```
 my_project/
-├── project.xml          ← targets and display sizes
+├── project.xml          ← the LVGL version, the targets and the display sizes
 ├── globals.xml          ← shared consts, styles, fonts, images, subjects
-├── translations.xml     ← optional
-├── fonts/  images/
-├── widgets/  components/  screens/
+├── translations.xml     ← optional, the same string in several languages
+├── fonts/               ← TTF files, and the generated bin or C files
+├── images/              ← PNG images, plus the SVG or JPEG sources of `<convert>`, and the generated image files
+├── components/          ← Reusable UI element, pure XML, no C. Can have `<animations>`, `<consts>`, `<api>`, `<subjects>`, `<styles>`, `<view>`, `<previews>`
+├── widgets/             ← A widget backed by handwritten C. Needs a C parser, cannot be loaded from XML at runtime, and needs a recompile of the preview. Can have `<consts>`, `<api>`, `<styles>`, `<view>`, `<previews>`
+├── screens/             ← A full screen created from components and widgets. Can have `<consts>`, `<subjects>`, `<styles>`, `<view>` (no `<api>`, no `<previews>`)
+└── tests/               ← optional, XML tests
 ```
 
 `project.xml` and `globals.xml` sit at the root. All `src_path` values are relative to that root.
 
-## Syntax essentials
+For components, widgets and screens: One file per element, and the filename becomes the name you use as a tag. `my_button.xml` is used as `<my_button/>`.
+
+**Write components unless you truly need C.** Widgets require a C implementation plus an XML parser; reach for one only when the behavior cannot be expressed as composition plus data binding.
+
+
+## Example
 
 ```xml
 <component>
   <api>
     <prop name="title" type="string" default="Untitled"/>
     <prop name="icon" type="image" default=""/>
+    <prop name="value" type="int" bindable="true"/>
     <slot name="trailing"/>
+    <variants>
+      <variant name="size" options="small large" default="small"/>
+    </variants>
   </api>
 
   <consts>
     <int name="gap" value="8"/>
+    <int name="limit" value="20"/>
   </consts>
 
   <styles>
     <style name="style_row" bg_opa="0" pad_all="{space_md}"/>
+    <style name="style_row_pressed" bg_opa="50%"/>
+    <style name="style_danger" bg_color="0xd33"/>
+    <style name="style_large" pad_all="{space_md * 2}"/>
   </styles>
 
   <view extends="lv_obj" flex_flow="row" width="100%">
     <style name="style_row"/>
     <style name="style_row_pressed" selector="pressed"/>
+    <style name="style_danger" enabled="{value > limit}"/>
+    <style name="style_large" enabled="{size == large}"/>
+
+    <lv_label text="Just a text"/>
     <lv_label text="{title}"/>
-    <lv_label text="{title . ' with expression'}"/>
-    <lv_obj name="trailing"/>
+    <lv_label text="{title . ', the value as data binding: ' . value}"/>
+    <lv_obj name="trailing" hidden="{size == small}"/>
   </view>
 </component>
 ```
 
-### The sigils
+## Syntax summary
 
-| Prefix | Means | Example |
-| --- | --- | --- |
-| `{ ... }` | An expression, evaluated once at creation | `hidden="{!icon}"` |
-| `@{ ... }` | The same expression as a binding: re-evaluated whenever a subject or variant in it changes | `hidden="@{subject_count == 0}"` |
-| `$name` | Legacy: an `<api>` property of this element | `<lv_label text="$title"/>` |
-| `#name` | Legacy: a constant from `<consts>` or `globals.xml` | `pad="#space_md"` |
+### Naming
 
-Inside `{ }` and `@{ }` you write bare identifiers, no `$` or `#`. Prefer the braces: `$` and `#` take a single name, so they can't be part of a larger expression.
+Attributes are `lower_snake_case`. Compound names use `-`: `lv_chart-series`, `style_bg_color-knob-pressed`. Colors accept `0xff0000`, or the 3-digit short forms, like `0xf00`.
 
-A `name="..."` is the one attribute with no bindings: a literal or `{ }`, never `@{ }`. The Editor has to resolve the name to check that the style, font or image exists.
+XML reserved characters must be escaped in values. `value="I'm here"` is invalid, write `I&apos;m here`.
 
 ### `view` and `extends`
 
@@ -87,135 +93,120 @@ A `name="..."` is the one attribute with no bindings: a literal or `{ }`, never 
 - `widget` can extend a widget only
 - `screen` cannot extend anything
 
-### Naming
-
-Attributes are `lower_snake_case`. Compound names use `-`: `lv_chart-series`, `style_bg_color-knob-pressed`. Colors accept `0xff0000`, or the 3-digit short forms, like `0xf00`.
-
-XML reserved characters must be escaped in values. `value="I'm here"` is invalid, write `I&apos;m here`.
 
 ### Types
 
-`bool`, `int`, `px`, `%`, `content`, `string`, `color`, `opa`, plus the name-based types `image`, `font`, `subject`, `style` that resolve against `globals.xml`. Combine with `|`: `type="px|%|content"`.
+- `bool`: `true` or `false`
+- `int`: the range of an `int32_t`
+- `px`: a size in pixels
+- `%`: a percent of the parent, `lv_pct(x)` in C
+- `content`: only for width and height, to make the size fit all the children
+- `string`: normal string, in expressions as `{'hello' . ' world'}`
+- `color`: `0xRRGGBB`, or `0xRGB`
+- `opa`: 0-255 or 0-100%
+- the name-based types `image`, `font`, `subject`, `style`, which resolve against `globals.xml` or the local items
+- `enum:<name>`, e.g. `enum:lv_flex_flow`. The options are in `lvgl_widgets_xml/<version>/globals.xml`
 
-Arrays come in four forms. Items are separated by spaces, and string items are wrapped in `'`.
+Combine types with `|`, as `type="px|%|content"`.
 
-| Form           | Meaning                                                                                           | Real example                            |
-| -------------- | ------------------------------------------------------------------------------------------------- | --------------------------------------- |
-| `int[3]`       | Fixed number of elements                                                                          |                                         |
-| `string[NULL]` | Terminated by an element. The terminator can be any token, e.g. `grid_dsc[LV_GRID_TEMPLATE_LAST]` | `lv_buttonmatrix` `map`                 |
-| `int[count]`   | Length is passed as a separate parameter in C                                                     | `lv_chart` `values`, `lv_line` `points` |
-| `string[]`     | No terminator and no count                                                                        |                                         |
+Arrays come in four forms. Items are separated by spaces, and string items are wrapped in `'`. They are not used in components, only in widgets where C code can consume them.
+- `int[3]`: Fixed number of elements
+- `string[NULL]`: Terminated by an element. The terminator can be any token, e.g. `grid_dsc[LV_GRID_TEMPLATE_LAST]`
+- `int[count]`: Length is passed as a separate parameter in C
+- `string[]`: No terminator and no count
 
-## Styling
+### Expressions
 
-Three ways, in order of preference:
+Expressions are wrapped into `"{ ... }"`. If only constants, literals, or plain component properties are used in it, it is evaluated only once, at creation time. If global or local subjects, variants, or bindable properties are also used, a binding is created that updates the value whenever any of them changes.
 
-```xml
-<!-- 1. Named style, defined once, reused -->
-<styles>
-  <style name="style_card" bg_color="{color_panel}" radius="{radius_default}"/>
-</styles>
-<view>
-  <style name="style_card"/>
-  <style name="style_card" selector="pressed"/>
-  <style name="style_card" selector="knob|focused"/>
-</view>
+`.` concatenates, strings use single quotes, and the result always reaches the attribute as text, so `<lv_label text="{count}"/>` shows `42`. Comparisons cannot be chained (`a < b < c`), ternaries cannot be nested, and there is no short-circuiting: both sides of an `and` or `or` are always evaluated. `&` and `<` must be escaped in an attribute value, so prefer the `and`, `or` keywords and `&lt;`: `hidden="{a > 10 and a &lt;= 30}"`.
 
-<!-- 2. Local style property, for one-off values -->
-<lv_slider style_bg_opa-indicator-pressed="200"/>
+Expressions work almost everywhere:
 
-<!-- 2b. Computed local style property -->
-<lv_label style_text_color-pressed="@{subject_error ? 0xf00 : 0xaaa}"/>
+| Where | Example | Note |
+|---|---|---|
+| Widget property | `<lv_label hidden="{count == 0}"/>` | |
+| Component property | `<my_card title="{'Hi ' . name}"/>` | Make the property [bindable](docs/syntax/api.mdx#bindable-properties) to let it follow a subject |
+| Local style property | `<lv_button style_bg_color="{dark ? 0x000 : 0xfff}"/>` | |
+| Style `enabled` | `<style name="style_error" enabled="{subject_error_cnt != 0}"/>` | See [Conditional styles](docs/syntax/styles.mdx#conditional-styles) |
+| Event trigger | `<play_timeline_event trigger="{subject_error_cnt == 0}" target="self" timeline="timeline_show_up"/>` | See [Triggers](docs/syntax/events.mdx#triggers) |
+| Constant value | `<int name="size_large" value="{base_size * 4}"/>` | Only literals and other constants |
+| Subject value | `<int name="subject_room_temp" value="{const_default_temp}"/>` | Only literals and constants |
+| Style property value | `<style name="style_main" radius="{base_unit * 2}"/>` | Only literals and constants |
 
-<!-- 3. Conditional style, switched by an expression -->
-<style name="style_warning" enabled="@{subject_temp > 10 and subject_temp &lt;= 30}"/>
-```
+The last three are read once, when the file is registered, before any instance exists. A property, subject or variant has no value at that point, so only literals and constants can be used there.
 
-`enabled` takes `{ }` (decided once, at creation) or `@{ }` (a binding). The legacy
-`<bind_style name="style_dark" subject="subject_dark_theme_on" ref_value="1"/>` compares one
-subject to one value and still works, but `enabled` does the same with a full expression.
+Widget specific bindings are usually two way bindings. E.g. `<lv_slider bind_value="subject_1"/>` updates the subject when the slider is dragged, and moves the slider when the subject is written.
 
-Prefix style names with `style_`. Selectors combine parts and states with `|`.
+There is no syntax to read a property of another UI element. E.g. this is not supported: `<lv_slider width="slider2.width"/>`. Use styles, layouts, and constants to describe these.
 
-**Styles are initialized once, before any instance exists, so an `<api>` property cannot go into a `<style>`.** With `thickness` a `<prop>`, both of these fail:
+A `name="..."` is the only attribute that never binds: a literal or a `{ }` the Editor can resolve at build time.
 
-```xml
-<style name="style_main" border_width="$thickness"/>   <!-- invalid -->
-<style name="style_main" border_width="{thickness}"/>  <!-- invalid, same reason -->
-```
+Before LVGL Pro v2.1 and LVGL v9.6: `$name` was used to pass an API property to a UI element. E.g. `<lv_label text="$title"/>`. Similarly `#name` was used for constants. E.g. `pad="#space_md"`. These didn't support expressions, so `"{...}"` is preferred.
 
-Constants and literals do have a value there, so an expression of them works:
 
-```xml
-<style name="style_main" border_width="{border_thin * 2}"/>   <!-- valid, a const -->
-```
+### Global and Local subjects
 
-Pass a property to a *local* style property instead: `<lv_slider style_border_width-knob="{thickness}"/>`.
-
-A `<transition>` child animates a style's properties on state changes. It animates *into* the state of the style holding it, so for both directions add one to the default style too:
-
-```xml
-<style name="style_card" bg_color="{color_panel}">
-  <transition props="bg_color" duration="300" easing="ease_out"/>
-</style>
-<style name="style_card_pressed" bg_color="{color_panel_pressed}">
-  <transition props="bg_color" duration="80"/>
-</style>
-```
-
-One transition per style, numeric and color properties only. Switching a style on and off, with `enabled` or `<bind_style>`, is not a state change, so it never animates.
-
-## Data binding
-
-Subjects are the interface between the UI and the application. Define them in `globals.xml`:
+Subjects are the interface between the UI and the application. Define them in `globals.xml` (global subjects) or inside a `<component>` or `<screen>` (per-instance local subjects):
 
 ```xml
 <subjects>
-  <int name="subject_brightness" value="50"/>
+  <int name="subject_brightness" value="50" min_value="0" max_value="100"/>
   <string name="subject_user" value="John"/>
 </subjects>
 ```
 
-The types are `int`, `float`, `string`, `color` and `pointer` (which holds a **name**, e.g. an image name). `int` and `float` take `min_value`/`max_value`, and every write is clamped to them.
+The types are `int`, `float`, `string`, `color` and `pointer` (which holds a name of an image or font). `int` and `float` take `min_value`/`max_value`, and every write is clamped to them.
 
-A `<subjects>` section in a component or screen instead of `globals.xml` declares **per-instance** subjects: each instance gets its own, it can't be set from outside, and it shadows a global of the same name.
+A local subject is private to the instance, always starts at its declared value, and shadows a global of the same name. To let the caller pick which subject an instance follows, take it as a property: `<prop name="temp" type="subject"/>`, used as `<room_card temp="subject_kitchen"/>`.
 
-```xml
-<!-- Simple: attribute binding -->
-<lv_slider bind_value="subject_brightness"/>
-<lv_label bind_text="subject_brightness" bind_text-fmt="%d %%"/>
+In C a global subject is exported as `extern lv_subject_t * subject_brightness;`, so the application writes it with `lv_subject_set_int(subject_brightness, 80)`. **Binding beats callbacks.** A radio group, a theme switch, or a value readout needs no C at all: write the subject with `<set_subject_event>`, read it with an expression.
 
-<!-- Conditional: child element binding -->
-<bind_flag_if_eq  subject="subject_mode" flag="hidden"  ref_value="0"/>
-<bind_state_if_gt subject="subject_temp" state="checked" ref_value="30"/>
+### Styling
 
-<!-- Generic: any widget attribute bound to any expression -->
-<lv_label text="@{'Battery: ' . subject_battery . '%'}"/>
-<lv_obj width="@{subject_columns * 100}" style_bg_color="@{subject_on ? 0x0f0 : 0x333}"/>
-```
+Styles can be added to parts (`main`, `indicator`, `scrollbar`, etc) and states (e.g.: `default`, `checked`, `pressed`, `scrolled`, `disabled`, etc.) of the UI elements.
 
-`bind_flag_*` takes a `flag`, `bind_state_*` takes a `state`. Both come in `_eq`, `_not_eq`, `_gt`, `_ge`, `_lt`, `_le`. The `lv_obj-` prefix is optional.
-
-States: `default`, `checked`, `focused`, `focus_key`, `edited`, `hovered`, `pressed`, `scrolled`, `disabled`.
-Common flags: `hidden`, `clickable`, `checkable`, `scrollable`, `floating`, `ignore_layout`.
-
-`@{ }` is `{ }` that re-runs whenever a referenced subject or variant changes. It works on **widget** attributes (including `style_*` locals), and on a component instance's **variant** attributes and `bindable` props. Not in `<styles>` (initialized once) and not on a plain prop or a slot. It must reference at least one subject or variant, or it is reported and dropped. A failed re-evaluation (e.g. `/0`) keeps the previous value.
-
-Inside `@{ }` a **plain prop is snapshotted**: frozen at creation, like a const. That is what lets an instance identify itself, `<tab index="2" .../>` with `hidden="@{active_tab != index}"` in `tab.xml`. It never tracks the prop afterwards.
-
-Three ways to give each instance its own changing data:
+Style sheets and local styles can be used:
 
 ```xml
-<prop name="reading" type="int" bindable="true"/>  <!-- a per-instance subject; generates set/get -->
-<prop name="temp" type="subject"/>                 <!-- names the subject to follow: <room_card temp="subject_kitchen"/> -->
-<subjects><int name="taps" value="0"/></subjects>  <!-- private to the instance -->
+<!-- Named style, defined once in <globals>, <screen>, <component>, <widget>, and reused.
+     In {} only constants and literals can be used, as styles are initialized only once. -->
+<styles>
+  <style name="style_base" bg_color="0xeee" radius="{size_sm * 2}">
+       <!-- Animate when going into this state. A transition on the default style is used for
+            every state change, so add one to another state only if it needs to differ.
+            One transition per style, add more styles to animate different props differently -->
+       <transition props="bg_color bg_opa" duration="200" delay="100" easing="ease_in_out"/>
+  </style>
+  <style name="style_pressed" bg_color="0xaaa" bg_opa="40%"/>
+  <style name="style_scrollbar_pressed" bg_color="{primary_color}"/>
+  <style name="style_warning" bg_color="{color_yellow}"/>
+</styles>
+
+<view>
+  <!-- Selectors combine parts and states with `|` -->
+  <style name="style_base"/>
+  <style name="style_pressed" selector="pressed"/>
+  <style name="style_scrollbar_pressed" selector="scrollbar|pressed"/>
+
+  <!-- `enabled` switches a style on and off from a condition, as a binding -->
+  <style name="style_warning" enabled="{subject_temp > 10 and subject_temp &lt;= 30}"/>
+</view>
+
+<!-- Local style property, for one-off values -->
+<lv_slider style_bg_opa-indicator-pressed="80%"/>
+<lv_label style_text_color-pressed="{subject_error ? 0xf00 : 0xaaa}"/>
+<my_button style_bg_color="{prop_color}"/>
 ```
 
-**Binding beats callbacks.** A radio group, a theme switch, or a value readout needs no C at all: write the subject with `set_subject_event`, read it with a `@{ }` binding.
+Switching a style on and off with `enabled` is not a state change, so it never animates. One `enabled` per style and selector: the second is ignored.
 
-## Variants
+The legacy syntax for `<style enabled="{}">` is `<bind_style name="style_1" subject="subject_1" ref_value="10"/>`, meaning enable the style when `subject_1 == 10`.
 
-A component's named visual states, declared in `<api>`. Per-instance and reactive, so they are the component-scoped counterpart of global subjects.
+
+### Variants
+
+A component's named visual states, declared in `<api>`. Per-instance and reactive, so they are the component-scoped counterpart of global subjects. A variant is a local subject under the hood, so it can be used in data bindings.
 
 ```xml
 <api>
@@ -224,66 +215,58 @@ A component's named visual states, declared in `<api>`. Per-instance and reactiv
     <variant name="tone" options="normal danger" default="normal"/>
   </variants>
 </api>
+
 <view extends="lv_button">
   <style name="style_normal"/>
-  <style name="style_danger" enabled="@{tone == danger}"/>
-  <style name="style_large"  enabled="@{size == large}"/>
-  <lv_label text="Subtitle" hidden="@{size == small}"/>
+  <style name="style_danger" enabled="{tone == danger}"/>
+  <style name="style_large"  enabled="{size == large}"/>
+  <lv_label text="Subtitle" hidden="{size == small}"/>
 </view>
 ```
 
-Read a variant with `<style enabled="@{…}">` (preferred for anything visual) or in any other `@{ }`, where the variant name is the current option and an option name is a constant.
-
-Pick an option on the instance, `<my_badge size="large" tone="@{subject_level > 100 ? danger : normal}"/>`, or from C with the exported `my_badge_set_size(obj, MY_BADGE_SIZE_LARGE)` (`lv_xml_set_variant(obj, "size", "large")` at runtime). An unknown option on the instance falls back to `default` with a warning; in `lv_xml_set_variant()` it's refused and the option is left unchanged. Option names must be unique across a component's variants, a variant name shadows a same-named prop/const/subject, and reordering `options` breaks already exported C.
-
-## Events
-
-All are children of a widget, all take `trigger`:
-
+On the instance:
 ```xml
-<event_cb callback="my_handler" trigger="clicked" user_data="ctx"/>
-<screen_load_event   screen="settings" trigger="clicked" anim_type="fade_in" duration="300"/>
-<screen_create_event screen="about"    trigger="long_pressed"/>
-<set_subject_event subject="subject_lamp" value="2"/>                    <!-- set -->
-<set_subject_event subject="subject_open" value="!subject_open"/>        <!-- toggle -->
-<set_subject_event subject="subject_vol"  value="subject_vol - 5"/>      <!-- increment -->
-<play_timeline_event timeline="timeline_load" target="self" trigger="clicked"/>
+<my_badge size="large" tone="{subject_level > 100 ? danger : normal}"/>
 ```
 
-`trigger` takes three things:
+Option names must be unique across a component's variants, because an option name carries no variant context. From C a variant is set with the generated `my_badge_set_size(obj, MY_BADGE_SIZE_LARGE)`, and reordering `options` breaks already exported C.
 
-| Form | Means |
-| --- | --- |
-| `clicked` | an LVGL event name. The default, and the usual case |
-| `@{expr}` | a condition. Fires on every **false-to-true** edge, and immediately if it's already true at creation. Needs at least one subject |
-| `{expr}` | decided once: true runs the action immediately, false attaches nothing |
+### Slots
 
-`set_subject_event`'s `value` is an expression re-evaluated on **every** fire, written **without** braces (`{}` there would freeze it at creation). The subject's own `min_value`/`max_value` clamp the result. The older `subject_set_*_event`, `subject_toggle_event` and `subject_increment_event` still work, but their `trigger` takes an event name only; `subject_increment_event` is the only one with `rollover`.
-
-`screen_load_event` needs `<screen permanent="true">` on the target; `screen_create_event` needs `permanent="false"` (the default). `event_cb` assumes you implement `void my_handler(lv_event_t * e)` in C, and with a `@{ }` trigger there is no real LVGL event, so don't read the event code in it.
-
-## Expressions
-
-Evaluated **once at creation**, not reactive. For anything that changes at runtime, use data binding.
+Expose an internal UI element so that children can be added to it on an instance:
 
 ```xml
-<lv_obj width="{columns * 100 + (columns - 1) * gap}"/>
-<lv_label text="{'Room ' . room_id . ': ' . temp . ' °C'}"/>
-<lv_obj hidden="{count == 0}"/>
-<lv_obj style_bg_color="{is_on ? 0x00ff00 : 0x333333}"/>
+<!-- card.xml -->
+<component>
+  <api>
+    <slot name="body"/>
+  </api>
+
+  <view flex_flow="column">
+    <lv_label text="Title"/>
+    <lv_obj name="body" flex_flow="column"/>
+  </view>
+</component>
+
+<!-- caller -->
+<card>
+  <card-body style_bg_color="0xf00">
+    <lv_label text="Anything"/>
+  </card-body>
+</card>
 ```
 
-`.` concatenates. Strings use single quotes. Comparisons cannot be chained (`a < b < c`) and ternaries cannot be nested.
+The slot tag is `<component_name-slot_name>`, and normal widget properties can be set on it.
 
-`&&` and `||` exist, but `&` and `<` must be XML-escaped in an attribute value, so prefer the `and` / `or` keywords: `hidden="{a > 10 and a &lt;= 30}"`. Both sides are always evaluated, there is no short-circuiting.
-
-## Animations
+### Animations
 
 ```xml
 <animations>
   <timeline name="timeline_load">
     <animation prop="translate_x" target="self" start="-30" end="0" duration="500" easing="ease_out"/>
     <animation prop="opa" target="label" start="0" end="255" duration="500" delay="200"/>
+    
+    <!-- Add the `show_up` timeline of `icon` here -->
     <include_timeline target="icon" timeline="show_up" delay="300"/>
   </timeline>
 </animations>
@@ -291,43 +274,178 @@ Evaluated **once at creation**, not reactive. For anything that changes at runti
 
 `target="self"` is the `view`; anything else is matched against a child's `name`. Play with `<play_timeline_event>`.
 
+An `<animation>` needs `prop`, `target`, `start` and `end`. `duration` defaults to 1000 ms. `selector` picks the part and state to animate, like on a style. Only the style properties LVGL can interpolate work: the numeric ones, `opa`, and colors. Enums, bools, fonts and image sources cannot be animated.
+
 `easing` (on `<animation>` and `<transition>`) is `linear` (default), `ease_in`, `ease_out`, `ease_in_out`, `overshoot`, `bounce`, `step`, `bezier(x1 y1 x2 y2)` with `x` in `0..1`, or a callback registered with `lv_xml_register_easing_cb()`.
 
-## Slots
+Play an animation with `<play_timeline_event target="self" timeline="timeline_load" trigger="clicked"/>`. That plays the `timeline_load` timeline of `self` (the view) on click. `target` can also be the name of a child, but then the timeline has to be defined by that child. `reverse="true/false"` and `delay="some_ms"` are optional. See more below.
 
-Expose an internal object as a place where the caller can add children:
+### Events
+
+Events are children of a widget. All take `trigger`, which can be
+
+1. An event name. E.g. `clicked`, `value_changed`, `long_pressed`. The full list is in `lvgl_widgets_xml/<version>/globals.xml`, in the `lv_event` enum
+2. Or an expression. The action runs on every false-to-true change, and right away if it is already true at creation. With no subject in it the expression is evaluated once: true runs the action immediately, false attaches nothing
 
 ```xml
-<!-- card.xml -->
-<api><slot name="body"/></api>
-<view>
-  <lv_obj name="body" flex_flow="column"/>
-</view>
+<!-- call a callback -->
+<event_cb callback="my_handler" trigger="clicked" user_data="some_string"/>
 
-<!-- caller -->
-<card>
-  <card-body>
-    <lv_label text="Anything"/>
-  </card-body>
-</card>
+<!-- load a <screen permanent="true"> -->
+<screen_load_event   screen="settings" trigger="clicked" anim_type="fade_in" duration="300"/>
+
+<!-- create a <screen permanent="false"> -->
+<screen_create_event screen="about"    trigger="long_pressed"/>
+
+<!-- set subject -->
+<set_subject_event subject="subject_lamp" value="2"/>
+
+<!-- toggle subject -->
+<set_subject_event subject="subject_open" value="{!subject_open}"/>
+
+<!-- decrement subject -->
+<set_subject_event subject="subject_vol"  value="{subject_vol - 5}"/>
+
+<!-- timeline play on click -->
+<play_timeline_event timeline="timeline_load" target="self" trigger="clicked"/>
+
+<!-- trigger is a data binding, plays when it gets true -->
+<play_timeline_event timeline="timeline_load" target="self" trigger="{subject_error_cnt > 10}"/>
+
+<!-- play backwards when it gets false -->
+<play_timeline_event timeline="timeline_load" target="self" trigger="{subject_error_cnt &lt;= 10}" reverse="true"/>
+
+<!-- always start on creation -->
+<play_timeline_event timeline="timeline_infinite" target="self" trigger="{true}"/>
 ```
 
-The slot target is `<component_name-slot_name>`, and you can set normal object properties on it.
+`set_subject_event`'s `value` is re-evaluated on every fire when it is written as `{ }`, and the subject's own `min_value`/`max_value` clamp the result. A bare literal is written as it is, every time.
 
-## Common mistakes
+`event_cb` assumes you implement `void my_handler(lv_event_t * e)` in C. With an expression trigger there is no real LVGL event behind the call, so don't read the event code in it.
 
-- Inventing an attribute instead of reading `lvgl_widgets_xml/`.
-- Putting `$prop` into a `<style>`. Use a local style property.
-- Expecting `{ }` to update at runtime. It does not, write `@{ }` for that.
-- Expecting a plain prop inside `@{ }` to update. It is snapshotted at creation; add `bindable="true"` if it has to change.
-- `@{ }` in a `<style>`, or on a plain prop of a component instance. Neither can update.
-- Wrapping `set_subject_event`'s `value` in `{ }`, which freezes it at creation.
-- Using `bind_state_*` with a `flag=` attribute, or `bind_flag_*` with `state=`.
-- `screen_load_event` on a screen that isn't `permanent="true"`.
-- Hard-coding `pad="8"` and `bg_color="0x1E232E"` when `{space_md}` and `{color_dark_panel}` already exist in `globals.xml`.
-- Building a component whose only job is one styled widget. Extend it instead: `<view extends="lv_label" style_text_font="font_h3"/>`.
-- Reaching for `<widget>` and C when composition plus binding would do.
-- Centering with flex and forgetting `style_flex_track_place="center"`, which centers the tracks themselves.
+### Images
+
+Images are external resources: register them in the `<images>` block of `globals.xml`, then use the name. `<data>` is compiled into the firmware as a C array, `<file>` is loaded from a file system at runtime. Both point at a **PNG**.
+
+```xml
+<images>
+  <!-- Make a PNG from an SVG or a JPEG, and scale it. Runs before <data> and <file>,
+       so `dest` doesn't have to exist yet. `width`, `height` or `scale`, and a
+       missing axis keeps the aspect ratio -->
+  <convert src="images/icons/home.svg" dest="images/icons/home.png" width="24"/>
+
+  <data name="icon_home" src_path="images/icons/home.png" color_format="argb8888"/>
+  <data name="logo"      src_path="images/logo.png"       color_format="rgb565"/>
+  <file name="avatar"    src_path="images/avatar1.png"/>
+</images>
+```
+
+```xml
+<lv_image src="icon_home"/>
+<lv_obj style_bg_image_src="logo"/>
+```
+
+All the usual color formats work: `i1`-`i8`, `a1`-`a8`, `rgb565`, `rgb565a8`, `rgb888`, `argb8888`. Every `src_path` is relative to the project root.
+
+### Fonts
+
+Fonts are registered in the `<fonts>` block of `globals.xml`, from TTF files. Three engines: `<bin>` renders the glyphs to bitmaps in one size, `<tiny_ttf>` renders from the TTF at runtime and works on MCUs too, `<freetype>` does the same for MPUs. `as_file="false"` compiles the font into the firmware, `as_file="true"` loads it from a file.
+
+```xml
+<fonts>
+  <bin name="font_body" src_path="fonts/Montserrat-Regular.ttf" size="16" bpp="4"
+       range="0x20-0x7F" symbols="°" as_file="false"/>
+  <tiny_ttf name="font_cjk" src_path="fonts/NotoSansSC.ttf" size="24" as_file="false"/>
+</fonts>
+```
+
+```xml
+<styles>
+  <style name="style_title" text_font="font_body"/>
+</styles>
+
+<view>
+  <lv_label text="Title" style_text_font="font_body"/>
+</view>
+```
+
+A `<bin>` font takes `range` and `symbols` to pick the glyphs to include, and `fallback="<other_font>"` to look up the ones it does not have in another font.
+
+### Translations
+
+Translated strings live in `translations.xml`. `languages` lists the language codes, and each `<translation>` has a `tag` that the UI refers to:
+
+```xml
+<translations languages="en de hu">
+  <translation tag="dog" en="The dog" de="Der Hund" hu="A kutya"/>
+  <translation tag="cat" en="The cat" de="Die Katze" hu="A cica"/>
+</translations>
+```
+
+```xml
+<lv_label translation_tag="dog"/>
+```
+
+`translation_tag` is a property of `lv_label`, and setting it makes the label follow the active language. Missing translations fall back, as described in [LVGL's translation module](https://lvgl.io/docs/open/main-modules/translation). The application picks the language with `lv_translation_set_language("de")`.
+
+For Chinese, Japanese or Korean prefer a `<tiny_ttf>` font, which loads any glyph on demand from one TTF. With `<bin>` fonts, chain one font per language with `fallback`.
+
+### Targets
+
+`<targets>` in `project.xml` describes the hardware the UI is built for, and `if_target` then includes or excludes a block for the named targets. Use it to ship different assets, styles or views per display size, instead of writing a second project.
+
+```xml
+<!-- project.xml -->
+<project name="my_ui" lvgl_version="9.6.0">
+  <targets>
+    <target name="large">
+      <display width="800" height="480"/>
+    </target>
+    <target name="small">
+      <display width="480" height="320"/>
+    </target>
+  </targets>
+</project>
+```
+
+```xml
+<!-- globals.xml: the large icons only on the large display.
+     The specific block first, the one without `if_target` last -->
+<consts if_target="large">
+  <int name="icon_size" value="24"/>
+</consts>
+
+<consts>
+  <int name="icon_size" value="16"/>
+</consts>
+
+<images if_target="large">
+  <data name="logo" src_path="images/logo_large.png" color_format="rgb565"/>
+</images>
+
+<images>
+  <data name="logo" src_path="images/logo_normal.png" color_format="rgb565"/>
+</images>
+```
+
+`if_target` works on `<images>`, `<fonts>`, `<styles>`, `<consts>` and, most importantly, `<view>`. Name several targets as `if_target="large|medium"`.
+
+**The first matching block wins, and a block with no `if_target` matches every target.** So the unconditional block has to come last. Put it anywhere earlier and it captures every target, and the specific blocks after it are never reached. Read [Targets](docs/syntax/targets.mdx) before using it on a view.
+
+### Legacy elements
+
+Still supported, and common in older projects. Prefer the current form in new XML:
+
+| Legacy | Current |
+| --- | --- |
+| `$prop`, `#const` | `{prop}`, `{const}` |
+| `<bind_style name="s" subject="x" ref_value="1"/>` | `<style name="s" enabled="{x == 1}"/>` |
+| `<bind_style_prop prop="bg_color" subject="x" .../>` | an expression on a local style property |
+| `<bind_flag_if_eq subject="x" flag="hidden" ref_value="0"/>` | `hidden="{x == 0}"` |
+| `<bind_state_if_gt subject="x" state="checked" ref_value="30"/>` | `checked="{x > 30}"` |
+| `<subject_set_int_event>`, `<subject_toggle_event>`, `<subject_increment_event>` | `<set_subject_event value="{...}"/>` |
+
+`bind_flag_*` takes a `flag`, `bind_state_*` takes a `state`, and both come in `_eq`, `_not_eq`, `_gt`, `_ge`, `_lt`, `_le`. The old subject events take an event name in `trigger`, never a condition, and `<subject_increment_event>` is the only one with `rollover`.
 
 ## Verifying
 
@@ -359,14 +477,120 @@ lvglpro run-all-tests <project>
 
 Every command needs the token. If it isn't set, say the XML is unverified rather than implying it was checked. `lvglpro <command> --help` lists the current options for any command.
 
-Tests are XML too, a `<test>` root with a `<view>` and a `<steps>` block of `click_at`, `wait`, `subject_set`, `subject_compare`, and `screenshot_compare`.
+### Tests
 
-## Where to look things up
+Tests are XML too: a `<test>` root, with the same `<consts>`, `<styles>` and `<view>` as a component, plus a `<steps>` block. Keep them in `tests/`.
 
-| Question                               | Answer                                                                                                                                           |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| What can this tag accept?              | `lvgl_widgets_xml/<version>/lv_*.xml`                                                                                                            |
-| What style properties and enums exist? | `lvgl_widgets_xml/<version>/globals.xml`                                                                                                         |
-| How does feature X work?               | `docs/syntax/*.mdx`                                                                                                                              |
-| What does real, good XML look like?    | `templates/basic/`, `examples/lvgl_open/`, `tutorials/`                                                                                          |
-| Anything about LVGL itself             | The LVGL MCP server at `https://lvgl.mcp.kapa.ai/`, preconfigured in each project's `.mcp.json`. Prefer it over recalling LVGL APIs from memory. |
+A test's `<view>` is built exactly like a component's, so the usual test extends a real screen and drives the actual UI:
+
+```xml
+<test>
+  <view extends="screen_components"/>
+
+  <steps>
+    <!-- Pin every subject the assertions depend on, instead of inheriting
+         whatever globals.xml defaults to today -->
+    <subject_set subject="subject_theme_dark" value="0"/>
+    <wait ms="50"/>
+    <screenshot_compare path="theme_light.png"/>
+
+    <click_at x="436" y="30"/>
+    <wait ms="100"/>
+    <subject_compare subject="subject_theme_dark" value="1"/>
+    <screenshot_compare path="theme_dark.png"/>
+  </steps>
+</test>
+```
+
+A `<view>` of its own works too, and is the right choice to exercise one component without depending on where it sits on a screen:
+
+```xml
+<test width="480" height="320">
+  <view width="100%" height="100%" flex_flow="column" style_pad_all="20">
+    <slider subject="subject_brightness" width="200"/>
+  </view>
+
+  <steps>
+    <subject_set subject="subject_brightness" value="0"/>
+    <wait ms="50"/>
+    <move_to x="40" y="24"/>
+    <wait ms="30"/>
+    <press/>
+    <wait ms="30"/>
+    <move_to x="260" y="24"/>
+    <wait ms="30"/>
+    <release/>
+    <subject_compare subject="subject_brightness" value="100"/>
+  </steps>
+</test>
+```
+
+Give every pointer step a few ms of its own. `move_to` only updates the input position, and LVGL needs a tick to read it, so a press in the same instant registers at the previous position and the drag silently does nothing.
+
+The steps are `click_at` (`x`, `y`), `click_on` (`name` of a widget), `move_to` (`x`, `y`), `press`, `release`, `wait` (`ms`, LVGL keeps running), `freeze` (`ms`, LVGL's time stops), `subject_set`, `subject_compare`, `set_language` (`name` of the language) and `screenshot_compare` (`path`). A missing reference screenshot is created on the first run, and a failed one is saved next to it with an `_err` suffix, so look at that image before changing the test.
+
+```bash
+lvglpro run-all-tests <project>
+lvglpro run-test <project> tests/my_test.xml
+```
+
+## AI Workflow
+
+The loop, per change:
+
+1. **Look it up.** The tag's schema in `lvgl_widgets_xml/<version>/`, the project's `globals.xml` and `components/`, then `docs/syntax/*.mdx` for the feature. LVGL questions go to the MCP server.
+2. **Write the XML.** Small steps, one file at a time.
+3. **`lvglpro validate`.** Fix every error, then re-run. The errors name the file, the line and the attribute.
+4. **`lvglpro screenshot`, then look at the image.** Validation says the XML is legal, not that the UI is right. Check the sizes, the alignment, and that nothing is missing or clipped.
+5. **`lvglpro run-all-tests`** if the project has tests, and add a test for what you changed.
+6. **Report what you could not check.** Without a token nothing was verified, so say so.
+
+Where things are in this repo:
+
+| Path | What is in it |
+| --- | --- |
+| `lvgl_widgets_xml/<version>/lv_*.xml` | The schema of every built-in widget: its exact properties, arguments, enums and elements, with `help` texts. The source of truth for "what can I write on this tag?" |
+| `lvgl_widgets_xml/<version>/globals.xml` | Every style property and enum, including the event names |
+| `docs/syntax/*.mdx` | How each feature works, one page per topic |
+| `examples/lvgl_open/` | 130+ small, focused example screens in one project |
+| `tutorials/` | One screen per concept: styles, layouts, animations, assets, bindings, translations, custom components and widgets, testing |
+| `templates/basic/` | A working project with a small design system and reusable components |
+
+## Authoring tips
+
+What good XML looks like:
+
+- **Start from `globals.xml`.** Use the constants, styles and fonts that are already there. A raw `8` or `0x1E232E` in a view is almost always a token that exists.
+- **One idea per file, and keep it small.** If a component does two things, or its `<view>` nests more than about three levels deep, split it. A repeated block of markup is a component waiting to be written.
+- **Extend instead of wrapping.** If the component is one styled widget, write `<view extends="lv_label" style_text_font="font_h3"/>` rather than a container with one child in it.
+- **Named styles for anything reused, local style properties for one-offs.** A local style property is right for a single value on a single widget, not for the look of a component.
+- **Lay out with flex or grid.** `width="100%"`, `height="content"` and `flex_grow` survive a font change and a different display size; hard-coded `x`/`y` do not.
+- **Give every `<prop>` a `help` and a sensible `default`.** The Editor and the next reader both use them.
+- **Bind, don't call back.** Reach for `<event_cb>` only when C really has to run.
+- **Name only what is referenced.** A `name="..."` is for animation targets, slots, `click_on` in a test, and C lookups. Naming everything is noise.
+- **Add a `<previews>` block** to a component so the Editor can show it on its own, in the sizes it is used at.
+- **Read the diff of your own XML** before handing it over, the same way you would read C.
+
+Naming:
+
+| What | How | Example |
+| --- | --- | --- |
+| File, and so the tag | `lower_snake_case.xml` | `list_item.xml` used as `<list_item/>` |
+| Style | `style_` prefix, state last | `style_card`, `style_card_pressed` |
+| Subject | `subject_` prefix | `subject_brightness` |
+| Timeline | `timeline_` prefix | `timeline_load` |
+| Constant | what it means, not what it is worth | `space_md`, `color_dark_panel`, `radius_default` |
+| Property, variant, slot | what it is, from the caller's side | `title`, `size`, `body` |
+
+## Common mistakes
+
+- Inventing an attribute instead of reading `lvgl_widgets_xml/`.
+- Putting a `prop` or a subject into a `<style>`. Styles are initialized once, before any instance exists. Use a local style property instead.
+- Expecting a `{ }` to update at runtime when it reads no subject, variant, or bindable property.
+- Expecting a plain prop inside a binding to update. It is snapshotted at creation, so add `bindable="true"` if it has to change.
+- Writing `set_subject_event`'s `value` without braces when it has to be re-evaluated on every fire.
+- `screen_load_event` on a screen that isn't `permanent="true"`.
+- Hard-coding `pad="8"` and `bg_color="0x1E232E"` when `{space_md}` and `{color_dark_panel}` already exist in `globals.xml`.
+- Creating a `<widget>` and C when a component with expressions would do the job.
+- Centering with flex and forgetting `style_flex_track_place="center"`, which centers the tracks themselves.
+

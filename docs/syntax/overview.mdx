@@ -16,7 +16,7 @@ LVGL Pro Editor uses standard XML syntax with special conventions for property n
   - Short hex: `0x123`, `#123`, or `123` (all equivalent to `#112233`)
 - **LVGL API alignment**: Follow LVGL naming conventions (e.g., `align="center"`, `bg_color="0xff0000"`)
 - **References**: Use `{ }` to reference anything by name: a `<prop>`, a constant, a subject, or a variant (e.g. `width="{card_width}"`). Inside the braces the name is written plain, and it can be part of a larger [expression](./expressions)
-- **Bindings**: the same expression, reading a [subject](./expressions) or a [variant](./variants). It is re-evaluated whenever one of them changes; an expression without one is evaluated once, when the element is created
+- **Bindings**: the same expression, reading a [subject](./expressions#global-and-local-subjects) or a [variant](./api#variants). It is re-evaluated whenever one of them changes; an expression without one is evaluated once, when the element is created
 - **Legacy references**: `$param_name` for a `<prop>` and `#const_name` for a constant. Each takes a single name, so it can't be part of an expression
 
 ## Names and Scopes

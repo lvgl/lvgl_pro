@@ -2,22 +2,29 @@
 title: Expressions & Data Binding
 description: Compute attribute values in your XML, and let them follow subjects so the UI updates itself.
 faqs:
-  - question: "What is the difference between an expression and a data binding?"
-    answer: "Nothing in the syntax. Both are written in { }. An expression that reads a subject is re-evaluated whenever that subject changes, which is what a binding is. An expression that reads only constants, literals and plain properties is computed once, when the element is created."
+  - question: "How do I write an expression in XML?"
+    answer: "Wrap the value in { }. For example <lv_label hidden=\"{value > 80}\"/>. You can use literals, API properties, constants, local or global subjects, and variants. If a subject or a variant is used, the expression becomes a data binding."
+  - question: "What operations are supported in expressions?"
+    answer: "Arithmetic with + - * / %, comparison with == != < <= > >=, logic with !, and, or, grouping with ( ), concatenation with . and the ternary ? :"
   - question: "What data types are supported for subjects?"
-    answer: "int, float, string, color, and pointer. You define them in globals.xml using <int>, <float>, <string>, <color>, or <pointer> tags with a name and initial value. A pointer subject holds a name, for example an image name, not a real pointer."
+    answer: "int, float, string, color, and pointer. You define them in a <subjects> block with an <int>, <float>, <string>, <color> or <pointer> tag."
+  - question: "What is the difference between an expression and a data binding?"
+    answer: "Nothing in the syntax. Both are written in { }. An expression that reads a subject is re-evaluated whenever that subject changes. An expression that reads only constants, literals and plain properties is computed once, when the element is created."
   - question: "How do I update a subject value from my C code?"
-    answer: "Every subject in globals.xml is exported as a global variable, so include the generated project header and call the normal LVGL setter, for example lv_subject_set_int(&battery_power, 80). All widgets bound to that subject update automatically."
+    answer: "Every subject in globals.xml is exported as a global variable, so include the generated project header and call the normal LVGL setter, for example lv_subject_set_int(battery_power, 80). All widgets bound to that subject update automatically."
   - question: "Can multiple widgets bind to the same subject?"
     answer: "Yes! Multiple widgets can bind to the same subject. When the subject's value changes (either from code or user interaction), all bound widgets automatically update to reflect the new value."
-  - question: "How do I use data binding to show or hide a widget?"
-    answer: "Bind the 'hidden' property to a condition. For example: <lv_obj hidden=\"{some_subject == 0}\"/> will hide the widget when some_subject equals 0."
+
 ---
 
 
+<Callout type="info">
+Expressions require [LVGL Pro Editor v2.0](https://github.com/lvgl/lvgl_pro/releases) or higher. **Reading a subject** in `{ }` requires **Editor v2.1** and **LVGL v9.6**; in earlier versions an expression is always computed once, at creation, and the [legacy binding elements](#legacy-syntax) are the way to follow a subject.
+</Callout>
+
 ## Overview
 
-Any XML attribute value can be an **expression** wrapped in `{ }`. Instead of writing a fixed value, you let LVGL compute it from numbers, colors, strings, constants, properties and subjects.
+Instead of writing a fixed value, like `width="30"`, any value can be an **expression** wrapped in `{ }`. LVGL computes it from numbers, colors, strings, constants, properties and subjects.
 
 ```xml
 <lv_obj width="{base_width * 2}"/>
@@ -25,9 +32,7 @@ Any XML attribute value can be an **expression** wrapped in `{ }`. Instead of wr
 <lv_obj hidden="{subject_item_count == 0}"/>
 ```
 
-An expression is **evaluated where the attribute is used**. Almost every attribute is used while the widget is created, so that is when the expression is computed, and the result is handed to the normal attribute parser exactly as if you had typed the computed value yourself.
-
-If the expression reads a [subject](#defining-subjects), the attribute is used again on every change, so the expression is re-evaluated then too. **That is all a data binding is** — there is no separate syntax for it:
+If the expression reads a global or local [subject](#global-and-local-subjects), or a [variant](#variants), it is re-evaluated and applied on every change. That is a **data binding**.
 
 ```xml
 <!-- `base_width` is a constant: computed once, at creation -->
@@ -37,297 +42,232 @@ If the expression reads a [subject](#defining-subjects), the attribute is used a
 <lv_obj hidden="{subject_item_count == 0}"/>
 ```
 
-A few properties to keep in mind:
 
-- **What it reads decides when it runs.** Constants, literals and plain properties are fixed, so an expression built only from those is computed once. A subject, a [variant](#variants) and a [`bindable` property](#bindable-properties) can change, so an expression reading one keeps up with it.
-- **The result type is inferred from the terms.** You never declare the type, it follows from the literals and variables you use (see [Value types](#value-types)).
-- **Expressions are exported into the generated C code**, not pre-computed to a fixed literal. They are re-evaluated every time the element is created, including when you create a Component manually from C, using the parameter values passed at that moment.
+## Where expressions work
 
-<Callout type="info">
-Expressions require [LVGL Pro Editor v2.0](https://github.com/lvgl/lvgl_pro/releases) or higher. **Reading a subject** in `{ }` requires **Editor v2.1** and **LVGL v9.6**; in earlier versions an expression is always computed once, at creation, and the [legacy binding elements](#legacy-syntax) are the way to follow a subject.
-</Callout>
+An expression works almost everywhere:
 
-<Callout type="info">
-Designing in Figma? You can bind layers to subjects directly in the Figma plugin, no code required. See [Subjects & Data Binding in Figma Flow](../figma/subjects).
-</Callout>
+| Where | Example | Note |
+|---|---|---|
+| Widget property | `<lv_label hidden="{count == 0}"/>` | |
+| Component property | `<my_card title="{'Hi ' . name}"/>` | Make the property [bindable](./api#bindable-properties) to let it follow a subject |
+| Local style property | `<lv_button style_bg_color="{dark ? 0x000 : 0xfff}"/>` | |
+| Style `enabled` | `<style name="style_error" enabled="{subject_error_cnt != 0}"/>` | See [Conditional styles](./styles#conditional-styles) |
+| Event trigger | `<play_timeline_event trigger="{subject_error_cnt == 0}" target="self" timeline="timeline_show_up"/>` | See [Triggers](./events#triggers) |
+| Constant value | `<int name="size_large" value="{base_size * 4}"/>` | Only literals and other constants |
+| Subject value | `<int name="subject_room_temp" value="{const_default_temp}"/>` | Only literals and constants |
+| Style property value | `<style name="style_main" radius="{base_unit * 2}"/>` | Only literals and constants |
 
-## Where the values come from
+The last three are read once, when the file is registered, before any instance exists. A property, subject or variant has no value at that point, so only literals and constants can be used there.
 
-Names are written as **bare identifiers**, without the `$` or `#` prefixes used elsewhere in XML. They are resolved in this order:
+## Data bindings
 
-1. **Per-instance names**: a [variant](#variants), a [`bindable` property](#bindable-properties), or a [local subject](#local-subjects). Each instance has its own, and it shadows a shared name.
-2. **Properties** declared in the element's [`<api>`](./api) as `<prop>`: the value passed at the call site, or the declared `default`.
-3. **Constants** from [`<consts>`](./constants): the type is inferred from the constant's value.
-4. **Variant option names**: an integer constant, the option's index in its variant.
-5. **Subjects**: the component's own `<subjects>` first, then those in `globals.xml`.
-6. **Other named items** the XML processor resolves later (a font, image, or screen name).
+### Global and local subjects
+
+A subject is a data item whose value can be set either from the application or from the UI. When a subject changes, every UI element that reads it is notified. Subjects are the center of data binding: they hold the data, and the interested parties connect to them.
+
+Subjects are declared in a `<subjects>` block, and there are five types:
 
 ```xml
-<component>
-  <consts>
-    <int name="gap" value="8"/>
-  </consts>
-  <api>
-    <prop name="columns" type="int" default="3"/>
-  </api>
+<subjects>
+  <!-- A whole number. `min_value` and `max_value` clamp it -->
+  <int name="battery_power" value="32" min_value="0" max_value="100"/>
 
-  <view>
-    <!-- `gap` is a const, `columns` is a property -->
-    <lv_obj width="{columns * 100 + (columns - 1) * gap}"/>
-  </view>
-</component>
+  <!-- A number with a fraction. `min_value` and `max_value` clamp it too -->
+  <float name="room_temperature" value="21.5"/>
+
+  <!-- A text -->
+  <string name="user_name" value="John"/>
+
+  <!-- A color, written as `0xRRGGBB` or `0xRGB` -->
+  <color name="accent_color" value="0xff8800"/>
+
+  <!-- The name of an image, a font, or anything else XML addresses by name -->
+  <pointer name="avatar" value="img_default_avatar"/>
+</subjects>
 ```
 
-<Callout type="warn">
-`$` and `#` are not used inside an expression. `$param_name` and `#const_name` are the legacy syntax for referencing a single name, so they can't be part of a larger expression.
-</Callout>
-
-### Defining subjects
-
-A subject is a data item whose value can be set either from the application or the UI. Most subjects are global, shared by the whole UI, and created in `globals.xml`:
+A subject declared in `globals.xml` is **global**: there is one of them, and the whole UI shares it.
 
 ```xml
 <globals>
   <subjects>
-    <int name="battery_power" value="32" min_value="0" max_value="100"/>
-    <string name="user_name" value="John"/>
-    <float name="room_temperature" value="21.5"/>
-    <color name="accent_color" value="0xff8800"/>
-    <pointer name="avatar" value="img_default_avatar"/>
+    <int name="subject_room_1" value="30"/>
   </subjects>
 </globals>
 ```
 
-A subject consists of a type, name, and initial value. These types are supported:
-
-| Type | Value | Note |
-|---|---|---|
-| `int` | a whole number | `min_value` and `max_value` clamp it |
-| `float` | a number with a fraction | `min_value` and `max_value` clamp it |
-| `string` | text | |
-| `color` | `0xRRGGBB` or `0xRGB` | |
-| `pointer` | a **name**, not a pointer | for an image, a font, or anything else XML addresses by name |
-
-A `<pointer>` subject holds the name as written, and whoever uses it resolves the name, so `<lv_image src="{avatar}"/>` works for a compiled-in image and for a file just the same.
-
-The initial value can be a constant or an [expression of constants](#outside-the-view), e.g. `<int name="battery_power" value="{full_charge / 2}"/>`.
-
-Every subject in `globals.xml` is exported as a global variable, so C code can write it with the normal LVGL setter and every widget reading it updates:
-
-```c
-lv_subject_set_int(&battery_power, 80);
-```
-
-<Callout type="info">
-Float subjects require `LV_USE_FLOAT` to be enabled in `lv_conf.h`. Without it, the generated code fails to compile.
-</Callout>
-
-### Plain properties are frozen
-
-A plain `<prop>` can be used in an expression, but it is **snapshotted**: its value is frozen into the expression when the instance is created, even next to a subject that keeps changing. That is what lets an instance identify itself inside its own bindings:
+A subject declared in a Component or a Screen is **local**: every instance gets its own copy, private to that instance. Use one for state that only the Component cares about, like which tab is open inside it.
 
 ```xml
-<!-- tab.xml: `index` is a plain <prop>, `active_tab` is a subject -->
-<view extends="lv_button" hidden="{active_tab != index}"/>
-```
-
-```xml
-<!-- Every tab watches the same subject, but compares it to its own index -->
-<tab index="0" text="Home"/>
-<tab index="1" text="Settings"/>
-```
-
-### Bindable properties
-
-<Callout type="info">
-Requires **LVGL Pro Editor v2.1** and **LVGL v9.6**.
-</Callout>
-
-Adding `bindable="true"` gives the property a subject of its own in every instance, so it can change after creation:
-
-```xml
-<!-- thermostat.xml -->
+<!-- card.xml -->
 <component>
   <api>
-    <prop name="reading" type="int" default="20" bindable="true"/>
-    <prop name="unit" type="string" default="C"/>
+    ...
   </api>
 
-  <view extends="lv_obj">
-    <lv_label text="{reading . unit}"/>
-    <lv_bar value="{reading}"/>
-  </view>
-</component>
-```
-
-The property can then be
-
-- set to a starting value, as usual: `<thermostat reading="18"/>`
-- driven by a subject where the Component is used: `<thermostat reading="{subject_kitchen_temp}"/>`
-- read in the Component's own expressions, as `{reading}` above
-- written from C with the generated `thermostat_set_reading()`, and read with `thermostat_get_reading()`
-
-`unit` in the example is a plain property, so `{reading . unit}` follows `reading` and freezes `unit`. Both are per instance: two thermostats can show `18C` and `40%` at the same time.
-
-### Local subjects
-
-<Callout type="info">
-Requires **LVGL Pro Editor v2.1** and **LVGL v9.6**.
-</Callout>
-
-A `<subjects>` section inside a Component or a Screen declares subjects that belong to the **instance**, not to the whole application. Every instance gets its own:
-
-```xml
-<component>
   <subjects>
-    <int name="taps" value="0" min_value="0" max_value="99"/>
+    <int name="local_state" value="0"/>
   </subjects>
 
-  <view extends="lv_button">
-    <lv_label text="{'Tapped ' . taps . ' times'}"/>
-    <set_subject_event subject="taps" value="{taps + 1}" trigger="clicked"/>
+  <view>
+    ...
   </view>
 </component>
 ```
 
-A local subject is private: it can't be set from the outside, so it always starts at its declared `value`. It also shadows a global subject of the same name.
+An initial value can be an expression of literals and constants:
 
-Use a local subject for state that only the Component cares about, like which tab is open inside it. Use a `bindable` property when the value comes from outside, and a global subject when several parts of the UI share it.
+```xml
+<subjects>
+  <int name="subject_room_1" value="{const_default_temp * 2}"/>
+</subjects>
+```
 
-### Following a different subject per instance
+Every global subject is exported as a variable, so C code can write it with the normal LVGL setter, and every widget reading it updates:
+
+```c
+lv_subject_set_int(battery_power, 80);
+```
 
 <Callout type="info">
-Requires **LVGL Pro Editor v2.1** and **LVGL v9.6**.
+Float subjects require `LV_USE_FLOAT` in `lv_conf.h`. Without it, the generated code fails to compile.
 </Callout>
-
-Referencing a subject by name inside a Component makes every instance follow the *same* subject. To let each instance follow a *different* one, declare a `type="subject"` property and pass the subject's name where the Component is used:
-
-```xml
-<!-- room_card.xml -->
-<component>
-  <api>
-    <prop name="temperature" type="subject"/>
-  </api>
-
-  <view extends="lv_obj">
-    <lv_label text="{temperature . ' °C'}"/>
-    <lv_obj style_bg_color="{temperature > 25 ? 0xff8800 : 0x0088ff}"/>
-  </view>
-</component>
-```
-
-```xml
-<!-- screen -->
-<room_card temperature="subject_kitchen_temp"/>
-<room_card temperature="subject_bedroom_temp"/>
-```
-
-The value has to name an existing subject. If it doesn't, the binding is skipped with a warning.
 
 ### Variants
 
-A subject is global, but a Component often needs reactive state of its own, for example whether a badge is `normal` or `danger`. That is what a [variant](./variants) is: a named list of options declared in the Component's `<api>`, with its own value in every instance.
+A variant is like a local subject with a fixed set of named options. It is the readable way to name the looks a Component can take, for example whether a badge is `normal` or `danger`.
 
-A variant is read exactly like a subject, and an option name acts as a constant:
-
-```xml
-<!-- Inside the Component that declares the `tone` variant -->
-<style name="style_danger" enabled="{tone == danger}"/>
-<lv_label text="{tone == danger ? 'Alert' : 'All good'}"/>
-```
+A variant is declared in the Component's `<api>`, and read in an expression like any other name. An option name acts as a constant:
 
 ```xml
-<!-- Where the Component is used, the variant can follow a subject -->
-<my_badge tone="{subject_alarm == 1 ? danger : normal}"/>
+<!-- badge.xml -->
+<component>
+  <api>
+    <variants>
+      <variant name="tone" options="normal danger" default="normal"/>
+    </variants>
+  </api>
+
+  <styles>
+    <style name="style_danger" bg_color="0xff0000" text_color="0xffffff"/>
+  </styles>
+
+  <view extends="lv_obj">
+    <!-- Turn the danger style on, and show the icon, only in the `danger` tone -->
+    <style name="style_danger" enabled="{tone == danger}"/>
+    <lv_image src="img_alert" hidden="{tone == normal}"/>
+  </view>
+</component>
 ```
 
-See [Variants](./variants) for declaring them and for setting an option from C.
-
-## Where expressions work
-
-An expression works on the attributes of **widgets**: on the `<view>` itself, on any widget inside it, and on local style properties (`style_bg_color`, `style_pad_all-pressed`, ...). On a Component instance it works on its [variant](./variants) attributes and on its [`bindable` properties](#bindable-properties).
+Where the Component is used, the variant is picked by name, or by an expression that follows a subject:
 
 ```xml
-<!-- ❌ A style is initialized once, so it can't follow a subject -->
-<style name="style_main" bg_color="{subject_theme_color}"/>
-
-<!-- ❌ `title` is a plain property of my_card, so it would be frozen at creation -->
-<my_card title="{subject_user_name}"/>
-
-<!-- ✅ Common widget properties -->
-<lv_slider hidden="{!subject_settings_show}" disabled="{!subject_settings_active}"/>
-
-<!-- ✅ `text` comes from the `lv_label` that `h3` extends -->
-<h3 text="{'Hi ' . subject_name}"/>
-
-<!-- ✅ `tone` is a variant of my_card -->
-<my_card tone="{subject_alarm == 1 ? danger : normal}"/>
-
-<!-- ✅ `reading` is a `bindable` property of my_card -->
-<my_card reading="{subject_temperature}"/>
-
-<!-- ✅ A whole style switched on and off -->
-<lv_obj>
-  <style name="style_warning" enabled="{subject_temp > 30}"/>
-</lv_obj>
+<badge tone="danger"/>
+<badge tone="{subject_alarm == 1 ? danger : normal}"/>
 ```
 
-A `<style>` element's `enabled` attribute switches a whole style on and off — see [Conditional styles](./styles#conditional-styles). An expression on a `trigger` becomes a [condition](./events#a-condition), and on `<set_subject_event value>` it is [re-evaluated at every fire](./events#set-a-subject-value).
+Learn more about variants on the [API page](./api#variants).
 
-### Outside the view
 
-`<consts>`, `<styles>`, `<subjects>`, `<animations>` and `<gradients>` are processed once, when the component is registered, before any instance of it exists. Expressions work there too, but they can only use **constants and literals**, with every operator, including `and` / `or` and the ternary:
+### Properties in expressions
+
+A Component's `<prop>`s can be read in an expression too. By default a property is not reactive, so:
+
+1. If the expression reads no subject, it is evaluated once, at creation. For example `<lv_label text="{'Hi ' . name}"/>`.
+2. If the expression also reads a subject, the property's value is frozen into the expression at creation, and only the subject keeps it moving. In `<lv_obj hidden="{subject_value > limit}"/>` whatever `limit` was at creation is what `subject_value` is compared against from then on.
+
+Freezing is what lets an instance identify itself inside its own bindings. Every tab below watches the same subject, but compares it to its own `index`:
 
 ```xml
-<consts>
-  <int name="gap" value="8"/>
-  <!-- A constant computed from another one -->
-  <int name="gap_large" value="{gap * 3}"/>
-  <int name="anim_ms" value="150"/>
-  <bool name="dark_theme" value="true"/>
-</consts>
+<!-- tab.xml -->
+<component>
+  <api>
+    <prop name="index" type="int"/>
+  </api>
 
-<styles>
-  <style name="style_card" pad_all="{gap_large}" bg_color="{dark_theme ? 0x101010 : 0xf0f0f0}">
-    <transition props="bg_color" duration="{anim_ms * 2}"/>
-  </style>
-</styles>
-
-<animations>
-  <timeline name="timeline_load">
-    <animation prop="translate_y" target="self" start="{-gap_large}" end="0" duration="{anim_ms}"/>
-  </timeline>
-</animations>
+  <view extends="lv_button" hidden="{subject_active_tab != index}"/>
+</component>
 ```
 
-A **property**, **subject** or **variant** has no value at that point: a property has no instance to take it from, and a subject or variant would have to be read again later, which these sections can't do. Referencing one gives no useful result, and usually an `Invalid expression` warning.
+Add `bindable="true"` to make a property reactive instead:
 
-To make a style follow a subject, put the expression on the `<style>` element in the `<view>` instead, as `enabled="{...}"` or as a local style property.
+```xml
+<!-- card.xml -->
+<component>
+  <api>
+    <prop name="limit" type="int" default="10" bindable="true"/>
+  </api>
 
-An `if_target` block is filtered before its content is processed, so an expression there sees the constants of the current target.
+  <view extends="lv_obj">
+    <lv_label text="{'Limit: ' . limit}"/>
+  </view>
+</component>
+```
 
-## Value types
+Now a subject passed to `limit` keeps reaching it, and every expression inside `card` that reads `limit` is re-evaluated:
 
-Each term has a type, inferred from how it is written:
+```xml
+<card limit="30"/>                            <!-- a literal -->
+<card limit="{const_limit / 2}"/>             <!-- computed once, at creation -->
+<card limit="{subject_current_limit / 2}"/>   <!-- follows the subject -->
+```
 
-| Term | Example | Type |
-|---|---|---|
-| Decimal integer | `42` | int |
-| Number with a fraction | `3.5` | float |
-| Hex literal | `0xff0000`, `0xf00` | color |
-| Single-quoted text | `'hello'` | string |
-| `true` / `false` | `true` | bool |
-| A comparison | `a == b` | bool |
-| A variable | `my_param` | its own type |
+A bindable property still accepts a plain value, as the first line shows. `bindable` only adds the ability to follow a subject, it does not require one. See [Bindable properties](./api#bindable-properties) for the C setter and getter it also generates.
 
-Notes:
 
-- **Colors** accept both the full `0xRRGGBB` form and the `0xRGB` shorthand, which expands like CSS (`0xf00` → `0xff0000`).
-- **Strings** use **single quotes** (`'...'`), since double quotes already delimit the XML attribute.
-- **Floats** require `LV_USE_FLOAT`. Without it, a float degrades to its integer part. Float results are serialized with two decimals in texts (e.g. `3.50`).
-- **The result always reaches the attribute as text**: an int as `42`, a float as `3.50`, a bool as `true` or `false`, a color as `0xRRGGBB`. So a number works directly on a text attribute, and `<lv_label text="{count}"/>` shows `42` without any concatenation.
+## Widget specific bindings
+
+Some widgets (e.g., label, slider) support binding a subject's value directly to the widget. These attributes start with `bind_*` and reference a subject by name, without an expression:
+
+```xml
+<lv_slider bind_value="some_subject"/>
+<lv_label bind_text="some_subject" bind_text-fmt="%03d Volts"/>
+```
+
+Most of these are **two way**: the widget can set the subject and the subject can set the widget too. If the subject's value changes, for example because the user dragged the slider, every widget bound to it is updated automatically.
+
+`lv_label` also accepts a format string, which an expression cannot do, so `bind_text` is the way to control the number of digits or decimals.
+
+Because a `bind_*` attribute names a subject rather than reading one, an expression there yields the *name*, so it can even choose which subject to bind:
+
+```xml
+<lv_slider bind_value="{use_backup ? subject_b : subject_a}"/>
+```
+
+## Subject related events
+
+`<set_subject_event>` writes a subject when its trigger fires. Its `value` is a literal, or a `{ }` expression evaluated **at every fire**, so it can read the subject it writes:
+
+```xml
+<lv_button>
+  <lv_label text="Reset"/>
+  <set_subject_event subject="subject_count" value="0" trigger="clicked"/>
+</lv_button>
+
+<lv_button>
+  <lv_label text="More"/>
+  <set_subject_event subject="subject_count" value="{subject_count + 1}" trigger="clicked"/>
+</lv_button>
+```
+
+A `trigger` also takes a `{ }` **condition**, which fires on every false-to-true change. `{true}` never changes, so it fires once, right after creation. That is how something runs on creation. See [Triggers](./events#triggers) for the whole set, and [Playing timelines](./animations#playing-without-a-click) for the animation cases.
+
+```xml
+<!-- Stamp the time the limit was crossed, and report it afterwards -->
+<set_subject_event trigger="{subject_temp > const_limit}"
+                   subject="subject_over_temp_at" value="{subject_current_time}"/>
+<lv_label text="{'Crossed ' . const_limit . ' at ' . subject_over_temp_at}"
+          hidden="{subject_temp &lt; const_limit}"/>
+```
+
 
 ## Operators
+
+This section lists in detail every operator an expression supports.
+
+You never declare a type. Each term has one, and it follows from how the term is written: `42` is an int, `3.5` a float, `'hello'` a string, `0xff0000` a color, `true` and `false` bools, and a variable takes the type it was declared with. Which operators you may use follows from those types.
 
 ### Arithmetic
 
@@ -338,6 +278,8 @@ Notes:
 <lv_obj height="{total / 3}"/>
 ```
 
+Floats need `LV_USE_FLOAT` in `lv_conf.h`. Without it a literal with a fraction degrades to its integer part, so `3.5` is read as `3` and the whole expression stays integer.
+
 ### Comparison
 
 `==` and `!=` work on any two operands of the **same** type (numbers, strings, colors, or bools). The ordered comparisons `<`, `<=`, `>`, `>=` work on **numbers only**. Every comparison yields a bool.
@@ -346,6 +288,8 @@ Notes:
 <lv_obj hidden="{count == 0}"/>
 <lv_obj checked="{mode != 'dark'}"/>
 ```
+
+A color is written as `0xRRGGBB`, or with the CSS-style `0xRGB` shorthand that expands to it, so `0xf00 == 0xff0000` is true.
 
 Comparisons cannot be **chained**: `a < b < c` is invalid. Each operand of a logical `and`/`or` may contain one comparison, so a range check is written as `a > 10 and a <= 30`.
 
@@ -383,12 +327,16 @@ Both sides are **always evaluated**. There is no short-circuiting, just like wit
 
 ### String concatenation
 
-The `.` operator joins values into a single string. Each operand is automatically stringified: integers and floats as decimals, bools as `true`/`false`, colors as `0xRRGGBB`.
+The `.` operator joins values into a single string. Each operand is automatically stringified: an int as a plain number, a float with two decimals (`3.50`), a bool as `true` or `false`, a color as `0xRRGGBB`.
+
+Text is written in **single quotes**, because double quotes already delimit the XML attribute:
 
 ```xml
 <lv_label text="{'Battery: ' . level . '%'}"/>
 <lv_label text="{first_name . ' ' . last_name}"/>
 ```
+
+The result of any expression reaches the attribute as text anyway, so a lone number needs no concatenation: `<lv_label text="{count}"/>` shows `42`.
 
 ### Ternary
 
@@ -421,6 +369,17 @@ Parentheses `( )` group **arithmetic, comparison, and logical** sub-expressions.
 <lv_obj hidden="{(a or b) and c}"/>
 ```
 
+## Name resolution
+
+Names are written as **bare identifiers**. They are resolved in this order:
+
+1. **Per-instance names**: a [variant](#variants), a [`bindable` property](./api#bindable-properties), or a [local subject](#global-and-local-subjects). Each instance has its own, and it shadows a shared name.
+2. **Properties** declared in the element's [`<api>`](./api) as `<prop>`: the value passed at the call site, or the declared `default`.
+3. **Constants** from [`<consts>`](./constants): the type is inferred from the constant's value.
+4. **Variant option names**: an integer constant, the option's index in its variant.
+5. **Subjects**: the component's own `<subjects>` first, then those in `globals.xml`.
+6. **Other named items** the XML processor resolves later (a font, image, or screen name).
+
 ## XML escaping
 
 An expression lives in an XML attribute value, where a few characters are reserved. This is a property of XML itself, not of the expression syntax:
@@ -443,50 +402,8 @@ An expression lives in an XML attribute value, where a few characters are reserv
 <lv_obj hidden="{10 > count and locked}"/>
 ```
 
-## Widget specific bindings
 
-Some widgets (e.g., label, slider) support binding a subject's value directly to the widget. These attributes start with `bind_*` and reference a subject by name, without an expression:
 
-```xml
-<lv_slider bind_value="some_subject"/>
-<lv_label bind_text="some_subject" bind_text-fmt="%03d Volts"/>
-```
-
-Most of these are **two way**: the widget can set the subject and the subject can set the widget too. If the subject's value changes — for example because the user dragged the slider — every widget bound to it is updated automatically.
-
-`lv_label` also accepts a format string, which an expression cannot do, so `bind_text` is the way to control the number of digits or decimals.
-
-Because a `bind_*` attribute names a subject rather than reading one, an expression there yields the *name*, so it can even choose which subject to bind:
-
-```xml
-<lv_slider bind_value="{use_backup ? subject_b : subject_a}"/>
-```
-
-## Subject related events
-
-`<set_subject_event>` writes a subject when its trigger fires. Its `value` is a literal, or a `{ }` expression evaluated **at every fire**, so it can read the subject it writes:
-
-```xml
-<lv_button>
-  <lv_label text="Reset"/>
-  <set_subject_event subject="subject_count" value="0" trigger="clicked"/>
-</lv_button>
-
-<lv_button>
-  <lv_label text="More"/>
-  <set_subject_event subject="subject_count" value="{subject_count + 1}" trigger="clicked"/>
-</lv_button>
-```
-
-A `trigger` also takes a `{ }` **condition**, which fires on every false-to-true change. `{true}` never changes, so it fires once, right after creation — which is how something runs on creation. See [Triggers](./events#triggers) for the whole set, and [Playing timelines](./animations#playing-without-a-click) for the animation cases.
-
-```xml
-<!-- Stamp the time the limit was crossed, and report it afterwards -->
-<set_subject_event trigger="{subject_temp > const_limit}"
-                   subject="subject_over_temp_at" value="{subject_current_time}"/>
-<lv_label text="{'Crossed ' . const_limit . ' at ' . subject_over_temp_at}"
-          hidden="{subject_temp &lt; const_limit}"/>
-```
 
 ## Legacy syntax
 
@@ -506,3 +423,5 @@ They all still work, and they are the way to follow a subject below LVGL v9.6. W
 ```xml
 <lv_label text="Hello world" hidden="{subject1 == 10}" checked="{subject1 > 20}"/>
 ```
+
+In earlier versions properties and constants were also referenced as `$prop_name` and `#const_name`. Both still work, but each takes a single name, so neither can be part of a larger expression. Inside `{ }` the name is always written plain.

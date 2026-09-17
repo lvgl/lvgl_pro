@@ -6,8 +6,8 @@ Example
 <widget>
     <api>
         <enumdef name="lv_roller_mode" help="How the roller scrolls">
-            <enum name="normal" help="Stop at first and last option"/>
-            <enum name="infinite" help="Scroll endlessly in a loop"/>
+            <enum name="normal" value="0" help="Stop at first and last option"/>
+            <enum name="infinite" value="1" help="Scroll endlessly in a loop"/>
         </enumdef>
 
         <prop name="options" help="Set the roller options">

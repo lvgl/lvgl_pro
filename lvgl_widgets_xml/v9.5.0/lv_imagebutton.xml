@@ -12,12 +12,12 @@
 <widget>
     <api>
         <enumdef name="lv_imagebutton_state" help="Possible states of an image button">
-            <enum name="released" help="Released"/>
-            <enum name="pressed" help="Pressed"/>
-            <enum name="disabled" help="Disabled"/>
-            <enum name="checked_released" help="Checked and released"/>
-            <enum name="checked_pressed" help="Checked and pressed"/>
-            <enum name="checked_disabled" help="Checked and disabled"/>
+            <enum name="released" value="0" help="Released"/>
+            <enum name="pressed" value="1" help="Pressed"/>
+            <enum name="disabled" value="2" help="Disabled"/>
+            <enum name="checked_released" value="3" help="Checked and released"/>
+            <enum name="checked_pressed" value="4" help="Checked and pressed"/>
+            <enum name="checked_disabled" value="5" help="Checked and disabled"/>
         </enumdef>
 
         <prop name="state" type="enum:lv_imagebutton_state" help="The current state of the imagebutton"/>

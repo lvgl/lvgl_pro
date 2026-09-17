@@ -1,0 +1,393 @@
+<screen>
+	<styles>
+		<style name="style_1" text_opa="#num_127" />
+		<style name="style_10" bg_color="#color_f44336" grid_cell_column_pos="0" grid_cell_column_span="1" grid_cell_row_pos="#num_2" grid_cell_row_span="1" grid_cell_x_align="start" grid_cell_y_align="start" height="#num_13" width="#num_13" />
+		<style name="style_11" border_width="0" radius="#num_32767" />
+		<style name="style_12" bg_color="#color_2196f3" grid_cell_column_pos="0" grid_cell_column_span="1" grid_cell_row_pos="#num_3" grid_cell_row_span="1" grid_cell_x_align="start" grid_cell_y_align="start" height="#num_13" width="#num_13" />
+		<style name="style_13" bg_color="#color_4caf50" grid_cell_column_pos="0" grid_cell_column_span="1" grid_cell_row_pos="#num_4" grid_cell_row_span="1" grid_cell_x_align="start" grid_cell_y_align="start" height="#num_13" width="#num_13" />
+		<style name="style_14" length="#num_30" />
+		<style name="style_15" bg_opa="0" />
+		<style name="style_16" arc_color="#color_2196f3" arc_rounded="false" arc_width="#num_10" />
+		<style name="style_17" arc_color="#color_f44336" arc_rounded="false" arc_width="#num_20" />
+		<style name="style_18" arc_color="#color_4caf50" arc_rounded="false" arc_width="#num_30" />
+		<style name="style_19" length="#num_10" />
+		<style name="style_2" text_color="#color_2196f3" />
+		<style name="style_20" length="#num_20" />
+		<style name="style_21" arc_color="#color_4caf50" arc_width="8" />
+		<style name="style_22" line_color="#color_388e3c" line_width="#num_4" />
+		<style name="style_23" arc_color="#color_2196f3" arc_width="8" />
+		<style name="style_24" line_color="#color_1976d2" line_width="#num_4" />
+		<style name="style_25" grid_column_dsc_array="content 5 1fr 1fr" grid_row_dsc_array="1fr 1fr" height="content" layout="grid" width="100%" />
+		<style name="style_26" align="bottom_right" bg_color="#color_ffffff" bg_opa="255" flex_cross_place="center" flex_flow="row" flex_main_place="space_evenly" flex_track_place="center" height="49" layout="flex" pad_right="45" radius="#num_32767" width="49" />
+		<style name="style_27" bg_color="#color_ffffff" />
+		<style name="style_3" grid_cell_column_pos="1" grid_cell_column_span="1" grid_cell_row_pos="1" grid_cell_row_span="#num_2" grid_cell_x_align="stretch" grid_cell_y_align="stretch" layout="grid" />
+		<style name="style_4" arc_opa="0" height="100%" width="100%" />
+		<style name="style_5" arc_color="#color_2196f3" arc_width="#num_15" />
+		<style name="style_6" align="center" arc_opa="0" height="100%" margin_bottom="#num_20" margin_left="#num_20" margin_right="#num_20" margin_top="#num_20" width="100%" />
+		<style name="style_7" arc_color="#color_f44336" arc_width="#num_15" />
+		<style name="style_8" align="center" arc_opa="0" height="100%" margin_bottom="#num_40" margin_left="#num_40" margin_right="#num_40" margin_top="#num_40" width="100%" />
+		<style name="style_9" arc_color="#color_4caf50" arc_width="#num_15" />
+	</styles>
+	<view>
+		<lv_tabview height="100%" width="100%" style_flex_flow="column" style_layout="flex">
+			<!-- TODO: implement tabview_delete_event_cb() -->
+			<event_cb callback="tabview_delete_event_cb" trigger="delete" />
+			<lv_tabview-tab_bar height="75" width="100%" style_flex_flow="row" style_layout="flex" style_pad_left="400">
+				<lv_image align="left_mid" x="-375" src="img_lvgl_logo" ignore_layout="true" />
+				<!-- TODO: text_font was lv_font_montserrat_24: declare it in globals.xml and set the font here -->
+				<lv_label align="top_left" x="-323" y="16" text="LVGL v9.5.0" ignore_layout="true" />
+				<lv_label align="top_left" x="-323" y="#num_40" text="Widgets demo" ignore_layout="true">
+					<style name="style_1" />
+				</lv_label>
+			</lv_tabview-tab_bar>
+			<lv_tabview-tab height="100%" width="100%" text="Profile" style_grid_column_dsc_array="1fr 1fr" style_grid_row_dsc_array="content content" style_layout="grid">
+				<lv_obj height="content" style_grid_cell_column_pos="0" style_grid_cell_column_span="#num_2" style_grid_cell_row_pos="0" style_grid_cell_row_span="1" style_grid_cell_x_align="stretch" style_grid_cell_y_align="center" style_grid_column_dsc_array="content 5 content 2fr 1fr 1fr" style_grid_row_dsc_array="content content 10 content content" style_layout="grid">
+					<lv_image src="img_demo_widgets_avatar" style_grid_cell_column_pos="0" style_grid_cell_column_span="1" style_grid_cell_row_pos="0" style_grid_cell_row_span="#num_5" style_grid_cell_x_align="center" style_grid_cell_y_align="center" />
+					<!-- TODO: text_font was lv_font_montserrat_24: declare it in globals.xml and set the font here -->
+					<lv_label text="Elena Smith" style_grid_cell_column_pos="#num_2" style_grid_cell_column_span="#num_2" style_grid_cell_row_pos="0" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="center" />
+					<lv_label text="This is a short description of me. Take a look at my profile!" style_grid_cell_column_pos="#num_2" style_grid_cell_column_span="#num_4" style_grid_cell_row_pos="1" style_grid_cell_row_span="1" style_grid_cell_x_align="stretch" style_grid_cell_y_align="start">
+						<style name="style_1" />
+					</lv_label>
+					<!-- TODO: text_font was lv_font_montserrat_24: declare it in globals.xml and set the font here -->
+					<lv_label text="" style_grid_cell_column_pos="#num_2" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_3" style_grid_cell_row_span="1" style_grid_cell_x_align="center" style_grid_cell_y_align="center">
+						<style name="style_2" />
+					</lv_label>
+					<lv_label text="elena@smith.com" style_grid_cell_column_pos="#num_3" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_3" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="center" />
+					<!-- TODO: text_font was lv_font_montserrat_24: declare it in globals.xml and set the font here -->
+					<lv_label text="" style_grid_cell_column_pos="#num_2" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_4" style_grid_cell_row_span="1" style_grid_cell_x_align="center" style_grid_cell_y_align="center">
+						<style name="style_2" />
+					</lv_label>
+					<lv_label text="+79 246 123 4567" style_grid_cell_column_pos="#num_3" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_4" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="center" />
+					<lv_button height="content" style_grid_cell_column_pos="#num_4" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_3" style_grid_cell_row_span="#num_2" style_grid_cell_x_align="stretch" style_grid_cell_y_align="center">
+						<lv_label align="center" text="Log out" />
+					</lv_button>
+					<lv_button height="content" disabled="true" style_grid_cell_column_pos="#num_5" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_3" style_grid_cell_row_span="#num_2" style_grid_cell_x_align="stretch" style_grid_cell_y_align="center">
+						<lv_label align="center" text="Invite" />
+					</lv_button>
+				</lv_obj>
+				<lv_obj height="content" style_grid_cell_column_pos="0" style_grid_cell_column_span="1" style_grid_cell_row_pos="1" style_grid_cell_row_span="1" style_grid_cell_x_align="stretch" style_grid_cell_y_align="start" style_grid_column_dsc_array="1fr 1fr" style_grid_row_dsc_array="content 5 content 30 5 content 30" style_layout="grid">
+					<!-- TODO: text_font was lv_font_montserrat_24: declare it in globals.xml and set the font here -->
+					<lv_label text="Your profile" style_grid_cell_column_pos="0" style_grid_cell_column_span="#num_2" style_grid_cell_row_pos="0" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="center" />
+					<lv_label text="User name" style_grid_cell_column_pos="0" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_2" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="start">
+						<style name="style_1" />
+					</lv_label>
+					<lv_textarea height="content" one_line="true" placeholder_text="Your name" style_grid_cell_column_pos="0" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_3" style_grid_cell_row_span="1" style_grid_cell_x_align="stretch" style_grid_cell_y_align="center">
+						<!-- TODO: implement ta_event_cb() -->
+						<event_cb callback="ta_event_cb" trigger="all" />
+					</lv_textarea>
+					<lv_label text="Password" style_grid_cell_column_pos="1" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_2" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="start">
+						<style name="style_1" />
+					</lv_label>
+					<lv_textarea height="content" one_line="true" placeholder_text="Min. 8 chars." style_grid_cell_column_pos="1" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_3" style_grid_cell_row_span="1" style_grid_cell_x_align="stretch" style_grid_cell_y_align="center">
+						<!-- TODO: implement ta_event_cb() -->
+						<event_cb callback="ta_event_cb" trigger="all" />
+					</lv_textarea>
+					<lv_label text="Gender" style_grid_cell_column_pos="0" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_5" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="start">
+						<style name="style_1" />
+					</lv_label>
+					<lv_dropdown options="Male&#10;Female&#10;Other" style_grid_cell_column_pos="0" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_6" style_grid_cell_row_span="1" style_grid_cell_x_align="stretch" style_grid_cell_y_align="center" />
+					<lv_label text="Birthday" style_grid_cell_column_pos="1" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_5" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="start">
+						<style name="style_1" />
+					</lv_label>
+					<lv_textarea height="content" one_line="true" style_grid_cell_column_pos="1" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_6" style_grid_cell_row_span="1" style_grid_cell_x_align="stretch" style_grid_cell_y_align="center">
+						<!-- TODO: implement birthday_event_cb() -->
+						<event_cb callback="birthday_event_cb" trigger="all" />
+					</lv_textarea>
+				</lv_obj>
+				<lv_obj style_grid_cell_column_pos="1" style_grid_cell_column_span="1" style_grid_cell_row_pos="1" style_grid_cell_row_span="1" style_grid_cell_x_align="stretch" style_grid_cell_y_align="stretch" style_grid_column_dsc_array="1fr 1fr" style_grid_row_dsc_array="content 5 content 30 5 content 30" style_layout="grid">
+					<!-- TODO: text_font was lv_font_montserrat_24: declare it in globals.xml and set the font here -->
+					<lv_label text="Your skills" style_grid_cell_column_pos="0" style_grid_cell_column_span="#num_2" style_grid_cell_row_pos="0" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="center" />
+					<lv_label text="Experience" style_grid_cell_column_pos="0" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_2" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="start">
+						<style name="style_1" />
+					</lv_label>
+					<lv_slider width="95%" send_draw_task_events="true" style_grid_cell_column_pos="0" style_grid_cell_column_span="#num_2" style_grid_cell_row_pos="#num_3" style_grid_cell_row_span="1" style_grid_cell_x_align="center" style_grid_cell_y_align="center">
+						<!-- TODO: implement slider_event_cb() -->
+						<event_cb callback="slider_event_cb" trigger="all" />
+					</lv_slider>
+					<lv_label text="Team player" style_grid_cell_column_pos="1" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_5" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="start">
+						<style name="style_1" />
+					</lv_label>
+					<lv_switch style_grid_cell_column_pos="0" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_6" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="center" />
+					<lv_label text="Hard-working" style_grid_cell_column_pos="0" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_5" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="start">
+						<style name="style_1" />
+					</lv_label>
+					<lv_switch style_grid_cell_column_pos="1" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_6" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="center" />
+				</lv_obj>
+			</lv_tabview-tab>
+			<lv_tabview-tab height="100%" width="100%" text="Analytics" style_flex_flow="row" style_layout="flex">
+				<lv_obj flex_grow="1" height="100%" style_grid_column_dsc_array="40 1fr" style_grid_row_dsc_array="content 1fr 40" style_layout="grid" style_max_height="#num_300" style_pad_column="0" style_pad_row="0">
+					<!-- TODO: text_font was lv_font_montserrat_24: declare it in globals.xml and set the font here -->
+					<lv_label text="Unique visitors" style_grid_cell_column_pos="0" style_grid_cell_column_span="1" style_grid_cell_row_pos="0" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="stretch" />
+					<lv_scale major_tick_every="2" mode="vertical_left" style_grid_cell_column_pos="0" style_grid_cell_column_span="1" style_grid_cell_row_pos="1" style_grid_cell_row_span="1" style_grid_cell_x_align="end" style_grid_cell_y_align="stretch" style_pad_bottom="#num_11" style_pad_top="#num_11" />
+					<lv_obj>
+						<remove_style selector="main" />
+						<style name="style_3" />
+						<lv_chart width="200%" hor_div_line_count="0" point_count="12" ver_div_line_count="12" scroll_on_focus="true" send_draw_task_events="true" style_border_width="0" style_grid_cell_column_pos="0" style_grid_cell_column_span="1" style_grid_cell_row_pos="0" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="stretch" style_radius="0">
+							<lv_chart-series color="0x2196f3" values="41 69 63 68 79 70 27 73 56 20 21 49" />
+							<!-- TODO: implement chart_event_cb() -->
+							<event_cb callback="chart_event_cb" trigger="all" />
+						</lv_chart>
+						<lv_scale height="#num_40" width="200%" major_tick_every="1" text_src="'Jan' 'Feb' 'March' 'April' 'May' 'Jun' 'July' 'Aug' 'Sept' 'Oct' 'Nov' 'Dec'" total_tick_count="12" style_grid_cell_column_pos="0" style_grid_cell_column_span="1" style_grid_cell_row_pos="1" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="start" style_pad_left="#num_11" style_pad_right="#num_11" />
+					</lv_obj>
+				</lv_obj>
+				<lv_obj flex_grow="1" height="100%" flex_in_new_track="true" style_grid_column_dsc_array="40 1fr" style_grid_row_dsc_array="content 1fr 40" style_layout="grid" style_max_height="#num_300" style_pad_column="0" style_pad_row="0">
+					<!-- TODO: text_font was lv_font_montserrat_24: declare it in globals.xml and set the font here -->
+					<lv_label text="Monthly revenue" style_grid_cell_column_pos="0" style_grid_cell_column_span="1" style_grid_cell_row_pos="0" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="stretch" />
+					<lv_scale major_tick_every="2" mode="vertical_left" style_grid_cell_column_pos="0" style_grid_cell_column_span="1" style_grid_cell_row_pos="1" style_grid_cell_row_span="1" style_grid_cell_x_align="end" style_grid_cell_y_align="stretch" style_pad_bottom="#num_11" style_pad_top="#num_11" />
+					<lv_obj>
+						<remove_style selector="main" />
+						<style name="style_3" />
+						<lv_chart width="200%" hor_div_line_count="0" point_count="12" type="bar" ver_div_line_count="12" scroll_on_focus="true" send_draw_task_events="true" style_border_width="0" style_grid_cell_column_pos="0" style_grid_cell_column_span="1" style_grid_cell_row_pos="0" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="stretch" style_radius="0">
+							<lv_chart-series color="0x9e9e9e" values="62 25 22 15 17 54 75 72 41 79 31 43" />
+							<lv_chart-series color="0x2196f3" values="58 51 77 24 32 33 21 72 71 48 16 74" />
+							<!-- TODO: implement chart_event_cb() -->
+							<event_cb callback="chart_event_cb" trigger="all" />
+						</lv_chart>
+						<lv_scale height="#num_40" width="200%" major_tick_every="1" text_src="'I' 'II' 'III' 'IV' 'V' 'VI' 'VII' 'VIII' 'IX' 'X' 'XI' 'XII'" total_tick_count="12" style_grid_cell_column_pos="0" style_grid_cell_column_span="1" style_grid_cell_row_pos="1" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="start" style_pad_left="62" style_pad_right="62" />
+					</lv_obj>
+				</lv_obj>
+				<lv_obj flex_grow="1" height="content" flex_in_new_track="true" style_grid_column_dsc_array="content 1fr" style_grid_row_dsc_array="content content content content content" style_layout="grid">
+					<!-- TODO: text_font was lv_font_montserrat_24: declare it in globals.xml and set the font here -->
+					<lv_label text="Monthly Target" style_grid_cell_column_pos="0" style_grid_cell_column_span="#num_2" style_grid_cell_row_pos="0" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="start" />
+					<lv_scale height="#num_196" width="100%" mode="round_outer" post_draw="true" style_grid_cell_column_pos="0" style_grid_cell_column_span="#num_2" style_grid_cell_row_pos="1" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="start" style_pad_bottom="#num_30" style_pad_left="#num_30" style_pad_right="#num_30" style_pad_top="#num_30">
+						<lv_arc end_angle="189" value="20" clickable="false">
+							<remove_style selector="knob" />
+							<remove_style selector="main" />
+							<style name="style_4" />
+							<style name="style_5" selector="indicator" />
+						</lv_arc>
+						<lv_arc end_angle="189" value="20" clickable="false">
+							<remove_style selector="knob" />
+							<style name="style_6" />
+							<style name="style_7" selector="indicator" />
+						</lv_arc>
+						<lv_arc end_angle="189" value="20" clickable="false">
+							<remove_style selector="knob" />
+							<style name="style_8" />
+							<style name="style_9" selector="indicator" />
+						</lv_arc>
+					</lv_scale>
+					<lv_obj>
+						<remove_style selector="scrollbar" />
+						<style name="style_10" />
+						<style name="style_11" />
+					</lv_obj>
+					<lv_label text="Revenue: 20 %" style_grid_cell_column_pos="1" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_2" style_grid_cell_row_span="1" style_grid_cell_x_align="stretch" style_grid_cell_y_align="start" />
+					<lv_obj>
+						<remove_style selector="scrollbar" />
+						<style name="style_12" />
+						<style name="style_11" />
+					</lv_obj>
+					<lv_label text="Sales: -" style_grid_cell_column_pos="1" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_3" style_grid_cell_row_span="1" style_grid_cell_x_align="stretch" style_grid_cell_y_align="start" />
+					<lv_obj>
+						<remove_style selector="scrollbar" />
+						<style name="style_13" />
+						<style name="style_11" />
+					</lv_obj>
+					<lv_label text="Costs: -" style_grid_cell_column_pos="1" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_4" style_grid_cell_row_span="1" style_grid_cell_x_align="stretch" style_grid_cell_y_align="start" />
+				</lv_obj>
+				<lv_obj flex_grow="1" height="content" style_grid_column_dsc_array="content 1fr" style_grid_row_dsc_array="content content content content content" style_layout="grid">
+					<!-- TODO: text_font was lv_font_montserrat_24: declare it in globals.xml and set the font here -->
+					<lv_label text="Sessions" style_grid_cell_column_pos="0" style_grid_cell_column_span="#num_2" style_grid_cell_row_pos="0" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="start" />
+					<lv_scale height="#num_196" width="100%" angle_range="360" major_tick_every="1" mode="round_inner" post_draw="true" text_src="'0' '10' '20' '30' '40' '50' '60' '70' '80' '90'" style_grid_cell_column_pos="0" style_grid_cell_column_span="#num_2" style_grid_cell_row_pos="1" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="start">
+						<style name="style_14" selector="indicator" />
+						<!-- TODO: implement delete_timer_event_cb() -->
+						<event_cb callback="delete_timer_event_cb" trigger="delete" />
+						<lv_arc align="center" height="100%" width="100%" clickable="false" style_arc_opa="0" style_margin_bottom="#num_10" style_margin_left="#num_10" style_margin_right="#num_10" style_margin_top="#num_10">
+							<style name="style_15" selector="knob" />
+							<style name="style_16" selector="indicator" />
+						</lv_arc>
+						<lv_arc align="center" height="100%" width="100%" clickable="false" style_arc_opa="0" style_margin_bottom="#num_5" style_margin_left="#num_5" style_margin_right="#num_5" style_margin_top="#num_5">
+							<style name="style_15" selector="knob" />
+							<style name="style_17" selector="indicator" />
+						</lv_arc>
+						<lv_arc align="center" height="100%" width="100%" clickable="false" style_arc_opa="0">
+							<style name="style_15" selector="knob" />
+							<style name="style_18" selector="indicator" />
+						</lv_arc>
+					</lv_scale>
+					<lv_obj>
+						<remove_style selector="scrollbar" />
+						<style name="style_10" />
+						<style name="style_11" />
+					</lv_obj>
+					<lv_label text="Desktop: -" style_grid_cell_column_pos="1" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_2" style_grid_cell_row_span="1" style_grid_cell_x_align="stretch" style_grid_cell_y_align="start" />
+					<lv_obj>
+						<remove_style selector="scrollbar" />
+						<style name="style_12" />
+						<style name="style_11" />
+					</lv_obj>
+					<lv_label text="Tablet: -" style_grid_cell_column_pos="1" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_3" style_grid_cell_row_span="1" style_grid_cell_x_align="stretch" style_grid_cell_y_align="start" />
+					<lv_obj>
+						<remove_style selector="scrollbar" />
+						<style name="style_13" />
+						<style name="style_11" />
+					</lv_obj>
+					<lv_label text="Mobile: -" style_grid_cell_column_pos="1" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_4" style_grid_cell_row_span="1" style_grid_cell_x_align="stretch" style_grid_cell_y_align="start" />
+				</lv_obj>
+				<lv_obj flex_grow="1" height="content" style_grid_column_dsc_array="content 1fr" style_grid_row_dsc_array="content content content content content" style_layout="grid">
+					<!-- TODO: text_font was lv_font_montserrat_24: declare it in globals.xml and set the font here -->
+					<lv_label text="Network Speed" style_grid_cell_column_pos="0" style_grid_cell_column_span="#num_2" style_grid_cell_row_pos="0" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="start" />
+					<lv_scale height="#num_196" width="100%" angle_range="225" major_tick_every="4" max_value="60" min_value="10" mode="round_inner" post_draw="true" total_tick_count="21" style_grid_cell_column_pos="0" style_grid_cell_column_span="#num_2" style_grid_cell_row_pos="1" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="start">
+						<style name="style_19" selector="items" />
+						<style name="style_20" selector="indicator" />
+						<lv_scale-section min_value="40" max_value="60" style_main="style_21" style_indicator="style_22" style_items="style_22" />
+						<lv_scale-section min_value="0" max_value="20" style_main="style_23" style_indicator="style_24" style_items="style_24" />
+						<!-- TODO: implement scale3_delete_event_cb() -->
+						<event_cb callback="scale3_delete_event_cb" trigger="delete" />
+						<!-- TODO: implement scale3_size_changed_event_cb() -->
+						<event_cb callback="scale3_size_changed_event_cb" trigger="size_changed" />
+						<lv_image align="center" x="47" y="-2" pivot_x="3" pivot_y="4" rotation="1350" src="img_demo_widgets_needle">
+							<!-- TODO: implement needle_deleted_cb() -->
+							<event_cb callback="needle_deleted_cb" trigger="delete" />
+						</lv_image>
+						<!-- TODO: text_font was lv_font_montserrat_24: declare it in globals.xml and set the font here -->
+						<lv_label align="top_mid" x="#num_10" y="55%" text="10" />
+						<lv_label align="top_left" x="131" y="116" text="Mbps" />
+					</lv_scale>
+					<lv_obj>
+						<remove_style selector="scrollbar" />
+						<style name="style_10" />
+						<style name="style_11" />
+					</lv_obj>
+					<lv_label text="Low speed" style_grid_cell_column_pos="1" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_2" style_grid_cell_row_span="1" style_grid_cell_x_align="stretch" style_grid_cell_y_align="start" />
+					<lv_obj>
+						<remove_style selector="scrollbar" />
+						<style name="style_12" />
+						<style name="style_11" />
+					</lv_obj>
+					<lv_label text="Normal Speed" style_grid_cell_column_pos="1" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_3" style_grid_cell_row_span="1" style_grid_cell_x_align="stretch" style_grid_cell_y_align="start" />
+					<lv_obj>
+						<remove_style selector="scrollbar" />
+						<style name="style_13" />
+						<style name="style_11" />
+					</lv_obj>
+					<lv_label text="High Speed" style_grid_cell_column_pos="1" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_4" style_grid_cell_row_span="1" style_grid_cell_x_align="stretch" style_grid_cell_y_align="start" />
+				</lv_obj>
+			</lv_tabview-tab>
+			<lv_tabview-tab height="100%" width="100%" text="Shop" style_flex_flow="row_wrap" style_layout="flex">
+				<lv_obj height="content" width="100%" style_grid_column_dsc_array="1fr 1fr" style_grid_row_dsc_array="content content 20 content content" style_layout="grid" style_pad_bottom="#num_30">
+					<!-- TODO: text_font was lv_font_montserrat_24: declare it in globals.xml and set the font here -->
+					<lv_label text="Monthly Summary" style_grid_cell_column_pos="0" style_grid_cell_column_span="1" style_grid_cell_row_pos="0" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="start" />
+					<!-- TODO: text_font was lv_font_montserrat_24: declare it in globals.xml and set the font here -->
+					<lv_label text="8-15 July, 2021" style_grid_cell_column_pos="0" style_grid_cell_column_span="1" style_grid_cell_row_pos="1" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="start">
+						<style name="style_1" />
+					</lv_label>
+					<!-- TODO: text_font was lv_font_montserrat_24: declare it in globals.xml and set the font here -->
+					<lv_label text="{'$27,123.25'}" style_grid_cell_column_pos="0" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_3" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="start" />
+					<lv_label text=" 17% growth this week" style_grid_cell_column_pos="0" style_grid_cell_column_span="1" style_grid_cell_row_pos="#num_4" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="start" style_text_color="#color_4caf50" />
+					<lv_chart height="100%" width="100%" hor_div_line_count="6" point_count="7" type="stacked" ver_div_line_count="0" style_grid_cell_column_pos="1" style_grid_cell_column_span="1" style_grid_cell_row_pos="0" style_grid_cell_row_span="#num_5" style_grid_cell_x_align="stretch" style_grid_cell_y_align="stretch" style_pad_column="24">
+						<lv_chart-series color="0x4caf50" values="24 21 25 30 36 33 38" />
+						<lv_chart-series color="0x2196f3" values="15 20 27 16 29 15 23" />
+						<lv_chart-series color="0xf44336" values="21 22 23 22 29 29 27" />
+						<!-- TODO: implement shop_chart_event_cb() -->
+						<event_cb callback="shop_chart_event_cb" trigger="all" />
+					</lv_chart>
+				</lv_obj>
+				<lv_obj flex_grow="1" height="100%" flex_in_new_track="true" style_flex_flow="column" style_layout="flex" style_max_height="#num_300">
+					<!-- TODO: text_font was lv_font_montserrat_24: declare it in globals.xml and set the font here -->
+					<lv_label text="Top products" />
+					<lv_obj>
+						<remove_style_all />
+						<style name="style_25" />
+						<lv_image src="img_clothes" style_grid_cell_column_pos="0" style_grid_cell_column_span="1" style_grid_cell_row_pos="0" style_grid_cell_row_span="#num_2" style_grid_cell_x_align="start" style_grid_cell_y_align="start" />
+						<lv_label text="Blue T-shirt" style_grid_cell_column_pos="#num_2" style_grid_cell_column_span="1" style_grid_cell_row_pos="0" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="end" />
+						<lv_label text="Clothes" style_grid_cell_column_pos="#num_2" style_grid_cell_column_span="1" style_grid_cell_row_pos="1" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="start">
+							<style name="style_1" />
+						</lv_label>
+						<lv_label text="{'$722'}" style_grid_cell_column_pos="#num_3" style_grid_cell_column_span="1" style_grid_cell_row_pos="0" style_grid_cell_row_span="1" style_grid_cell_x_align="end" style_grid_cell_y_align="end" />
+					</lv_obj>
+					<lv_obj>
+						<remove_style_all />
+						<style name="style_25" />
+						<lv_image src="img_clothes" style_grid_cell_column_pos="0" style_grid_cell_column_span="1" style_grid_cell_row_pos="0" style_grid_cell_row_span="#num_2" style_grid_cell_x_align="start" style_grid_cell_y_align="start" />
+						<lv_label text="Blue T-shirt" style_grid_cell_column_pos="#num_2" style_grid_cell_column_span="1" style_grid_cell_row_pos="0" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="end" />
+						<lv_label text="Clothes" style_grid_cell_column_pos="#num_2" style_grid_cell_column_span="1" style_grid_cell_row_pos="1" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="start">
+							<style name="style_1" />
+						</lv_label>
+						<lv_label text="{'$411'}" style_grid_cell_column_pos="#num_3" style_grid_cell_column_span="1" style_grid_cell_row_pos="0" style_grid_cell_row_span="1" style_grid_cell_x_align="end" style_grid_cell_y_align="end" />
+					</lv_obj>
+					<lv_obj>
+						<remove_style_all />
+						<style name="style_25" />
+						<lv_image src="img_clothes" style_grid_cell_column_pos="0" style_grid_cell_column_span="1" style_grid_cell_row_pos="0" style_grid_cell_row_span="#num_2" style_grid_cell_x_align="start" style_grid_cell_y_align="start" />
+						<lv_label text="Blue T-shirt" style_grid_cell_column_pos="#num_2" style_grid_cell_column_span="1" style_grid_cell_row_pos="0" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="end" />
+						<lv_label text="Clothes" style_grid_cell_column_pos="#num_2" style_grid_cell_column_span="1" style_grid_cell_row_pos="1" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="start">
+							<style name="style_1" />
+						</lv_label>
+						<lv_label text="{'$917'}" style_grid_cell_column_pos="#num_3" style_grid_cell_column_span="1" style_grid_cell_row_pos="0" style_grid_cell_row_span="1" style_grid_cell_x_align="end" style_grid_cell_y_align="end" />
+					</lv_obj>
+					<lv_obj>
+						<remove_style_all />
+						<style name="style_25" />
+						<lv_image src="img_clothes" style_grid_cell_column_pos="0" style_grid_cell_column_span="1" style_grid_cell_row_pos="0" style_grid_cell_row_span="#num_2" style_grid_cell_x_align="start" style_grid_cell_y_align="start" />
+						<lv_label text="Blue T-shirt" style_grid_cell_column_pos="#num_2" style_grid_cell_column_span="1" style_grid_cell_row_pos="0" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="end" />
+						<lv_label text="Clothes" style_grid_cell_column_pos="#num_2" style_grid_cell_column_span="1" style_grid_cell_row_pos="1" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="start">
+							<style name="style_1" />
+						</lv_label>
+						<lv_label text="{'$64'}" style_grid_cell_column_pos="#num_3" style_grid_cell_column_span="1" style_grid_cell_row_pos="0" style_grid_cell_row_span="1" style_grid_cell_x_align="end" style_grid_cell_y_align="end" />
+					</lv_obj>
+					<lv_obj>
+						<remove_style_all />
+						<style name="style_25" />
+						<lv_image src="img_clothes" style_grid_cell_column_pos="0" style_grid_cell_column_span="1" style_grid_cell_row_pos="0" style_grid_cell_row_span="#num_2" style_grid_cell_x_align="start" style_grid_cell_y_align="start" />
+						<lv_label text="Blue T-shirt" style_grid_cell_column_pos="#num_2" style_grid_cell_column_span="1" style_grid_cell_row_pos="0" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="end" />
+						<lv_label text="Clothes" style_grid_cell_column_pos="#num_2" style_grid_cell_column_span="1" style_grid_cell_row_pos="1" style_grid_cell_row_span="1" style_grid_cell_x_align="start" style_grid_cell_y_align="start">
+							<style name="style_1" />
+						</lv_label>
+						<lv_label text="{'$805'}" style_grid_cell_column_pos="#num_3" style_grid_cell_column_span="1" style_grid_cell_row_pos="0" style_grid_cell_row_span="1" style_grid_cell_x_align="end" style_grid_cell_y_align="end" />
+					</lv_obj>
+				</lv_obj>
+				<lv_obj flex_grow="1" height="100%" style_flex_flow="column" style_layout="flex" style_max_height="#num_300">
+					<!-- TODO: text_font was lv_font_montserrat_24: declare it in globals.xml and set the font here -->
+					<lv_label text="Notification" />
+					<lv_checkbox text="Item purchased" />
+					<lv_checkbox text="New connection" />
+					<lv_checkbox text="New subscriber" checked="true" />
+					<lv_checkbox text="New message" disabled="true" />
+					<lv_checkbox text="Milestone reached" checked="true" disabled="true" />
+					<lv_checkbox text="Out of stock" />
+				</lv_obj>
+			</lv_tabview-tab>
+			<lv_obj floating="true">
+				<remove_style_all />
+				<style name="style_26" />
+				<lv_button height="#num_20" width="#num_20" scroll_on_focus="false" style_bg_color="#color_2196f3" style_opa="0" style_radius="#num_32767">
+					<!-- TODO: implement color_event_cb() -->
+					<event_cb callback="color_event_cb" trigger="all" />
+				</lv_button>
+				<lv_button height="#num_20" width="#num_20" scroll_on_focus="false" style_bg_color="#color_4caf50" style_opa="0" style_radius="#num_32767">
+					<!-- TODO: implement color_event_cb() -->
+					<event_cb callback="color_event_cb" trigger="all" />
+				</lv_button>
+				<lv_button height="#num_20" width="#num_20" scroll_on_focus="false" style_bg_color="#color_607d8b" style_opa="0" style_radius="#num_32767">
+					<!-- TODO: implement color_event_cb() -->
+					<event_cb callback="color_event_cb" trigger="all" />
+				</lv_button>
+				<lv_button height="#num_20" width="#num_20" scroll_on_focus="false" style_bg_color="#color_ff9800" style_opa="0" style_radius="#num_32767">
+					<!-- TODO: implement color_event_cb() -->
+					<event_cb callback="color_event_cb" trigger="all" />
+				</lv_button>
+				<lv_button height="#num_20" width="#num_20" scroll_on_focus="false" style_bg_color="#color_f44336" style_opa="0" style_radius="#num_32767">
+					<!-- TODO: implement color_event_cb() -->
+					<event_cb callback="color_event_cb" trigger="all" />
+				</lv_button>
+				<lv_button height="#num_20" width="#num_20" scroll_on_focus="false" style_bg_color="#color_9c27b0" style_opa="0" style_radius="#num_32767">
+					<!-- TODO: implement color_event_cb() -->
+					<event_cb callback="color_event_cb" trigger="all" />
+				</lv_button>
+				<lv_button height="#num_20" width="#num_20" scroll_on_focus="false" style_bg_color="#color_009688" style_opa="0" style_radius="#num_32767">
+					<!-- TODO: implement color_event_cb() -->
+					<event_cb callback="color_event_cb" trigger="all" />
+				</lv_button>
+			</lv_obj>
+			<!-- TODO: bg_image_src was the symbol U+F043: set it as an image or a label here -->
+			<lv_button align="bottom_right" height="41" width="41" x="-12" y="-12" floating="true" style_pad_bottom="#num_10" style_pad_left="#num_10" style_pad_right="#num_10" style_pad_top="#num_10" style_radius="#num_32767" style_shadow_width="0">
+				<style name="style_27" selector="checked" />
+				<!-- TODO: implement color_changer_event_cb() -->
+				<event_cb callback="color_changer_event_cb" trigger="all" />
+			</lv_button>
+		</lv_tabview>
+		<lv_keyboard align="bottom_mid" hidden="true" style_base_dir="ltr" />
+	</view>
+</screen>

@@ -1,0 +1,86 @@
+name: lvgl_app2pro
+
+# Builds the two test apps, converts them with GDB, and checks the XML against
+# tests/reference_xml_projects. The screenshot comparison needs the Pro CLI and
+# is skipped here; run it locally with `tests/test.py --cli <path>`.
+
+on:
+  pull_request:
+    paths:
+      - 'tools/lvgl_app2pro/**'
+      - 'lvgl_widgets_xml/**'
+      - '.github/workflows/tools-lvgl_app2pro.yml'
+  push:
+    branches:
+      - master
+    paths:
+      - 'tools/lvgl_app2pro/**'
+      - 'lvgl_widgets_xml/**'
+      - '.github/workflows/tools-lvgl_app2pro.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # 3.10 is the documented floor for running the converter. It is
+      # deliberately not the interpreter GDB uses: GDB embeds its own, so this
+      # combination is also what most users have.
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install GDB and what the example needs
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gdb libsdl2-dev
+
+      - name: Install the plugin's dependencies for the interpreter GDB embeds
+        # lvglgdb imports numpy, Pillow and prettytable at module level, so it
+        # cannot load without them. They have to go to the *system* Python,
+        # which is the one GDB embeds - installing them with the 3.10 above
+        # would put them somewhere GDB never looks.
+        run: |
+          /usr/bin/python3 -m pip install --break-system-packages \
+            -r tools/lvgl_app2pro/src/gdb_plugin/requirements.txt
+
+      - name: Check GDB can load the plugin
+        # The strongest preflight there is: if lvglgdb imports here, it will
+        # import during the run. Without it, a missing dependency surfaces much
+        # later and much less clearly.
+        run: |
+          gdb -batch \
+            -ex "python import sys; print('GDB Python:', sys.version)" \
+            -ex "python sys.path.insert(0, 'tools/lvgl_app2pro/src/gdb_plugin')" \
+            -ex "python import lvglgdb; print('lvglgdb', lvglgdb.__version__, 'loaded')"
+
+      - name: Cache the LVGL checkout the example builds against
+        uses: actions/cache@v4
+        with:
+          path: tools/lvgl_app2pro/tests/.work/lvgl
+          key: lvgl-${{ hashFiles('tools/lvgl_app2pro/tests/test.py') }}
+
+      - name: Build, convert and compare
+        working-directory: tools/lvgl_app2pro
+        run: python3 tests/test.py
+
+      - name: Show what changed if the comparison failed
+        if: failure()
+        working-directory: tools/lvgl_app2pro
+        run: |
+          for app in test_ui lv_demo_widgets; do
+            diff -ru "tests/reference_xml_projects/$app" \
+                     "tests/.work/$app/converted" || true
+          done
+
+      - name: Keep the converted projects for inspection
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: converted
+          path: |
+            tools/lvgl_app2pro/tests/.work/*/converted
+            tools/lvgl_app2pro/tests/.work/*/*.png

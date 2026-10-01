@@ -291,7 +291,26 @@ Floats need `LV_USE_FLOAT` in `lv_conf.h`. Without it a literal with a fraction 
 
 A color is written as `0xRRGGBB`, or with the CSS-style `0xRGB` shorthand that expands to it, so `0xf00 == 0xff0000` is true.
 
-Comparisons cannot be **chained**: `a < b < c` is invalid. Each operand of a logical `and`/`or` may contain one comparison, so a range check is written as `a > 10 and a <= 30`.
+Because `<` must be escaped in an XML attribute value, every comparison also has a keyword spelling. The two spellings work the same, and you can mix them in one expression:
+
+| Symbol | Keyword |
+|---|---|
+| `==` | `EQ` |
+| `!=` | `NE` |
+| `<` | `LT` |
+| `<=` | `LE` |
+| `>` | `GT` |
+| `>=` | `GE` |
+
+```xml
+<!-- These two are identical -->
+<lv_obj hidden="{count LT 5}"/>
+<lv_obj hidden="{count &lt; 5}"/>
+```
+
+Prefer the keywords, so all comparisons look the same whether they need escaping or not. `==` and `!=` are the exception: they are very common and never need escaping, so they are fine to use.
+
+Comparisons cannot be **chained**: `a < b < c` is invalid. Each operand of a logical `AND`/`OR` may contain one comparison, so a range check is written as `a GT 10 AND a LE 30`.
 
 ### Logical not
 
@@ -305,25 +324,27 @@ The unary `!` accepts a number, bool, or string and returns a bool. An empty or 
 
 `&&` and `||` combine two conditions and return a bool. Their operands can be anything that has a truthiness: a bool, a number (non-zero is true), or a string (non-empty is true). A color has none, so it's a type error.
 
-Because `&` must be escaped in an XML attribute value, both operators also have a keyword spelling, `and` and `or`, which is usually the readable choice:
+Because `&` must be escaped in an XML attribute value, both operators also have a keyword spelling, `AND` and `OR`. Prefer the keywords, for the same reason as with comparisons:
 
 ```xml
 <!-- These two are identical -->
-<lv_obj hidden="{temperature > 10 and temperature &lt;= 30}"/>
+<lv_obj hidden="{temperature GT 10 AND temperature LE 30}"/>
 <lv_obj hidden="{temperature > 10 &amp;&amp; temperature &lt;= 30}"/>
 ```
 
 `&&` binds tighter than `||`, and both bind tighter than concatenation and the ternary. So a combined condition can be written directly as a ternary condition, without parentheses:
 
 ```xml
-<lv_label text="{level > 80 or charging ? 'OK' : 'Low'}"/>
+<lv_label text="{level > 80 OR charging ? 'OK' : 'Low'}"/>
 ```
 
 <Callout type="warn">
-Both sides are **always evaluated**. There is no short-circuiting, just like with the two ternary branches. So `count != 0 and total / count > 5` still fails on a division by zero when `count` is 0.
+Both sides are **always evaluated**. There is no short-circuiting, just like with the two ternary branches. So `count != 0 AND total / count > 5` still fails on a division by zero when `count` is 0.
 </Callout>
 
-`and`/`or` are keywords, so a constant, property, or subject cannot be named `and` or `or`. There is no `^^` operator.
+There is no `^^` operator.
+
+The keywords `AND`, `OR`, `EQ`, `NE`, `LT`, `LE`, `GT` and `GE` are uppercase only. They are reserved, so a constant, property, or subject cannot have one of these names. Lowercase `and` or `lt` is an ordinary name.
 
 ### String concatenation
 
@@ -356,9 +377,9 @@ From highest to lowest:
 1. Unary `-`, `+`, `!`
 2. `*`, `/`, `%`
 3. `+`, `-`
-4. Comparisons (`==`, `!=`, `<`, `<=`, `>`, `>=`)
-5. `&&` (`and`)
-6. `||` (`or`)
+4. Comparisons (`==`, `!=`, `<`, `<=`, `>`, `>=`, and their keywords)
+5. `&&` (`AND`)
+6. `||` (`OR`)
 7. Concatenation (`.`)
 8. Ternary (`? :`)
 
@@ -366,7 +387,7 @@ Parentheses `( )` group **arithmetic, comparison, and logical** sub-expressions.
 
 ```xml
 <lv_obj width="{(a + b) * 2}"/>
-<lv_obj hidden="{(a or b) and c}"/>
+<lv_obj hidden="{(a OR b) AND c}"/>
 ```
 
 ## Name resolution
@@ -386,8 +407,8 @@ An expression lives in an XML attribute value, where a few characters are reserv
 
 | Character | Write it as | Note |
 |---|---|---|
-| `<` | `&lt;` | Never allowed in an attribute value |
-| `&` | `&amp;` | So `&&` becomes `&amp;&amp;`. Or use `and` |
+| `<` | `&lt;` | Never allowed in an attribute value. Or use `LT` / `LE` |
+| `&` | `&amp;` | So `&&` becomes `&amp;&amp;`. Or use `AND` |
 | `'` | `&apos;` | Only if the attribute value itself is delimited by `'` |
 | `>` | `>` | Allowed as-is |
 
@@ -396,10 +417,10 @@ An expression lives in an XML attribute value, where a few characters are reserv
 <lv_obj hidden="{count < 10 && locked}"/>
 
 <!-- ✅ -->
-<lv_obj hidden="{count &lt; 10 and locked}"/>
+<lv_obj hidden="{count &lt; 10 AND locked}"/>
 
-<!-- ✅ or turn the comparison around and avoid the escape entirely -->
-<lv_obj hidden="{10 > count and locked}"/>
+<!-- ✅ or use the keywords and avoid the escapes entirely -->
+<lv_obj hidden="{count LT 10 AND locked}"/>
 ```
 
 

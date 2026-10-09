@@ -2,7 +2,7 @@
 <component>
 	<api>
 		<prop name="text" type="string" default="?" />
-		<prop name="subject" type="subject" default="" />
+		<prop name="subject" type="subject" />
 		<prop name="step" type="int" default="1" />
 	</api>
 

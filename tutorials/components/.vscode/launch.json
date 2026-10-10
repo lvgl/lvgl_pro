@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug LVGL Simulator",
+      "program": "${workspaceFolder}/build/bin/lvgl_simulator",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "CMake build"
+    }
+  ]
+}

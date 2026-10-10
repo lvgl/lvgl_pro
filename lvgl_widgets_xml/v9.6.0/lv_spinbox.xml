@@ -1,0 +1,24 @@
+<!--
+Example
+<lv_spinbox digit_count="5" dec_point_pos="3" value="12345"/>
+ -->
+
+<widget>
+	<api>
+        <prop name="value" type="int" help="Set the value as a raw integer. The displayed format depends on `digit_count` and `dec_point_pos`"/>
+        <prop name="rollover" type="bool" help="If enabled, stepping past the maximum jumps to the minimum and vice versa"/>
+        <prop name="digit_count" type="int" help="Set the number of digits, excluding the sign and the decimal separator"/>
+        <prop name="dec_point_pos" type="int" help="Set the number of digits before the decimal point. 0 means no decimal point is shown"/>
+        <prop name="min_value" type="int" help="Set the minimum value (inclusive)"/>
+        <prop name="max_value" type="int" help="Set the maximum value (inclusive)"/>
+        <prop name="step" type="int" help="Set the digit that changes on increment/decrement. Can be 1, 10, 100, etc."/>
+        <prop name="bind_value" type="subject" help="Connect a subject to the spinbox's value"/>
+
+        <parts>
+            <part name="main" help="The background and the number text (extends lv_textarea): background, padding and text properties."/>
+            <part name="scrollbar" help="The scrollbar shown when content overflows: `width` (thickness), background properties and padding."/>
+            <part name="selected" help="The selected text. Only `text_color` and `bg_color` are used."/>
+            <part name="cursor" help="The cursor over the edited digit: `bg_color`/`bg_opa` for a block cursor or a left border for a bar cursor."/>
+        </parts>
+	</api>
+</widget>

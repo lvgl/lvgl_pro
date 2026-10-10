@@ -151,7 +151,7 @@ Black is the practical choice: the alpha channel carries the shape, so a single
 asset can be tinted anywhere it's used and one icon set serves every theme.
 
 ```xml
-<lv_image src="icon_home" style_image_recolor="#color_accent" style_image_recolor_opa="100%"/>
+<lv_image src="icon_home" style_image_recolor="{color_accent}" style_image_recolor_opa="100%"/>
 ```
 
 ## Using the Images
@@ -178,7 +178,7 @@ In custom properties:
   </api> 
 
   <view>
-    <lv_image src="$icon_src"/>
+    <lv_image src="{icon_src}"/>
   </view>
 </component>
 ```

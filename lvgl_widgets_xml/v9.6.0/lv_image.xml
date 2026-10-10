@@ -1,0 +1,38 @@
+<!--
+Example
+<lv_image src="logo" scale="300" rotate="30"/>
+-->
+
+<widget>
+    <api>
+        <enumdef name="lv_image_align" help="How the image is placed inside its container">
+            <enum name="default" value="0" help="Align top-left (same as top_left)"/>
+            <enum name="top_left" value="1" help="Align to top-left"/>
+            <enum name="top_mid" value="2" help="Align to top-center"/>
+            <enum name="top_right" value="3" help="Align to top-right"/>
+            <enum name="bottom_left" value="4" help="Align to bottom-left"/>
+            <enum name="bottom_mid" value="5" help="Align to bottom-center"/>
+            <enum name="bottom_right" value="6" help="Align to bottom-right"/>
+            <enum name="left_mid" value="7" help="Align to left-center"/>
+            <enum name="right_mid" value="8" help="Align to right-center"/>
+            <enum name="center" value="9" help="Align to center"/>
+            <!-- 10 is _LV_IMAGE_ALIGN_AUTO_TRANSFORM, an internal marker -->
+            <enum name="stretch" value="11" help="Stretch to fill the widget"/>
+            <enum name="tile" value="12" help="Tile to fill the widget"/>
+            <enum name="contain" value="13" help="Scale to fit inside while keeping aspect ratio"/>
+            <enum name="cover" value="14" help="Scale to fully cover while keeping aspect ratio"/>
+        </enumdef>
+
+        <prop name="src" type="image" help="Set the image source (file, symbol, or variable)"/>
+        <prop name="inner_align" type="enum:lv_image_align" help="Align and scale the image inside"/>
+        <prop name="rotation" type="int" help="Rotate the image (degrees)"/>
+        <prop name="scale_x" type="int" help="Scale horizontally (100 = original)"/>
+        <prop name="scale_y" type="int" help="Scale vertically (100 = original)"/>
+        <prop name="pivot_x" type="px|%" help="Set the pivot X for rotation/scaling"/>
+        <prop name="pivot_y" type="px|%" help="Set the pivot Y for rotation/scaling"/>
+
+        <parts>
+            <part name="main" help="Style the image: `image_recolor`, `image_recolor_opa`, `image_opa` and the transform properties (scale/rotation). Background, border, etc can be added too."/>
+        </parts>
+    </api>
+</widget>

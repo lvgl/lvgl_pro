@@ -67,7 +67,7 @@ For components, widgets and screens: One file per element, and the filename beco
 
     <lv_label text="Just a text"/>
     <lv_label text="{title}"/>
-    <lv_label text="{title . ', the value as data binding: ' . value}"/>
+    <lv_label text="{title + ', the value as data binding: ' + value}"/>
     <lv_obj name="trailing" hidden="{size == small}"/>
   </view>
 </component>
@@ -101,7 +101,7 @@ XML reserved characters must be escaped in values. `value="I'm here"` is invalid
 - `px`: a size in pixels
 - `%`: a percent of the parent, `lv_pct(x)` in C
 - `content`: only for width and height, to make the size fit all the children
-- `string`: normal string, in expressions as `{'hello' . ' world'}`
+- `string`: normal string, in expressions as `{'hello' + ' world'}`
 - `color`: `0xRRGGBB`, or `0xRGB`
 - `opa`: 0-255 or 0-100%
 - the name-based types `image`, `font`, `subject`, `style`, which resolve against `globals.xml` or the local items
@@ -119,14 +119,14 @@ Arrays come in four forms. Items are separated by spaces, and string items are w
 
 Expressions are wrapped into `"{ ... }"`. If only constants, literals, or plain component properties are used in it, it is evaluated only once, at creation time. If global or local subjects, variants, or bindable properties are also used, a binding is created that updates the value whenever any of them changes.
 
-`.` concatenates, strings use single quotes, and the result always reaches the attribute as text, so `<lv_label text="{count}"/>` shows `42`. Comparisons cannot be chained (`a < b < c`), ternaries cannot be nested, and there is no short-circuiting: both sides of an `and` or `or` are always evaluated. `&` and `<` must be escaped in an attribute value, so prefer the `and`, `or` keywords and `&lt;`: `hidden="{a > 10 and a &lt;= 30}"`.
+`+` concatenates when either side is a string, left to right, so `'n: ' + 1 + 2` is `n: 12` and `'n: ' + (1 + 2)` is `n: 3`. Strings use single quotes, and the result always reaches the attribute as text, so `<lv_label text="{count}"/>` shows `42`. Comparisons cannot be chained (`a < b < c`), ternaries cannot be nested, and there is no short-circuiting: both sides of an `AND` or `OR` are always evaluated. `&` and `<` must be escaped in an attribute value, so prefer the keywords `AND`, `OR`, `EQ`, `NE`, `LT`, `LE`, `GT`, `GE`: `hidden="{a GT 10 AND a LE 30}"`. They are uppercase only; lowercase `and` is an ordinary name.
 
 Expressions work almost everywhere:
 
 | Where | Example | Note |
 |---|---|---|
 | Widget property | `<lv_label hidden="{count == 0}"/>` | |
-| Component property | `<my_card title="{'Hi ' . name}"/>` | Make the property [bindable](docs/syntax/api.mdx#bindable-properties) to let it follow a subject |
+| Component property | `<my_card title="{'Hi ' + name}"/>` | Make the property [bindable](docs/syntax/api.mdx#bindable-properties) to let it follow a subject |
 | Local style property | `<lv_button style_bg_color="{dark ? 0x000 : 0xfff}"/>` | |
 | Style `enabled` | `<style name="style_error" enabled="{subject_error_cnt != 0}"/>` | See [Conditional styles](docs/syntax/styles.mdx#conditional-styles) |
 | Event trigger | `<play_timeline_event trigger="{subject_error_cnt == 0}" target="self" timeline="timeline_show_up"/>` | See [Triggers](docs/syntax/events.mdx#triggers) |
@@ -190,7 +190,7 @@ Style sheets and local styles can be used:
   <style name="style_scrollbar_pressed" selector="scrollbar|pressed"/>
 
   <!-- `enabled` switches a style on and off from a condition, as a binding -->
-  <style name="style_warning" enabled="{subject_temp > 10 and subject_temp &lt;= 30}"/>
+  <style name="style_warning" enabled="{subject_temp GT 10 AND subject_temp LE 30}"/>
 </view>
 
 <!-- Local style property, for one-off values -->

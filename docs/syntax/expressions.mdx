@@ -5,7 +5,7 @@ faqs:
   - question: "How do I write an expression in XML?"
     answer: "Wrap the value in { }. For example <lv_label hidden=\"{value > 80}\"/>. You can use literals, API properties, constants, local or global subjects, and variants. If a subject or a variant is used, the expression becomes a data binding."
   - question: "What operations are supported in expressions?"
-    answer: "Arithmetic with + - * / %, comparison with == != < <= > >=, logic with !, and, or, grouping with ( ), concatenation with . and the ternary ? :"
+    answer: "Arithmetic with + - * / %, string concatenation with +, comparison with == != < <= > >=, logic with !, and, or, grouping with ( ), and the ternary ? :"
   - question: "What data types are supported for subjects?"
     answer: "int, float, string, color, and pointer. You define them in a <subjects> block with an <int>, <float>, <string>, <color> or <pointer> tag."
   - question: "What is the difference between an expression and a data binding?"
@@ -28,7 +28,7 @@ Instead of writing a fixed value, like `width="30"`, any value can be an **expre
 
 ```xml
 <lv_obj width="{base_width * 2}"/>
-<lv_label text="{'Hello, ' . user_name . '!'}"/>
+<lv_label text="{'Hello, ' + user_name + '!'}"/>
 <lv_obj hidden="{subject_item_count == 0}"/>
 ```
 
@@ -50,7 +50,7 @@ An expression works almost everywhere:
 | Where | Example | Note |
 |---|---|---|
 | Widget property | `<lv_label hidden="{count == 0}"/>` | |
-| Component property | `<my_card title="{'Hi ' . name}"/>` | Make the property [bindable](./api#bindable-properties) to let it follow a subject |
+| Component property | `<my_card title="{'Hi ' + name}"/>` | Make the property [bindable](./api#bindable-properties) to let it follow a subject |
 | Local style property | `<lv_button style_bg_color="{dark ? 0x000 : 0xfff}"/>` | |
 | Style `enabled` | `<style name="style_error" enabled="{subject_error_cnt != 0}"/>` | See [Conditional styles](./styles#conditional-styles) |
 | Event trigger | `<play_timeline_event trigger="{subject_error_cnt == 0}" target="self" timeline="timeline_show_up"/>` | See [Triggers](./events#triggers) |
@@ -175,7 +175,7 @@ Learn more about variants on the [API page](./api#variants).
 
 A Component's `<prop>`s can be read in an expression too. By default a property is not reactive, so:
 
-1. If the expression reads no subject, it is evaluated once, at creation. For example `<lv_label text="{'Hi ' . name}"/>`.
+1. If the expression reads no subject, it is evaluated once, at creation. For example `<lv_label text="{'Hi ' + name}"/>`.
 2. If the expression also reads a subject, the property's value is frozen into the expression at creation, and only the subject keeps it moving. In `<lv_obj hidden="{subject_value > limit}"/>` whatever `limit` was at creation is what `subject_value` is compared against from then on.
 
 Freezing is what lets an instance identify itself inside its own bindings. Every tab below watches the same subject, but compares it to its own `index`:
@@ -201,7 +201,7 @@ Add `bindable="true"` to make a property reactive instead:
   </api>
 
   <view extends="lv_obj">
-    <lv_label text="{'Limit: ' . limit}"/>
+    <lv_label text="{'Limit: ' + limit}"/>
   </view>
 </component>
 ```
@@ -258,7 +258,7 @@ A `trigger` also takes a `{ }` **condition**, which fires on every false-to-true
 <!-- Stamp the time the limit was crossed, and report it afterwards -->
 <set_subject_event trigger="{subject_temp > const_limit}"
                    subject="subject_over_temp_at" value="{subject_current_time}"/>
-<lv_label text="{'Crossed ' . const_limit . ' at ' . subject_over_temp_at}"
+<lv_label text="{'Crossed ' + const_limit + ' at ' + subject_over_temp_at}"
           hidden="{subject_temp &lt; const_limit}"/>
 ```
 
@@ -271,7 +271,7 @@ You never declare a type. Each term has one, and it follows from how the term is
 
 ### Arithmetic
 
-`+`, `-`, `*`, `/`, `%` operate on numbers. `%` requires integer operands, and division or modulo by zero is an error.
+`+`, `-`, `*`, `/`, `%` operate on numbers. `%` requires integer operands, and division or modulo by zero is an error. `+` also joins text, see [String concatenation](#string-concatenation).
 
 ```xml
 <lv_obj width="{100 + pad * 2}"/>
@@ -332,7 +332,7 @@ Because `&` must be escaped in an XML attribute value, both operators also have 
 <lv_obj hidden="{temperature > 10 &amp;&amp; temperature &lt;= 30}"/>
 ```
 
-`&&` binds tighter than `||`, and both bind tighter than concatenation and the ternary. So a combined condition can be written directly as a ternary condition, without parentheses:
+`&&` binds tighter than `||`, and both bind tighter than the ternary. So a combined condition can be written directly as a ternary condition, without parentheses:
 
 ```xml
 <lv_label text="{level > 80 OR charging ? 'OK' : 'Low'}"/>
@@ -348,13 +348,22 @@ The keywords `AND`, `OR`, `EQ`, `NE`, `LT`, `LE`, `GT` and `GE` are uppercase on
 
 ### String concatenation
 
-The `.` operator joins values into a single string. Each operand is automatically stringified: an int as a plain number, a float with two decimals (`3.50`), a bool as `true` or `false`, a color as `0xRRGGBB`.
+When at least one side of `+` is a string, `+` joins the two sides into one string. The other side is turned into text: an int as a plain number, a float with two decimals (`3.50`), a bool as `true` or `false`, a color as `0xRRGGBB`.
 
 Text is written in **single quotes**, because double quotes already delimit the XML attribute:
 
 ```xml
-<lv_label text="{'Battery: ' . level . '%'}"/>
-<lv_label text="{first_name . ' ' . last_name}"/>
+<lv_label text="{'Battery: ' + level + '%'}"/>
+<lv_label text="{first_name + ' ' + last_name}"/>
+```
+
+`+` works from left to right. Once the result is a string, every later `+` joins. So put a sum in parentheses:
+
+```xml
+<!-- With a = 1 and b = 2 -->
+<lv_label text="{'Total: ' + a + b}"/>     <!-- Total: 12 -->
+<lv_label text="{'Total: ' + (a + b)}"/>   <!-- Total: 3 -->
+<lv_label text="{a + b + ' items'}"/>      <!-- 3 items -->
 ```
 
 The result of any expression reaches the attribute as text anyway, so a lone number needs no concatenation: `<lv_label text="{count}"/>` shows `42`.
@@ -364,11 +373,11 @@ The result of any expression reaches the attribute as text anyway, so a lone num
 `cond ? a : b` chooses between two values. The condition must be a bool, a number, or a string (a non-empty string is truthy); it **cannot** be a color. Both branches must have the same type (int and float mix freely).
 
 ```xml
-<lv_label text="{subject_count == 0 ? 'Empty' : 'Has ' . subject_count . ' items'}"/>
+<lv_label text="{subject_count == 0 ? 'Empty' : 'Has ' + subject_count + ' items'}"/>
 <lv_obj style_bg_color="{is_on ? 0x00ff00 : 0x333333}"/>
 ```
 
-Ternaries **cannot be nested**, but each branch may itself be a string concatenation.
+Ternaries **cannot be nested**.
 
 ## Precedence and grouping
 
@@ -376,14 +385,13 @@ From highest to lowest:
 
 1. Unary `-`, `+`, `!`
 2. `*`, `/`, `%`
-3. `+`, `-`
+3. `+` (add or join), `-`
 4. Comparisons (`==`, `!=`, `<`, `<=`, `>`, `>=`, and their keywords)
 5. `&&` (`AND`)
 6. `||` (`OR`)
-7. Concatenation (`.`)
-8. Ternary (`? :`)
+7. Ternary (`? :`)
 
-Parentheses `( )` group **arithmetic, comparison, and logical** sub-expressions. They cannot contain a concatenation or a ternary.
+Parentheses `( )` group any sub-expression except a ternary.
 
 ```xml
 <lv_obj width="{(a + b) * 2}"/>

@@ -142,7 +142,7 @@ Components and Screens can declare local subjects to hold their own internal sta
   <view flex_flow="column">
     <lv_button>
       <set_subject_event trigger="clicked" subject="count" value="{count + 1}"/>
-      <lv_label text="{'Clicked ' + count + ' times'}"/>
+      <lv_label text="{'Clicked ' . count . ' times'}"/>
     </lv_button>
     <lv_label hidden="{count &lt; 5}" text="Too many clicks"/>
   </view>

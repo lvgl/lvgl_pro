@@ -138,7 +138,7 @@ Float subjects require `LV_USE_FLOAT` in `lv_conf.h`. Without it, the generated 
 
 A variant is like a local subject with a fixed set of named options. It is the readable way to name the looks a Component can take, for example whether a badge is `normal` or `danger`.
 
-A variant is declared in the Component's `<api>`, and read in an expression like any other name. An option name acts as a constant:
+A variant is declared in the Component's `<api>`. In an expression, compare it with one of its options using `==` or `!=`:
 
 ```xml
 <!-- badge.xml -->
@@ -160,6 +160,18 @@ A variant is declared in the Component's `<api>`, and read in an expression like
   </view>
 </component>
 ```
+
+The option is looked up in the variant it is compared with, so two variants can have an option of the same name. With a `tone` and a `state` variant that both have a `normal` option, `{state == normal}` uses the `normal` of `state`. The order does not matter: `{normal == tone}` works too.
+
+A variant can be used in one way only: compared with one of its own options, using `==`, `!=`, `EQ` or `NE`. The other side can be any expression that gives an option name, for example a [ternary](#ternary) in parentheses:
+
+```xml
+<lv_image src="img_alert" hidden="{tone NE (subject_level GT 100 ? danger : normal)}"/>
+```
+
+The check runs when the expression is evaluated. If the other side gives something that is not an option of the variant, such as `{tone == 0}` or `{tone == other_name}`, the expression is an error. Using the variant in any other way is an error too: in arithmetic (`{tone + 1}`), with `<` or `>`, with `!`, or as a value of its own (`{tone}`).
+
+Outside such a comparison an option name is just a word, so `{danger + 1}` gives `danger1`.
 
 Where the Component is used, the variant is picked by name, or by an expression that follows a subject:
 
@@ -377,7 +389,7 @@ The result of any expression reaches the attribute as text anyway, so a lone num
 <lv_obj style_bg_color="{is_on ? 0x00ff00 : 0x333333}"/>
 ```
 
-Ternaries **cannot be nested**.
+To nest a ternary, put it in parentheses: `{a ? (b ? 1 : 2) : 3}`.
 
 ## Precedence and grouping
 
@@ -391,7 +403,7 @@ From highest to lowest:
 6. `||` (`OR`)
 7. Ternary (`? :`)
 
-Parentheses `( )` group any sub-expression except a ternary.
+Parentheses `( )` group any sub-expression, a ternary too.
 
 ```xml
 <lv_obj width="{(a + b) * 2}"/>
@@ -405,9 +417,10 @@ Names are written as **bare identifiers**. They are resolved in this order:
 1. **Per-instance names**: a [variant](#variants), a [`bindable` property](./api#bindable-properties), or a [local subject](#global-and-local-subjects). Each instance has its own, and it shadows a shared name.
 2. **Properties** declared in the element's [`<api>`](./api) as `<prop>`: the value passed at the call site, or the declared `default`.
 3. **Constants** from [`<consts>`](./constants): the type is inferred from the constant's value.
-4. **Variant option names**: an integer constant, the option's index in its variant.
-5. **Subjects**: the component's own `<subjects>` first, then those in `globals.xml`.
-6. **Other named items** the XML processor resolves later (a font, image, or screen name).
+4. **Subjects**: the component's own `<subjects>` first, then those in `globals.xml`.
+5. **Other named items** the XML processor resolves later (a font, image, or screen name).
+
+A variant option name is not in this list. It is an option only when it is compared with its variant, as in `{tone == danger}`. See [Variants](#variants).
 
 ## XML escaping
 

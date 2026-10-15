@@ -158,6 +158,8 @@ A variant has a name and a list of options. The name is exposed as a property of
 
 Under the hood a variant is an int-typed [local subject](#local-subjects) whose values have names, so it can be used in data bindings too.
 
+In an expression, compare a variant with one of its own options, for example `{tone == danger}`. The option is looked up in that variant, so two variants of a Component can have an option of the same name. See [Variants in expressions](./expressions#variants).
+
 
 `badge.xml`
 

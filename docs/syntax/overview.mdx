@@ -30,7 +30,7 @@ A name is looked up in the local scope first, and in the global scope only after
 
 Keeping names unique **within one scope is your responsibility**. Nothing reports a collision, so give every style, constant, subject, timeline, and widget `name="..."` a distinct name. Two cases make a collision easy to miss:
 
-- In an [expression](./expressions) a bare name is resolved in a fixed order: per-instance names (a variant, a `bindable` property, a local subject), then property, constant, variant option, subject. The first match wins, so a constant named `temperature` hides a subject of the same name.
+- In an [expression](./expressions) a bare name is resolved in a fixed order: per-instance names (a variant, a `bindable` property, a local subject), then property, constant, subject. The first match wins, so a constant named `temperature` hides a subject of the same name.
 - A `name="..."` is found by searching the widget tree and the first match is used, so two widgets with the same name make animation targets and `lv_obj_find_by_name()` ambiguous.
 
 A prefix per kind keeps them apart: `style_card`, `subject_temperature`, `timeline_load`.

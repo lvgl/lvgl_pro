@@ -119,7 +119,7 @@ Arrays come in four forms. Items are separated by spaces, and string items are w
 
 Expressions are wrapped into `"{ ... }"`. If only constants, literals, or plain component properties are used in it, it is evaluated only once, at creation time. If global or local subjects, variants, or bindable properties are also used, a binding is created that updates the value whenever any of them changes.
 
-`+` concatenates when either side is a string, left to right, so `'n: ' + 1 + 2` is `n: 12` and `'n: ' + (1 + 2)` is `n: 3`. Strings use single quotes, and the result always reaches the attribute as text, so `<lv_label text="{count}"/>` shows `42`. Comparisons cannot be chained (`a < b < c`), ternaries cannot be nested, and there is no short-circuiting: both sides of an `AND` or `OR` are always evaluated. `&` and `<` must be escaped in an attribute value, so prefer the keywords `AND`, `OR`, `EQ`, `NE`, `LT`, `LE`, `GT`, `GE`: `hidden="{a GT 10 AND a LE 30}"`. They are uppercase only; lowercase `and` is an ordinary name.
+`+` concatenates when either side is a string, left to right, so `'n: ' + 1 + 2` is `n: 12` and `'n: ' + (1 + 2)` is `n: 3`. Strings use single quotes, and the result always reaches the attribute as text, so `<lv_label text="{count}"/>` shows `42`. Comparisons cannot be chained (`a < b < c`), a ternary is nested only inside `( )`, and there is no short-circuiting: both sides of an `AND` or `OR` are always evaluated. `&` and `<` must be escaped in an attribute value, so prefer the keywords `AND`, `OR`, `EQ`, `NE`, `LT`, `LE`, `GT`, `GE`: `hidden="{a GT 10 AND a LE 30}"`. They are uppercase only; lowercase `and` is an ordinary name.
 
 Expressions work almost everywhere:
 
@@ -229,7 +229,7 @@ On the instance:
 <my_badge size="large" tone="{subject_level > 100 ? danger : normal}"/>
 ```
 
-Option names must be unique across a component's variants, because an option name carries no variant context. From C a variant is set with the generated `my_badge_set_size(obj, MY_BADGE_SIZE_LARGE)`, and reordering `options` breaks already exported C.
+Two variants may share an option name. A variant can only be compared with `==`/`!=`/`EQ`/`NE` (either order) to something that evaluates to one of its own option names, e.g. `size == large` or `size == (x GT 9 ? large : small)`; the name is looked up in that variant. Any other use of a variant (arithmetic, `<`/`>`, `!`, as a value) is an error, and a bare option name elsewhere is just a word. From C a variant is set with the generated `my_badge_set_size(obj, MY_BADGE_SIZE_LARGE)`, and reordering `options` breaks already exported C.
 
 ### Slots
 

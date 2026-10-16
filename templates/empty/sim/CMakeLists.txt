@@ -210,6 +210,10 @@ target_link_libraries(${PROJECT_NAME} PRIVATE lib-ui lvgl ${BACKEND_LIBS})
 # leave the C++ standard library out of the link.
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 
+# Keep the exe in bin/, not bin/<config>/, where .vscode/launch.json expects it.
+set_target_properties(${PROJECT_NAME} PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/$<0:>")
+
 # Guard the sim/ files (so a glob-based embedded build skips them) and pass the
 # exported UI's header, init function and window size to main.c.
 target_compile_definitions(${PROJECT_NAME} PRIVATE

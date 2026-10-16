@@ -80,6 +80,11 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
 
+# LVGL is UTF-8; MSVC would otherwise read it in the system code page.
+if(MSVC)
+  add_compile_options(/utf-8)
+endif()
+
 # ---------------------------------------------------------------------------
 #  Fetch LVGL
 # ---------------------------------------------------------------------------

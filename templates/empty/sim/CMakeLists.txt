@@ -44,14 +44,15 @@ string(TOUPPER "${ENABLE_ASAN}" _enable_asan)
 # for it — any value that is not OFF/0/FALSE/NO/empty is true — but naming it
 # spells out the default path instead of leaving it to that rule.
 if(_enable_asan STREQUAL "AUTO" OR ENABLE_ASAN)
-  # Probe by compiling *and* linking: MinGW-w64 reports itself as GNU but often
+  # Probe by compiling, linking *and* running: MinGW-w64 reports itself as GNU but often
   # ships no libasan. The cached result is dropped first so every configure
   # re-probes and a toolchain change is picked up.
-  include(CheckCSourceCompiles)
+  # On Windows the ASAN runtime is a DLL, so an exe that builds may still not start.
+  include(CheckCSourceRuns)
   unset(HAVE_ASAN CACHE)
   set(CMAKE_REQUIRED_FLAGS -fsanitize=address)
   set(CMAKE_REQUIRED_LINK_OPTIONS -fsanitize=address)
-  check_c_source_compiles("int main(void){return 0;}" HAVE_ASAN)
+  check_c_source_runs("int main(void){return 0;}" HAVE_ASAN)
   unset(CMAKE_REQUIRED_FLAGS)
   unset(CMAKE_REQUIRED_LINK_OPTIONS)
 
@@ -64,8 +65,8 @@ if(_enable_asan STREQUAL "AUTO" OR ENABLE_ASAN)
     message(STATUS "AddressSanitizer unavailable; building without it")
   else()
     message(FATAL_ERROR
-            "ENABLE_ASAN=${ENABLE_ASAN} but this toolchain cannot build with "
-            "-fsanitize=address")
+            "ENABLE_ASAN=${ENABLE_ASAN} but this toolchain cannot build and run "
+            "with -fsanitize=address")
   endif()
 endif()
 

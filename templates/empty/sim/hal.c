@@ -23,6 +23,8 @@ lv_display_t * hal_init(int32_t hor_res, int32_t ver_res)
         false,  /*allow_dpi_override*/
         false); /*simulator_mode*/
 
+    lv_lock();
+
     lv_group_t * group = lv_group_create();
     lv_group_set_default(group);
 
@@ -34,6 +36,8 @@ lv_display_t * hal_init(int32_t hor_res, int32_t ver_res)
 
     lv_indev_t * encoder = lv_windows_acquire_encoder_indev(disp);
     lv_indev_set_group(encoder, group);
+
+    lv_unlock();
 
     return disp;
 }

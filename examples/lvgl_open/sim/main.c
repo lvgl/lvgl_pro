@@ -17,11 +17,13 @@ int main(void)
 {
     lv_init();
 
+    /* Before lv_lock(): the Windows driver's window thread needs the mutex. */
+    hal_init(UI_WIDTH, UI_HEIGHT);
+
     /* Hold the LVGL mutex while building the UI: a no-op without an OS, but
      * required to stay off the Windows driver's render thread. */
     lv_lock();
 
-    hal_init(UI_WIDTH, UI_HEIGHT);
     UI_INIT("A:");      /* "A:" = file-system drive for file-based assets */
 
     /* Load a screen from your project, e.g.:

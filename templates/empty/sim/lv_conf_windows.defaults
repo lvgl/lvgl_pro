@@ -50,6 +50,9 @@ LV_USE_MATRIX           1
 LV_USE_VECTOR_GRAPHIC   1
 LV_USE_THORVG_INTERNAL  1
 
+# ThorVG needs at least 32 KB on the draw thread that LV_USE_OS creates.
+LV_DRAW_THREAD_STACK_SIZE (32 * 1024)
+
 # A handful of built-in fonts.
 LV_FONT_MONTSERRAT_14   1
 LV_FONT_MONTSERRAT_16   1

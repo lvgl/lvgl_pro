@@ -5,7 +5,7 @@ How to write LVGL Pro XML. This is the UI language of LVGL Pro: HTML-like markup
 ## Ground rules
 
 1. **Never invent an attribute.** Every widget's exact API lives in `lvgl_widgets_xml/<version>/lv_*.xml`. Read it before writing. Style properties and enums are in `globals.xml` in the same folder.
-2. **Match the project's LVGL version.** If `project.xml` declares `lvgl_version="9.5.0"` use the `v9.5.0/` schema folder.
+2. **Match the project's LVGL version.** If `project.xml` declares `lvgl_version="9.6.0"` use the `v9.6.0/` schema folder.
 3. **Validate what you write.** `lvglpro validate <project>` gives precise errors. Then `screenshot` to see it. Guessing is not the same as knowing.
 4. **Reuse before you create.** Look at the project's existing components and `globals.xml` first. A design system usually already has the button, the card, and the spacing scale you were about to reinvent.
 

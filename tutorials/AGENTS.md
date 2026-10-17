@@ -14,7 +14,7 @@ the Editor or the CLI turns into plain LVGL C code. You do not hand-write the C.
    [Built-in widgets](https://lvgl.io/docs/pro/built_in_widgets) has the same API as
    readable pages.
 2. **Match this project's LVGL version.** Read `lvgl_version` from `project.xml` and use
-   that schema folder — `lvgl_version="9.5.0"` is the folder `v9.5.0`.
+   that schema folder — `lvgl_version="9.6.0"` is the folder `v9.6.0`.
 3. **Validate what you write.** Guessing is not the same as knowing. See *Verifying*.
 4. **Reuse before you create.** Read `globals.xml` and `components/` first. The
    constant, the style and the button you were about to invent are often already there.

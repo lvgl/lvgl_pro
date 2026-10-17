@@ -27,7 +27,8 @@ if true; then
     cd emscripten_builder
     git submodule update --init --single-branch -- lvgl
     cd lvgl
-    git pull origin master
+    git co release/v9.6
+    git pull origin release/v9.6
 fi
 
 EMSCRIPTEN_BUILDER_PATH=$STARTER_PATH/emscripten_builder

@@ -70,7 +70,7 @@ if(_enable_asan STREQUAL "AUTO" OR ENABLE_ASAN)
 endif()
 
 # LVGL version to fetch (any git tag or branch from https://github.com/lvgl/lvgl)
-set(LVGL_VERSION "v9.5.0" CACHE STRING "LVGL version (git tag or branch)")
+set(LVGL_VERSION "v9.6.0" CACHE STRING "LVGL version (git tag or branch)")
 
 # Folder with the UI exported from LVGL Pro (the parent of this sim/ folder).
 set(UI_DIR "${CMAKE_CURRENT_SOURCE_DIR}/.." CACHE PATH "Folder with the exported UI")

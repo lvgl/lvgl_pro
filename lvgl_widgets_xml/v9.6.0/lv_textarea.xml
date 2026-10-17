@@ -1,0 +1,24 @@
+<!--
+Example
+<lv_textarea text="Hello"/>
+-->
+
+<widget>
+    <api>
+        <prop name="text" type="string" help="Set textarea text"/>
+        <prop name="placeholder_text" type="string" help="Set placeholder text"/>
+        <prop name="one_line" type="bool" help="Enable single-line mode"/>
+        <prop name="password_mode" type="bool" help="Enable password masking"/>
+        <prop name="password_show_time" type="int" help="Set delay to show typed chars (ms)"/>
+        <prop name="text_selection" type="bool" help="Enable text selection"/>
+        <prop name="cursor_pos" type="int" help="Set cursor position (0-based)"/>
+
+        <parts>
+            <part name="main" help="The background and the typed text: background, padding and text properties."/>
+            <part name="scrollbar" help="The scrollbar shown when the text is taller than the area: `width` (thickness), background properties and padding on the respective side."/>
+            <part name="selected" help="The selected text. Only `text_color` and `bg_color` are used."/>
+            <part name="cursor" help="The insertion cursor: set `bg_color`/`bg_opa` for a block cursor or a left border (`border_side`='left') for a bar cursor. `anim_duration` controls blinking."/>
+            <part name="textarea_placeholder" help="The placeholder text shown when empty: text properties (e.g. `text_color`, `text_font`)."/>
+        </parts>
+    </api>
+</widget>

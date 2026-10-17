@@ -70,6 +70,8 @@ selector) or inside a named [`<style>`](../syntax/styles) sheet. See the
 | `bg_main_stop` | `int` | Position where the start color stops fading, 0-255 (0=start, 128=middle, 255=end). Default: 0. |
 | `bg_grad_stop` | `int` | Position where the end color begins, 0-255. Default: 255. |
 | `bg_grad_color` | `color` | Second color of the background gradient (used when `bg_grad_dir` is set). |
+| `bg_main_opa` | `opa` | Opacity of the gradient's start color (0-255 or 0-100%). Default: 255 (opaque). |
+| `bg_grad_opa` | `opa` | Opacity of the gradient's end color (0-255 or 0-100%). Default: 255 (opaque). |
 
 ### Background image
 
@@ -79,6 +81,7 @@ selector) or inside a named [`<style>`](../syntax/styles) sheet. See the
 | `bg_image_tiled` | `bool` | Repeat (tile) the background image to fill the area instead of drawing it once. Default: false. |
 | `bg_image_recolor` | `color` | Color blended onto the background image; intensity set by `bg_image_recolor_opa`. |
 | `bg_image_recolor_opa` | `opa` | Strength of `bg_image_recolor` (0-255 or 0-100%). Default: 0 (no recolor). |
+| `bg_image_opa` | `opa` | Background image opacity (0-255 or 0-100%). Default: 255 (opaque). |
 
 ### Border
 
@@ -121,6 +124,9 @@ selector) or inside a named [`<style>`](../syntax/styles) sheet. See the
 | `text_letter_space` | `int` | Extra spacing between characters (px); can be negative. |
 | `text_line_space` | `int` | Extra spacing between lines (px); can be negative. |
 | `text_decor` | `enum:lv_text_decor` | Text decoration: none, underline or strikethrough. |
+| `text_outline_stroke_color` | `color` | Color of the outline drawn around the glyphs. Only visible when `text_outline_stroke_width` is above 0. |
+| `text_outline_stroke_width` | `int` | Thickness of the outline drawn around the glyphs (px). Default: 0. |
+| `text_outline_stroke_opa` | `opa` | Opacity of the glyph outline (0-255 or 0-100%). Default: 255 (opaque). |
 
 ### Image
 
@@ -195,11 +201,11 @@ selector) or inside a named [`<style>`](../syntax/styles) sheet. See the
 | `translate_x` | `int` | Shift the widget horizontally after layout (px or %); siblings are not affected. |
 | `translate_y` | `int` | Shift the widget vertically after layout (px or %); siblings are not affected. |
 | `translate_radial` | `int` | On round/scale layouts, move the widget toward or away from the parent's center (px). |
-| `transform_scale_x` | `int` | Horizontal zoom: 256 = 100%, 128 = 50%, 512 = 200%. Default: 256 (no scaling). |
-| `transform_scale_y` | `int` | Vertical zoom: 256 = 100%, 128 = 50%, 512 = 200%. Default: 256 (no scaling). |
+| `transform_scale_x` | `int\|%` | Horizontal zoom: 256 = 100%, 128 = 50%, 512 = 200%. Percentages are also accepted, e.g. `50%`. Default: 256 (no scaling). |
+| `transform_scale_y` | `int\|%` | Vertical zoom: 256 = 100%, 128 = 50%, 512 = 200%. Percentages are also accepted, e.g. `50%`. Default: 256 (no scaling). |
 | `transform_rotation` | `int` | Rotation in 0.1° units (450 = 45°, 3600 = 360°). Default: 0. Pivot set by `transform_pivot_x`/`y`. |
-| `transform_pivot_x` | `int` | X of the rotation/scale pivot, relative to the widget's top-left corner (px or %). Default: 0. |
-| `transform_pivot_y` | `int` | Y of the rotation/scale pivot, relative to the widget's top-left corner (px or %). Default: 0. |
+| `transform_pivot_x` | `px\|%` | X of the rotation/scale pivot, relative to the widget's top-left corner (px or %). Default: 0. |
+| `transform_pivot_y` | `px\|%` | Y of the rotation/scale pivot, relative to the widget's top-left corner (px or %). Default: 0. |
 | `transform_skew_x` | `int` | Horizontal skew in 0.1° units. Not supported by the SW renderer. Default: 0. |
 | `transform_skew_y` | `int` | Vertical skew in 0.1° units. Not supported by the SW renderer. Default: 0. |
 | `bitmap_mask_src` | `image` | An A8/L8 image used as an alpha mask: the widget is drawn on a layer and masked by this bitmap. |

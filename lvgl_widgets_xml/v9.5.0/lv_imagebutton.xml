@@ -1,11 +1,7 @@
 <!--
 <lv_imagebutton state="checked">
-    <lv_imagebutton-src_left  state="released" src="normal_left"/>
-    <lv_imagebutton-src_mid   state="released" src="normal_mid"/>
-    <lv_imagebutton-src_right state="released" src="normal_right"/>
-    <lv_imagebutton-src_left  state="pressed" src="pr_left"/>
-    <lv_imagebutton-src_mid   state="pressed" src="pr_mid"/>
-    <lv_imagebutton-src_right state="pressed" src="pr_right"/>
+    <lv_imagebutton-src state="released" left="normal_left" mid="normal_mid" right="normal_right"/>
+    <lv_imagebutton-src state="pressed"  left="pr_left"     mid="pr_mid"     right="pr_right"/>
 </lv_imagebutton>
  -->
 
@@ -22,19 +18,11 @@
 
         <prop name="state" type="enum:lv_imagebutton_state" help="The current state of the imagebutton"/>
 
-        <element name="src_left" access="set" help="Set the left image source in a given state">
-            <arg name="state" type="enum:lv_imagebutton_state" help="Set the image in this state"/>
-            <arg name="src" type="image" help="The image in the given state"/>
-        </element>
-
-        <element name="src_right" access="set" help="Set the right image source in a given state">
-            <arg name="state" type="enum:lv_imagebutton_state" help="Set the image in this state"/>
-            <arg name="src" type="image" help="The image in the given state"/>
-        </element>
-
-        <element name="src_mid" access="set" help="Set the middle image source in a given state">
-            <arg name="state" type="enum:lv_imagebutton_state" help="Set the image in this state"/>
-            <arg name="src" type="image" help="The image in the given state"/>
+        <element name="src" access="set" help="Set the image sources in a given state">
+            <arg name="state" type="enum:lv_imagebutton_state" help="Set the images in this state"/>
+            <prop name="left" type="image" help="The left image in the given state"/>
+            <prop name="mid" type="image" help="The middle image in the given state"/>
+            <prop name="right" type="image" help="The right image in the given state"/>
         </element>
 
         <parts>

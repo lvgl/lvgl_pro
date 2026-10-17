@@ -16,10 +16,11 @@ Example
             <enum name="left_mid" value="7" help="Align to left-center"/>
             <enum name="right_mid" value="8" help="Align to right-center"/>
             <enum name="center" value="9" help="Align to center"/>
-            <enum name="stretch" value="10" help="Stretch to fill the widget"/>
-            <enum name="tile" value="11" help="Tile to fill the widget"/>
-            <enum name="contain" value="12" help="Scale to fit inside while keeping aspect ratio"/>
-            <enum name="cover" value="13" help="Scale to fully cover while keeping aspect ratio"/>
+            <!-- 10 is _LV_IMAGE_ALIGN_AUTO_TRANSFORM, an internal marker -->
+            <enum name="stretch" value="11" help="Stretch to fill the widget"/>
+            <enum name="tile" value="12" help="Tile to fill the widget"/>
+            <enum name="contain" value="13" help="Scale to fit inside while keeping aspect ratio"/>
+            <enum name="cover" value="14" help="Scale to fully cover while keeping aspect ratio"/>
         </enumdef>
 
         <prop name="src" type="image" help="Set the image source (file, symbol, or variable)"/>

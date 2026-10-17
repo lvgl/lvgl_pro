@@ -53,12 +53,11 @@ Example
 
         <element name="remove_style_all" access="custom" type="void" help="Remove all styles"/>
 
-        <element name="bind_style" access="custom" type="void" help="Bind a style to a subject value or to an expression">
+        <element name="bind_style" access="custom" type="void" help="Bind a style to a subject value">
             <arg name="name" type="style" help="Style name"/>
             <arg name="selector" type="selector+" default="0" help="Selector (part+state)"/>
-            <arg name="subject" type="subject" required="false" help="Subject to monitor (with ref_value)"/>
-            <arg name="ref_value" type="int" required="false" help="Value that activates the style"/>
-            <arg name="if" type="expression" required="false" help="Apply the style while this expression is true, e.g. `subject1 > 10 and subject1 &lt;= 30`. Written without the `@{}` wrapper. Use instead of subject/ref_value."/>
+            <arg name="subject" type="subject" help="Subject to monitor (with ref_value)"/>
+            <arg name="ref_value" type="int" help="Value that activates the style"/>
         </element>
 
         <element name="bind_style_prop" access="custom" type="void" help="Bind a style to a subject value">
@@ -342,8 +341,8 @@ Example
         <prop name="style_transform_scale_x-selector" type="int" help="Horizontal zoom: 256 = 100%, 128 = 50%, 512 = 200%. Default: 256 (no scaling)."/>
         <prop name="style_transform_scale_y-selector" type="int" help="Vertical zoom: 256 = 100%, 128 = 50%, 512 = 200%. Default: 256 (no scaling)."/>
         <prop name="style_transform_rotation-selector" type="int" help="Rotation in 0.1° units (450 = 45°, 3600 = 360°). Default: 0. Pivot set by `transform_pivot_x`/`y`."/>
-        <prop name="style_transform_pivot_x-selector" type="int" help="X of the rotation/scale pivot, relative to the widget's top-left corner (px or %). Default: 0."/>
-        <prop name="style_transform_pivot_y-selector" type="int" help="Y of the rotation/scale pivot, relative to the widget's top-left corner (px or %). Default: 0."/>
+        <prop name="style_transform_pivot_x-selector" type="px|%" help="X of the rotation/scale pivot, relative to the widget's top-left corner (px or %). Default: 0."/>
+        <prop name="style_transform_pivot_y-selector" type="px|%" help="Y of the rotation/scale pivot, relative to the widget's top-left corner (px or %). Default: 0."/>
         <prop name="style_transform_skew_x-selector" type="int" help="Horizontal skew in 0.1° units. Not supported by the SW renderer. Default: 0."/>
         <prop name="style_transform_skew_y-selector" type="int" help="Vertical skew in 0.1° units. Not supported by the SW renderer. Default: 0."/>
         <prop name="style_bitmap_mask_src-selector" type="image" help="An A8/L8 image used as an alpha mask: the widget is drawn on a layer and masked by this bitmap."/>

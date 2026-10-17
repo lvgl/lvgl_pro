@@ -1,4 +1,4 @@
-<project lvgl_version="9.5.0">
+<project lvgl_version="9.6.0">
 	<targets>
 		<target name="target1">
 			<display width="320" height="240" />

@@ -54,5 +54,5 @@ together with [130+ small examples](https://github.com/lvgl/lvgl_pro/tree/master
 [`lvgl_widgets_xml/`](https://github.com/lvgl/lvgl_pro/tree/master/lvgl_widgets_xml) with the XML schema of
 LVGL's built-in widgets. Both humans and agents can check exactly which properties, enums, styles, and other
 elements are available. See
-[lv_slider.xml](https://github.com/lvgl/lvgl_pro/blob/master/lvgl_widgets_xml/v9.5.0/lv_slider.xml) as an
+[lv_slider.xml](https://github.com/lvgl/lvgl_pro/blob/master/lvgl_widgets_xml/v9.6.0/lv_slider.xml) as an
 example. AI agents can clone the whole repo or get only one file.

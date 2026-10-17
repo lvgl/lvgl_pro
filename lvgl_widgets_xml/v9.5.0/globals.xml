@@ -371,8 +371,8 @@
         <prop name="transform_scale_x" type="int" help="Horizontal zoom: 256 = 100%, 128 = 50%, 512 = 200%. Default: 256 (no scaling)."/>
         <prop name="transform_scale_y" type="int" help="Vertical zoom: 256 = 100%, 128 = 50%, 512 = 200%. Default: 256 (no scaling)."/>
         <prop name="transform_rotation" type="int" help="Rotation in 0.1° units (450 = 45°, 3600 = 360°). Default: 0. Pivot set by `transform_pivot_x`/`y`."/>
-        <prop name="transform_pivot_x" type="int" help="X of the rotation/scale pivot, relative to the widget's top-left corner (px or %). Default: 0."/>
-        <prop name="transform_pivot_y" type="int" help="Y of the rotation/scale pivot, relative to the widget's top-left corner (px or %). Default: 0."/>
+        <prop name="transform_pivot_x" type="px|%" help="X of the rotation/scale pivot, relative to the widget's top-left corner (px or %). Default: 0."/>
+        <prop name="transform_pivot_y" type="px|%" help="Y of the rotation/scale pivot, relative to the widget's top-left corner (px or %). Default: 0."/>
         <prop name="transform_skew_x" type="int" help="Horizontal skew in 0.1° units. Not supported by the SW renderer. Default: 0."/>
         <prop name="transform_skew_y" type="int" help="Vertical skew in 0.1° units. Not supported by the SW renderer. Default: 0."/>
         <prop name="bitmap_mask_src" type="image" help="An A8/L8 image used as an alpha mask: the widget is drawn on a layer and masked by this bitmap."/>

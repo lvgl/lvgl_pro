@@ -42,35 +42,15 @@ Properties below are the widget's XML [`<api>`](../syntax/api); see [API](../syn
 | --- | --- | --- |
 | `state` | `enum:lv_imagebutton_state` | The current state of the imagebutton |
 
-### `<lv_imagebutton-src_left>`
+### `<lv_imagebutton-src>`
 
-Set the left image source in a given state
-
-_access `set`_
-
-| Name | Kind | Type | Description |
-| --- | --- | --- | --- |
-| `state` | arg | `enum:lv_imagebutton_state` | Set the image in this state |
-| `src` | arg | `image` | The image in the given state |
-
-### `<lv_imagebutton-src_right>`
-
-Set the right image source in a given state
+Set the image sources in a given state
 
 _access `set`_
 
 | Name | Kind | Type | Description |
 | --- | --- | --- | --- |
-| `state` | arg | `enum:lv_imagebutton_state` | Set the image in this state |
-| `src` | arg | `image` | The image in the given state |
-
-### `<lv_imagebutton-src_mid>`
-
-Set the middle image source in a given state
-
-_access `set`_
-
-| Name | Kind | Type | Description |
-| --- | --- | --- | --- |
-| `state` | arg | `enum:lv_imagebutton_state` | Set the image in this state |
-| `src` | arg | `image` | The image in the given state |
+| `state` | arg | `enum:lv_imagebutton_state` | Set the images in this state |
+| `left` | prop | `image` | The left image in the given state |
+| `mid` | prop | `image` | The middle image in the given state |
+| `right` | prop | `image` | The right image in the given state |

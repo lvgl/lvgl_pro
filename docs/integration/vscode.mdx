@@ -30,7 +30,7 @@ my_vscode_project/
 
 When configured, the project:
 
-1. Fetches LVGL automatically with CMake `FetchContent` (the `LVGL_VERSION` cache option, default `v9.5.0`).
+1. Fetches LVGL automatically with CMake `FetchContent` (the `LVGL_VERSION` cache option, default `v9.6.0`).
 2. Generates `lv_conf.h` from the matching `lv_conf_*.defaults` for your platform.
 3. Detects `ui/CMakeLists.txt` if a UI has been exported, links its `lib-ui` target, and defines `HAS_UI` so `main.c` initializes it.
 4. Builds a `lvgl_simulator` executable.
@@ -96,5 +96,5 @@ LVGL is configured through the per-platform defaults file picked automatically b
 
 CMake cache options (pass with `-D`):
 
-- `LVGL_VERSION` — LVGL git tag or branch to fetch (default `v9.5.0`).
+- `LVGL_VERSION` — LVGL git tag or branch to fetch (default `v9.6.0`).
 - `UI_DIR` — folder with the exported Editor code (default `ui`).

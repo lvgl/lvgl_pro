@@ -1,0 +1,32 @@
+<!--
+<lv_imagebutton state="checked">
+    <lv_imagebutton-src state="released" left="normal_left" mid="normal_mid" right="normal_right"/>
+    <lv_imagebutton-src state="pressed"  left="pr_left"     mid="pr_mid"     right="pr_right"/>
+</lv_imagebutton>
+ -->
+
+<widget>
+    <api>
+        <enumdef name="lv_imagebutton_state" help="Possible states of an image button">
+            <enum name="released" value="0" help="Released"/>
+            <enum name="pressed" value="1" help="Pressed"/>
+            <enum name="disabled" value="2" help="Disabled"/>
+            <enum name="checked_released" value="3" help="Checked and released"/>
+            <enum name="checked_pressed" value="4" help="Checked and pressed"/>
+            <enum name="checked_disabled" value="5" help="Checked and disabled"/>
+        </enumdef>
+
+        <prop name="state" type="enum:lv_imagebutton_state" help="The current state of the imagebutton"/>
+
+        <element name="src" access="set" help="Set the image sources in a given state">
+            <arg name="state" type="enum:lv_imagebutton_state" help="Set the images in this state"/>
+            <prop name="left" type="image" help="The left image in the given state"/>
+            <prop name="mid" type="image" help="The middle image in the given state"/>
+            <prop name="right" type="image" help="The right image in the given state"/>
+        </element>
+
+        <parts>
+            <part name="main" help="Style the button: background, text and `image_recolor`/`image_recolor_opa` properties. The shown left/mid/right images change with the state (released, pressed, disabled, checked_*)."/>
+        </parts>
+    </api>
+</widget>

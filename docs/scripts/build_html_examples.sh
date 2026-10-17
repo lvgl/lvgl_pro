@@ -27,7 +27,10 @@ if true; then
     cd emscripten_builder
     git submodule update --init --single-branch -- lvgl
     cd lvgl
-    git pull origin master
+    # --single-branch above only fetched lvgl's default branch, so fetch the
+    # release branch explicitly before checking it out.
+    git fetch origin release/v9.6
+    git checkout -B release/v9.6 FETCH_HEAD
 fi
 
 EMSCRIPTEN_BUILDER_PATH=$STARTER_PATH/emscripten_builder

@@ -55,7 +55,7 @@ brew install cmake llvm python sdl2
 
 When configured, the simulator automatically:
 
-1. Fetches LVGL via CMake `FetchContent` (using LVGL v9.5.0 by default, can be modified in `CMakeLists.txt`)
+1. Fetches LVGL via CMake `FetchContent` (using LVGL v9.6.0 by default, can be modified in `CMakeLists.txt`)
 2. Generates `lv_conf.h` from the platform-specific `lv_conf_*.defaults`
 3. Builds your exported UI as the `lib-ui` library
 4. Reads the project name and display size from `project.xml` and passes them to `main.c`

@@ -20,14 +20,14 @@ Widget states
 | Value | Description |
 | --- | --- |
 | `default` | Normal state |
-| `pressed` | Being pressed |
 | `checked` | Toggled or checked |
-| `hovered` | Pointer over widget |
-| `scrolled` | Being scrolled |
-| `disabled` | Disabled, no interaction |
 | `focused` | Has input focus |
 | `focus_key` | Focused by keyboard |
 | `edited` | Being edited |
+| `hovered` | Pointer over widget |
+| `pressed` | Being pressed |
+| `scrolled` | Being scrolled |
+| `disabled` | Disabled, no interaction |
 | `user_1` | User state 1 |
 | `user_2` | User state 2 |
 | `user_3` | User state 3 |
@@ -44,8 +44,8 @@ Widget parts
 | `indicator` | Indicator (e.g. bar fill) |
 | `knob` | Knob or handle |
 | `selected` | Selected item or region |
-| `cursor` | Cursor (e.g. in text area) |
 | `items` | Items (e.g. chart series or table cells) |
+| `cursor` | Cursor (e.g. in text area) |
 | `textarea_placeholder` | Placeholder text in text area |
 
 ### `lv_event`
@@ -71,6 +71,10 @@ Widget events
 | `scroll_end` | Scroll ends |
 | `scroll` | Scrolling |
 | `gesture` | Gesture detected |
+| `gesture_up` | Upwards gesture detected. Sent right after gesture |
+| `gesture_down` | Downwards gesture detected. Sent right after gesture |
+| `gesture_left` | Leftwards gesture detected. Sent right after gesture |
+| `gesture_right` | Rightwards gesture detected. Sent right after gesture |
 | `key` | Key sent to widget |
 | `rotary` | Rotary encoder turned |
 | `focused` | Got focus |
@@ -94,6 +98,9 @@ Widget events
 | `refresh` | Refresh requested |
 | `ready` | Process finished |
 | `cancel` | Process cancelled |
+| `state_changed` | State changed |
+| `checked` | A checkable widget became checked. Sent right after value_changed |
+| `unchecked` | A checkable widget became unchecked. Sent right after value_changed |
 | `create` | Object created |
 | `delete` | Object deleted |
 | `child_changed` | Child changed |
@@ -119,7 +126,9 @@ Widget events
 | `flush_finish` | Flush done |
 | `flush_wait_start` | Flush wait start |
 | `flush_wait_finish` | Flush wait done |
+| `update_layout_completed` | Layout update finished |
 | `vsync` | Vertical sync |
+| `vsync_request` | Vertical sync requested |
 
 ### `lv_align`
 
@@ -145,11 +154,11 @@ Direction flags
 | Value | Description |
 | --- | --- |
 | `none` | No direction |
-| `top` | Top |
-| `bottom` | Bottom |
 | `left` | Left |
 | `right` | Right |
 | `hor` | Horizontal (L+R) |
+| `top` | Top |
+| `bottom` | Bottom |
 | `ver` | Vertical (T+B) |
 | `all` | All directions |
 
@@ -170,12 +179,12 @@ Flex flow
 | Value | Description |
 | --- | --- |
 | `row` | Row |
-| `row_wrap` | Row wrap |
-| `row_reverse` | Row reverse |
-| `row_wrap_reverse` | Row wrap reverse |
 | `column` | Column |
+| `row_wrap` | Row wrap |
 | `column_wrap` | Column wrap |
+| `row_reverse` | Row reverse |
 | `column_reverse` | Column reverse |
+| `row_wrap_reverse` | Row wrap reverse |
 | `column_wrap_reverse` | Column wrap reverse |
 
 ### `lv_flex_align`
@@ -184,12 +193,12 @@ Flex alignment
 
 | Value | Description |
 | --- | --- |
-| `center` | Center |
 | `start` | Start |
 | `end` | End |
+| `center` | Center |
+| `space_evenly` | Space evenly |
 | `space_around` | Space around |
 | `space_between` | Space between |
-| `space_evenly` | Space evenly |
 
 ### `lv_grid_align`
 
@@ -197,13 +206,13 @@ Grid alignment
 
 | Value | Description |
 | --- | --- |
-| `center` | Center of cell |
 | `start` | Start of cell |
+| `center` | Center of cell |
 | `end` | End of cell |
 | `stretch` | Stretch to fill |
+| `space_evenly` | Space evenly |
 | `space_around` | Space around |
 | `space_between` | Space between |
-| `space_evenly` | Space evenly |
 
 ### `lv_text_align`
 
@@ -211,10 +220,10 @@ Text alignment
 
 | Value | Description |
 | --- | --- |
-| `center` | Center |
-| `left` | Left |
-| `right` | Right |
 | `auto` | Auto (based on dir) |
+| `left` | Left |
+| `center` | Center |
+| `right` | Right |
 
 ### `lv_text_decor`
 
@@ -255,8 +264,8 @@ Gradient direction
 | Value | Description |
 | --- | --- |
 | `none` | No gradient |
-| `hor` | Horizontal |
 | `ver` | Vertical |
+| `hor` | Horizontal |
 
 ### `lv_border_side`
 
@@ -265,10 +274,10 @@ Border sides
 | Value | Description |
 | --- | --- |
 | `none` | No border |
+| `bottom` | Bottom side |
+| `top` | Top side |
 | `left` | Left side |
 | `right` | Right side |
-| `top` | Top side |
-| `bottom` | Bottom side |
 | `full` | All sides |
 
 ### `lv_scroll_snap`
@@ -292,6 +301,16 @@ How to display scrollbars
 | `on` | Always show the scrollbars |
 | `active` | Show scrollbars while the widget is being scrolled |
 | `auto` | Show scrollbars when the content is large enough to be scrolled |
+
+### `lv_blur_quality`
+
+Blur rendering trade-off
+
+| Value | Description |
+| --- | --- |
+| `auto` | Set the quality automatically |
+| `speed` | Prefer speed over precision |
+| `precision` | Prefer precision over speed |
 
 ### `lv_screen_load_anim`
 

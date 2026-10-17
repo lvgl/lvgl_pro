@@ -1,0 +1,28 @@
+---
+title: Migration
+description: Bring an existing user interface into LVGL Pro, so you can keep the UI you already have and continue it in XML.
+---
+
+You do not have to start from scratch to use LVGL Pro. If you already have a
+working user interface, it can be brought across and continued in XML.
+
+<Cards>
+  <Card
+    icon={<FileCode />}
+    href="./from-c-code"
+    title="From C code"
+  >
+    Convert a running LVGL application into an LVGL Pro XML project, by reading
+    the finished UI out of the process instead of parsing the source.
+  </Card>
+</Cards>
+
+## What migration can and cannot do
+
+A migration tool moves the **user interface**: the widget tree, the layout, the
+styles, the text and the images. That is the part that is tedious to redo by
+hand and easy to get subtly wrong.
+
+It does not move your **application logic**. Event handlers, data binding and
+state machines stay yours to connect, and the tools tell you exactly which ones
+to wire up rather than dropping them silently.

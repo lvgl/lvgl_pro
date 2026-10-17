@@ -5,6 +5,7 @@
     "syntax",
     "built_in_widgets",
     "integration",
+    "migration",
     "editor",
     "online-viewer",
     "figma",

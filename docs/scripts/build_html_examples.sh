@@ -27,7 +27,7 @@ if true; then
     cd emscripten_builder
     git submodule update --init --single-branch -- lvgl
     cd lvgl
-    git co release/v9.6
+    git checkout release/v9.6
     git pull origin release/v9.6
 fi
 

@@ -10,10 +10,7 @@ LVGL Pro Editor uses standard XML syntax with special conventions for property n
 - **Attribute names** use lowercase letters with `_` separation (e.g., `bg_color`, `font_size`)
 - **Tag names** must start with a letter or `_` and can contain letters, `_`, and digits
 - **Compound names** use `-` as separator (e.g., `lv_chart-series`)
-- **Color values** support multiple formats like CSS:
-  - Hex with prefix: `0x112233` or `#112233`
-  - Hex without prefix: `112233`
-  - Short hex: `0x123`, `#123`, or `123` (all equivalent to `#112233`)
+- **Color values** are written in hex as `0x112233` or in a short form: `0x123`, but not as `#112233` (a value that starts with `#` is read as a legacy constant reference (see below), so the color is not set)
 - **LVGL API alignment**: Follow LVGL naming conventions (e.g., `align="center"`, `bg_color="0xff0000"`)
 - **References**: Use `{ }` to reference anything by name: a `<prop>`, a constant, a subject, or a variant (e.g. `width="{card_width}"`). Inside the braces the name is written plain, and it can be part of a larger [expression](./expressions)
 - **Bindings**: the same expression, reading a [subject](./expressions#global-and-local-subjects) or a [variant](./api#variants). It is re-evaluated whenever one of them changes; an expression without one is evaluated once, when the element is created

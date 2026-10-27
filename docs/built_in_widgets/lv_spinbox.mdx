@@ -37,4 +37,6 @@ Properties below are the widget's XML [`<api>`](../syntax/api); see [API](../syn
 | `min_value` | `int` | Set the minimum value (inclusive) |
 | `max_value` | `int` | Set the maximum value (inclusive) |
 | `step` | `int` | Set the digit that changes on increment/decrement. Can be 1, 10, 100, etc. |
+| `cursor_pos` | `int` | Put the cursor on this digit (0 = rightmost). It also sets `step` |
+| `digit_step_direction` | `enum:lv_dir` | Which way the cursor moves when stepping to the next digit (left or right) |
 | `bind_value` | `subject` | Connect a subject to the spinbox's value |

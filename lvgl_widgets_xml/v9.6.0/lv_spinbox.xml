@@ -12,6 +12,8 @@ Example
         <prop name="min_value" type="int" help="Set the minimum value (inclusive)"/>
         <prop name="max_value" type="int" help="Set the maximum value (inclusive)"/>
         <prop name="step" type="int" help="Set the digit that changes on increment/decrement. Can be 1, 10, 100, etc."/>
+        <prop name="cursor_pos" type="int" help="Put the cursor on this digit (0 = rightmost). It also sets `step`"/>
+        <prop name="digit_step_direction" type="enum:lv_dir" help="Which way the cursor moves when stepping to the next digit (left or right)"/>
         <prop name="bind_value" type="subject" help="Connect a subject to the spinbox's value"/>
 
         <parts>

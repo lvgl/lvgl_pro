@@ -15,6 +15,11 @@ Example
             <param name="mode" type="enum:lv_roller_mode" default="normal" help="Set the roller mode (reference as `options-mode`)"/>
         </prop>
 
+        <prop name="options_translation_tag" help="Set the options from a translation tag. They follow the active language.">
+            <param name="options_translation_tag" type="string" help="Translation tag whose translations are newline (`\n`) separated lists"/>
+            <param name="mode" type="enum:lv_roller_mode" default="normal" help="Set the roller mode (reference as `options_translation_tag-mode`)"/>
+        </prop>
+
         <prop name="selected" help="Set the selected option">
             <param name="selected" type="int" help="Index of the selected option (0-based)"/>
             <param name="animated" type="bool" default="false" help="Animate the selection (reference as `selected-animated`)"/>

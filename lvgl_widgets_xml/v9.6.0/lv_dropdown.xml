@@ -13,6 +13,9 @@ Example
         <prop name="symbol" type="image" help="Set a symbol shown next to the dropdown"/>
         <prop name="bind_value" type="subject" help="Bind the selected option index to a subject"/>
         <prop name="dir" type="enum:lv_dir" help="Tells in which direction the dropdown should be opened"/>
+        <prop name="selected_highlight" type="bool" help="Highlight the selected option in the open list"/>
+        <prop name="text_translation_tag" type="string" help="Translation tag of the text shown on the button. It follows the active language."/>
+        <prop name="options_translation_tag" type="string" help="Translation tag of the options. Its translations are newline (`\n`) separated lists. It follows the active language."/>
 
         <element name="list" access="get" type="lv_obj" help="The dropdown list object for styling or customization">
             <parts>

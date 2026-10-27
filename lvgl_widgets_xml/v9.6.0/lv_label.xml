@@ -19,6 +19,7 @@ Example
         <prop name="recolor" type="bool" help="Allow recoloring words like: A #ff0000 red# word."/>
         <prop name="text_selection_start" type="int" help="Beginning of text highlight"/>
         <prop name="text_selection_end" type="int" help="End of text highlight"/>
+        <prop name="max_lines" type="int" help="Show at most this many lines. Works with `long_mode` wrap or dots"/>
 
         <prop name="bind_text" help="Bind text to a subject">
             <param name="bind_text" type="subject" help="Subject that provides text"/>

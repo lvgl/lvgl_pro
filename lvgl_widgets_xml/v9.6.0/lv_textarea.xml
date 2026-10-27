@@ -12,6 +12,10 @@ Example
         <prop name="password_show_time" type="int" help="Set delay to show typed chars (ms)"/>
         <prop name="text_selection" type="bool" help="Enable text selection"/>
         <prop name="cursor_pos" type="int" help="Set cursor position (0-based)"/>
+        <prop name="cursor_click_pos" type="bool" help="Move the cursor to where the textarea is clicked"/>
+        <prop name="accepted_chars" type="string" help="Only these characters can be typed, e.g. `0123456789`"/>
+        <prop name="max_length" type="int" help="Maximum number of characters that can be typed"/>
+        <prop name="password_bullet" type="string" help="Character shown instead of each letter in password mode"/>
 
         <parts>
             <part name="main" help="The background and the typed text: background, padding and text properties."/>

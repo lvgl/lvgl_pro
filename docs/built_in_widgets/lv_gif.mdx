@@ -13,6 +13,18 @@ Learn more in the [LVGL Open documentation](https://lvgl.io/docs/open/widgets/gi
 
 {/* @generated from lv_xml/xmls/widgets/lv_gif.xml — do not edit below this line; re-run docs/scripts/gen_widget_api.ts instead. */}
 
+## Enumerations
+
+**`lv_color_format`** — Color format of the buffer the gif is decoded to
+
+| Value | Description |
+| --- | --- |
+| `rgb565` | 16 bit RGB |
+| `rgb565_swapped` | 16 bit RGB with swapped bytes |
+| `rgb888` | 24 bit RGB |
+| `xrgb8888` | 32 bit RGB, the alpha byte is unused |
+| `argb8888` | 32 bit RGB with alpha |
+
 ## Properties
 
 ### Parts
@@ -29,3 +41,5 @@ Properties below are the widget's XML [`<api>`](../syntax/api); see [API](../syn
 | --- | --- | --- |
 | `src` | `image` | The source for the gif (raw data or a file) |
 | `loop_count` | `int` | Number of repeats. If not set the information form the gif will be used |
+| `color_format` | `enum:lv_color_format` | Color format to decode the gif to. Set it before `src` to decode only once |
+| `auto_pause_invisible` | `bool` | Pause the gif while it is not visible |

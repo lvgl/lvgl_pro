@@ -30,6 +30,10 @@ Example
         <prop name="scale_y" type="int" help="Scale vertically (100 = original)"/>
         <prop name="pivot_x" type="px|%" help="Set the pivot X for rotation/scaling"/>
         <prop name="pivot_y" type="px|%" help="Set the pivot Y for rotation/scaling"/>
+        <prop name="offset_x" type="int" help="Shift the origin of the image source horizontally (px)"/>
+        <prop name="offset_y" type="int" help="Shift the origin of the image source vertically (px)"/>
+        <prop name="blend_mode" type="enum:lv_blend_mode" help="How the image's pixels mix with the background"/>
+        <prop name="antialias" type="bool" help="Smooth the edges when the image is rotated or scaled"/>
 
         <parts>
             <part name="main" help="Style the image: `image_recolor`, `image_recolor_opa`, `image_opa` and the transform properties (scale/rotation). Background, border, etc can be added too."/>

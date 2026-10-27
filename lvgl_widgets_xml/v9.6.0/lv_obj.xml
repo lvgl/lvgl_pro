@@ -54,6 +54,10 @@ Example
 
         <element name="remove_style_all" access="custom" type="void" help="Remove all styles"/>
 
+        <element name="remove_theme" access="custom" type="void" help="Remove the styles added by the theme, keep the others">
+            <arg name="selector" type="selector+" help="Target part and state, can be ORed, e.g. pressed|knob. If not set, all parts and states"/>
+        </element>
+
         <element name="bind_style" access="custom" type="void" help="Bind a style to a subject value. For a condition use `&lt;style enabled=&quot;{...}&quot;&gt;` instead">
             <arg name="name" type="style" help="Style name"/>
             <arg name="selector" type="selector+" default="0" help="Selector (part+state)"/>
@@ -218,6 +222,8 @@ Example
         <prop name="align" type="enum:lv_align" help="Align on parent"/>
 
         <prop name="ext_click_area" type="int" help="Extra clickable area around object in px"/>
+        <prop name="ext_draw_size" type="int" help="Extra area around the object to redraw in px, for drawings that go beyond its edges"/>
+        <prop name="scroll_dir" type="enum:lv_dir" help="Directions the object can be scrolled in"/>
         <prop name="scroll_snap_x" type="enum:lv_scroll_snap" help="Snap children horizontally"/>
         <prop name="scroll_snap_y" type="enum:lv_scroll_snap" help="Snap children vertically"/>
         <prop name="scrollbar_mode" type="enum:lv_scrollbar_mode" help="Set the scrollbar mode"/>

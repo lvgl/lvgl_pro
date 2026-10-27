@@ -41,36 +41,32 @@ lv_obj_t * lv_example_button_styling_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_button);
-            lv_style_set_bg_opa(&style_button, (255 * 100 / 100));
-            lv_style_set_bg_color(&style_button, lv_color_hex(0x3b82f6));
-            lv_style_set_radius(&style_button, 12);
-            lv_style_set_shadow_color(&style_button, lv_color_hex(0x1e3a8a));
-            lv_style_set_shadow_width(&style_button, 14);
-            lv_style_set_shadow_offset_y(&style_button, 4);
-            lv_style_set_shadow_opa(&style_button, 120);
-            lv_style_set_text_color(&style_button, lv_color_hex(0xffffff));
-            lv_style_set_pad_all(&style_button, 10);
+        /*Init all styles*/
+        lv_style_init(&style_button);
+        lv_style_init(&style_button_pressed);
+        lv_style_init(&style_button_checked);
 
-            lv_style_init(&style_button_pressed);
-            lv_style_set_bg_color(&style_button_pressed, lv_color_hex(0x1d4ed8));
-            lv_style_set_shadow_offset_y(&style_button_pressed, 1);
-            lv_style_set_shadow_width(&style_button_pressed, 6);
-            lv_style_set_outline_color(&style_button_pressed, lv_color_hex(0x60a5fa));
-            lv_style_set_outline_width(&style_button_pressed, 3);
-            lv_style_set_outline_pad(&style_button_pressed, 2);
-            lv_style_set_outline_opa(&style_button_pressed, (255 * 100 / 100));
+        lv_style_set_bg_opa(&style_button, (255 * 100 / 100));
+        lv_style_set_bg_color(&style_button, lv_color_hex(0x3b82f6));
+        lv_style_set_radius(&style_button, 12);
+        lv_style_set_shadow_color(&style_button, lv_color_hex(0x1e3a8a));
+        lv_style_set_shadow_width(&style_button, 14);
+        lv_style_set_shadow_offset_y(&style_button, 4);
+        lv_style_set_shadow_opa(&style_button, 120);
+        lv_style_set_text_color(&style_button, lv_color_hex(0xffffff));
+        lv_style_set_pad_all(&style_button, 10);
+        lv_style_set_bg_color(&style_button_pressed, lv_color_hex(0x1d4ed8));
+        lv_style_set_shadow_offset_y(&style_button_pressed, 1);
+        lv_style_set_shadow_width(&style_button_pressed, 6);
+        lv_style_set_outline_color(&style_button_pressed, lv_color_hex(0x60a5fa));
+        lv_style_set_outline_width(&style_button_pressed, 3);
+        lv_style_set_outline_pad(&style_button_pressed, 2);
+        lv_style_set_outline_opa(&style_button_pressed, (255 * 100 / 100));
+        lv_style_set_bg_color(&style_button_checked, lv_color_hex(0x16a34a));
+        lv_style_set_shadow_color(&style_button_checked, lv_color_hex(0x14532d));
+        lv_style_set_shadow_width(&style_button_checked, 20);
+        lv_style_set_shadow_opa(&style_button_checked, 160);
 
-            lv_style_init(&style_button_checked);
-            lv_style_set_bg_color(&style_button_checked, lv_color_hex(0x16a34a));
-            lv_style_set_shadow_color(&style_button_checked, lv_color_hex(0x14532d));
-            lv_style_set_shadow_width(&style_button_checked, 20);
-            lv_style_set_shadow_opa(&style_button_checked, 160);
-
-        }
-        #endif
         style_inited = true;
     }
 
@@ -102,7 +98,7 @@ lv_obj_t * lv_example_button_styling_create(void)
         lv_obj_set_name(button_2, "button_2");
         lv_obj_set_width(button_2, 180);
         lv_obj_set_height(button_2, 48);
-        lv_obj_set_flag(button_2, LV_OBJ_FLAG_CHECKABLE, true);
+        lv_obj_set_checkable(button_2, true);
         lv_obj_add_style(button_2, &style_button, 0);
         lv_obj_add_style(button_2, &style_button_pressed, LV_STATE_PRESSED);
         lv_obj_add_style(button_2, &style_button_checked, LV_STATE_CHECKED);

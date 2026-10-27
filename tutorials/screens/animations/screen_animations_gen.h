@@ -18,7 +18,7 @@ extern "C" {
     #include "lvgl_private.h"
 #else
     #include "lvgl/lvgl.h"
-    #include "lvgl/lvgl_private.h"
+    #include "lvgl_private/lvgl_private.h"
 #endif
 
 #if defined(LV_USE_XML) && LV_USE_XML
@@ -49,7 +49,7 @@ lv_obj_t * screen_animations_create(void);
 /**
  * Get a timeline of a screen_animations
  * @param obj          pointer to a screen_animations component
- * @param timeline_id  ID of the the timeline
+ * @param timeline_id  ID of the timeline
  * @return             pointer to the timeline or NULL if not found
  */
 lv_anim_timeline_t * screen_animations_get_timeline(lv_obj_t * obj, screen_animations_timeline_t timeline_id);

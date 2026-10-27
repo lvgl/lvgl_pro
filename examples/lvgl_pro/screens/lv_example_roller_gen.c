@@ -67,14 +67,14 @@ lv_obj_t * lv_example_roller_create(void)
         lv_obj_set_align(lv_roller_0, LV_ALIGN_CENTER);
         lv_roller_set_options(lv_roller_0, "January\nFebruary\nMarch\nApril\nMay\nJune\nJuly\nAugust\nSeptember\nOctober\nNovember", LV_ROLLER_MODE_INFINITE);
         lv_roller_set_visible_row_count(lv_roller_0, 3);
-        lv_roller_bind_value(lv_roller_0, &subject_index);
+        lv_roller_bind_value(lv_roller_0, subject_index);
         lv_obj_add_style(lv_roller_0, &style_roller, 0);
         lv_obj_add_style(lv_roller_0, &style_roller_sel, LV_PART_SELECTED);
 
         lv_obj_t * lv_label_0 = lv_label_create(lv_obj_0);
         lv_obj_set_align(lv_label_0, LV_ALIGN_CENTER);
         lv_obj_set_y(lv_label_0, -70);
-        lv_label_bind_text(lv_label_0, &subject_index, "Month index: %d");
+        lv_label_bind_text(lv_label_0, subject_index, "Month index: %d");
 
         the_root = lv_obj_0;
     }

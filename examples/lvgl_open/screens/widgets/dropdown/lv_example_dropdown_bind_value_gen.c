@@ -49,14 +49,14 @@ lv_obj_t * lv_example_dropdown_bind_value_create(void)
 
         lv_obj_t * label_1 = lv_label_create(lv_obj_0);
         lv_obj_set_name(label_1, "label_1");
-        lv_label_bind_text(label_1, &subject_index, "Selected option: %d");
+        lv_label_bind_text(label_1, subject_index, "Selected option: %d");
 
         lv_obj_t * roller = lv_roller_create(lv_obj_0);
         lv_obj_set_name(roller, "roller");
         lv_obj_set_width(roller, 160);
         lv_roller_set_visible_row_count(roller, 3);
         lv_roller_set_options(roller, "Mon\nTue\nWed\nThu\nFri\nSat\nSun", LV_ROLLER_MODE_NORMAL);
-        lv_roller_bind_value(roller, &subject_index);
+        lv_roller_bind_value(roller, subject_index);
 
         lv_obj_t * button = lv_button_create(lv_obj_0);
         lv_obj_set_name(button, "button");
@@ -65,7 +65,7 @@ lv_obj_t * lv_example_dropdown_bind_value_create(void)
         lv_obj_set_align(label_2, LV_ALIGN_CENTER);
         lv_label_set_text(label_2, "Jump to Wed");
 
-        lv_obj_add_subject_set_int_event(button, &subject_index, LV_EVENT_CLICKED, 2);
+        lv_obj_add_subject_set_int_event(button, subject_index, LV_EVENT_CLICKED, 2);
 
         the_root = lv_obj_0;
     }

@@ -58,7 +58,7 @@ lv_obj_t * lv_example_scroll_snap_create(void)
         lv_obj_set_name(button_1, "button_1");
         lv_obj_set_width(button_1, 120);
         lv_obj_set_height(button_1, lv_pct(100));
-        lv_obj_set_flag(button_1, LV_OBJ_FLAG_SCROLL_ON_FOCUS, false);
+        lv_obj_set_scroll_on_focus(button_1, false);
         lv_obj_t * label_1 = lv_label_create(button_1);
         lv_obj_set_name(label_1, "label_1");
         lv_obj_set_align(label_1, LV_ALIGN_CENTER);
@@ -68,7 +68,7 @@ lv_obj_t * lv_example_scroll_snap_create(void)
         lv_obj_set_name(button_2, "button_2");
         lv_obj_set_width(button_2, 120);
         lv_obj_set_height(button_2, lv_pct(100));
-        lv_obj_set_flag(button_2, LV_OBJ_FLAG_SCROLL_ON_FOCUS, false);
+        lv_obj_set_scroll_on_focus(button_2, false);
         lv_obj_t * label_2 = lv_label_create(button_2);
         lv_obj_set_name(label_2, "label_2");
         lv_obj_set_align(label_2, LV_ALIGN_CENTER);
@@ -78,9 +78,9 @@ lv_obj_t * lv_example_scroll_snap_create(void)
         lv_obj_set_name(button_3, "button_3");
         lv_obj_set_width(button_3, 120);
         lv_obj_set_height(button_3, lv_pct(100));
-        lv_obj_set_flag(button_3, LV_OBJ_FLAG_SNAPPABLE, false);
+        lv_obj_set_snappable(button_3, false);
         lv_obj_set_style_bg_color(button_3, lv_color_hex(0x9429ff), 0);
-        lv_obj_set_flag(button_3, LV_OBJ_FLAG_SCROLL_ON_FOCUS, false);
+        lv_obj_set_scroll_on_focus(button_3, false);
         lv_obj_t * label_3 = lv_label_create(button_3);
         lv_obj_set_name(label_3, "label_3");
         lv_obj_set_align(label_3, LV_ALIGN_CENTER);
@@ -90,7 +90,7 @@ lv_obj_t * lv_example_scroll_snap_create(void)
         lv_obj_set_name(button_4, "button_4");
         lv_obj_set_width(button_4, 120);
         lv_obj_set_height(button_4, lv_pct(100));
-        lv_obj_set_flag(button_4, LV_OBJ_FLAG_SCROLL_ON_FOCUS, false);
+        lv_obj_set_scroll_on_focus(button_4, false);
         lv_obj_t * label_4 = lv_label_create(button_4);
         lv_obj_set_name(label_4, "label_4");
         lv_obj_set_align(label_4, LV_ALIGN_CENTER);
@@ -100,7 +100,7 @@ lv_obj_t * lv_example_scroll_snap_create(void)
         lv_obj_set_name(button_5, "button_5");
         lv_obj_set_width(button_5, 120);
         lv_obj_set_height(button_5, lv_pct(100));
-        lv_obj_set_flag(button_5, LV_OBJ_FLAG_SCROLL_ON_FOCUS, false);
+        lv_obj_set_scroll_on_focus(button_5, false);
         lv_obj_t * label_5 = lv_label_create(button_5);
         lv_obj_set_name(label_5, "label_5");
         lv_obj_set_align(label_5, LV_ALIGN_CENTER);
@@ -110,7 +110,7 @@ lv_obj_t * lv_example_scroll_snap_create(void)
         lv_obj_set_name(button_6, "button_6");
         lv_obj_set_width(button_6, 120);
         lv_obj_set_height(button_6, lv_pct(100));
-        lv_obj_set_flag(button_6, LV_OBJ_FLAG_SCROLL_ON_FOCUS, false);
+        lv_obj_set_scroll_on_focus(button_6, false);
         lv_obj_t * label_6 = lv_label_create(button_6);
         lv_obj_set_name(label_6, "label_6");
         lv_obj_set_align(label_6, LV_ALIGN_CENTER);

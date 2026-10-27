@@ -14,7 +14,7 @@
  *      DEFINES
  *********************/
 
-#define ACCENT lv_color_hex(0x6366f1)
+#define ACCENT (lv_color_hex(0x6366f1))
 
 
 /**********************
@@ -42,20 +42,18 @@ lv_obj_t * lv_example_style_outline_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_focus);
-            lv_style_set_radius(&style_focus, 14);
-            lv_style_set_bg_opa(&style_focus, (255 * 100 / 100));
-            lv_style_set_bg_color(&style_focus, lv_color_hex(0xffffff));
-            lv_style_set_border_width(&style_focus, 1);
-            lv_style_set_border_color(&style_focus, lv_color_hex(0xe2e8f0));
-            lv_style_set_outline_color(&style_focus, ACCENT);
-            lv_style_set_outline_width(&style_focus, 3);
-            lv_style_set_outline_pad(&style_focus, 6);
+        /*Init all styles*/
+        lv_style_init(&style_focus);
 
-        }
-        #endif
+        lv_style_set_radius(&style_focus, 14);
+        lv_style_set_bg_opa(&style_focus, (255 * 100 / 100));
+        lv_style_set_bg_color(&style_focus, lv_color_hex(0xffffff));
+        lv_style_set_border_width(&style_focus, 1);
+        lv_style_set_border_color(&style_focus, lv_color_hex(0xe2e8f0));
+        lv_style_set_outline_color(&style_focus, ACCENT);
+        lv_style_set_outline_width(&style_focus, 3);
+        lv_style_set_outline_pad(&style_focus, 6);
+
         style_inited = true;
     }
 

@@ -44,11 +44,11 @@ lv_obj_t * screen_data_bindings_create(void)
         lv_obj_set_flex_flow(lv_obj_0, LV_FLEX_FLOW_COLUMN);
         lv_obj_set_style_flex_track_place(lv_obj_0, LV_FLEX_ALIGN_CENTER, 0);
 
-        sliderbox_create(lv_obj_0, "Max. current", &subject_max_current, "%d mA");
+        sliderbox_create(lv_obj_0, "Max. current", subject_max_current, "mA");
 
-        sliderbox_create(lv_obj_0, "Timeout", &subject_timeout, "%d ms");
+        sliderbox_create(lv_obj_0, "Timeout", subject_timeout, "ms");
 
-        sliderbox_create(lv_obj_0, "Volume", &subject_volume, "%d%%");
+        sliderbox_create(lv_obj_0, "Volume", subject_volume, "%");
 
         the_root = lv_obj_0;
     }

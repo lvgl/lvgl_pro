@@ -78,8 +78,8 @@ lv_obj_t * lv_example_button_create(void)
         lv_label_set_text(lv_label_0, "Action");
 
         lv_obj_t * lv_button_1 = lv_button_create(lv_obj_0);
-        lv_obj_set_flag(lv_button_1, LV_OBJ_FLAG_CHECKABLE, true);
-        lv_obj_set_state(lv_button_1, LV_STATE_CHECKED, true);
+        lv_obj_set_checkable(lv_button_1, true);
+        lv_obj_set_checked(lv_button_1, true);
         lv_obj_add_style(lv_button_1, &style_btn, 0);
         lv_obj_add_style(lv_button_1, &style_btn_pressed, LV_STATE_PRESSED);
         lv_obj_add_style(lv_button_1, &style_btn_checked, LV_STATE_CHECKED);
@@ -87,7 +87,7 @@ lv_obj_t * lv_example_button_create(void)
         lv_label_set_text(lv_label_1, "Toggle");
 
         lv_obj_t * lv_button_2 = lv_button_create(lv_obj_0);
-        lv_obj_set_state(lv_button_2, LV_STATE_DISABLED, true);
+        lv_obj_set_disabled(lv_button_2, true);
         lv_obj_set_style_bg_opa(lv_button_2, (255 * 40 / 100), 0);
         lv_obj_add_style(lv_button_2, &style_btn, 0);
         lv_obj_t * lv_label_2 = lv_label_create(lv_button_2);

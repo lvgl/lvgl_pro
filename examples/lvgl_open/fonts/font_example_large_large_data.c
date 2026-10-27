@@ -1,3 +1,7 @@
+#ifndef OSPI_REGION
+#define OSPI_REGION __attribute__((section("the_ospi_section")))
+#endif
+
 /*******************************************************************************
  * Size: 32 px
  * Bpp: 4
@@ -18,20 +22,20 @@
     #include "lvgl/lvgl.h"
 #endif
 
-
-
 #ifndef FONT_EXAMPLE_LARGE_LARGE_DATA
 #define FONT_EXAMPLE_LARGE_LARGE_DATA 1
 #endif
 
 #if FONT_EXAMPLE_LARGE_LARGE_DATA
 
+
+
 /*-----------------
  *    BITMAPS
  *----------------*/
 
 /*Store the image of the glyphs*/
-static LV_ATTRIBUTE_LARGE_CONST const uint8_t glyph_bitmap[] __attribute__((section("the_ospi_section"))) = {
+static LV_ATTRIBUTE_LARGE_CONST const uint8_t glyph_bitmap[] OSPI_REGION = {
     /* U+0020 " " */
 
     /* U+0021 "!" */
@@ -2279,7 +2283,7 @@ static LV_ATTRIBUTE_LARGE_CONST const uint8_t glyph_bitmap[] __attribute__((sect
  *  GLYPH DESCRIPTION
  *--------------------*/
 
-static const lv_font_fmt_txt_glyph_dsc_t glyph_dsc[] __attribute__((section("the_ospi_section"))) = {
+static const lv_font_fmt_txt_glyph_dsc_t glyph_dsc[] OSPI_REGION = {
     {.bitmap_index = 0, .adv_w = 0, .box_w = 0, .box_h = 0, .ofs_x = 0, .ofs_y = 0} /* id = 0 reserved */,
     {.bitmap_index = 0, .adv_w = 138, .box_w = 0, .box_h = 0, .ofs_x = 0, .ofs_y = 0},
     {.bitmap_index = 0, .adv_w = 137, .box_w = 5, .box_h = 22, .ofs_x = 2, .ofs_y = 0},
@@ -2385,7 +2389,7 @@ static const lv_font_fmt_txt_glyph_dsc_t glyph_dsc[] __attribute__((section("the
 
 
 /*Collect the unicode lists and glyph_id offsets*/
-static const lv_font_fmt_txt_cmap_t cmaps[] __attribute__((section("the_ospi_section"))) =
+static const lv_font_fmt_txt_cmap_t cmaps[] OSPI_REGION =
 {
     {
         .range_start = 32, .range_length = 95, .glyph_id_start = 1,
@@ -2405,9 +2409,9 @@ static  lv_font_fmt_txt_glyph_cache_t cache;
 #endif
 
 #if LVGL_VERSION_MAJOR >= 8
-static const lv_font_fmt_txt_dsc_t font_dsc __attribute__((section("the_ospi_section"))) = {
+static const lv_font_fmt_txt_dsc_t font_dsc OSPI_REGION = {
 #else
-static lv_font_fmt_txt_dsc_t font_dsc __attribute__((section("the_ospi_section"))) = {
+static lv_font_fmt_txt_dsc_t font_dsc OSPI_REGION = {
 #endif
     .glyph_bitmap = glyph_bitmap,
     .glyph_dsc = glyph_dsc,
@@ -2440,6 +2444,10 @@ lv_font_t font_example_large_large_data = {
     .get_glyph_bitmap = lv_font_get_bitmap_fmt_txt,    /*Function pointer to get glyph's bitmap*/
     .line_height = 33,          /*The maximum line height required by the font*/
     .base_line = 6,             /*Baseline measured from the bottom of the line*/
+#if LV_VERSION_CHECK(9, 6, 0) || LVGL_VERSION_MAJOR >= 10
+    .cap_height = 22,           /*Cap height of the font*/
+    .x_height = 17,               /*x-height of the font*/
+#endif
 #if !(LVGL_VERSION_MAJOR == 6 && LVGL_VERSION_MINOR == 0)
     .subpx = LV_FONT_SUBPX_NONE,
 #endif
@@ -2448,7 +2456,7 @@ lv_font_t font_example_large_large_data = {
     .underline_thickness = 2,
 #endif
 
-#if LV_VERSION_CHECK(9, 3, 0)
+#if LV_VERSION_CHECK(9, 3, 0) || LVGL_VERSION_MAJOR >= 10
     .static_bitmap = 1,    /*Bitmaps are stored as const so they are always static if not compressed */
 #endif
 

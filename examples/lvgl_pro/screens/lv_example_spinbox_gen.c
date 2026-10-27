@@ -81,12 +81,12 @@ lv_obj_t * lv_example_spinbox_create(void)
         lv_obj_set_width(lv_spinbox_1, 150);
         lv_spinbox_set_min_value(lv_spinbox_1, 0);
         lv_spinbox_set_max_value(lv_spinbox_1, 100);
-        lv_spinbox_bind_value(lv_spinbox_1, &subject_value);
+        lv_spinbox_bind_value(lv_spinbox_1, subject_value);
         lv_obj_add_style(lv_spinbox_1, &style_sb, 0);
 
         lv_obj_t * lv_slider_0 = lv_slider_create(lv_obj_0);
         lv_obj_set_width(lv_slider_0, 220);
-        lv_slider_bind_value(lv_slider_0, &subject_value);
+        lv_slider_bind_value(lv_slider_0, subject_value);
 
         the_root = lv_obj_0;
     }

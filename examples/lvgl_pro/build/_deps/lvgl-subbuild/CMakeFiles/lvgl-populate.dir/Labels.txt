@@ -1,0 +1,14 @@
+# Target labels
+ lvgl-populate
+# Source files and their labels
+/home/kisvegabor/projects/lvgl/editor/lvgl_pro/examples/lvgl_pro/build/_deps/lvgl-subbuild/CMakeFiles/lvgl-populate
+/home/kisvegabor/projects/lvgl/editor/lvgl_pro/examples/lvgl_pro/build/_deps/lvgl-subbuild/CMakeFiles/lvgl-populate.rule
+/home/kisvegabor/projects/lvgl/editor/lvgl_pro/examples/lvgl_pro/build/_deps/lvgl-subbuild/CMakeFiles/lvgl-populate-complete.rule
+/home/kisvegabor/projects/lvgl/editor/lvgl_pro/examples/lvgl_pro/build/_deps/lvgl-subbuild/lvgl-populate-prefix/src/lvgl-populate-stamp/lvgl-populate-build.rule
+/home/kisvegabor/projects/lvgl/editor/lvgl_pro/examples/lvgl_pro/build/_deps/lvgl-subbuild/lvgl-populate-prefix/src/lvgl-populate-stamp/lvgl-populate-configure.rule
+/home/kisvegabor/projects/lvgl/editor/lvgl_pro/examples/lvgl_pro/build/_deps/lvgl-subbuild/lvgl-populate-prefix/src/lvgl-populate-stamp/lvgl-populate-download.rule
+/home/kisvegabor/projects/lvgl/editor/lvgl_pro/examples/lvgl_pro/build/_deps/lvgl-subbuild/lvgl-populate-prefix/src/lvgl-populate-stamp/lvgl-populate-install.rule
+/home/kisvegabor/projects/lvgl/editor/lvgl_pro/examples/lvgl_pro/build/_deps/lvgl-subbuild/lvgl-populate-prefix/src/lvgl-populate-stamp/lvgl-populate-mkdir.rule
+/home/kisvegabor/projects/lvgl/editor/lvgl_pro/examples/lvgl_pro/build/_deps/lvgl-subbuild/lvgl-populate-prefix/src/lvgl-populate-stamp/lvgl-populate-patch.rule
+/home/kisvegabor/projects/lvgl/editor/lvgl_pro/examples/lvgl_pro/build/_deps/lvgl-subbuild/lvgl-populate-prefix/src/lvgl-populate-stamp/lvgl-populate-test.rule
+/home/kisvegabor/projects/lvgl/editor/lvgl_pro/examples/lvgl_pro/build/_deps/lvgl-subbuild/lvgl-populate-prefix/src/lvgl-populate-stamp/lvgl-populate-update.rule

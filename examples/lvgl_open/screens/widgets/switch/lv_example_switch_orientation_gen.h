@@ -2,8 +2,8 @@
  * @file lv_example_switch_orientation_gen.h
  */
 
-#ifndef LV_EXAMPLE_SWITCH_ORIENTATION_H
-#define LV_EXAMPLE_SWITCH_ORIENTATION_H
+#ifndef LVGL_PRO_LV_EXAMPLE_SWITCH_ORIENTATION_GEN_H
+#define LVGL_PRO_LV_EXAMPLE_SWITCH_ORIENTATION_GEN_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -18,10 +18,10 @@ extern "C" {
     #include "lvgl_private.h"
 #else
     #include "lvgl/lvgl.h"
-    #include "lvgl/lvgl_private.h"
+    #include "lvgl_private/lvgl_private.h"
 #endif
 
-#ifdef LV_USE_XML
+#if defined(LV_USE_XML) && LV_USE_XML
     #include "lv_xml/lv_xml.h"
 #endif
 
@@ -49,7 +49,7 @@ lv_obj_t * lv_example_switch_orientation_create(void);
 /**
  * Get a timeline of a lv_example_switch_orientation
  * @param obj          pointer to a lv_example_switch_orientation component
- * @param timeline_id  ID of the the timeline
+ * @param timeline_id  ID of the timeline
  * @return             pointer to the timeline or NULL if not found
  */
 lv_anim_timeline_t * lv_example_switch_orientation_get_timeline(lv_obj_t * obj, lv_example_switch_orientation_timeline_t timeline_id);
@@ -62,4 +62,4 @@ lv_anim_timeline_t * lv_example_switch_orientation_get_timeline(lv_obj_t * obj, 
 } /*extern "C"*/
 #endif
 
-#endif /*LV_EXAMPLE_SWITCH_ORIENTATION_H*/
+#endif /*LVGL_PRO_LV_EXAMPLE_SWITCH_ORIENTATION_GEN_H*/

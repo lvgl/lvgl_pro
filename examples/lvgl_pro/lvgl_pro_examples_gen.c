@@ -6,7 +6,7 @@
  *      INCLUDES
  *********************/
 
-#include "lvgl_pro_examples_gen.h"
+#include "lvgl_pro_examples.h"
 
 #if defined(LV_USE_XML) && LV_USE_XML
 #endif /* LV_USE_XML */
@@ -29,7 +29,7 @@ static void check_font(lv_font_t ** font, const char * name);
  *  STATIC VARIABLES
  **********************/
 
-static uint32_t lvgl_pro_examples_target = LVGL_PRO_EXAMPLES_TARGET_ALL;
+static uint32_t lvgl_pro_examples_target = LVGL_PRO_EXAMPLES_COMPILE_TARGET;
 
 /*----------------
  * Translations
@@ -74,12 +74,12 @@ extern const void * img_bulb_data;
  * Subjects
  *----------------*/
 
-lv_subject_t subject_value;
-lv_subject_t subject_value2;
-lv_subject_t subject_opa;
-lv_subject_t subject_index;
-lv_subject_t subject_checked;
-lv_subject_t subject_text;
+lv_subject_t * subject_value;
+lv_subject_t * subject_value2;
+lv_subject_t * subject_opa;
+lv_subject_t * subject_index;
+lv_subject_t * subject_checked;
+lv_subject_t * subject_text;
 
 /**********************
  *      MACROS
@@ -146,25 +146,27 @@ void lvgl_pro_examples_init_gen(const char * asset_path)
     /*----------------
      * Subjects
      *----------------*/
-    lv_subject_init_int(&subject_value, 50);
-    lv_subject_set_min_value_int(&subject_value, 0);
-    lv_subject_set_max_value_int(&subject_value, 100);
-    lv_subject_init_int(&subject_value2, 20);
-    lv_subject_set_min_value_int(&subject_value2, 0);
-    lv_subject_set_max_value_int(&subject_value2, 100);
-    lv_subject_init_int(&subject_opa, 128);
-    lv_subject_set_min_value_int(&subject_opa, 0);
-    lv_subject_set_max_value_int(&subject_opa, 255);
-    lv_subject_init_int(&subject_index, 0);
-    lv_subject_init_int(&subject_checked, 0);
+    subject_value = lv_subject_create(LV_SUBJECT_TYPE_INT);
+    lv_subject_set_min_value_int(subject_value, 0);
+    lv_subject_set_max_value_int(subject_value, 100);
+    lv_subject_set_int(subject_value, 50);
+    subject_value2 = lv_subject_create(LV_SUBJECT_TYPE_INT);
+    lv_subject_set_min_value_int(subject_value2, 0);
+    lv_subject_set_max_value_int(subject_value2, 100);
+    lv_subject_set_int(subject_value2, 20);
+    subject_opa = lv_subject_create(LV_SUBJECT_TYPE_INT);
+    lv_subject_set_min_value_int(subject_opa, 0);
+    lv_subject_set_max_value_int(subject_opa, 255);
+    lv_subject_set_int(subject_opa, 128);
+    subject_index = lv_subject_create(LV_SUBJECT_TYPE_INT);
+    lv_subject_set_int(subject_index, 0);
+    subject_checked = lv_subject_create(LV_SUBJECT_TYPE_INT);
+    lv_subject_set_int(subject_checked, 0);
     static char subject_text_buf[UI_SUBJECT_STRING_LENGTH];
     static char subject_text_prev_buf[UI_SUBJECT_STRING_LENGTH];
-    lv_subject_init_string(&subject_text,
-                           subject_text_buf,
-                           subject_text_prev_buf,
-                           UI_SUBJECT_STRING_LENGTH,
-                           "Hello"
-                          );
+    subject_text = lv_subject_create(LV_SUBJECT_TYPE_STRING);
+    lv_subject_set_string_buffer_static(subject_text, subject_text_buf, subject_text_prev_buf, UI_SUBJECT_STRING_LENGTH);
+    lv_subject_set_string(subject_text, "Hello");
 
     /*----------------
      * Translations
@@ -181,12 +183,12 @@ void lvgl_pro_examples_init_gen(const char * asset_path)
     lv_xml_register_font(NULL, "font_large", font_large);
 
     /* Register subjects */
-    lv_xml_register_subject(NULL, "subject_value", &subject_value);
-    lv_xml_register_subject(NULL, "subject_value2", &subject_value2);
-    lv_xml_register_subject(NULL, "subject_opa", &subject_opa);
-    lv_xml_register_subject(NULL, "subject_index", &subject_index);
-    lv_xml_register_subject(NULL, "subject_checked", &subject_checked);
-    lv_xml_register_subject(NULL, "subject_text", &subject_text);
+    lv_xml_register_subject(NULL, "subject_value", subject_value);
+    lv_xml_register_subject(NULL, "subject_value2", subject_value2);
+    lv_xml_register_subject(NULL, "subject_opa", subject_opa);
+    lv_xml_register_subject(NULL, "subject_index", subject_index);
+    lv_xml_register_subject(NULL, "subject_checked", subject_checked);
+    lv_xml_register_subject(NULL, "subject_text", subject_text);
 
     /* Register callbacks */
 

@@ -40,28 +40,25 @@ lv_obj_t * lv_example_bar_styling_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_bar_track);
-            lv_style_set_bg_opa(&style_bar_track, (255 * 100 / 100));
-            lv_style_set_bg_color(&style_bar_track, lv_color_hex(0x1f2937));
-            lv_style_set_radius(&style_bar_track, 12);
-            lv_style_set_border_color(&style_bar_track, lv_color_hex(0x0f172a));
-            lv_style_set_border_width(&style_bar_track, 1);
+        /*Init all styles*/
+        lv_style_init(&style_bar_track);
+        lv_style_init(&style_bar_indicator);
 
-            lv_style_init(&style_bar_indicator);
-            lv_style_set_bg_opa(&style_bar_indicator, (255 * 100 / 100));
-            lv_style_set_bg_color(&style_bar_indicator, lv_color_hex(0x10b981));
-            lv_style_set_bg_grad_color(&style_bar_indicator, lv_color_hex(0x06b6d4));
-            lv_style_set_bg_grad_dir(&style_bar_indicator, LV_GRAD_DIR_HOR);
-            lv_style_set_radius(&style_bar_indicator, 12);
-            lv_style_set_shadow_color(&style_bar_indicator, lv_color_hex(0x064e3b));
-            lv_style_set_shadow_width(&style_bar_indicator, 8);
-            lv_style_set_shadow_spread(&style_bar_indicator, -2);
-            lv_style_set_shadow_opa(&style_bar_indicator, 180);
+        lv_style_set_bg_opa(&style_bar_track, (255 * 100 / 100));
+        lv_style_set_bg_color(&style_bar_track, lv_color_hex(0x1f2937));
+        lv_style_set_radius(&style_bar_track, 12);
+        lv_style_set_border_color(&style_bar_track, lv_color_hex(0x0f172a));
+        lv_style_set_border_width(&style_bar_track, 1);
+        lv_style_set_bg_opa(&style_bar_indicator, (255 * 100 / 100));
+        lv_style_set_bg_color(&style_bar_indicator, lv_color_hex(0x10b981));
+        lv_style_set_bg_grad_color(&style_bar_indicator, lv_color_hex(0x06b6d4));
+        lv_style_set_bg_grad_dir(&style_bar_indicator, LV_GRAD_DIR_HOR);
+        lv_style_set_radius(&style_bar_indicator, 12);
+        lv_style_set_shadow_color(&style_bar_indicator, lv_color_hex(0x064e3b));
+        lv_style_set_shadow_width(&style_bar_indicator, 8);
+        lv_style_set_shadow_spread(&style_bar_indicator, -2);
+        lv_style_set_shadow_opa(&style_bar_indicator, 180);
 
-        }
-        #endif
         style_inited = true;
     }
 

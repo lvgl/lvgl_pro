@@ -61,9 +61,12 @@ lv_obj_t * lv_example_imagebutton_create(void)
         lv_obj_set_width(lv_imagebutton_0, 160);
         lv_obj_set_align(lv_imagebutton_0, LV_ALIGN_CENTER);
         lv_obj_add_style(lv_imagebutton_0, &style_pressed, LV_STATE_PRESSED);
+        lv_imagebutton_set_src_left(lv_imagebutton_0, LV_IMAGEBUTTON_STATE_RELEASED, imgbtn_left);
+        lv_imagebutton_set_src_right(lv_imagebutton_0, LV_IMAGEBUTTON_STATE_RELEASED, imgbtn_right);
+        lv_imagebutton_set_src_mid(lv_imagebutton_0, LV_IMAGEBUTTON_STATE_RELEASED, imgbtn_mid);
         lv_obj_t * lv_label_0 = lv_label_create(lv_imagebutton_0);
         lv_obj_set_align(lv_label_0, LV_ALIGN_CENTER);
-        lv_label_set_text(lv_label_0, "Press");
+        lv_label_set_text(lv_label_0, "Press Me");
         lv_obj_set_style_text_color(lv_label_0, lv_color_hex(0xffffff), 0);
         lv_obj_set_y(lv_label_0, -3);
 

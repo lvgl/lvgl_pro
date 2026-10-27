@@ -46,7 +46,7 @@ LV_USE_GIF              1
 LV_USE_FLOAT            1
 LV_USE_MATRIX           1
 LV_USE_VECTOR_GRAPHIC   1
-LV_USE_THORVG_INTERNAL  1
+LV_USE_THORVG           1
 
 # A handful of built-in fonts.
 LV_FONT_MONTSERRAT_14   1

@@ -39,16 +39,14 @@ lv_obj_t * lv_example_image_inner_align_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_main);
-            lv_style_set_bg_color(&style_main, lv_color_hex(0xd5d5d5));
-            lv_style_set_bg_opa(&style_main, (255 * 100 / 100));
-            lv_style_set_border_width(&style_main, 2);
-            lv_style_set_border_color(&style_main, lv_color_hex(0x9429ff));
+        /*Init all styles*/
+        lv_style_init(&style_main);
 
-        }
-        #endif
+        lv_style_set_bg_color(&style_main, lv_color_hex(0xd5d5d5));
+        lv_style_set_bg_opa(&style_main, (255 * 100 / 100));
+        lv_style_set_border_width(&style_main, 2);
+        lv_style_set_border_color(&style_main, lv_color_hex(0x9429ff));
+
         style_inited = true;
     }
 

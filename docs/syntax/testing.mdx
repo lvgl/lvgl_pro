@@ -26,12 +26,14 @@ The following step types are currently supported:
 | --- | --- | --- |
 | `<move_to x="10" y="30"/>` | `x`, `y` | Move the mouse to the specified screen coordinates |
 | `<click_at x="10" y="30"/>` | `x`, `y` | Simulates a click at the specified screen coordinates |
+| `<click_on name="button_ok"/>` | `name` | Simulates a click on the widget with the given `name` |
 | `<press/>` | — | Press on the current screen coordinate |
 | `<release/>` | — | Release on the current screen coordinate |
 | `<wait ms="100"/>` | `ms` | Waits for the given number of milliseconds. LVGL continues running, including animations and timers |
 | `<freeze ms="100"/>` | `ms` | Pauses the UI and LVGL's internal time. Useful for visual debugging |
 | `<subject_set subject="subject1" value="5"/>` | `subject`, `value` | Set an integer or string subject's value |
 | `<subject_compare subject="subject1" value="10"/>` | `subject`, `value` | Compare an integer or string subject's value against a reference value |
+| `<set_language name="de"/>` | `name` | Switch to the given language from `translations.xml` |
 | `<screenshot_compare path="path/to/image.png"/>` | `path` | Compares the current screen with a reference image. If the image doesn't exist, it is created. If the comparison fails, an image with `_err` suffix is saved for inspection |
 
 Example:

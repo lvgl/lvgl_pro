@@ -134,10 +134,10 @@ A typical use case is light/dark theme switching:
 
 A few details:
 
-- The condition doesn't have to be a comparison. Anything but `false`, `0`, and empty text counts as enabled, so `enabled="{subject_error}"` is enough for an int subject. A float is the exception: `0.00` is not the text `0`, so compare it, as in `enabled="{subject_level > 0}"`.
+- The condition doesn't have to be a comparison. Anything but `false`, `0`, and empty text counts as enabled, so `enabled="{subject_error}"` is enough for an int subject. A float is the exception: `0.00` is not the text `0`, so compare it, as in `enabled="{subject_level GT 0}"`.
 - `enabled="false"` works too, for a style that starts off.
 - An expression reading no subject is decided at creation, so the style stays that way for the life of the widget.
-- One `enabled` binding per style and selector. Two bindings on the same pair fight over the same switch, and only one of them wins.
+- One `enabled` binding per style and selector. Two bindings on the same pair fight over the same switch, and last one of them wins.
 
 <Callout type="info">
 `enabled` doesn't add or remove the style, it only switches it. The style keeps its place among the widget's other styles, no matter how often the condition flips.

@@ -41,25 +41,21 @@ lv_obj_t * lv_example_scale_styling_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_scale_main);
-            lv_style_set_line_color(&style_scale_main, lv_color_hex(0x6b7280));
-            lv_style_set_line_width(&style_scale_main, 2);
+        /*Init all styles*/
+        lv_style_init(&style_scale_main);
+        lv_style_init(&style_scale_items);
+        lv_style_init(&style_scale_indicator);
 
-            lv_style_init(&style_scale_items);
-            lv_style_set_line_color(&style_scale_items, lv_color_hex(0x9ca3af));
-            lv_style_set_line_width(&style_scale_items, 1);
+        lv_style_set_line_color(&style_scale_main, lv_color_hex(0x6b7280));
+        lv_style_set_line_width(&style_scale_main, 2);
+        lv_style_set_line_color(&style_scale_items, lv_color_hex(0x9ca3af));
+        lv_style_set_line_width(&style_scale_items, 1);
+        lv_style_set_line_color(&style_scale_indicator, lv_color_hex(0x6366f1));
+        lv_style_set_line_width(&style_scale_indicator, 3);
+        lv_style_set_text_color(&style_scale_indicator, lv_color_hex(0x6366f1));
+        lv_style_set_transform_rotation(&style_scale_indicator, 300);
+        lv_style_set_pad_bottom(&style_scale_indicator, 8);
 
-            lv_style_init(&style_scale_indicator);
-            lv_style_set_line_color(&style_scale_indicator, lv_color_hex(0x6366f1));
-            lv_style_set_line_width(&style_scale_indicator, 3);
-            lv_style_set_text_color(&style_scale_indicator, lv_color_hex(0x6366f1));
-            lv_style_set_transform_rotation(&style_scale_indicator, 300);
-            lv_style_set_pad_bottom(&style_scale_indicator, 8);
-
-        }
-        #endif
         style_inited = true;
     }
 

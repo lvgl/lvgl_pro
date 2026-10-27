@@ -14,7 +14,7 @@
  *      DEFINES
  *********************/
 
-#define TEXT_COLOR lv_color_hex(0x013992)
+#define TEXT_COLOR (lv_color_hex(0x013992))
 
 
 /**********************

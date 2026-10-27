@@ -68,7 +68,7 @@ lv_obj_t * lv_example_bar_create(void)
         lv_obj_t * lv_bar_0 = lv_bar_create(lv_obj_0);
         lv_obj_set_width(lv_bar_0, 240);
         lv_obj_set_height(lv_bar_0, 22);
-        lv_bar_bind_value(lv_bar_0, &subject_value);
+        lv_bar_bind_value(lv_bar_0, subject_value);
         lv_obj_set_align(lv_bar_0, LV_ALIGN_LEFT_MID);
         lv_obj_set_y(lv_bar_0, -40);
         lv_obj_set_x(lv_bar_0, 20);
@@ -76,7 +76,7 @@ lv_obj_t * lv_example_bar_create(void)
         lv_obj_add_style(lv_bar_0, &style_bar_ind, LV_PART_INDICATOR);
         lv_obj_t * lv_label_0 = lv_label_create(lv_bar_0);
         lv_obj_set_align(lv_label_0, LV_ALIGN_CENTER);
-        lv_label_bind_text(lv_label_0, &subject_value, "%d %%");
+        lv_label_bind_text(lv_label_0, subject_value, "%d %%");
         lv_obj_set_style_text_color(lv_label_0, lv_color_hex(0x192e4f), 0);
 
         lv_obj_t * lv_bar_1 = lv_bar_create(lv_obj_0);

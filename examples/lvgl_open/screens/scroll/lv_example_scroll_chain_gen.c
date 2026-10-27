@@ -67,7 +67,7 @@ lv_obj_t * lv_example_scroll_chain_create(void)
         lv_obj_set_height(container_2, 90);
         lv_obj_set_flex_flow(container_2, LV_FLEX_FLOW_COLUMN);
         lv_obj_set_style_pad_row(container_2, 6, 0);
-        lv_obj_set_flag(container_2, LV_OBJ_FLAG_SCROLL_CHAIN, false);
+        lv_obj_set_scroll_chain(container_2, false);
         lv_obj_set_style_border_color(container_2, lv_color_hex(0x9429ff), 0);
         lv_obj_set_style_border_width(container_2, 2, 0);
         lv_obj_t * button_2 = lv_button_create(container_2);

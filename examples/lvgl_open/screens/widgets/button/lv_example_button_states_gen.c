@@ -60,8 +60,8 @@ lv_obj_t * lv_example_button_states_create(void)
         lv_obj_set_name(button_2, "button_2");
         lv_obj_set_width(button_2, 160);
         lv_obj_set_height(button_2, 40);
-        lv_obj_set_flag(button_2, LV_OBJ_FLAG_CHECKABLE, true);
-        lv_obj_set_state(button_2, LV_STATE_CHECKED, true);
+        lv_obj_set_checkable(button_2, true);
+        lv_obj_set_checked(button_2, true);
         lv_obj_t * label_2 = lv_label_create(button_2);
         lv_obj_set_name(label_2, "label_2");
         lv_obj_set_align(label_2, LV_ALIGN_CENTER);
@@ -71,7 +71,7 @@ lv_obj_t * lv_example_button_states_create(void)
         lv_obj_set_name(button_3, "button_3");
         lv_obj_set_width(button_3, 160);
         lv_obj_set_height(button_3, 40);
-        lv_obj_set_state(button_3, LV_STATE_DISABLED, true);
+        lv_obj_set_disabled(button_3, true);
         lv_obj_t * label_3 = lv_label_create(button_3);
         lv_obj_set_name(label_3, "label_3");
         lv_obj_set_align(label_3, LV_ALIGN_CENTER);

@@ -25,6 +25,6 @@
 		<!-- Add widgets/components here -->
 		<style name="style_base" />
 		<style name="style_checked" selector="checked" />
-		<lv_label text="$text" align="center" />
+		<lv_label text="{text}" align="center" />
 	</view>
 </component>

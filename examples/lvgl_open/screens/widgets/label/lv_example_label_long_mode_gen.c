@@ -39,14 +39,12 @@ lv_obj_t * lv_example_label_long_mode_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_label_bg);
-            lv_style_set_bg_opa(&style_label_bg, (255 * 100 / 100));
-            lv_style_set_radius(&style_label_bg, 6);
+        /*Init all styles*/
+        lv_style_init(&style_label_bg);
 
-        }
-        #endif
+        lv_style_set_bg_opa(&style_label_bg, (255 * 100 / 100));
+        lv_style_set_radius(&style_label_bg, 6);
+
         style_inited = true;
     }
 

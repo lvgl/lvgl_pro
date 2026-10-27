@@ -45,7 +45,7 @@ Constants can be used in:
 A constant is referenced by its name in `{ }`, where it can also be part of a larger [expression](./expressions). This works in the `view` and in the `<consts>`, `<styles>`, `<subjects>`, `<animations>` and `<gradients>` sections alike:
 
 ```xml
-<components>
+<component>
   <consts>
     <color name="red" value="0xff0000" help="A pure red color"/>
     <int name="long" value="200" help="Just large number"/>
@@ -63,7 +63,7 @@ A constant is referenced by its name in `{ }`, where it can also be part of a la
     <style name="style_1"/>
     <lv_label text="{greeting}"/>
   </view>
-</components>
+</component>
 ```
 
 `#const_name` is the legacy syntax for referencing a constant. It takes a single name only, so `{ }` is the recommended form.

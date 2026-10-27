@@ -39,16 +39,14 @@ lv_obj_t * lv_example_grid_ignore_layout_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_cell);
-            lv_style_set_bg_opa(&style_cell, (255 * 100 / 100));
-            lv_style_set_text_color(&style_cell, lv_color_hex(0xffffff));
-            lv_style_set_pad_all(&style_cell, 6);
-            lv_style_set_radius(&style_cell, 4);
+        /*Init all styles*/
+        lv_style_init(&style_cell);
 
-        }
-        #endif
+        lv_style_set_bg_opa(&style_cell, (255 * 100 / 100));
+        lv_style_set_text_color(&style_cell, lv_color_hex(0xffffff));
+        lv_style_set_pad_all(&style_cell, 6);
+        lv_style_set_radius(&style_cell, 4);
+
         style_inited = true;
     }
 
@@ -108,7 +106,7 @@ lv_obj_t * lv_example_grid_ignore_layout_create(void)
 
         lv_obj_t * label_5 = lv_label_create(container);
         lv_obj_set_name(label_5, "label_5");
-        lv_obj_set_flag(label_5, LV_OBJ_FLAG_IGNORE_LAYOUT, true);
+        lv_obj_set_ignore_layout(label_5, true);
         lv_obj_set_align(label_5, LV_ALIGN_CENTER);
         lv_obj_set_style_bg_color(label_5, lv_color_hex(0xe74c3c), 0);
         lv_label_set_text(label_5, "FREE");

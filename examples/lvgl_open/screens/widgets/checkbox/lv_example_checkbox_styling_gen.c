@@ -40,26 +40,23 @@ lv_obj_t * lv_example_checkbox_styling_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_cb_indicator);
-            lv_style_set_bg_opa(&style_cb_indicator, (255 * 100 / 100));
-            lv_style_set_bg_color(&style_cb_indicator, lv_color_hex(0xf9fafb));
-            lv_style_set_radius(&style_cb_indicator, 6);
-            lv_style_set_border_color(&style_cb_indicator, lv_color_hex(0x9ca3af));
-            lv_style_set_border_width(&style_cb_indicator, 2);
-            lv_style_set_pad_all(&style_cb_indicator, 4);
+        /*Init all styles*/
+        lv_style_init(&style_cb_indicator);
+        lv_style_init(&style_cb_indicator_checked);
 
-            lv_style_init(&style_cb_indicator_checked);
-            lv_style_set_bg_color(&style_cb_indicator_checked, lv_color_hex(0x16a34a));
-            lv_style_set_border_color(&style_cb_indicator_checked, lv_color_hex(0x14532d));
-            lv_style_set_outline_color(&style_cb_indicator_checked, lv_color_hex(0x16a34a));
-            lv_style_set_outline_width(&style_cb_indicator_checked, 4);
-            lv_style_set_outline_pad(&style_cb_indicator_checked, 2);
-            lv_style_set_outline_opa(&style_cb_indicator_checked, 80);
+        lv_style_set_bg_opa(&style_cb_indicator, (255 * 100 / 100));
+        lv_style_set_bg_color(&style_cb_indicator, lv_color_hex(0xf9fafb));
+        lv_style_set_radius(&style_cb_indicator, 6);
+        lv_style_set_border_color(&style_cb_indicator, lv_color_hex(0x9ca3af));
+        lv_style_set_border_width(&style_cb_indicator, 2);
+        lv_style_set_pad_all(&style_cb_indicator, 4);
+        lv_style_set_bg_color(&style_cb_indicator_checked, lv_color_hex(0x16a34a));
+        lv_style_set_border_color(&style_cb_indicator_checked, lv_color_hex(0x14532d));
+        lv_style_set_outline_color(&style_cb_indicator_checked, lv_color_hex(0x16a34a));
+        lv_style_set_outline_width(&style_cb_indicator_checked, 4);
+        lv_style_set_outline_pad(&style_cb_indicator_checked, 2);
+        lv_style_set_outline_opa(&style_cb_indicator_checked, 80);
 
-        }
-        #endif
         style_inited = true;
     }
 
@@ -87,7 +84,7 @@ lv_obj_t * lv_example_checkbox_styling_create(void)
         lv_obj_t * checkbox_2 = lv_checkbox_create(lv_obj_0);
         lv_obj_set_name(checkbox_2, "checkbox_2");
         lv_checkbox_set_text(checkbox_2, "Pre-checked");
-        lv_obj_set_state(checkbox_2, LV_STATE_CHECKED, true);
+        lv_obj_set_checked(checkbox_2, true);
         lv_obj_set_style_text_color(checkbox_2, lv_color_hex(0x111827), 0);
         lv_obj_set_style_pad_column(checkbox_2, 10, 0);
         lv_obj_add_style(checkbox_2, &style_cb_indicator, LV_PART_INDICATOR);

@@ -39,15 +39,13 @@ lv_obj_t * lv_example_flex_rtl_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_label);
-            lv_style_set_bg_opa(&style_label, (255 * 100 / 100));
-            lv_style_set_text_color(&style_label, lv_color_hex(0xffffff));
-            lv_style_set_pad_all(&style_label, 8);
+        /*Init all styles*/
+        lv_style_init(&style_label);
 
-        }
-        #endif
+        lv_style_set_bg_opa(&style_label, (255 * 100 / 100));
+        lv_style_set_text_color(&style_label, lv_color_hex(0xffffff));
+        lv_style_set_pad_all(&style_label, 8);
+
         style_inited = true;
     }
 

@@ -39,24 +39,22 @@ lv_obj_t * lv_example_style_background_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_grad);
-            lv_style_set_radius(&style_grad, 20);
-            lv_style_set_bg_opa(&style_grad, (255 * 100 / 100));
-            lv_style_set_bg_color(&style_grad, lv_color_hex(0x6366f1));
-            lv_style_set_bg_grad_color(&style_grad, lv_color_hex(0xec4899));
-            lv_style_set_bg_grad_dir(&style_grad, LV_GRAD_DIR_VER);
-            lv_style_set_bg_main_stop(&style_grad, 80);
-            lv_style_set_bg_grad_stop(&style_grad, 220);
-            lv_style_set_shadow_color(&style_grad, lv_color_hex(0x6366f1));
-            lv_style_set_shadow_width(&style_grad, 26);
-            lv_style_set_shadow_offset_y(&style_grad, 10);
-            lv_style_set_shadow_opa(&style_grad, 70);
-            lv_style_set_text_color(&style_grad, lv_color_hex(0xffffff));
+        /*Init all styles*/
+        lv_style_init(&style_grad);
 
-        }
-        #endif
+        lv_style_set_radius(&style_grad, 20);
+        lv_style_set_bg_opa(&style_grad, (255 * 100 / 100));
+        lv_style_set_bg_color(&style_grad, lv_color_hex(0x6366f1));
+        lv_style_set_bg_grad_color(&style_grad, lv_color_hex(0xec4899));
+        lv_style_set_bg_grad_dir(&style_grad, LV_GRAD_DIR_VER);
+        lv_style_set_bg_main_stop(&style_grad, 80);
+        lv_style_set_bg_grad_stop(&style_grad, 220);
+        lv_style_set_shadow_color(&style_grad, lv_color_hex(0x6366f1));
+        lv_style_set_shadow_width(&style_grad, 26);
+        lv_style_set_shadow_offset_y(&style_grad, 10);
+        lv_style_set_shadow_opa(&style_grad, 70);
+        lv_style_set_text_color(&style_grad, lv_color_hex(0xffffff));
+
         style_inited = true;
     }
 

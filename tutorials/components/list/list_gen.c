@@ -18,6 +18,12 @@
  *      TYPEDEFS
  **********************/
 
+typedef struct {
+    /* Index is the <COMP>_TIMELINE_* enum. Kept here rather than the root's
+     * user_data, which stays free for the user. */
+    lv_anim_timeline_t ** timelines;
+} list_t;
+
 /***********************
  *  STATIC VARIABLES
  **********************/
@@ -27,7 +33,12 @@
  **********************/
 
 static lv_anim_timeline_t * timeline_list_open_create(lv_obj_t * obj);
-static void free_timeline_event_cb(lv_event_t * e);
+
+static uint32_t list_get_instance_event;
+static void list_get_instance_cb(lv_event_t * e);
+static list_t * list_get_instance(lv_obj_t * obj);
+static void list_destroy_instance(list_t * inst);
+static void list_delete_cb(lv_event_t * e);
 
 /**********************
  *   GLOBAL FUNCTIONS
@@ -40,10 +51,15 @@ lv_obj_t * list_create(lv_obj_t * parent)
 
     lv_obj_t * the_root = NULL;
 
+    if(list_get_instance_event == 0) list_get_instance_event = lv_event_register_id();
+    list_t * inst = lv_malloc(sizeof(list_t));
+    lv_memzero(inst, sizeof(list_t));
+
     #if TUTORIALS_CHECK_COMPILE_TARGET(TUTORIALS_TARGET_ALL)
     if (tutorials_check_target(TUTORIALS_TARGET_ALL)) {
         lv_obj_t * lv_obj_0 = lv_obj_create(parent);
         lv_obj_set_name_static(lv_obj_0, "list_#");
+        lv_obj_add_event_cb(lv_obj_0, list_get_instance_cb, list_get_instance_event, inst);
         lv_obj_set_flex_flow(lv_obj_0, LV_FLEX_FLOW_COLUMN);
         lv_obj_set_style_pad_all(lv_obj_0, UNIT_SMALL, 0);
         lv_obj_set_style_flex_cross_place(lv_obj_0, LV_FLEX_ALIGN_CENTER, 0);
@@ -80,12 +96,14 @@ lv_obj_t * list_create(lv_obj_t * parent)
         /* create animation timeline(s) */
         lv_anim_timeline_t ** at_array = lv_malloc(sizeof(lv_anim_timeline_t *) * _LIST_TIMELINE_CNT);
         at_array[LIST_TIMELINE_LIST_OPEN] = timeline_list_open_create(lv_obj_0);
-        lv_obj_set_user_data(lv_obj_0, at_array);
-        lv_obj_add_event_cb(lv_obj_0, free_timeline_event_cb, LV_EVENT_DELETE, at_array);
+        inst->timelines = at_array;
 
         the_root = lv_obj_0;
     }
     #endif
+
+    if(the_root) lv_obj_add_event_cb(the_root, list_delete_cb, LV_EVENT_DELETE, inst);
+    else list_destroy_instance(inst); /* no target matched, so nothing owns it */
 
     LV_TRACE_OBJ_CREATE("finished");
 
@@ -94,13 +112,13 @@ lv_obj_t * list_create(lv_obj_t * parent)
 
 lv_anim_timeline_t * list_get_timeline(lv_obj_t * obj, list_timeline_t timeline_id)
 {
-    if (timeline_id >= _LIST_TIMELINE_CNT) {
+    if ((uint32_t)timeline_id >= _LIST_TIMELINE_CNT) {
         LV_LOG_WARN("list has no timeline with %d ID", timeline_id);
         return NULL;
     }
 
-    lv_anim_timeline_t ** at_array = lv_obj_get_user_data(obj);
-    return at_array[timeline_id];
+    list_t * inst = list_get_instance(obj);
+    return inst ? inst->timelines[timeline_id] : NULL;
 }
 
 /**********************
@@ -182,13 +200,32 @@ static lv_anim_timeline_t * timeline_list_open_create(lv_obj_t * obj)
     return at;
 }
 
-static void free_timeline_event_cb(lv_event_t * e)
+static void list_get_instance_cb(lv_event_t * e)
 {
-    lv_anim_timeline_t ** at_array = lv_event_get_user_data(e);
-    uint32_t i;
-    for(i = 0; i < _LIST_TIMELINE_CNT; i++) {
-        lv_anim_timeline_delete(at_array[i]);
+    void ** out = lv_event_get_param(e);
+    *out = lv_event_get_user_data(e);
+}
+
+static list_t * list_get_instance(lv_obj_t * obj)
+{
+    list_t * inst = NULL;
+    for(lv_obj_t * o = obj; o && !inst; o = lv_obj_get_parent(o)) {
+        lv_obj_send_event(o, list_get_instance_event, &inst);
     }
-    lv_free(at_array);
+    return inst;
+}
+
+static void list_destroy_instance(list_t * inst)
+{
+    if(inst->timelines) {
+        for(uint32_t i = 0; i < 1; i++) lv_anim_timeline_delete(inst->timelines[i]);
+        lv_free(inst->timelines);
+    }
+    lv_free(inst);
+}
+
+static void list_delete_cb(lv_event_t * e)
+{
+    list_destroy_instance(lv_event_get_user_data(e));
 }
 

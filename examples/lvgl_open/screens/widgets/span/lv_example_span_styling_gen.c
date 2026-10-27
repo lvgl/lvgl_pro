@@ -43,28 +43,22 @@ lv_obj_t * lv_example_span_styling_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_span_title);
-            lv_style_set_text_color(&style_span_title, lv_color_hex(0x1d4ed8));
-            lv_style_set_text_decor(&style_span_title, LV_TEXT_DECOR_UNDERLINE);
+        /*Init all styles*/
+        lv_style_init(&style_span_title);
+        lv_style_init(&style_span_body);
+        lv_style_init(&style_span_accent);
+        lv_style_init(&style_span_underline);
+        lv_style_init(&style_span_strike);
 
-            lv_style_init(&style_span_body);
-            lv_style_set_text_color(&style_span_body, lv_color_hex(0x111827));
+        lv_style_set_text_color(&style_span_title, lv_color_hex(0x1d4ed8));
+        lv_style_set_text_decor(&style_span_title, LV_TEXT_DECOR_UNDERLINE);
+        lv_style_set_text_color(&style_span_body, lv_color_hex(0x111827));
+        lv_style_set_text_color(&style_span_accent, lv_color_hex(0xdc2626));
+        lv_style_set_text_color(&style_span_underline, lv_color_hex(0x059669));
+        lv_style_set_text_decor(&style_span_underline, LV_TEXT_DECOR_UNDERLINE);
+        lv_style_set_text_color(&style_span_strike, lv_color_hex(0x6b7280));
+        lv_style_set_text_decor(&style_span_strike, LV_TEXT_DECOR_STRIKETHROUGH);
 
-            lv_style_init(&style_span_accent);
-            lv_style_set_text_color(&style_span_accent, lv_color_hex(0xdc2626));
-
-            lv_style_init(&style_span_underline);
-            lv_style_set_text_color(&style_span_underline, lv_color_hex(0x059669));
-            lv_style_set_text_decor(&style_span_underline, LV_TEXT_DECOR_UNDERLINE);
-
-            lv_style_init(&style_span_strike);
-            lv_style_set_text_color(&style_span_strike, lv_color_hex(0x6b7280));
-            lv_style_set_text_decor(&style_span_strike, LV_TEXT_DECOR_STRIKETHROUGH);
-
-        }
-        #endif
         style_inited = true;
     }
 

@@ -54,18 +54,18 @@ lv_obj_t * lv_example_checkbox_states_create(void)
         lv_obj_t * checkbox_2 = lv_checkbox_create(lv_obj_0);
         lv_obj_set_name(checkbox_2, "checkbox_2");
         lv_checkbox_set_text(checkbox_2, "Checked");
-        lv_obj_set_state(checkbox_2, LV_STATE_CHECKED, true);
+        lv_obj_set_checked(checkbox_2, true);
 
         lv_obj_t * checkbox_3 = lv_checkbox_create(lv_obj_0);
         lv_obj_set_name(checkbox_3, "checkbox_3");
         lv_checkbox_set_text(checkbox_3, "Disabled");
-        lv_obj_set_state(checkbox_3, LV_STATE_DISABLED, true);
+        lv_obj_set_disabled(checkbox_3, true);
 
         lv_obj_t * checkbox_4 = lv_checkbox_create(lv_obj_0);
         lv_obj_set_name(checkbox_4, "checkbox_4");
         lv_checkbox_set_text(checkbox_4, "Disabled + Checked");
-        lv_obj_set_state(checkbox_4, LV_STATE_DISABLED, true);
-        lv_obj_set_state(checkbox_4, LV_STATE_CHECKED, true);
+        lv_obj_set_disabled(checkbox_4, true);
+        lv_obj_set_checked(checkbox_4, true);
 
         the_root = lv_obj_0;
     }

@@ -13,7 +13,7 @@
 	</styles>
 
 	<!-- Smallest heading. Text color inherited; override per-use with style_text_color. -->
-	<view extends="lv_label" text="$text" translation_tag="$translation_tag">
+	<view extends="lv_label" text="{text}" translation_tag="{translation_tag}">
 		<style name="style_h5" />
 	</view>
 </component>

@@ -46,7 +46,7 @@ lv_obj_t * lv_example_spinbox_bind_value_create(void)
         lv_obj_set_name(arc, "arc");
         lv_obj_set_width(arc, 160);
         lv_obj_set_height(arc, 160);
-        lv_arc_bind_value(arc, &subject_value);
+        lv_arc_bind_value(arc, subject_value);
         lv_obj_set_align(arc, LV_ALIGN_CENTER);
         lv_obj_t * spinbox = lv_spinbox_create(arc);
         lv_obj_set_name(spinbox, "spinbox");
@@ -55,7 +55,7 @@ lv_obj_t * lv_example_spinbox_bind_value_create(void)
         lv_spinbox_set_min_value(spinbox, 0);
         lv_spinbox_set_max_value(spinbox, 100);
         lv_spinbox_set_step(spinbox, 1);
-        lv_spinbox_bind_value(spinbox, &subject_value);
+        lv_spinbox_bind_value(spinbox, subject_value);
         lv_obj_set_align(spinbox, LV_ALIGN_CENTER);
         lv_obj_set_y(spinbox, -20);
 
@@ -71,8 +71,8 @@ lv_obj_t * lv_example_spinbox_bind_value_create(void)
         lv_label_set_text(label_1, "-");
         lv_obj_set_align(label_1, LV_ALIGN_CENTER);
 
-        lv_subject_increment_dsc_t * subject_increment_event_0 = lv_obj_add_subject_increment_event(button_1, &subject_value, LV_EVENT_CLICKED, -1);
-        lv_subject_increment_dsc_t * subject_increment_event_1 = lv_obj_add_subject_increment_event(button_1, &subject_value, LV_EVENT_LONG_PRESSED_REPEAT, -1);
+        lv_subject_increment_dsc_t * subject_increment_event_0 = lv_obj_add_subject_increment_event(button_1, subject_value, LV_EVENT_CLICKED, -1);
+        lv_subject_increment_dsc_t * subject_increment_event_1 = lv_obj_add_subject_increment_event(button_1, subject_value, LV_EVENT_LONG_PRESSED_REPEAT, -1);
 
         lv_obj_t * button_2 = lv_button_create(arc);
         lv_obj_set_name(button_2, "button_2");
@@ -86,8 +86,8 @@ lv_obj_t * lv_example_spinbox_bind_value_create(void)
         lv_label_set_text(label_2, "+");
         lv_obj_set_align(label_2, LV_ALIGN_CENTER);
 
-        lv_subject_increment_dsc_t * subject_increment_event_2 = lv_obj_add_subject_increment_event(button_2, &subject_value, LV_EVENT_CLICKED, 1);
-        lv_subject_increment_dsc_t * subject_increment_event_3 = lv_obj_add_subject_increment_event(button_2, &subject_value, LV_EVENT_LONG_PRESSED_REPEAT, 1);
+        lv_subject_increment_dsc_t * subject_increment_event_2 = lv_obj_add_subject_increment_event(button_2, subject_value, LV_EVENT_CLICKED, 1);
+        lv_subject_increment_dsc_t * subject_increment_event_3 = lv_obj_add_subject_increment_event(button_2, subject_value, LV_EVENT_LONG_PRESSED_REPEAT, 1);
 
         the_root = lv_obj_0;
     }

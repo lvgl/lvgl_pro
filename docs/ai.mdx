@@ -23,7 +23,7 @@ The server endpoint is `https://lvgl.mcp.kapa.ai/`. It is read-only: it returns 
 
 ## Using it
 
-LVGL Pro projects ship with the MCP configuration already in place (in the project's `.claude` folder), so supported tools detect it as soon as you open the project.
+LVGL Pro projects ship with the MCP configuration already in place (in `.mcp.json` at the project root), so supported tools detect it as soon as you open the project.
 
 1. **Open the project** in your AI assistant (e.g. Claude Code) from the project root.
 2. **Approve & authenticate.** On first use, the assistant asks you to approve the server, then walks you through a one-time login. After that it stays connected.
@@ -40,7 +40,7 @@ In Claude Code, run `/mcp` to confirm the `lvgl` server is connected and to see 
 
 ## Adding it manually
 
-If your project doesn't already include the configuration, add it yourself. For **Claude Code**, create a `.claude/.mcp.json` file in your project's root:
+If your project doesn't already include the configuration, add it yourself. For **Claude Code**, create a `.mcp.json` file in your project's root:
 
 ```json
 {

@@ -77,7 +77,7 @@ lv_obj_t * lv_example_label_create(void)
         lv_obj_add_style(lv_label_1, &style_box, 0);
 
         lv_obj_t * lv_label_2 = lv_label_create(lv_obj_0);
-        lv_label_bind_text(lv_label_2, &subject_value, "Bound value: %d %%");
+        lv_label_bind_text(lv_label_2, subject_value, "Bound value: %d %%");
         lv_obj_add_style(lv_label_2, &style_box, 0);
 
         the_root = lv_obj_0;

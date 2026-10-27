@@ -15,8 +15,17 @@ jobs:
             - name: Checkout current repository
               uses: actions/checkout@v4
 
+            # The projects' copies must match templates/common, so syncing must change nothing.
             - name: Check the common template files
-              run: .github/scripts/check-common-template-files.sh
+              run: |
+                  scripts/sync-common-template-files.sh
+                  if [ -n "$(git status --porcelain)" ]; then
+                      echo "A project's copy of a common template file differs from templates/common."
+                      echo "Edit templates/common, then run scripts/sync-common-template-files.sh."
+                      git status --short
+                      git diff
+                      exit 1
+                  fi
 
     # The widget API tables in docs/built_in_widgets are generated from the XML
     # schemas, so a schema edit without a regenerated page silently ships stale

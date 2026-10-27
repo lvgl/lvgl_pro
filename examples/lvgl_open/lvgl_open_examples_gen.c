@@ -6,9 +6,9 @@
  *      INCLUDES
  *********************/
 
-#include "lvgl_open_examples_gen.h"
+#include "lvgl_open_examples.h"
 
-#if LV_USE_XML
+#if defined(LV_USE_XML) && LV_USE_XML
 #endif /* LV_USE_XML */
 
 /*********************
@@ -29,7 +29,7 @@ static void check_font(lv_font_t ** font, const char * name);
  *  STATIC VARIABLES
  **********************/
 
-static uint32_t lvgl_open_examples_target = LVGL_OPEN_EXAMPLES_TARGET_ALL;
+static uint32_t lvgl_open_examples_target = LVGL_OPEN_EXAMPLES_COMPILE_TARGET;
 
 /*----------------
  * Translations
@@ -56,15 +56,15 @@ extern lv_font_t font_example_large_large_data;
 
 /* Targets: large */
 const void * img_example_lvgl_logo = NULL;
-extern const void * img_example_lvgl_logo_data;
+extern const void * img_example_lvgl_logo_large_data;
 const void * img_arc_bg = NULL;
-extern const void * img_arc_bg_data;
+extern const void * img_arc_bg_large_data;
 const void * img_arc_indicator = NULL;
-extern const void * img_arc_indicator_data;
+extern const void * img_arc_indicator_large_data;
 const void * img_bar_bg = NULL;
-extern const void * img_bar_bg_data;
+extern const void * img_bar_bg_large_data;
 const void * img_bar_indicator = NULL;
-extern const void * img_bar_indicator_data;
+extern const void * img_bar_indicator_large_data;
 
 /*----------------
  * Global styles
@@ -74,12 +74,12 @@ extern const void * img_bar_indicator_data;
  * Subjects
  *----------------*/
 
-lv_subject_t subject_value;
-lv_subject_t subject_value2;
-lv_subject_t subject_opa;
-lv_subject_t subject_index;
-lv_subject_t subject_flag;
-lv_subject_t subject_text;
+lv_subject_t * subject_value;
+lv_subject_t * subject_value2;
+lv_subject_t * subject_opa;
+lv_subject_t * subject_index;
+lv_subject_t * subject_flag;
+lv_subject_t * subject_text;
 
 /**********************
  *      MACROS
@@ -91,8 +91,6 @@ lv_subject_t subject_text;
 
 void lvgl_open_examples_init_gen(const char * asset_path)
 {
-    char buf[256];
-
 
     /*----------------
      * Fonts
@@ -120,23 +118,23 @@ void lvgl_open_examples_init_gen(const char * asset_path)
     if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_LARGE)) {
         /* img_example_lvgl_logo */
         if (!img_example_lvgl_logo) {
-            img_example_lvgl_logo = &img_example_lvgl_logo_data;
+            img_example_lvgl_logo = &img_example_lvgl_logo_large_data;
         }
         /* img_arc_bg */
         if (!img_arc_bg) {
-            img_arc_bg = &img_arc_bg_data;
+            img_arc_bg = &img_arc_bg_large_data;
         }
         /* img_arc_indicator */
         if (!img_arc_indicator) {
-            img_arc_indicator = &img_arc_indicator_data;
+            img_arc_indicator = &img_arc_indicator_large_data;
         }
         /* img_bar_bg */
         if (!img_bar_bg) {
-            img_bar_bg = &img_bar_bg_data;
+            img_bar_bg = &img_bar_bg_large_data;
         }
         /* img_bar_indicator */
         if (!img_bar_indicator) {
-            img_bar_indicator = &img_bar_indicator_data;
+            img_bar_indicator = &img_bar_indicator_large_data;
         }
     }
     #endif
@@ -148,31 +146,33 @@ void lvgl_open_examples_init_gen(const char * asset_path)
     /*----------------
      * Subjects
      *----------------*/
-    lv_subject_init_int(&subject_value, 50);
-    lv_subject_set_min_value_int(&subject_value, 0);
-    lv_subject_set_max_value_int(&subject_value, 100);
-    lv_subject_init_int(&subject_value2, 20);
-    lv_subject_set_min_value_int(&subject_value2, 0);
-    lv_subject_set_max_value_int(&subject_value2, 100);
-    lv_subject_init_int(&subject_opa, 128);
-    lv_subject_set_min_value_int(&subject_opa, 0);
-    lv_subject_set_max_value_int(&subject_opa, 255);
-    lv_subject_init_int(&subject_index, 0);
-    lv_subject_init_int(&subject_flag, 0);
+    subject_value = lv_subject_create(LV_SUBJECT_TYPE_INT);
+    lv_subject_set_min_value_int(subject_value, 0);
+    lv_subject_set_max_value_int(subject_value, 100);
+    lv_subject_set_int(subject_value, 50);
+    subject_value2 = lv_subject_create(LV_SUBJECT_TYPE_INT);
+    lv_subject_set_min_value_int(subject_value2, 0);
+    lv_subject_set_max_value_int(subject_value2, 100);
+    lv_subject_set_int(subject_value2, 20);
+    subject_opa = lv_subject_create(LV_SUBJECT_TYPE_INT);
+    lv_subject_set_min_value_int(subject_opa, 0);
+    lv_subject_set_max_value_int(subject_opa, 255);
+    lv_subject_set_int(subject_opa, 128);
+    subject_index = lv_subject_create(LV_SUBJECT_TYPE_INT);
+    lv_subject_set_int(subject_index, 0);
+    subject_flag = lv_subject_create(LV_SUBJECT_TYPE_INT);
+    lv_subject_set_int(subject_flag, 0);
     static char subject_text_buf[UI_SUBJECT_STRING_LENGTH];
     static char subject_text_prev_buf[UI_SUBJECT_STRING_LENGTH];
-    lv_subject_init_string(&subject_text,
-                           subject_text_buf,
-                           subject_text_prev_buf,
-                           UI_SUBJECT_STRING_LENGTH,
-                           "Hello"
-                          );
+    subject_text = lv_subject_create(LV_SUBJECT_TYPE_STRING);
+    lv_subject_set_string_buffer_static(subject_text, subject_text_buf, subject_text_prev_buf, UI_SUBJECT_STRING_LENGTH);
+    lv_subject_set_string(subject_text, "Hello");
 
     /*----------------
      * Translations
      *----------------*/
 
-#if LV_USE_XML
+#if defined(LV_USE_XML) && LV_USE_XML
     /* Register widgets */
 
     /* Check all fonts / default if needed. This prevents fonts that are used in one target but
@@ -183,19 +183,21 @@ void lvgl_open_examples_init_gen(const char * asset_path)
     lv_xml_register_font(NULL, "font_example_large", font_example_large);
 
     /* Register subjects */
-    lv_xml_register_subject(NULL, "subject_value", &subject_value);
-    lv_xml_register_subject(NULL, "subject_value2", &subject_value2);
-    lv_xml_register_subject(NULL, "subject_opa", &subject_opa);
-    lv_xml_register_subject(NULL, "subject_index", &subject_index);
-    lv_xml_register_subject(NULL, "subject_flag", &subject_flag);
-    lv_xml_register_subject(NULL, "subject_text", &subject_text);
+    lv_xml_register_subject(NULL, "subject_value", subject_value);
+    lv_xml_register_subject(NULL, "subject_value2", subject_value2);
+    lv_xml_register_subject(NULL, "subject_opa", subject_opa);
+    lv_xml_register_subject(NULL, "subject_index", subject_index);
+    lv_xml_register_subject(NULL, "subject_flag", subject_flag);
+    lv_xml_register_subject(NULL, "subject_text", subject_text);
 
     /* Register callbacks */
+
+    /* Register easing callbacks */
 #endif
 
     /* Register all the global assets so that they won't be created again when globals.xml is parsed.
      * While running in the editor skip this step to update the preview when the XML changes */
-#if LV_USE_XML && !defined(LV_EDITOR_PREVIEW)
+#if defined(LV_USE_XML) && LV_USE_XML && !defined(LV_EDITOR_PREVIEW)
     /* Register images */
     lv_xml_register_image(NULL, "img_example_lvgl_logo", img_example_lvgl_logo);
     lv_xml_register_image(NULL, "img_arc_bg", img_arc_bg);
@@ -204,7 +206,7 @@ void lvgl_open_examples_init_gen(const char * asset_path)
     lv_xml_register_image(NULL, "img_bar_indicator", img_bar_indicator);
 #endif
 
-#if LV_USE_XML == 0
+#if !defined(LV_USE_XML) || LV_USE_XML == 0
     /*--------------------
      *  Permanent screens
      *-------------------*/
@@ -237,7 +239,7 @@ bool lvgl_open_examples_check_target(uint32_t target)
 static void check_font(lv_font_t ** font, const char * name)
 {
     if (!(*font)) {
-        *font = LV_FONT_DEFAULT;
+        *font = (lv_font_t *)LV_FONT_DEFAULT;
         LV_LOG_WARN("font `%s` was not set. Using `LV_FONT_DEFAULT` instead", name);
     }
 }

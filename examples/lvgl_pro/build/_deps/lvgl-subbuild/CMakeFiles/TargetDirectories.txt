@@ -1,0 +1,3 @@
+/home/kisvegabor/projects/lvgl/editor/lvgl_pro/examples/lvgl_pro/build/_deps/lvgl-subbuild/CMakeFiles/lvgl-populate.dir
+/home/kisvegabor/projects/lvgl/editor/lvgl_pro/examples/lvgl_pro/build/_deps/lvgl-subbuild/CMakeFiles/edit_cache.dir
+/home/kisvegabor/projects/lvgl/editor/lvgl_pro/examples/lvgl_pro/build/_deps/lvgl-subbuild/CMakeFiles/rebuild_cache.dir

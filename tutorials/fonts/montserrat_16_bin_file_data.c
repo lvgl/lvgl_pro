@@ -18,13 +18,13 @@
     #include "lvgl/lvgl.h"
 #endif
 
-
-
 #ifndef MONTSERRAT_16_BIN_FILE_DATA
 #define MONTSERRAT_16_BIN_FILE_DATA 1
 #endif
 
 #if MONTSERRAT_16_BIN_FILE_DATA
+
+
 
 /*-----------------
  *    BITMAPS
@@ -1154,6 +1154,10 @@ lv_font_t montserrat_16_bin_file_data = {
     .get_glyph_bitmap = lv_font_get_bitmap_fmt_txt,    /*Function pointer to get glyph's bitmap*/
     .line_height = 17,          /*The maximum line height required by the font*/
     .base_line = 3,             /*Baseline measured from the bottom of the line*/
+#if LV_VERSION_CHECK(9, 6, 0) || LVGL_VERSION_MAJOR >= 10
+    .cap_height = 11,           /*Cap height of the font*/
+    .x_height = 8,               /*x-height of the font*/
+#endif
 #if !(LVGL_VERSION_MAJOR == 6 && LVGL_VERSION_MINOR == 0)
     .subpx = LV_FONT_SUBPX_NONE,
 #endif
@@ -1162,7 +1166,7 @@ lv_font_t montserrat_16_bin_file_data = {
     .underline_thickness = 1,
 #endif
 
-#if LV_VERSION_CHECK(9, 3, 0)
+#if LV_VERSION_CHECK(9, 3, 0) || LVGL_VERSION_MAJOR >= 10
     .static_bitmap = 1,    /*Bitmaps are stored as const so they are always static if not compressed */
 #endif
 

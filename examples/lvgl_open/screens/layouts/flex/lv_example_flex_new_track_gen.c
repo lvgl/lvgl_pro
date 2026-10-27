@@ -39,15 +39,13 @@ lv_obj_t * lv_example_flex_new_track_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_day);
-            lv_style_set_bg_opa(&style_day, (255 * 100 / 100));
-            lv_style_set_text_color(&style_day, lv_color_hex(0xffffff));
-            lv_style_set_pad_all(&style_day, 6);
+        /*Init all styles*/
+        lv_style_init(&style_day);
 
-        }
-        #endif
+        lv_style_set_bg_opa(&style_day, (255 * 100 / 100));
+        lv_style_set_text_color(&style_day, lv_color_hex(0xffffff));
+        lv_style_set_pad_all(&style_day, 6);
+
         style_inited = true;
     }
 
@@ -100,7 +98,7 @@ lv_obj_t * lv_example_flex_new_track_create(void)
 
         lv_obj_t * label_6 = lv_label_create(container);
         lv_obj_set_name(label_6, "label_6");
-        lv_obj_set_flag(label_6, LV_OBJ_FLAG_FLEX_IN_NEW_TRACK, true);
+        lv_obj_set_flex_in_new_track(label_6, true);
         lv_obj_set_style_bg_color(label_6, lv_color_hex(0xe74c3c), 0);
         lv_label_set_text(label_6, "Sat");
         lv_obj_add_style(label_6, &style_day, 0);

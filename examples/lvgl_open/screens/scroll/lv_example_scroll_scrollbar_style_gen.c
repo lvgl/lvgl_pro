@@ -14,7 +14,7 @@
  *      DEFINES
  *********************/
 
-#define ACCENT lv_color_hex(0x9429ff)
+#define ACCENT (lv_color_hex(0x9429ff))
 
 
 /**********************
@@ -42,18 +42,16 @@ lv_obj_t * lv_example_scroll_scrollbar_style_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_scrollbar);
-            lv_style_set_width(&style_scrollbar, 10);
-            lv_style_set_radius(&style_scrollbar, 5);
-            lv_style_set_bg_color(&style_scrollbar, ACCENT);
-            lv_style_set_bg_opa(&style_scrollbar, (255 * 100 / 100));
-            lv_style_set_pad_right(&style_scrollbar, 4);
-            lv_style_set_pad_top(&style_scrollbar, 4);
+        /*Init all styles*/
+        lv_style_init(&style_scrollbar);
 
-        }
-        #endif
+        lv_style_set_width(&style_scrollbar, 10);
+        lv_style_set_radius(&style_scrollbar, 5);
+        lv_style_set_bg_color(&style_scrollbar, ACCENT);
+        lv_style_set_bg_opa(&style_scrollbar, (255 * 100 / 100));
+        lv_style_set_pad_right(&style_scrollbar, 4);
+        lv_style_set_pad_top(&style_scrollbar, 4);
+
         style_inited = true;
     }
 

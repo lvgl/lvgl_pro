@@ -22,7 +22,7 @@ extern "C" {
     #include "lvgl_private.h"
 #else
     #include "lvgl/lvgl.h"
-    #include "lvgl/lvgl_private.h"
+    #include "lvgl_private/lvgl_private.h"
 #endif
 
 #if defined(LV_USE_XML) && LV_USE_XML
@@ -116,12 +116,12 @@ extern const void * img_bulb;
  * Subjects
  *----------------*/
 
-extern lv_subject_t subject_value;
-extern lv_subject_t subject_value2;
-extern lv_subject_t subject_opa;
-extern lv_subject_t subject_index;
-extern lv_subject_t subject_checked;
-extern lv_subject_t subject_text;
+extern lv_subject_t * subject_value;
+extern lv_subject_t * subject_value2;
+extern lv_subject_t * subject_opa;
+extern lv_subject_t * subject_index;
+extern lv_subject_t * subject_checked;
+extern lv_subject_t * subject_text;
 
 /**********************
  * GLOBAL PROTOTYPES

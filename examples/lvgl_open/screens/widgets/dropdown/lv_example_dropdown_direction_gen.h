@@ -2,8 +2,8 @@
  * @file lv_example_dropdown_direction_gen.h
  */
 
-#ifndef LV_EXAMPLE_DROPDOWN_DIRECTION_H
-#define LV_EXAMPLE_DROPDOWN_DIRECTION_H
+#ifndef LVGL_PRO_LV_EXAMPLE_DROPDOWN_DIRECTION_GEN_H
+#define LVGL_PRO_LV_EXAMPLE_DROPDOWN_DIRECTION_GEN_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -18,10 +18,10 @@ extern "C" {
     #include "lvgl_private.h"
 #else
     #include "lvgl/lvgl.h"
-    #include "lvgl/lvgl_private.h"
+    #include "lvgl_private/lvgl_private.h"
 #endif
 
-#ifdef LV_USE_XML
+#if defined(LV_USE_XML) && LV_USE_XML
     #include "lv_xml/lv_xml.h"
 #endif
 
@@ -49,4 +49,4 @@ lv_obj_t * lv_example_dropdown_direction_create(void);
 } /*extern "C"*/
 #endif
 
-#endif /*LV_EXAMPLE_DROPDOWN_DIRECTION_H*/
+#endif /*LVGL_PRO_LV_EXAMPLE_DROPDOWN_DIRECTION_GEN_H*/

@@ -79,7 +79,7 @@ lv_obj_t * lv_example_obj_create(void)
         lv_obj_set_name_static(lv_obj_0, "lv_example_obj_#");
 
         lv_obj_t * lv_switch_0 = lv_switch_create(lv_obj_0);
-        lv_obj_bind_checked(lv_switch_0, &subject_checked);
+        lv_obj_bind_checked(lv_switch_0, subject_checked);
         lv_obj_set_x(lv_switch_0, 92);
         lv_obj_set_y(lv_switch_0, 11);
 
@@ -96,7 +96,7 @@ lv_obj_t * lv_example_obj_create(void)
         lv_obj_set_style_pad_row(lv_obj_1, 8, 0);
         lv_obj_set_scrollbar_mode(lv_obj_1, LV_SCROLLBAR_MODE_ACTIVE);
         lv_obj_add_style(lv_obj_1, &style_box, 0);
-        lv_obj_bind_style(lv_obj_1, &style_box_alt, 0, &subject_checked, 1);
+        lv_obj_bind_style(lv_obj_1, &style_box_alt, 0, subject_checked, 1);
         lv_obj_add_style(lv_obj_1, &style_scrollbar, LV_PART_SCROLLBAR);
         lv_obj_t * lv_obj_2 = lv_obj_create(lv_obj_1);
         lv_obj_add_style(lv_obj_2, &style_row, 0);

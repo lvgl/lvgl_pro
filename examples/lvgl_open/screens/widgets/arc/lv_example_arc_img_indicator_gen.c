@@ -41,23 +41,19 @@ lv_obj_t * lv_example_arc_img_indicator_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_arc_bg);
-            lv_style_set_arc_image_src(&style_arc_bg, img_arc_bg);
-            lv_style_set_arc_width(&style_arc_bg, 40);
-            lv_style_set_arc_rounded(&style_arc_bg, false);
+        /*Init all styles*/
+        lv_style_init(&style_arc_bg);
+        lv_style_init(&style_arc_indicator);
+        lv_style_init(&style_arc_knob);
 
-            lv_style_init(&style_arc_indicator);
-            lv_style_set_arc_image_src(&style_arc_indicator, img_arc_indicator);
-            lv_style_set_arc_width(&style_arc_indicator, 40);
-            lv_style_set_arc_rounded(&style_arc_indicator, false);
+        lv_style_set_arc_image_src(&style_arc_bg, img_arc_bg);
+        lv_style_set_arc_width(&style_arc_bg, 40);
+        lv_style_set_arc_rounded(&style_arc_bg, false);
+        lv_style_set_arc_image_src(&style_arc_indicator, img_arc_indicator);
+        lv_style_set_arc_width(&style_arc_indicator, 40);
+        lv_style_set_arc_rounded(&style_arc_indicator, false);
+        lv_style_set_opa(&style_arc_knob, 0);
 
-            lv_style_init(&style_arc_knob);
-            lv_style_set_opa(&style_arc_knob, 0);
-
-        }
-        #endif
         style_inited = true;
     }
 
@@ -82,14 +78,14 @@ lv_obj_t * lv_example_arc_img_indicator_create(void)
         lv_arc_set_max_value(arc, 22);
         lv_arc_set_bg_start_angle(arc, 138);
         lv_arc_set_bg_end_angle(arc, 41);
-        lv_arc_bind_value(arc, &subject_value2);
+        lv_arc_bind_value(arc, subject_value2);
         lv_obj_add_style(arc, &style_arc_bg, LV_PART_MAIN);
         lv_obj_add_style(arc, &style_arc_indicator, LV_PART_INDICATOR);
         lv_obj_add_style(arc, &style_arc_knob, LV_PART_KNOB);
         lv_obj_t * label = lv_label_create(arc);
         lv_obj_set_name(label, "label");
         lv_obj_set_align(label, LV_ALIGN_CENTER);
-        lv_label_bind_text(label, &subject_value2, NULL);
+        lv_label_bind_text(label, subject_value2, NULL);
 
         the_root = lv_obj_0;
     }

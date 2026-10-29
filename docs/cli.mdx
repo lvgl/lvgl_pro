@@ -33,7 +33,7 @@ Because it's scriptable and headless, the CLI is the bridge between LVGL Pro and
 
 ## Installation
 
-1. **Install Node.js** 18 or newer (CI is tested on Node 22).
+1. **Install Node.js** 18 or newer (CI is tested on Node 24).
 2. **Install the CLI** globally with npm:
 
 ```bash
@@ -41,12 +41,6 @@ npm install --global @lvgl/lvglpro
 ```
 
 This puts `lvglpro` on your `PATH`.
-
-```bash
-lvglpro --help
-```
-
-That gives you the `lvglpro` command:
 
 ```bash
 lvglpro --help
@@ -208,21 +202,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-            - uses: actions/setup-node@v4
-              with:
-                  node-version: '22'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
 
       - name: Install CLI
         run: npm install --global @lvgl/lvglpro
 
       - name: Generate code
-        run: lvglpro generate examples
+        run: lvglpro generate examples/lvgl_open
 
       - name: Compile to run tests
-        run: lvglpro compile examples --target cli
+        run: lvglpro compile examples/lvgl_open --target cli
 
       - name: Run UI tests
-        run: lvglpro run-all-tests examples
+        run: lvglpro run-all-tests examples/lvgl_open
 ```
 
 The [project's own PR-check workflow](https://github.com/lvgl/lvgl_pro/blob/master/.github/workflows/pr-check.yml) runs the same steps against a real project.

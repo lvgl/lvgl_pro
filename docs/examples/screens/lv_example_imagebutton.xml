@@ -2,7 +2,7 @@
  @title Image button
  @brief A button drawn from per-state images instead of a styled rectangle.
 
- `<lv_imagebutton-src_left>`, `-src_mid` and `-src_right` set the image for
+ `<lv_imagebutton-src>` sets the `left`, `mid` and `right` images for
  a given `state`. The middle image is tiled to fill the width, so left and
  right act as fixed end-caps. Here the released and pressed states use the
  same source to keep the example self-contained.
@@ -14,9 +14,7 @@
 	<view>
 		<lv_imagebutton width="160" align="center">
 			<style name="style_pressed" selector="pressed" />
-			<lv_imagebutton-src_left state="released" src="imgbtn_left" />
-			<lv_imagebutton-src_mid state="released" src="imgbtn_mid" />
-			<lv_imagebutton-src_right state="released" src="imgbtn_right" />
+			<lv_imagebutton-src state="released" left="imgbtn_left" mid="imgbtn_mid" right="imgbtn_right" />
 
 			<lv_label align="center" text="Press" style_text_color="0xffffff" y="-3" />
 		</lv_imagebutton>

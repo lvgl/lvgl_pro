@@ -40,25 +40,22 @@ lv_obj_t * lv_example_table_styling_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_table_main);
-            lv_style_set_bg_color(&style_table_main, lv_color_hex(0xffffff));
-            lv_style_set_bg_opa(&style_table_main, (255 * 100 / 100));
-            lv_style_set_radius(&style_table_main, 8);
-            lv_style_set_border_color(&style_table_main, lv_color_hex(0xe5e7eb));
-            lv_style_set_border_width(&style_table_main, 1);
+        /*Init all styles*/
+        lv_style_init(&style_table_main);
+        lv_style_init(&style_table_items);
 
-            lv_style_init(&style_table_items);
-            lv_style_set_bg_color(&style_table_items, lv_color_hex(0xffffff));
-            lv_style_set_bg_opa(&style_table_items, (255 * 100 / 100));
-            lv_style_set_border_color(&style_table_items, lv_color_hex(0xe5e7eb));
-            lv_style_set_border_width(&style_table_items, 1);
-            lv_style_set_pad_all(&style_table_items, 8);
-            lv_style_set_text_color(&style_table_items, lv_color_hex(0x1345b0));
+        lv_style_set_bg_color(&style_table_main, lv_color_hex(0xffffff));
+        lv_style_set_bg_opa(&style_table_main, (255 * 100 / 100));
+        lv_style_set_radius(&style_table_main, 8);
+        lv_style_set_border_color(&style_table_main, lv_color_hex(0xe5e7eb));
+        lv_style_set_border_width(&style_table_main, 1);
+        lv_style_set_bg_color(&style_table_items, lv_color_hex(0xffffff));
+        lv_style_set_bg_opa(&style_table_items, (255 * 100 / 100));
+        lv_style_set_border_color(&style_table_items, lv_color_hex(0xe5e7eb));
+        lv_style_set_border_width(&style_table_items, 1);
+        lv_style_set_pad_all(&style_table_items, 8);
+        lv_style_set_text_color(&style_table_items, lv_color_hex(0x1345b0));
 
-        }
-        #endif
         style_inited = true;
     }
 

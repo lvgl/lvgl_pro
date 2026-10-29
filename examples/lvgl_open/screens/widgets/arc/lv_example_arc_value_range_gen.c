@@ -54,12 +54,12 @@ lv_obj_t * lv_example_arc_value_range_create(void)
         lv_arc_set_value(arc_2, 140);
         lv_arc_set_bg_start_angle(arc_2, 135);
         lv_arc_set_bg_end_angle(arc_2, 45);
-        lv_arc_bind_value(arc_2, &subject_value);
+        lv_arc_bind_value(arc_2, subject_value);
         lv_obj_t * label_4 = lv_label_create(arc_2);
         lv_obj_set_name(label_4, "label_4");
         lv_obj_set_align(label_4, LV_ALIGN_CENTER);
         lv_obj_set_y(label_4, -10);
-        lv_label_bind_text(label_4, &subject_value, NULL);
+        lv_label_bind_text(label_4, subject_value, NULL);
 
         lv_obj_t * label_3 = lv_label_create(arc_2);
         lv_obj_set_name(label_3, "label_3");

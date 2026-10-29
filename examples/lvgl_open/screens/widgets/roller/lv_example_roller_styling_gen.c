@@ -40,25 +40,22 @@ lv_obj_t * lv_example_roller_styling_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_roller_main);
-            lv_style_set_bg_color(&style_roller_main, lv_color_hex(0xf3f4f6));
-            lv_style_set_bg_opa(&style_roller_main, (255 * 100 / 100));
-            lv_style_set_radius(&style_roller_main, 12);
-            lv_style_set_border_color(&style_roller_main, lv_color_hex(0xd1d5db));
-            lv_style_set_border_width(&style_roller_main, 1);
-            lv_style_set_text_color(&style_roller_main, lv_color_hex(0x6b7280));
-            lv_style_set_text_line_space(&style_roller_main, 20);
+        /*Init all styles*/
+        lv_style_init(&style_roller_main);
+        lv_style_init(&style_roller_selected);
 
-            lv_style_init(&style_roller_selected);
-            lv_style_set_bg_color(&style_roller_selected, lv_color_hex(0x6366f1));
-            lv_style_set_bg_opa(&style_roller_selected, (255 * 100 / 100));
-            lv_style_set_text_color(&style_roller_selected, lv_color_hex(0xffffff));
-            lv_style_set_text_font(&style_roller_selected, font_example_large);
+        lv_style_set_bg_color(&style_roller_main, lv_color_hex(0xf3f4f6));
+        lv_style_set_bg_opa(&style_roller_main, (255 * 100 / 100));
+        lv_style_set_radius(&style_roller_main, 12);
+        lv_style_set_border_color(&style_roller_main, lv_color_hex(0xd1d5db));
+        lv_style_set_border_width(&style_roller_main, 1);
+        lv_style_set_text_color(&style_roller_main, lv_color_hex(0x6b7280));
+        lv_style_set_text_line_space(&style_roller_main, 20);
+        lv_style_set_bg_color(&style_roller_selected, lv_color_hex(0x6366f1));
+        lv_style_set_bg_opa(&style_roller_selected, (255 * 100 / 100));
+        lv_style_set_text_color(&style_roller_selected, lv_color_hex(0xffffff));
+        lv_style_set_text_font(&style_roller_selected, font_example_large);
 
-        }
-        #endif
         style_inited = true;
     }
 

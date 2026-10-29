@@ -14,7 +14,7 @@
     #include "lvgl_private.h"
 #else
     #include "lvgl/lvgl.h"
-    #include "lvgl/lvgl_private.h"
+    #include "lvgl_private/lvgl_private.h"
 #endif
 
 #ifdef LV_USE_XML

@@ -39,16 +39,14 @@ lv_obj_t * lv_example_flex_internal_padding_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_tag);
-            lv_style_set_bg_opa(&style_tag, (255 * 100 / 100));
-            lv_style_set_pad_ver(&style_tag, 12);
-            lv_style_set_pad_hor(&style_tag, 18);
-            lv_style_set_radius(&style_tag, 4);
+        /*Init all styles*/
+        lv_style_init(&style_tag);
 
-        }
-        #endif
+        lv_style_set_bg_opa(&style_tag, (255 * 100 / 100));
+        lv_style_set_pad_ver(&style_tag, 12);
+        lv_style_set_pad_hor(&style_tag, 18);
+        lv_style_set_radius(&style_tag, 4);
+
         style_inited = true;
     }
 

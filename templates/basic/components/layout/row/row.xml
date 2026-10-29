@@ -28,11 +28,11 @@
 	<view
 		extends="container"
 		flow="row"
-		pad="$pad"
-		gap="$gap"
-		grow="$grow"
-		style_flex_main_place="$horizontal_align"
-		style_flex_cross_place="$vertical_align"
-		style_flex_track_place="$content_align"
+		pad="{pad}"
+		gap="{gap}"
+		grow="{grow}"
+		style_flex_main_place="{horizontal_align}"
+		style_flex_cross_place="{vertical_align}"
+		style_flex_track_place="{content_align}"
 	/>
 </component>

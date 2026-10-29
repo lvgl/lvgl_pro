@@ -24,8 +24,7 @@
     "---Interaction & Configuration---",
     "api",
     "events",
-    "data-binding",
-    "evaluate",
+    "expressions",
     "translations",
     "targets",
 

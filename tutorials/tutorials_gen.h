@@ -19,10 +19,8 @@ extern "C" {
 
 #ifdef LV_LVGL_H_INCLUDE_SIMPLE
     #include "lvgl.h"
-    #include "lvgl_private.h"
 #else
     #include "lvgl/lvgl.h"
-    #include "lvgl/lvgl_private.h"
 #endif
 
 #if defined(LV_USE_XML) && LV_USE_XML
@@ -52,16 +50,31 @@ bool tutorials_check_target(uint32_t target);
 
 #define TUTORIALS_CHECK_COMPILE_TARGET(target) (TUTORIALS_COMPILE_TARGET & (target) ? 1 : 0)
 
-#define UNIT_SMALL 6
-#define UNIT_MEDIUM 12
-#define UNIT_LARGE 24
-#define DARK_BLUE lv_color_hex(0x035391)
-#define YELLOW lv_color_hex(0xda9d19)
+#define UNIT_SMALL (6)
+#define UNIT_MEDIUM (12)
+#define UNIT_LARGE (24)
+#define DARK_BLUE (lv_color_hex(0x035391))
+#define YELLOW (lv_color_hex(0xda9d19))
 
 
 #ifndef LV_XML_EVAL_STRING_BUF_SIZE
     #define LV_XML_EVAL_STRING_BUF_SIZE 256
 #endif
+
+/**
+ * Animation path of a style transition with a `bezier(…)` easing. The control
+ * points come from the transition descriptor's `user_data`, as a transition
+ * descriptor cannot store animation parameters itself.
+ */
+static inline int32_t tutorials_style_transition_bezier_path_helper(const lv_anim_t * a)
+{
+    const lv_anim_bezier3_para_t * para = (const lv_anim_bezier3_para_t *)lv_anim_get_user_data(a);
+    if(para == NULL) return lv_anim_path_linear(a);
+
+    lv_anim_t a_tmp = *a;
+    lv_anim_set_bezier3_param(&a_tmp, para->x1, para->y1, para->x2, para->y2);
+    return lv_anim_path_custom_bezier3(&a_tmp);
+}
 
 /**********************
  *      TYPEDEFS
@@ -104,11 +117,11 @@ extern const void * flower_file;
  * Subjects
  *----------------*/
 
-extern lv_subject_t subject_dark_mode;
-extern lv_subject_t subject_max_current;
-extern lv_subject_t subject_timeout;
-extern lv_subject_t subject_volume;
-extern lv_subject_t subject_segment;
+extern lv_subject_t * subject_dark_mode;
+extern lv_subject_t * subject_max_current;
+extern lv_subject_t * subject_timeout;
+extern lv_subject_t * subject_volume;
+extern lv_subject_t * subject_segment;
 
 /**********************
  * GLOBAL PROTOTYPES
@@ -116,6 +129,10 @@ extern lv_subject_t subject_segment;
 
 /*----------------
  * Event Callbacks
+ *----------------*/
+
+/*----------------
+ * Easing Callbacks
  *----------------*/
 
 /**

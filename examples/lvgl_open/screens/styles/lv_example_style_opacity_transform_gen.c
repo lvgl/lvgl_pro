@@ -14,7 +14,7 @@
  *      DEFINES
  *********************/
 
-#define ACCENT lv_color_hex(0x6366f1)
+#define ACCENT (lv_color_hex(0x6366f1))
 
 
 /**********************
@@ -42,17 +42,15 @@ lv_obj_t * lv_example_style_opacity_transform_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_btn);
-            lv_style_set_radius(&style_btn, 10);
-            lv_style_set_bg_opa(&style_btn, (255 * 100 / 100));
-            lv_style_set_bg_color(&style_btn, ACCENT);
-            lv_style_set_pad_all(&style_btn, 12);
-            lv_style_set_text_color(&style_btn, lv_color_hex(0xffffff));
+        /*Init all styles*/
+        lv_style_init(&style_btn);
 
-        }
-        #endif
+        lv_style_set_radius(&style_btn, 10);
+        lv_style_set_bg_opa(&style_btn, (255 * 100 / 100));
+        lv_style_set_bg_color(&style_btn, ACCENT);
+        lv_style_set_pad_all(&style_btn, 12);
+        lv_style_set_text_color(&style_btn, lv_color_hex(0xffffff));
+
         style_inited = true;
     }
 

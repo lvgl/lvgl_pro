@@ -69,25 +69,25 @@ lv_obj_t * lv_example_switch_create(void)
         lv_obj_set_style_flex_main_place(lv_obj_0, LV_FLEX_ALIGN_CENTER, 0);
 
         lv_obj_t * lv_switch_0 = lv_switch_create(lv_obj_0);
-        lv_obj_set_state(lv_switch_0, LV_STATE_CHECKED, true);
+        lv_obj_set_checked(lv_switch_0, true);
         lv_obj_add_style(lv_switch_0, &style_sw, 0);
         lv_obj_add_style(lv_switch_0, &style_sw_on, LV_PART_INDICATOR | LV_STATE_CHECKED);
         lv_obj_add_style(lv_switch_0, &style_knob, LV_PART_KNOB);
 
         lv_obj_t * lv_switch_1 = lv_switch_create(lv_obj_0);
-        lv_obj_set_state(lv_switch_1, LV_STATE_DISABLED, true);
+        lv_obj_set_disabled(lv_switch_1, true);
         lv_obj_set_style_bg_opa(lv_switch_1, (255 * 40 / 100), 0);
         lv_obj_add_style(lv_switch_1, &style_sw, 0);
         lv_obj_add_style(lv_switch_1, &style_knob, LV_PART_KNOB);
 
         lv_obj_t * lv_switch_2 = lv_switch_create(lv_obj_0);
-        lv_obj_bind_checked(lv_switch_2, &subject_checked);
+        lv_obj_bind_checked(lv_switch_2, subject_checked);
         lv_obj_add_style(lv_switch_2, &style_sw, 0);
         lv_obj_add_style(lv_switch_2, &style_sw_on, LV_PART_INDICATOR | LV_STATE_CHECKED);
         lv_obj_add_style(lv_switch_2, &style_knob, LV_PART_KNOB);
 
         lv_obj_t * lv_switch_3 = lv_switch_create(lv_obj_0);
-        lv_obj_bind_checked(lv_switch_3, &subject_checked);
+        lv_obj_bind_checked(lv_switch_3, subject_checked);
         lv_obj_add_style(lv_switch_3, &style_sw, 0);
         lv_obj_add_style(lv_switch_3, &style_sw_on, LV_PART_INDICATOR | LV_STATE_CHECKED);
         lv_obj_add_style(lv_switch_3, &style_knob, LV_PART_KNOB);

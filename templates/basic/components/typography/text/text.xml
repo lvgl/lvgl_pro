@@ -9,7 +9,7 @@
 
 	<!-- Body copy. Text color is inherited.
 	     Give it a width to make it wrap: <text text="..." width="100%" /> -->
-	<view extends="lv_label" text="$text" long_mode="wrap">
+	<view extends="lv_label" text="{text}" long_mode="wrap">
 		<style name="style_text" />
 	</view>
 </component>

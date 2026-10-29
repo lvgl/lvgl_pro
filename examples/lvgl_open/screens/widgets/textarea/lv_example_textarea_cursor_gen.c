@@ -40,22 +40,19 @@ lv_obj_t * lv_example_textarea_cursor_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_block_cursor);
-            lv_style_set_bg_opa(&style_block_cursor, (255 * 100 / 100));
-            lv_style_set_bg_color(&style_block_cursor, lv_color_hex(0x2563eb));
-            lv_style_set_text_color(&style_block_cursor, lv_color_hex(0xffffff));
-            lv_style_set_border_side(&style_block_cursor, LV_BORDER_SIDE_NONE);
+        /*Init all styles*/
+        lv_style_init(&style_block_cursor);
+        lv_style_init(&style_bar_cursor);
 
-            lv_style_init(&style_bar_cursor);
-            lv_style_set_bg_opa(&style_bar_cursor, (255 * 0 / 100));
-            lv_style_set_border_side(&style_bar_cursor, LV_BORDER_SIDE_LEFT);
-            lv_style_set_border_width(&style_bar_cursor, 2);
-            lv_style_set_border_color(&style_bar_cursor, lv_color_hex(0xdc2626));
+        lv_style_set_bg_opa(&style_block_cursor, (255 * 100 / 100));
+        lv_style_set_bg_color(&style_block_cursor, lv_color_hex(0x2563eb));
+        lv_style_set_text_color(&style_block_cursor, lv_color_hex(0xffffff));
+        lv_style_set_border_side(&style_block_cursor, LV_BORDER_SIDE_NONE);
+        lv_style_set_bg_opa(&style_bar_cursor, (255 * 0 / 100));
+        lv_style_set_border_side(&style_bar_cursor, LV_BORDER_SIDE_LEFT);
+        lv_style_set_border_width(&style_bar_cursor, 2);
+        lv_style_set_border_color(&style_bar_cursor, lv_color_hex(0xdc2626));
 
-        }
-        #endif
         style_inited = true;
     }
 
@@ -78,7 +75,7 @@ lv_obj_t * lv_example_textarea_cursor_create(void)
         lv_textarea_set_one_line(textarea_1, true);
         lv_textarea_set_text(textarea_1, "Block");
         lv_textarea_set_cursor_pos(textarea_1, 2);
-        lv_obj_set_state(textarea_1, LV_STATE_FOCUSED, true);
+        lv_obj_set_focused(textarea_1, true);
         lv_obj_add_style(textarea_1, &style_block_cursor, LV_PART_CURSOR | LV_STATE_FOCUSED);
 
         lv_obj_t * textarea_2 = lv_textarea_create(lv_obj_0);
@@ -87,7 +84,7 @@ lv_obj_t * lv_example_textarea_cursor_create(void)
         lv_textarea_set_one_line(textarea_2, true);
         lv_textarea_set_text(textarea_2, "Bar");
         lv_textarea_set_cursor_pos(textarea_2, 2);
-        lv_obj_set_state(textarea_2, LV_STATE_FOCUSED, true);
+        lv_obj_set_focused(textarea_2, true);
         lv_obj_add_style(textarea_2, &style_bar_cursor, LV_PART_CURSOR | LV_STATE_FOCUSED);
 
         the_root = lv_obj_0;

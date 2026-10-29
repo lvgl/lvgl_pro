@@ -10,7 +10,7 @@
 	</api>
 
 	<styles>
-		<style name="style_text_input" radius="#radius_default" />
+		<style name="style_text_input" radius="{radius_default}" />
 	</styles>
 
 	<!-- Single-line text field. Read its text from C via the name you give it.
@@ -19,9 +19,9 @@
 		extends="text_box"
 		one_line="true"
 		width="200"
-		text="$text"
-		placeholder_text="$placeholder"
-		password_mode="$password"
+		text="{text}"
+		placeholder_text="{placeholder}"
+		password_mode="{password}"
 	>
 		<style name="style_text_input" />
 	</view>

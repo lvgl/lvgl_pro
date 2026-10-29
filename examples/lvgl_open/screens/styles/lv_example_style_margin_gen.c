@@ -14,7 +14,7 @@
  *      DEFINES
  *********************/
 
-#define ACCENT lv_color_hex(0x6366f1)
+#define ACCENT (lv_color_hex(0x6366f1))
 
 
 /**********************
@@ -43,23 +43,20 @@ lv_obj_t * lv_example_style_margin_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_chip);
-            lv_style_set_radius(&style_chip, 10);
-            lv_style_set_bg_opa(&style_chip, (255 * 100 / 100));
-            lv_style_set_bg_color(&style_chip, lv_color_hex(0xe2e8f0));
-            lv_style_set_pad_all(&style_chip, 14);
+        /*Init all styles*/
+        lv_style_init(&style_chip);
+        lv_style_init(&style_chip_accent);
 
-            lv_style_init(&style_chip_accent);
-            lv_style_set_radius(&style_chip_accent, 10);
-            lv_style_set_bg_opa(&style_chip_accent, (255 * 100 / 100));
-            lv_style_set_bg_color(&style_chip_accent, ACCENT);
-            lv_style_set_pad_all(&style_chip_accent, 14);
-            lv_style_set_text_color(&style_chip_accent, lv_color_hex(0xffffff));
+        lv_style_set_radius(&style_chip, 10);
+        lv_style_set_bg_opa(&style_chip, (255 * 100 / 100));
+        lv_style_set_bg_color(&style_chip, lv_color_hex(0xe2e8f0));
+        lv_style_set_pad_all(&style_chip, 14);
+        lv_style_set_radius(&style_chip_accent, 10);
+        lv_style_set_bg_opa(&style_chip_accent, (255 * 100 / 100));
+        lv_style_set_bg_color(&style_chip_accent, ACCENT);
+        lv_style_set_pad_all(&style_chip_accent, 14);
+        lv_style_set_text_color(&style_chip_accent, lv_color_hex(0xffffff));
 
-        }
-        #endif
         style_inited = true;
     }
 

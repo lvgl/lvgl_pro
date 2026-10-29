@@ -2,8 +2,8 @@
  * @file lvgl_open_examples_gen.h
  */
 
-#ifndef LVGL_OPEN_EXAMPLES_GEN_H
-#define LVGL_OPEN_EXAMPLES_GEN_H
+#ifndef LVGL_PRO_LVGL_OPEN_EXAMPLES_GEN_H
+#define LVGL_PRO_LVGL_OPEN_EXAMPLES_GEN_H
 
 #ifndef UI_SUBJECT_STRING_LENGTH
 #define UI_SUBJECT_STRING_LENGTH 256
@@ -19,13 +19,11 @@ extern "C" {
 
 #ifdef LV_LVGL_H_INCLUDE_SIMPLE
     #include "lvgl.h"
-    #include "lvgl_private.h"
 #else
     #include "lvgl/lvgl.h"
-    #include "lvgl/lvgl_private.h"
 #endif
 
-#ifdef LV_USE_XML
+#if defined(LV_USE_XML) && LV_USE_XML
     #include "lv_xml/lv_xml.h"
 #endif
 
@@ -55,6 +53,21 @@ bool lvgl_open_examples_check_target(uint32_t target);
 #ifndef LV_XML_EVAL_STRING_BUF_SIZE
     #define LV_XML_EVAL_STRING_BUF_SIZE 256
 #endif
+
+/**
+ * Animation path of a style transition with a `bezier(…)` easing. The control
+ * points come from the transition descriptor's `user_data`, as a transition
+ * descriptor cannot store animation parameters itself.
+ */
+static inline int32_t lvgl_open_examples_style_transition_bezier_path_helper(const lv_anim_t * a)
+{
+    const lv_anim_bezier3_para_t * para = (const lv_anim_bezier3_para_t *)lv_anim_get_user_data(a);
+    if(para == NULL) return lv_anim_path_linear(a);
+
+    lv_anim_t a_tmp = *a;
+    lv_anim_set_bezier3_param(&a_tmp, para->x1, para->y1, para->x2, para->y2);
+    return lv_anim_path_custom_bezier3(&a_tmp);
+}
 
 /**********************
  *      TYPEDEFS
@@ -95,12 +108,12 @@ extern const void * img_bar_indicator;
  * Subjects
  *----------------*/
 
-extern lv_subject_t subject_value;
-extern lv_subject_t subject_value2;
-extern lv_subject_t subject_opa;
-extern lv_subject_t subject_index;
-extern lv_subject_t subject_flag;
-extern lv_subject_t subject_text;
+extern lv_subject_t * subject_value;
+extern lv_subject_t * subject_value2;
+extern lv_subject_t * subject_opa;
+extern lv_subject_t * subject_index;
+extern lv_subject_t * subject_flag;
+extern lv_subject_t * subject_text;
 
 /**********************
  * GLOBAL PROTOTYPES
@@ -108,6 +121,10 @@ extern lv_subject_t subject_text;
 
 /*----------------
  * Event Callbacks
+ *----------------*/
+
+/*----------------
+ * Easing Callbacks
  *----------------*/
 
 /**
@@ -265,4 +282,4 @@ void lvgl_open_examples_init_gen(const char * asset_path);
 } /*extern "C"*/
 #endif
 
-#endif /*LVGL_OPEN_EXAMPLES_GEN_H*/
+#endif /*LVGL_PRO_LVGL_OPEN_EXAMPLES_GEN_H*/

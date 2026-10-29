@@ -73,12 +73,12 @@ lv_obj_t * lv_example_arc_create(void)
         lv_obj_set_width(lv_arc_0, 120);
         lv_obj_set_height(lv_arc_0, 120);
         lv_obj_set_align(lv_arc_0, LV_ALIGN_CENTER);
-        lv_arc_bind_value(lv_arc_0, &subject_value);
+        lv_arc_bind_value(lv_arc_0, subject_value);
         lv_obj_add_style(lv_arc_0, &style_arc_main, 0);
         lv_obj_add_style(lv_arc_0, &style_arc_ind, LV_PART_INDICATOR);
         lv_obj_add_style(lv_arc_0, &style_arc_knob, LV_PART_KNOB);
         lv_obj_t * lv_label_0 = lv_label_create(lv_arc_0);
-        lv_label_bind_text(lv_label_0, &subject_value, "value: %d");
+        lv_label_bind_text(lv_label_0, subject_value, "value: %d");
         lv_obj_set_align(lv_label_0, LV_ALIGN_CENTER);
 
         the_root = lv_obj_0;

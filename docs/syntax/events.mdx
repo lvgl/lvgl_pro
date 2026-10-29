@@ -11,12 +11,59 @@ There are several ways to define events for user interactions. These events can 
 
 ## Triggers
 
-In all event types, the `trigger` attribute defines what kind of user action should trigger the event. All LVGL event types are supported with straightforward mapping:
+Every event element takes a `trigger` attribute, which says when the action should happen. It accepts three things: an event name, a condition, or a one time switch.
 
-- `"all"` - `LV_EVENT_ALL`
-- `"clicked"` - `LV_EVENT_CLICKED`
+### An event name
+
+This is the usual case: the name of an LVGL event, mapped straight from its enum.
+
+- `"clicked"` - `LV_EVENT_CLICKED`, and the default when `trigger` is missing
 - `"pressed"` - `LV_EVENT_PRESSED`
-- etc
+- `"value_changed"` - `LV_EVENT_VALUE_CHANGED`
+- `"all"` - `LV_EVENT_ALL`
+- and so on for every LVGL event
+
+### A condition
+
+An [expression](./expressions) that reads a [subject](./expressions) is watched instead of an event. The action runs on every change from **false to true**:
+
+```xml
+<!-- Show the alarm screen as soon as the temperature goes over 30 -->
+<screen_load_event trigger="{subject_temp > 30}" screen="screen_alarm"/>
+```
+
+<Callout type="info">
+Condition triggers require **LVGL Pro Editor v2.1** and **LVGL v9.6**.
+</Callout>
+
+Two things to keep in mind:
+
+- Only the rising edge fires. Going back to false does nothing, and neither does a change that leaves the condition true.
+- A condition that is **already true when the element is created fires right away**. The remembered previous state starts as false, so subscribing counts as the first rising edge.
+
+### A one time switch
+
+An expression that reads no subject can't change, so it is decided once, when the element is created. What it decides depends on what it evaluates to.
+
+A **boolean** switches the whole element on or off:
+
+- true - the action runs immediately, once
+- false - nothing is attached at all, so the element does nothing
+
+```xml
+<!-- Load the home screen at creation, but only when this instance asked for it -->
+<screen_load_event trigger="{auto_open}" screen="screen_home"/>
+
+<!-- `{true}` never changes, so this is simply "run once, on creation" -->
+<event_cb callback="on_ready" trigger="{true}"/>
+```
+
+Anything else is used as an **event name**, so an expression can pick which event to listen to:
+
+```xml
+<!-- Fire on a long press in compact mode, on a plain click otherwise -->
+<event_cb callback="my_handler" trigger="{compact ? long_pressed : clicked}"/>
+```
 
 ## Call Function
 
@@ -48,6 +95,8 @@ lv_obj_add_event_cb(obj, my_callback_1, LV_EVENT_CLICKED, "some_text");
 
 And it's the developer's responsibility to implement the `my_callback_1`. 
 
+When the `trigger` is a [condition](#a-condition) there is no LVGL event behind the call, so LVGL builds one. The callback still gets the right target and its own `user_data`, but the event code it carries is created internally and is not one of the `LV_EVENT_*` names, so don't read it.
+
 
 ### Recommendations
 
@@ -69,7 +118,7 @@ The key difference between load and create is:
 
 Both tags support these optional attributes:
 
-- `trigger` - Event code that triggers the action (e.g., `"clicked"`, `"long_pressed"`). Default: `"clicked"`.
+- `trigger` - When to act. An event name, or a condition. See [Triggers](#triggers). Default: `"clicked"`.
 - `anim_type` - How the screen is loaded (e.g., `"move_right"`, `"fade_in"`). Default: `"none"`.
 - `duration` - Length of the animation in milliseconds. Default: `0`. Only used if `anim_type` is not `"none"`.
 - `delay` - Wait time before loading the screen in milliseconds. Default: `0`.
@@ -101,46 +150,59 @@ Here is an example of both load and create events:
 ```
 
 
-## Set Subject Value
+## Set a Subject Value
 
-You can set subject values in response to user interactions by adding special event tags as children of any widget:
-
-```xml
-<view>
- <lv_button width="200" height="100">
-  <subject_set_int_event trigger="clicked" subject="subject_int" value="10"/>
-  <subject_set_float_event trigger="clicked" subject="subject_float" value="12.34"/>
-  <subject_set_string_event trigger="clicked" subject="subject_string" value="Hello"/>
-  <lv_label text="Set the values"/>
- </lv_button>
-</view>
-```
-
-The specified `subject` will be set to the given `value` when the `trigger` event occurs.
-
-## Increment Subject Value
-
-Increment or decrement subject values in response to events using the `subject_increment_event` element:
+`<set_subject_event>` writes a [subject](./expressions) when the trigger fires:
 
 ```xml
 <view>
  <lv_button width="200" height="100">
-  <subject_increment_event trigger="clicked" subject="subject_int1" step="10"/>
-  <subject_increment_event trigger="clicked" subject="subject_int2" step="-10" min_value="0" max_value="50"/>
-  <subject_increment_event trigger="clicked" subject="subject_float1" step="2"/>
+  <set_subject_event subject="subject_count" value="{subject_count + 1}" trigger="clicked"/>
+  <lv_label text="One more"/>
  </lv_button>
 </view>
 ```
 
-The `subject_increment_event` element adds a `step` value to the subject's current value when the `trigger` event occurs.
+It takes three attributes:
 
-The `subject` must be an `int` or `float` type.
+- `subject` - The subject to write. Mandatory.
+- `value` - The value to write: a literal, or a `{ }` [expression](./expressions) re-evaluated **every time** the trigger fires. Mandatory.
+- `trigger` - See [Triggers](#triggers). Default: `"clicked"`.
 
-If `step` is negative, the subject's value will be decremented. Currently, only integer `step` values are supported.
+Because `value` is a fresh expression on every fire, one element covers setting, toggling, and incrementing:
 
-Optionally, use `min_value` and/or `max_value` to limit the subject's value. The default min/max values are `INT32_MIN` (-2,147,483,648) and `INT32_MAX` (+2,147,483,647) respectively.
+```xml
+<!-- Set: a literal, like any other attribute -->
+<set_subject_event subject="subject_name" value="Anna"/>
 
-The `rollover` property is optional. If `false` (default), the value stops at the min/max boundary; if `true`, it wraps to the other end.
+<!-- Toggle -->
+<set_subject_event subject="subject_menu_open" value="{!subject_menu_open}"/>
+
+<!-- Increment, and decrement with a negative step -->
+<set_subject_event subject="subject_count" value="{subject_count + 1}"/>
+<set_subject_event subject="subject_count" value="{subject_count - 1}"/>
+
+<!-- Anything else an expression can say -->
+<set_subject_event subject="subject_page" value="{subject_page + 1}" trigger="{subject_next_pressed}"/>
+```
+
+The subject's declared type decides how the value is written, and `true` and `false` become 1 and 0 in an `int` subject. To keep a value in range, give the **subject** a `min_value` and a `max_value`: every write is clamped to them.
+
+### Older subject events
+
+Before `<set_subject_event>` there was one element per operation. They still work, so existing XML keeps running:
+
+```xml
+<subject_set_int_event trigger="clicked" subject="subject_int" value="10"/>
+<subject_set_float_event trigger="clicked" subject="subject_float" value="12.34"/>
+<subject_set_string_event trigger="clicked" subject="subject_string" value="Hello"/>
+<subject_toggle_event trigger="clicked" subject="subject_int"/>
+<subject_increment_event trigger="clicked" subject="subject_int" step="10" min_value="0" max_value="50" rollover="true"/>
+```
+
+`subject_increment_event` is the only one with something `<set_subject_event>` can't do: `rollover="true"` wraps the value to the other end at the `min_value`/`max_value` boundary instead of stopping there.
+
+These elements take an **event name** only. A `{ }` condition in their `trigger` doesn't work, so use `<set_subject_event>` when you need one.
 
 ## Play Animation
 

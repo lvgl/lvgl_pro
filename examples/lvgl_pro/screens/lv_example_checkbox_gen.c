@@ -63,21 +63,21 @@ lv_obj_t * lv_example_checkbox_create(void)
 
         lv_obj_t * lv_checkbox_0 = lv_checkbox_create(lv_obj_0);
         lv_checkbox_set_text(lv_checkbox_0, "Enable feature");
-        lv_obj_set_state(lv_checkbox_0, LV_STATE_CHECKED, true);
+        lv_obj_set_checked(lv_checkbox_0, true);
         lv_obj_add_style(lv_checkbox_0, &style_tick_checked, LV_PART_INDICATOR | LV_STATE_CHECKED);
 
         lv_obj_t * lv_checkbox_1 = lv_checkbox_create(lv_obj_0);
         lv_checkbox_set_text(lv_checkbox_1, "Unavailable option");
-        lv_obj_set_state(lv_checkbox_1, LV_STATE_DISABLED, true);
+        lv_obj_set_disabled(lv_checkbox_1, true);
 
         lv_obj_t * lv_checkbox_2 = lv_checkbox_create(lv_obj_0);
         lv_checkbox_set_text(lv_checkbox_2, "Sync A");
-        lv_obj_bind_checked(lv_checkbox_2, &subject_checked);
+        lv_obj_bind_checked(lv_checkbox_2, subject_checked);
         lv_obj_add_style(lv_checkbox_2, &style_tick_checked, LV_PART_INDICATOR | LV_STATE_CHECKED);
 
         lv_obj_t * lv_checkbox_3 = lv_checkbox_create(lv_obj_0);
         lv_checkbox_set_text(lv_checkbox_3, "Sync B");
-        lv_obj_bind_checked(lv_checkbox_3, &subject_checked);
+        lv_obj_bind_checked(lv_checkbox_3, subject_checked);
         lv_obj_add_style(lv_checkbox_3, &style_tick_checked, LV_PART_INDICATOR | LV_STATE_CHECKED);
 
         the_root = lv_obj_0;

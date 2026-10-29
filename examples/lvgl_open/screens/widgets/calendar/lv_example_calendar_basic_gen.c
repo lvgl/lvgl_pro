@@ -52,7 +52,7 @@ lv_obj_t * lv_example_calendar_basic_create(void)
         lv_calendar_set_today_day(calendar, 15);
         lv_calendar_set_shown_year(calendar, 2026);
         lv_calendar_set_shown_month(calendar, 5);
-        lv_obj_t * lv_calendar_header_arrow_0 = lv_calendar_add_header_arrow(calendar);
+        lv_calendar_add_header_arrow(calendar);
 
         the_root = lv_obj_0;
     }

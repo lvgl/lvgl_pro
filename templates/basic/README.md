@@ -4,7 +4,7 @@ A ready-to-use starting point for a new **LVGL Pro** project. Instead of an empt
 folder, you get a small **design system**, a set of reusable **components**, and an
 example screen — already wired up so you can start building your own UI right away.
 
-Target display: **480 × 320**, `lvgl_version` 9.5.0.
+Target display: **480 × 320**, `lvgl_version` 9.6.0.
 
 ## What's inside
 
@@ -71,7 +71,7 @@ Check out the docs at **<https://lvgl.io/docs/pro>**. These are the key pages to
 The [**lvgl/lvgl_pro**](https://github.com/lvgl/lvgl_pro) repository is also worth checking. It contains examples, tutorials, and 
 [`lvgl_widgets_xml/`](https://github.com/lvgl/lvgl_pro/tree/master/lvgl_widgets_xml) with the XML schema of LVGL's built-in widgets. 
 Both humans and agents can check exactly which properties, enums, styles, and other elements are available. See
-[lv_slider.xml](https://github.com/lvgl/lvgl_pro/blob/master/lvgl_widgets_xml/v9.5.0/lv_slider.xml) as an example. 
+[lv_slider.xml](https://github.com/lvgl/lvgl_pro/blob/master/lvgl_widgets_xml/v9.6.0/lv_slider.xml) as an example. 
 AI agents can clone the whole repo or get only one file.
 
 

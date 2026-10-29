@@ -52,16 +52,16 @@ lv_obj_t * lv_example_switch_state_create(void)
 
         lv_obj_t * sw_2 = lv_switch_create(lv_obj_0);
         lv_obj_set_name(sw_2, "sw_2");
-        lv_obj_set_state(sw_2, LV_STATE_CHECKED, true);
+        lv_obj_set_checked(sw_2, true);
 
         lv_obj_t * sw_3 = lv_switch_create(lv_obj_0);
         lv_obj_set_name(sw_3, "sw_3");
-        lv_obj_set_state(sw_3, LV_STATE_DISABLED, true);
+        lv_obj_set_disabled(sw_3, true);
 
         lv_obj_t * sw_4 = lv_switch_create(lv_obj_0);
         lv_obj_set_name(sw_4, "sw_4");
-        lv_obj_set_state(sw_4, LV_STATE_DISABLED, true);
-        lv_obj_set_state(sw_4, LV_STATE_CHECKED, true);
+        lv_obj_set_disabled(sw_4, true);
+        lv_obj_set_checked(sw_4, true);
 
         the_root = lv_obj_0;
     }

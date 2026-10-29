@@ -14,8 +14,8 @@
  *      DEFINES
  *********************/
 
-#define QR_DARK lv_color_hex(0x1d4ed8)
-#define QR_LIGHT lv_color_hex(0xdbeafe)
+#define QR_DARK (lv_color_hex(0x1d4ed8))
+#define QR_LIGHT (lv_color_hex(0xdbeafe))
 
 
 /**********************

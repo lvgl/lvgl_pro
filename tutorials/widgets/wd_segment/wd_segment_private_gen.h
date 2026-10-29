@@ -17,7 +17,7 @@ extern "C" {
 #ifdef LV_LVGL_H_INCLUDE_SIMPLE
     #include "lvgl_private.h"
 #else
-    #include "lvgl/lvgl_private.h"
+    #include "lvgl_private/lvgl_private.h"
 #endif
 #include "wd_segment.h"
 

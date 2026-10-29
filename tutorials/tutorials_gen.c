@@ -6,7 +6,7 @@
  *      INCLUDES
  *********************/
 
-#include "tutorials_gen.h"
+#include "tutorials.h"
 
 #if defined(LV_USE_XML) && LV_USE_XML
 #include "widgets/wd_segment/wd_segment_private_gen.h"
@@ -30,7 +30,7 @@ static void check_font(lv_font_t ** font, const char * name);
  *  STATIC VARIABLES
  **********************/
 
-static uint32_t tutorials_target = TUTORIALS_TARGET_ALL;
+static uint32_t tutorials_target = TUTORIALS_COMPILE_TARGET;
 
 /*----------------
  * Translations
@@ -87,11 +87,11 @@ const void * flower_file = NULL;
  * Subjects
  *----------------*/
 
-lv_subject_t subject_dark_mode;
-lv_subject_t subject_max_current;
-lv_subject_t subject_timeout;
-lv_subject_t subject_volume;
-lv_subject_t subject_segment;
+lv_subject_t * subject_dark_mode;
+lv_subject_t * subject_max_current;
+lv_subject_t * subject_timeout;
+lv_subject_t * subject_volume;
+lv_subject_t * subject_segment;
 
 /**********************
  *      MACROS
@@ -167,11 +167,16 @@ void tutorials_init_gen(const char * asset_path)
     /*----------------
      * Subjects
      *----------------*/
-    lv_subject_init_int(&subject_dark_mode, 0);
-    lv_subject_init_int(&subject_max_current, 0);
-    lv_subject_init_int(&subject_timeout, 0);
-    lv_subject_init_int(&subject_volume, 0);
-    lv_subject_init_int(&subject_segment, 0);
+    subject_dark_mode = lv_subject_create(LV_SUBJECT_TYPE_INT);
+    lv_subject_set_int(subject_dark_mode, 0);
+    subject_max_current = lv_subject_create(LV_SUBJECT_TYPE_INT);
+    lv_subject_set_int(subject_max_current, 0);
+    subject_timeout = lv_subject_create(LV_SUBJECT_TYPE_INT);
+    lv_subject_set_int(subject_timeout, 0);
+    subject_volume = lv_subject_create(LV_SUBJECT_TYPE_INT);
+    lv_subject_set_int(subject_volume, 0);
+    subject_segment = lv_subject_create(LV_SUBJECT_TYPE_INT);
+    lv_subject_set_int(subject_segment, 0);
 
     /*----------------
      * Translations
@@ -200,13 +205,15 @@ void tutorials_init_gen(const char * asset_path)
     lv_xml_register_font(NULL, "montserrat_20_tiny_ttf_file", montserrat_20_tiny_ttf_file);
 
     /* Register subjects */
-    lv_xml_register_subject(NULL, "subject_dark_mode", &subject_dark_mode);
-    lv_xml_register_subject(NULL, "subject_max_current", &subject_max_current);
-    lv_xml_register_subject(NULL, "subject_timeout", &subject_timeout);
-    lv_xml_register_subject(NULL, "subject_volume", &subject_volume);
-    lv_xml_register_subject(NULL, "subject_segment", &subject_segment);
+    lv_xml_register_subject(NULL, "subject_dark_mode", subject_dark_mode);
+    lv_xml_register_subject(NULL, "subject_max_current", subject_max_current);
+    lv_xml_register_subject(NULL, "subject_timeout", subject_timeout);
+    lv_xml_register_subject(NULL, "subject_volume", subject_volume);
+    lv_xml_register_subject(NULL, "subject_segment", subject_segment);
 
     /* Register callbacks */
+
+    /* Register easing callbacks */
 #endif
 
     /* Register all the global assets so that they won't be created again when globals.xml is parsed.
@@ -223,7 +230,7 @@ void tutorials_init_gen(const char * asset_path)
      *-------------------*/
     /* If XML is enabled it's assumed that the permanent screens are created
      * manually from XML using lv_xml_create() */
-    /* To allow screens to reference each other, create them all before calling the sceen create functions */
+    /* Create all the permanent screens first so that they can reference each other */
     screen_main = lv_obj_create(NULL);
 
     screen_main_create();

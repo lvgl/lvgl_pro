@@ -15,10 +15,8 @@ extern "C" {
 
 #ifdef LV_LVGL_H_INCLUDE_SIMPLE
     #include "lvgl.h"
-    #include "lvgl_private.h"
 #else
     #include "lvgl/lvgl.h"
-    #include "lvgl/lvgl_private.h"
 #endif
 
 #if defined(LV_USE_XML) && LV_USE_XML
@@ -47,7 +45,7 @@ lv_obj_t * list_create(lv_obj_t * parent);
 /**
  * Get a timeline of a list
  * @param obj          pointer to a list component
- * @param timeline_id  ID of the the timeline
+ * @param timeline_id  ID of the timeline
  * @return             pointer to the timeline or NULL if not found
  */
 lv_anim_timeline_t * list_get_timeline(lv_obj_t * obj, list_timeline_t timeline_id);

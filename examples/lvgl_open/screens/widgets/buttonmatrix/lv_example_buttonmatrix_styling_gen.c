@@ -40,26 +40,23 @@ lv_obj_t * lv_example_buttonmatrix_styling_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_bm_item);
-            lv_style_set_bg_opa(&style_bm_item, (255 * 100 / 100));
-            lv_style_set_bg_color(&style_bm_item, lv_color_hex(0xf3f4f6));
-            lv_style_set_radius(&style_bm_item, 8);
-            lv_style_set_border_color(&style_bm_item, lv_color_hex(0xd1d5db));
-            lv_style_set_border_width(&style_bm_item, 1);
-            lv_style_set_text_color(&style_bm_item, lv_color_hex(0x111827));
+        /*Init all styles*/
+        lv_style_init(&style_bm_item);
+        lv_style_init(&style_bm_item_checked);
 
-            lv_style_init(&style_bm_item_checked);
-            lv_style_set_bg_color(&style_bm_item_checked, lv_color_hex(0x6366f1));
-            lv_style_set_text_color(&style_bm_item_checked, lv_color_hex(0xffffff));
-            lv_style_set_outline_color(&style_bm_item_checked, lv_color_hex(0x6366f1));
-            lv_style_set_outline_width(&style_bm_item_checked, 3);
-            lv_style_set_outline_pad(&style_bm_item_checked, 2);
-            lv_style_set_outline_opa(&style_bm_item_checked, 80);
+        lv_style_set_bg_opa(&style_bm_item, (255 * 100 / 100));
+        lv_style_set_bg_color(&style_bm_item, lv_color_hex(0xf3f4f6));
+        lv_style_set_radius(&style_bm_item, 8);
+        lv_style_set_border_color(&style_bm_item, lv_color_hex(0xd1d5db));
+        lv_style_set_border_width(&style_bm_item, 1);
+        lv_style_set_text_color(&style_bm_item, lv_color_hex(0x111827));
+        lv_style_set_bg_color(&style_bm_item_checked, lv_color_hex(0x6366f1));
+        lv_style_set_text_color(&style_bm_item_checked, lv_color_hex(0xffffff));
+        lv_style_set_outline_color(&style_bm_item_checked, lv_color_hex(0x6366f1));
+        lv_style_set_outline_width(&style_bm_item_checked, 3);
+        lv_style_set_outline_pad(&style_bm_item_checked, 2);
+        lv_style_set_outline_opa(&style_bm_item_checked, 80);
 
-        }
-        #endif
         style_inited = true;
     }
 

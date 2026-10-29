@@ -40,28 +40,25 @@ lv_obj_t * lv_example_spinbox_styling_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_spinbox_main);
-            lv_style_set_bg_color(&style_spinbox_main, lv_color_hex(0xf3f4f6));
-            lv_style_set_bg_opa(&style_spinbox_main, (255 * 100 / 100));
-            lv_style_set_radius(&style_spinbox_main, 8);
-            lv_style_set_border_color(&style_spinbox_main, lv_color_hex(0xd1d5db));
-            lv_style_set_border_width(&style_spinbox_main, 1);
-            lv_style_set_pad_all(&style_spinbox_main, 8);
-            lv_style_set_text_color(&style_spinbox_main, lv_color_hex(0x111827));
-            lv_style_set_text_letter_space(&style_spinbox_main, 4);
+        /*Init all styles*/
+        lv_style_init(&style_spinbox_main);
+        lv_style_init(&style_spinbox_cursor);
 
-            lv_style_init(&style_spinbox_cursor);
-            lv_style_set_bg_opa(&style_spinbox_cursor, 0);
-            lv_style_set_text_opa(&style_spinbox_cursor, 0);
-            lv_style_set_border_color(&style_spinbox_cursor, lv_color_hex(0x6366f1));
-            lv_style_set_border_width(&style_spinbox_cursor, 2);
-            lv_style_set_radius(&style_spinbox_cursor, 4);
-            lv_style_set_pad_ver(&style_spinbox_cursor, 2);
+        lv_style_set_bg_color(&style_spinbox_main, lv_color_hex(0xf3f4f6));
+        lv_style_set_bg_opa(&style_spinbox_main, (255 * 100 / 100));
+        lv_style_set_radius(&style_spinbox_main, 8);
+        lv_style_set_border_color(&style_spinbox_main, lv_color_hex(0xd1d5db));
+        lv_style_set_border_width(&style_spinbox_main, 1);
+        lv_style_set_pad_all(&style_spinbox_main, 8);
+        lv_style_set_text_color(&style_spinbox_main, lv_color_hex(0x111827));
+        lv_style_set_text_letter_space(&style_spinbox_main, 4);
+        lv_style_set_bg_opa(&style_spinbox_cursor, 0);
+        lv_style_set_text_opa(&style_spinbox_cursor, 0);
+        lv_style_set_border_color(&style_spinbox_cursor, lv_color_hex(0x6366f1));
+        lv_style_set_border_width(&style_spinbox_cursor, 2);
+        lv_style_set_radius(&style_spinbox_cursor, 4);
+        lv_style_set_pad_ver(&style_spinbox_cursor, 2);
 
-        }
-        #endif
         style_inited = true;
     }
 

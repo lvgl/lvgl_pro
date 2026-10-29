@@ -39,15 +39,13 @@ lv_obj_t * lv_example_obj_bind_style_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_dark);
-            lv_style_set_bg_color(&style_dark, lv_color_hex(0x1f2937));
-            lv_style_set_text_color(&style_dark, lv_color_hex(0xf9fafb));
-            lv_style_set_border_color(&style_dark, lv_color_hex(0x4b5563));
+        /*Init all styles*/
+        lv_style_init(&style_dark);
 
-        }
-        #endif
+        lv_style_set_bg_color(&style_dark, lv_color_hex(0x1f2937));
+        lv_style_set_text_color(&style_dark, lv_color_hex(0xf9fafb));
+        lv_style_set_border_color(&style_dark, lv_color_hex(0x4b5563));
+
         style_inited = true;
     }
 
@@ -71,7 +69,7 @@ lv_obj_t * lv_example_obj_bind_style_create(void)
         lv_obj_set_style_pad_all(container, 16, 0);
         lv_obj_set_style_radius(container, 8, 0);
         lv_obj_set_style_border_width(container, 1, 0);
-        lv_obj_bind_style(container, &style_dark, 0, &subject_flag, 1);
+        lv_obj_bind_style(container, &style_dark, 0, subject_flag, 1);
         lv_obj_t * label_1 = lv_label_create(container);
         lv_obj_set_name(label_1, "label_1");
         lv_obj_set_align(label_1, LV_ALIGN_CENTER);
@@ -84,7 +82,7 @@ lv_obj_t * lv_example_obj_bind_style_create(void)
         lv_obj_set_align(label_2, LV_ALIGN_CENTER);
         lv_label_set_text(label_2, "Toggle theme");
 
-        lv_obj_add_subject_toggle_event(button, &subject_flag, LV_EVENT_CLICKED);
+        lv_obj_add_subject_toggle_event(button, subject_flag, LV_EVENT_CLICKED);
 
         the_root = lv_obj_0;
     }

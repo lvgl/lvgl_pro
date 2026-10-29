@@ -37,59 +37,55 @@ Properties below are the widget's XML [`<api>`](../syntax/api); see [API](../syn
 | `width` | `px\|%\|content` | Set width (px, % or content) |
 | `align` | `enum:lv_align` | Align on parent |
 | `ext_click_area` | `int` | Extra clickable area around object in px |
+| `ext_draw_size` | `int` | Extra area around the object to redraw in px, for drawings that go beyond its edges |
+| `scroll_dir` | `enum:lv_dir` | Directions the object can be scrolled in |
 | `scroll_snap_x` | `enum:lv_scroll_snap` | Snap children horizontally |
 | `scroll_snap_y` | `enum:lv_scroll_snap` | Snap children vertically |
 | `scrollbar_mode` | `enum:lv_scrollbar_mode` | Set the scrollbar mode |
 | `flex_grow` | `int` | Set flex grow to fill the available space in the track |
 | `flex_flow` | `enum:lv_flex_flow` | Set flex flow direction (row, column, etc.) |
+| `checked` | `bool` | Mark widget as checked (e.g. switch or checkbox) |
+| `focused` | `bool` | Mark widget as focused |
+| `focus_key` | `bool` | Mark widget as focused via key navigation |
+| `edited` | `bool` | Mark widget as being edited (e.g. text input) |
+| `hovered` | `bool` | Mark widget as hovered by a pointer |
+| `pressed` | `bool` | Mark widget as pressed |
+| `scrolled` | `bool` | Mark widget as being scrolled |
+| `disabled` | `bool` | Disable widget interaction |
+| `hidden` | `bool` | Make the object hidden. (Like it wasn't there at all) |
+| `clickable` | `bool` | Make the object clickable by the input devices |
+| `click_focusable` | `bool` | Add focused state to the object when clicked |
+| `checkable` | `bool` | Toggle checked state when the object is clicked |
+| `scrollable` | `bool` | Make the object scrollable |
+| `scroll_elastic` | `bool` | Allow scrolling inside but with slower speed |
+| `scroll_momentum` | `bool` | Make the object scroll further when 'thrown' |
+| `scroll_one` | `bool` | Allow scrolling only one snappable children |
+| `scroll_chain_hor` | `bool` | Allow propagating the horizontal scroll to a parent |
+| `scroll_chain_ver` | `bool` | Allow propagating the vertical scroll to a parent |
+| `scroll_chain` | `bool` | SCROLL_CHAIN_HOR and SCROLL_CHAIN_VER |
+| `scroll_on_focus` | `bool` | Automatically scroll object to make it visible when focused |
+| `scroll_with_arrow` | `bool` | Allow scrolling the focused object with arrow keys |
+| `snappable` | `bool` | If scroll snap is enabled on the parent it can snap to this object |
+| `press_lock` | `bool` | Keep the object pressed even if the press slid from the object |
+| `event_bubble` | `bool` | Propagate the events to the parent too |
+| `event_trickle` | `bool` | Send events to children first |
+| `state_trickle` | `bool` | Propagate state changes to children |
+| `gesture_bubble` | `bool` | Propagate the gestures to the parent |
+| `adv_hittest` | `bool` | Allow performing more accurate hit (click) test. E.g. consider rounded corners. |
+| `ignore_layout` | `bool` | Make the object not positioned by the layouts |
+| `floating` | `bool` | Do not scroll the object when the parent scrolls and ignore layout |
+| `send_draw_task_events` | `bool` | Send `LV_EVENT_DRAW_TASK_ADDED` events |
+| `overflow_visible` | `bool` | Do not clip the children to the parent's ext draw size |
 | `radio_button` | `bool` | Allow only one radio_button sibling to be checked |
+| `flex_in_new_track` | `bool` | Start a new flex track on this item |
 
 ### Flags
 
 Boolean object flags — set as `flag="true"` / `"false"`.
 
-| Flag | Description |
-| --- | --- |
-| `hidden` | Make the object hidden. (Like it wasn't there at all) |
-| `clickable` | Make the object clickable by the input devices |
-| `click_focusable` | Add focused state to the object when clicked |
-| `checkable` | Toggle checked state when the object is clicked |
-| `scrollable` | Make the object scrollable |
-| `scroll_elastic` | Allow scrolling inside but with slower speed |
-| `scroll_momentum` | Make the object scroll further when 'thrown' |
-| `scroll_one` | Allow scrolling only one snappable children |
-| `scroll_chain_hor` | Allow propagating the horizontal scroll to a parent |
-| `scroll_chain_ver` | Allow propagating the vertical scroll to a parent |
-| `scroll_chain` | SCROLL_CHAIN_HOR and SCROLL_CHAIN_VER |
-| `scroll_on_focus` | Automatically scroll object to make it visible when focused |
-| `scroll_with_arrow` | Allow scrolling the focused object with arrow keys |
-| `snappable` | If scroll snap is enabled on the parent it can snap to this object |
-| `press_lock` | Keep the object pressed even if the press slid from the object |
-| `event_bubble` | Propagate the events to the parent too |
-| `event_trickle` | Send events to children first |
-| `state_trickle` | Propagate state changes to children |
-| `gesture_bubble` | Propagate the gestures to the parent |
-| `adv_hittest` | Allow performing more accurate hit (click) test. E.g. consider rounded corners. |
-| `ignore_layout` | Make the object not positioned by the layouts |
-| `floating` | Do not scroll the object when the parent scrolls and ignore layout |
-| `send_draw_task_events` | Send `LV_EVENT_DRAW_TASK_ADDED` events |
-| `overflow_visible` | Do not clip the children to the parent's ext draw size |
-| `flex_in_new_track` | Start a new flex track on this item |
-
 ### State flags
 
 Force a widget state on or off — set as `state="true"` / `"false"`.
-
-| State | Description |
-| --- | --- |
-| `checked` | Mark widget as checked (e.g. switch or checkbox) |
-| `focused` | Mark widget as focused |
-| `focus_key` | Mark widget as focused via key navigation |
-| `edited` | Mark widget as being edited (e.g. text input) |
-| `hovered` | Mark widget as hovered by a pointer |
-| `pressed` | Mark widget as pressed |
-| `scrolled` | Mark widget as being scrolled |
-| `disabled` | Disable widget interaction |
 
 ### Styling
 
@@ -97,12 +93,13 @@ Force a widget state on or off — set as `state="true"` / `"false"`.
 
 Add a style to the widget
 
-_access `add`_
+_access `add_set`_
 
 | Name | Kind | Type | Description |
 | --- | --- | --- | --- |
 | `name` | arg | `style` | Style name |
 | `selector` | arg | `selector+` | Target part and state, can be ORed, e.g. pressed\|knob (default: `0`) |
+| `enabled` | prop | `bool` | While false the style looks like it wasn't added. The style keeps its place in the style list, so its priority never changes. Can be bound, e.g. `enabled="{temperature > 30}"` |
 
 #### `<lv_obj-remove_style>`
 
@@ -154,7 +151,7 @@ _access `add`_
 | Name | Kind | Type | Description |
 | --- | --- | --- | --- |
 | `callback` | arg | `event_cb` | Callback function |
-| `trigger` | arg | `lv_event` | Event to trigger callback (default: `clicked`) |
+| `trigger` | arg | `trigger` | An event name, or a condition `{expr}`. A condition on a subject fires on every false-to-true change, one without is decided at creation (default: `clicked`) |
 | `user_data` | arg | `string` | Optional user data as a string (default: `NULL`) |
 
 #### `<lv_obj-screen_load_event>`
@@ -165,7 +162,7 @@ _access `add`_
 
 | Name | Kind | Type | Description |
 | --- | --- | --- | --- |
-| `trigger` | arg | `lv_event` | Trigger event (default: `clicked`) |
+| `trigger` | arg | `trigger` | An event name, or a condition `{expr}`. A condition on a subject fires on every false-to-true change, one without is decided at creation (default: `clicked`) |
 | `screen` | arg | `screen` | Target screen |
 | `anim_type` | arg | `enum:lv_screen_load_anim` | Load animation (default: `none`) |
 | `duration` | arg | `int` | Animation duration (ms) (default: `0`) |
@@ -179,7 +176,7 @@ _access `add`_
 
 | Name | Kind | Type | Description |
 | --- | --- | --- | --- |
-| `trigger` | arg | `lv_event` | Trigger event (default: `clicked`) |
+| `trigger` | arg | `trigger` | An event name, or a condition `{expr}`. A condition on a subject fires on every false-to-true change, one without is decided at creation (default: `clicked`) |
 | `screen` | arg | `screen_create_cb` | Screen create callback |
 | `anim_type` | arg | `enum:lv_screen_load_anim` | Load animation (default: `none`) |
 | `duration` | arg | `int` | Animation duration (ms) (default: `0`) |
@@ -193,7 +190,7 @@ _access `add`_
 
 | Name | Kind | Type | Description |
 | --- | --- | --- | --- |
-| `trigger` | arg | `lv_event` | Trigger event (default: `clicked`) |
+| `trigger` | arg | `trigger` | An event name, or a condition `{expr}`. A condition on a subject fires on every false-to-true change, one without is decided at creation (default: `clicked`) |
 | `target` | arg | `lv_obj\|self` | Timeline target |
 | `timeline` | arg | `timeline` | Timeline to play |
 | `delay` | arg | `int` | Start delay (ms) (default: `0`) |
@@ -201,7 +198,7 @@ _access `add`_
 
 #### `<lv_obj-subject_toggle_event>`
 
-Toggle an int subject's value on an a trigger
+Toggle an int subject's value on an a trigger. Prefer <set_subject_event value="!my_subject"/>
 
 _access `add`_
 
@@ -267,7 +264,7 @@ Drive widget state, flags or styles from an observer [subject](../syntax/data-bi
 
 #### `<lv_obj-bind_style>`
 
-Bind a style to a subject value
+Bind a style to a subject value. For a condition use `<style enabled="{...}">` instead
 
 _access `custom`_
 
@@ -275,7 +272,7 @@ _access `custom`_
 | --- | --- | --- | --- |
 | `name` | arg | `style` | Style name |
 | `selector` | arg | `selector+` | Selector (part+state) (default: `0`) |
-| `subject` | arg | `subject` | Subject to monitor |
+| `subject` | arg | `subject` | Subject to monitor (with ref_value) |
 | `ref_value` | arg | `int` | Value that activates the style |
 
 #### `<lv_obj-bind_style_prop>`

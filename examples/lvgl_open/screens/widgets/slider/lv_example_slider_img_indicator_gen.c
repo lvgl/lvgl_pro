@@ -41,29 +41,25 @@ lv_obj_t * lv_example_slider_img_indicator_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_slider_track);
-            lv_style_set_bg_image_src(&style_slider_track, img_bar_bg);
-            lv_style_set_bg_opa(&style_slider_track, 0);
-            lv_style_set_radius(&style_slider_track, 0);
+        /*Init all styles*/
+        lv_style_init(&style_slider_track);
+        lv_style_init(&style_slider_indicator);
+        lv_style_init(&style_slider_knob);
 
-            lv_style_init(&style_slider_indicator);
-            lv_style_set_bg_image_src(&style_slider_indicator, img_bar_indicator);
-            lv_style_set_bg_opa(&style_slider_indicator, 0);
-            lv_style_set_radius(&style_slider_indicator, 0);
+        lv_style_set_bg_image_src(&style_slider_track, img_bar_bg);
+        lv_style_set_bg_opa(&style_slider_track, 0);
+        lv_style_set_radius(&style_slider_track, 0);
+        lv_style_set_bg_image_src(&style_slider_indicator, img_bar_indicator);
+        lv_style_set_bg_opa(&style_slider_indicator, 0);
+        lv_style_set_radius(&style_slider_indicator, 0);
+        lv_style_set_bg_opa(&style_slider_knob, (255 * 100 / 100));
+        lv_style_set_bg_color(&style_slider_knob, lv_color_hex(0x101820));
+        lv_style_set_radius(&style_slider_knob, 4);
+        lv_style_set_border_color(&style_slider_knob, lv_color_hex(0x00d4ff));
+        lv_style_set_border_width(&style_slider_knob, 2);
+        lv_style_set_pad_hor(&style_slider_knob, 0);
+        lv_style_set_pad_ver(&style_slider_knob, 6);
 
-            lv_style_init(&style_slider_knob);
-            lv_style_set_bg_opa(&style_slider_knob, (255 * 100 / 100));
-            lv_style_set_bg_color(&style_slider_knob, lv_color_hex(0x101820));
-            lv_style_set_radius(&style_slider_knob, 4);
-            lv_style_set_border_color(&style_slider_knob, lv_color_hex(0x00d4ff));
-            lv_style_set_border_width(&style_slider_knob, 2);
-            lv_style_set_pad_hor(&style_slider_knob, 0);
-            lv_style_set_pad_ver(&style_slider_knob, 6);
-
-        }
-        #endif
         style_inited = true;
     }
 
@@ -86,14 +82,14 @@ lv_obj_t * lv_example_slider_img_indicator_create(void)
         lv_obj_set_height(slider, 30);
         lv_slider_set_min_value(slider, 0);
         lv_slider_set_max_value(slider, 20);
-        lv_slider_bind_value(slider, &subject_value2);
+        lv_slider_bind_value(slider, subject_value2);
         lv_obj_add_style(slider, &style_slider_track, LV_PART_MAIN);
         lv_obj_add_style(slider, &style_slider_indicator, LV_PART_INDICATOR);
         lv_obj_add_style(slider, &style_slider_knob, LV_PART_KNOB);
 
         lv_obj_t * label = lv_label_create(lv_obj_0);
         lv_obj_set_name(label, "label");
-        lv_label_bind_text(label, &subject_value2, "%d");
+        lv_label_bind_text(label, subject_value2, "%d");
 
         the_root = lv_obj_0;
     }

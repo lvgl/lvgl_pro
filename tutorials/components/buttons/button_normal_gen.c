@@ -18,6 +18,12 @@
  *      TYPEDEFS
  **********************/
 
+typedef struct {
+    /* Index is the <COMP>_TIMELINE_* enum. Kept here rather than the root's
+     * user_data, which stays free for the user. */
+    lv_anim_timeline_t ** timelines;
+} button_normal_t;
+
 /***********************
  *  STATIC VARIABLES
  **********************/
@@ -27,7 +33,12 @@
  **********************/
 
 static lv_anim_timeline_t * timeline_show_up_create(lv_obj_t * obj);
-static void free_timeline_event_cb(lv_event_t * e);
+
+static uint32_t button_normal_get_instance_event;
+static void button_normal_get_instance_cb(lv_event_t * e);
+static button_normal_t * button_normal_get_instance(lv_obj_t * obj);
+static void button_normal_destroy_instance(button_normal_t * inst);
+static void button_normal_delete_cb(lv_event_t * e);
 
 /**********************
  *   GLOBAL FUNCTIONS
@@ -64,10 +75,15 @@ lv_obj_t * button_normal_create(lv_obj_t * parent, const char * label_text)
 
     lv_obj_t * the_root = NULL;
 
+    if(button_normal_get_instance_event == 0) button_normal_get_instance_event = lv_event_register_id();
+    button_normal_t * inst = lv_malloc(sizeof(button_normal_t));
+    lv_memzero(inst, sizeof(button_normal_t));
+
     #if TUTORIALS_CHECK_COMPILE_TARGET(TUTORIALS_TARGET_ALL)
     if (tutorials_check_target(TUTORIALS_TARGET_ALL)) {
         lv_obj_t * lv_button_0 = lv_button_create(parent);
         lv_obj_set_name_static(lv_button_0, "button_normal_#");
+        lv_obj_add_event_cb(lv_button_0, button_normal_get_instance_cb, button_normal_get_instance_event, inst);
 
         lv_obj_remove_style_all(lv_button_0);
         lv_obj_add_style(lv_button_0, &style_base, 0);
@@ -80,12 +96,14 @@ lv_obj_t * button_normal_create(lv_obj_t * parent, const char * label_text)
         /* create animation timeline(s) */
         lv_anim_timeline_t ** at_array = lv_malloc(sizeof(lv_anim_timeline_t *) * _BUTTON_NORMAL_TIMELINE_CNT);
         at_array[BUTTON_NORMAL_TIMELINE_SHOW_UP] = timeline_show_up_create(lv_button_0);
-        lv_obj_set_user_data(lv_button_0, at_array);
-        lv_obj_add_event_cb(lv_button_0, free_timeline_event_cb, LV_EVENT_DELETE, at_array);
+        inst->timelines = at_array;
 
         the_root = lv_button_0;
     }
     #endif
+
+    if(the_root) lv_obj_add_event_cb(the_root, button_normal_delete_cb, LV_EVENT_DELETE, inst);
+    else button_normal_destroy_instance(inst); /* no target matched, so nothing owns it */
 
     LV_TRACE_OBJ_CREATE("finished");
 
@@ -94,13 +112,13 @@ lv_obj_t * button_normal_create(lv_obj_t * parent, const char * label_text)
 
 lv_anim_timeline_t * button_normal_get_timeline(lv_obj_t * obj, button_normal_timeline_t timeline_id)
 {
-    if (timeline_id >= _BUTTON_NORMAL_TIMELINE_CNT) {
+    if ((uint32_t)timeline_id >= _BUTTON_NORMAL_TIMELINE_CNT) {
         LV_LOG_WARN("button_normal has no timeline with %d ID", timeline_id);
         return NULL;
     }
 
-    lv_anim_timeline_t ** at_array = lv_obj_get_user_data(obj);
-    return at_array[timeline_id];
+    button_normal_t * inst = button_normal_get_instance(obj);
+    return inst ? inst->timelines[timeline_id] : NULL;
 }
 
 /**********************
@@ -150,13 +168,32 @@ static lv_anim_timeline_t * timeline_show_up_create(lv_obj_t * obj)
     return at;
 }
 
-static void free_timeline_event_cb(lv_event_t * e)
+static void button_normal_get_instance_cb(lv_event_t * e)
 {
-    lv_anim_timeline_t ** at_array = lv_event_get_user_data(e);
-    uint32_t i;
-    for(i = 0; i < _BUTTON_NORMAL_TIMELINE_CNT; i++) {
-        lv_anim_timeline_delete(at_array[i]);
+    void ** out = lv_event_get_param(e);
+    *out = lv_event_get_user_data(e);
+}
+
+static button_normal_t * button_normal_get_instance(lv_obj_t * obj)
+{
+    button_normal_t * inst = NULL;
+    for(lv_obj_t * o = obj; o && !inst; o = lv_obj_get_parent(o)) {
+        lv_obj_send_event(o, button_normal_get_instance_event, &inst);
     }
-    lv_free(at_array);
+    return inst;
+}
+
+static void button_normal_destroy_instance(button_normal_t * inst)
+{
+    if(inst->timelines) {
+        for(uint32_t i = 0; i < 1; i++) lv_anim_timeline_delete(inst->timelines[i]);
+        lv_free(inst->timelines);
+    }
+    lv_free(inst);
+}
+
+static void button_normal_delete_cb(lv_event_t * e)
+{
+    button_normal_destroy_instance(lv_event_get_user_data(e));
 }
 

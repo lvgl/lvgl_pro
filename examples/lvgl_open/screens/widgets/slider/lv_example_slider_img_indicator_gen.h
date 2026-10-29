@@ -2,8 +2,8 @@
  * @file lv_example_slider_img_indicator_gen.h
  */
 
-#ifndef LV_EXAMPLE_SLIDER_IMG_INDICATOR_H
-#define LV_EXAMPLE_SLIDER_IMG_INDICATOR_H
+#ifndef LVGL_PRO_LV_EXAMPLE_SLIDER_IMG_INDICATOR_GEN_H
+#define LVGL_PRO_LV_EXAMPLE_SLIDER_IMG_INDICATOR_GEN_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -15,13 +15,11 @@ extern "C" {
 
 #ifdef LV_LVGL_H_INCLUDE_SIMPLE
     #include "lvgl.h"
-    #include "lvgl_private.h"
 #else
     #include "lvgl/lvgl.h"
-    #include "lvgl/lvgl_private.h"
 #endif
 
-#ifdef LV_USE_XML
+#if defined(LV_USE_XML) && LV_USE_XML
     #include "lv_xml/lv_xml.h"
 #endif
 
@@ -49,4 +47,4 @@ lv_obj_t * lv_example_slider_img_indicator_create(void);
 } /*extern "C"*/
 #endif
 
-#endif /*LV_EXAMPLE_SLIDER_IMG_INDICATOR_H*/
+#endif /*LVGL_PRO_LV_EXAMPLE_SLIDER_IMG_INDICATOR_GEN_H*/

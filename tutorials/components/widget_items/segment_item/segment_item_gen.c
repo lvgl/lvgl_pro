@@ -63,7 +63,7 @@ lv_obj_t * segment_item_create(lv_obj_t * parent, const char * text)
     if (tutorials_check_target(TUTORIALS_TARGET_ALL)) {
         lv_obj_t * lv_obj_0 = lv_obj_create(parent);
         lv_obj_set_name_static(lv_obj_0, "segment_item_#");
-        lv_obj_set_flag(lv_obj_0, LV_OBJ_FLAG_SCROLLABLE, false);
+        lv_obj_set_scrollable(lv_obj_0, false);
 
         lv_obj_add_style(lv_obj_0, &style_base, 0);
         lv_obj_add_style(lv_obj_0, &style_checked, LV_STATE_CHECKED);

@@ -1,0 +1,55 @@
+<screen>
+	<styles>
+		<style name="style_1" bg_color="#color_eeeeee" bg_opa="255" flex_flow="row_wrap" height="content" layout="flex" pad_bottom="#num_8" pad_left="#num_8" pad_right="#num_8" pad_top="#num_8" width="100%" />
+		<style name="style_2" bg_color="#color_1565c0" translate_y="#num_2" />
+		<style name="style_3" bg_color="#color_4caf50" />
+		<style name="style_4" bg_color="#color_ff9800" pad_bottom="#num_4" pad_left="#num_4" pad_right="#num_4" pad_top="#num_4" />
+		<style name="style_5" bg_color="#color_fff3e0" border_color="#color_ff9800" border_width="#num_2" radius="6" />
+	</styles>
+	<view style_pad_bottom="0" style_pad_left="0" style_pad_right="0" style_pad_top="0">
+		<lv_tabview height="100%" width="100%" style_flex_flow="column" style_layout="flex">
+			<lv_tabview-tab_bar height="48" width="100%" style_flex_flow="row" style_layout="flex" />
+			<lv_tabview-tab height="100%" width="100%" text="Controls" style_flex_flow="column" style_layout="flex">
+				<lv_label text="Controls" />
+				<lv_obj>
+					<remove_style_all />
+					<style name="style_1" />
+					<lv_button>
+						<style name="style_2" selector="pressed" />
+						<!-- TODO: implement button_clicked_cb() -->
+						<event_cb callback="button_clicked_cb" trigger="clicked" />
+						<lv_label text="Send" />
+					</lv_button>
+					<lv_button disabled="true">
+						<lv_label text="Off" />
+					</lv_button>
+					<lv_switch checked="true" />
+					<lv_checkbox text="Enabled" checked="true" />
+				</lv_obj>
+				<lv_slider width="80%" max_value="200" value="120">
+					<style name="style_3" selector="indicator" />
+					<style name="style_4" selector="knob" />
+					<!-- TODO: implement slider_changed_cb() -->
+					<event_cb callback="slider_changed_cb" trigger="value_changed" />
+				</lv_slider>
+				<lv_bar width="80%" max_value="50" value="35" />
+				<lv_dropdown options="One&#10;Two&#10;Three" selected="1" />
+				<lv_roller options="Red&#10;Green&#10;Blue" selected="2" />
+			</lv_tabview-tab>
+			<lv_tabview-tab height="100%" width="100%" text="Data" style_flex_flow="column" style_layout="flex">
+				<lv_chart height="160" width="90%" point_count="5" type="bar">
+					<lv_chart-series color="0x2196f3" values="10 40 30 70 55" />
+					<lv_chart-series color="0xf44336" values="60 20 80 25 45" />
+				</lv_chart>
+				<lv_scale height="60" width="90%" />
+				<lv_image src="img_lvgl_logo" />
+				<lv_obj height="40" width="90%" scrollable="false">
+					<style name="style_5" />
+				</lv_obj>
+				<lv_obj height="40" width="90%" scrollable="false">
+					<style name="style_5" />
+				</lv_obj>
+			</lv_tabview-tab>
+		</lv_tabview>
+	</view>
+</screen>

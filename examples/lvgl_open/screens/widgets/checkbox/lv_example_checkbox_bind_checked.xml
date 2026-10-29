@@ -9,10 +9,19 @@
 <screen>
 	<view>
 		<!-- 💡 Toggle the checkbox; the note appears/disappears as `subject_flag` flips between 0 and 1. -->
-		<lv_checkbox name="checkbox" text="Show extra details" align="center" bind_checked="subject_flag" />
+		<lv_checkbox
+			name="checkbox"
+			text="Show extra details"
+			align="center"
+			bind_checked="subject_flag"
+		/>
 
-		<lv_label name="label" text="Extra details only visible while the box is ticked." align="center" y="30">
-			<bind_flag_if_eq subject="subject_flag" flag="hidden" ref_value="0" />
-		</lv_label>
+		<lv_label
+			name="label"
+			text="Extra details only visible while the box is ticked."
+			hidden="{!subject_flag}"
+			align="center"
+			y="30"
+		/>
 	</view>
 </screen>

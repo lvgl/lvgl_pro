@@ -40,20 +40,17 @@ lv_obj_t * lv_example_bar_img_indicator_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_bar_track);
-            lv_style_set_bg_image_src(&style_bar_track, img_bar_bg);
-            lv_style_set_bg_opa(&style_bar_track, 0);
-            lv_style_set_radius(&style_bar_track, 0);
+        /*Init all styles*/
+        lv_style_init(&style_bar_track);
+        lv_style_init(&style_bar_indicator);
 
-            lv_style_init(&style_bar_indicator);
-            lv_style_set_bg_image_src(&style_bar_indicator, img_bar_indicator);
-            lv_style_set_bg_opa(&style_bar_indicator, 0);
-            lv_style_set_radius(&style_bar_indicator, 0);
+        lv_style_set_bg_image_src(&style_bar_track, img_bar_bg);
+        lv_style_set_bg_opa(&style_bar_track, 0);
+        lv_style_set_radius(&style_bar_track, 0);
+        lv_style_set_bg_image_src(&style_bar_indicator, img_bar_indicator);
+        lv_style_set_bg_opa(&style_bar_indicator, 0);
+        lv_style_set_radius(&style_bar_indicator, 0);
 
-        }
-        #endif
         style_inited = true;
     }
 
@@ -76,7 +73,7 @@ lv_obj_t * lv_example_bar_img_indicator_create(void)
         lv_obj_set_height(bar, 35);
         lv_bar_set_min_value(bar, 0);
         lv_bar_set_max_value(bar, 20);
-        lv_bar_bind_value(bar, &subject_value2);
+        lv_bar_bind_value(bar, subject_value2);
         lv_obj_add_style(bar, &style_bar_track, LV_PART_MAIN);
         lv_obj_add_style(bar, &style_bar_indicator, LV_PART_INDICATOR);
 
@@ -97,12 +94,12 @@ lv_obj_t * lv_example_bar_img_indicator_create(void)
         lv_obj_set_align(label_1, LV_ALIGN_CENTER);
         lv_label_set_text(label_1, "-");
 
-        lv_subject_increment_dsc_t * subject_increment_event_0 = lv_obj_add_subject_increment_event(button_1, &subject_value2, LV_EVENT_CLICKED, -1);
-        lv_subject_increment_dsc_t * subject_increment_event_1 = lv_obj_add_subject_increment_event(button_1, &subject_value2, LV_EVENT_LONG_PRESSED_REPEAT, -1);
+        lv_subject_increment_dsc_t * subject_increment_event_0 = lv_obj_add_subject_increment_event(button_1, subject_value2, LV_EVENT_CLICKED, -1);
+        lv_subject_increment_dsc_t * subject_increment_event_1 = lv_obj_add_subject_increment_event(button_1, subject_value2, LV_EVENT_LONG_PRESSED_REPEAT, -1);
 
         lv_obj_t * label_2 = lv_label_create(container);
         lv_obj_set_name(label_2, "label_2");
-        lv_label_bind_text(label_2, &subject_value2, NULL);
+        lv_label_bind_text(label_2, subject_value2, NULL);
 
         lv_obj_t * button_2 = lv_button_create(container);
         lv_obj_set_name(button_2, "button_2");
@@ -111,8 +108,8 @@ lv_obj_t * lv_example_bar_img_indicator_create(void)
         lv_obj_set_align(label_3, LV_ALIGN_CENTER);
         lv_label_set_text(label_3, "+");
 
-        lv_subject_increment_dsc_t * subject_increment_event_2 = lv_obj_add_subject_increment_event(button_2, &subject_value2, LV_EVENT_CLICKED, 1);
-        lv_subject_increment_dsc_t * subject_increment_event_3 = lv_obj_add_subject_increment_event(button_2, &subject_value2, LV_EVENT_LONG_PRESSED_REPEAT, 1);
+        lv_subject_increment_dsc_t * subject_increment_event_2 = lv_obj_add_subject_increment_event(button_2, subject_value2, LV_EVENT_CLICKED, 1);
+        lv_subject_increment_dsc_t * subject_increment_event_3 = lv_obj_add_subject_increment_event(button_2, subject_value2, LV_EVENT_LONG_PRESSED_REPEAT, 1);
 
         the_root = lv_obj_0;
     }

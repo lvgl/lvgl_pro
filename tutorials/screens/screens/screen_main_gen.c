@@ -34,12 +34,17 @@ lv_obj_t * screen_main_create(void)
 {
     LV_TRACE_OBJ_CREATE("begin");
 
+    static bool screen_created = false;
+    if (screen_created) {
+        LV_LOG_WARN("`screen_main` is already initialized as a permanent screen. Returning with no change.");
+        return screen_main;
+    }
+
 
     lv_obj_t * the_root = NULL;
 
     #if TUTORIALS_CHECK_COMPILE_TARGET(TUTORIALS_TARGET_ALL)
     if (tutorials_check_target(TUTORIALS_TARGET_ALL)) {
-        if (screen_main == NULL) screen_main = lv_obj_create(NULL);
         lv_obj_t * lv_obj_0 = screen_main;
         lv_obj_set_name_static(lv_obj_0, "screen_main_#");
 
@@ -68,6 +73,8 @@ lv_obj_t * screen_main_create(void)
         the_root = lv_obj_0;
     }
     #endif
+
+    if (the_root) screen_created = true;
 
     LV_TRACE_OBJ_CREATE("finished");
 

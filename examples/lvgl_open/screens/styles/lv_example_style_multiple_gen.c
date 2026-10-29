@@ -14,8 +14,8 @@
  *      DEFINES
  *********************/
 
-#define BASE lv_color_hex(0x6366f1)
-#define WARN lv_color_hex(0xf59e0b)
+#define BASE (lv_color_hex(0x6366f1))
+#define WARN (lv_color_hex(0xf59e0b))
 
 
 /**********************
@@ -44,28 +44,25 @@ lv_obj_t * lv_example_style_multiple_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_base);
-            lv_style_set_radius(&style_base, 14);
-            lv_style_set_bg_opa(&style_base, (255 * 100 / 100));
-            lv_style_set_bg_color(&style_base, BASE);
-            lv_style_set_border_width(&style_base, 2);
-            lv_style_set_border_color(&style_base, lv_color_hex(0x4338ca));
-            lv_style_set_shadow_color(&style_base, lv_color_hex(0x312e81));
-            lv_style_set_shadow_width(&style_base, 14);
-            lv_style_set_shadow_offset_y(&style_base, 5);
-            lv_style_set_shadow_opa(&style_base, 120);
-            lv_style_set_pad_all(&style_base, 16);
-            lv_style_set_text_color(&style_base, lv_color_hex(0xffffff));
+        /*Init all styles*/
+        lv_style_init(&style_base);
+        lv_style_init(&style_warning);
 
-            lv_style_init(&style_warning);
-            lv_style_set_bg_color(&style_warning, WARN);
-            lv_style_set_border_color(&style_warning, lv_color_hex(0xb45309));
-            lv_style_set_text_color(&style_warning, lv_color_hex(0x1f2937));
+        lv_style_set_radius(&style_base, 14);
+        lv_style_set_bg_opa(&style_base, (255 * 100 / 100));
+        lv_style_set_bg_color(&style_base, BASE);
+        lv_style_set_border_width(&style_base, 2);
+        lv_style_set_border_color(&style_base, lv_color_hex(0x4338ca));
+        lv_style_set_shadow_color(&style_base, lv_color_hex(0x312e81));
+        lv_style_set_shadow_width(&style_base, 14);
+        lv_style_set_shadow_offset_y(&style_base, 5);
+        lv_style_set_shadow_opa(&style_base, 120);
+        lv_style_set_pad_all(&style_base, 16);
+        lv_style_set_text_color(&style_base, lv_color_hex(0xffffff));
+        lv_style_set_bg_color(&style_warning, WARN);
+        lv_style_set_border_color(&style_warning, lv_color_hex(0xb45309));
+        lv_style_set_text_color(&style_warning, lv_color_hex(0x1f2937));
 
-        }
-        #endif
         style_inited = true;
     }
 

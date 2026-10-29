@@ -33,7 +33,7 @@ Any files placed in a `custom_data/` folder are copied into the Editor preview a
 The simplest valid project file declares a `name`, the LVGL version, and at least one `<target>` with a `<display>`:
 
 ```xml
-<project name="ui" lvgl_version="9.5.0">
+<project name="ui" lvgl_version="9.6.0">
     <targets>
         <target name="target1">
             <display width="800" height="480"/>
@@ -51,7 +51,7 @@ To preview Screens at multiple resolutions of real hardware, declare multiple `<
 Each target contains a `<display>` describing the screen size.
 
 ```xml
-<project name="ui" lvgl_version="9.5.0">
+<project name="ui" lvgl_version="9.6.0">
     <targets>
         <target name="large">
             <display width="800" height="480"/>
@@ -77,8 +77,6 @@ In `project.xml` you can also select the LVGL Theme you would like to use:
 1. Simple: minimal styles for easy customization
 2. Default: a good looking theme to quickly get started
 
-TODO add images
-
 To set a theme use `<project theme="simple">` or `<project theme="default">`.
 If the theme is not set, `default` will be used.
 
@@ -88,7 +86,7 @@ If the theme is not set, `default` will be used.
 A project can include other projects — for example a shared component library, or a common folder used by several projects. Declare them with a `<folders>` element in `project.xml`:
 
 ```xml
-<project name="ui" lvgl_version="9.5.0">
+<project name="ui" lvgl_version="9.6.0">
     <folders>
         <!-- Specifying root project is optional, but allows for controlling the precedence of globals -->
         <folder path="."/>

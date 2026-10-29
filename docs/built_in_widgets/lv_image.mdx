@@ -53,6 +53,9 @@ Properties below are the widget's XML [`<api>`](../syntax/api); see [API](../syn
 | `rotation` | `int` | Rotate the image (degrees) |
 | `scale_x` | `int` | Scale horizontally (100 = original) |
 | `scale_y` | `int` | Scale vertically (100 = original) |
-| `pivot_x` | `int\|%` | Set the pivot X for rotation/scaling |
-| `pivot_y` | `int\|%` | Set the pivot Y for rotation/scaling |
-| `bind_src` | `subject:pointer` | Bind the image source to a pointer subject |
+| `pivot_x` | `px\|%` | Set the pivot X for rotation/scaling |
+| `pivot_y` | `px\|%` | Set the pivot Y for rotation/scaling |
+| `offset_x` | `int` | Shift the origin of the image source horizontally (px) |
+| `offset_y` | `int` | Shift the origin of the image source vertically (px) |
+| `blend_mode` | `enum:lv_blend_mode` | How the image's pixels mix with the background |
+| `antialias` | `bool` | Smooth the edges when the image is rotated or scaled |

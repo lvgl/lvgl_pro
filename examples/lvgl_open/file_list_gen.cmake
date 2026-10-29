@@ -2,11 +2,11 @@ list(
   APPEND
   LV_EDITOR_PROJECT_SOURCES
   ${CMAKE_CURRENT_LIST_DIR}/fonts/font_example_large_large_data.c
-  ${CMAKE_CURRENT_LIST_DIR}/images/img_arc_bg_data.c
-  ${CMAKE_CURRENT_LIST_DIR}/images/img_arc_indicator_data.c
-  ${CMAKE_CURRENT_LIST_DIR}/images/img_bar_bg_data.c
-  ${CMAKE_CURRENT_LIST_DIR}/images/img_bar_indicator_data.c
-  ${CMAKE_CURRENT_LIST_DIR}/images/img_example_lvgl_logo_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/img_arc_bg_large_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/img_arc_indicator_large_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/img_bar_bg_large_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/img_bar_indicator_large_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/img_example_lvgl_logo_large_data.c
   ${CMAKE_CURRENT_LIST_DIR}/lvgl_open_examples_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/lvgl_open_examples.c
   ${CMAKE_CURRENT_LIST_DIR}/screens/layouts/flex/lv_example_flex_align_gen.c

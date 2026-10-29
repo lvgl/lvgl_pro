@@ -26,6 +26,8 @@
  *  STATIC PROTOTYPES
  **********************/
 
+static void lv_example_slider_bind_state_label_2_disabled_binding_cb(lv_observer_t * observer, lv_subject_t * subject);
+
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
@@ -50,20 +52,19 @@ lv_obj_t * lv_example_slider_bind_state_create(void)
         lv_obj_t * slider = lv_slider_create(lv_obj_0);
         lv_obj_set_name(slider, "slider");
         lv_obj_set_width(slider, lv_pct(90));
-        lv_slider_bind_value(slider, &subject_value);
+        lv_slider_bind_value(slider, subject_value);
 
         lv_obj_t * label_1 = lv_label_create(lv_obj_0);
         lv_obj_set_name(label_1, "label_1");
-        lv_label_bind_text(label_1, &subject_value, "Current: %d (disabled above 80)");
+        lv_label_bind_text(label_1, subject_value, "Current: %d (disabled above 80)");
 
         lv_obj_t * button = lv_button_create(lv_obj_0);
         lv_obj_set_name(button, "button");
         lv_obj_t * label_2 = lv_label_create(button);
         lv_obj_set_name(label_2, "label_2");
-        lv_obj_set_align(label_2, LV_ALIGN_CENTER);
+        lv_subject_add_observer_obj(subject_value, lv_example_slider_bind_state_label_2_disabled_binding_cb, label_2, NULL);
         lv_label_set_text(label_2, "Submit");
-
-        lv_obj_bind_state_if_gt(button, &subject_value, LV_STATE_DISABLED, 80);
+        lv_obj_set_align(label_2, LV_ALIGN_CENTER);
 
         the_root = lv_obj_0;
     }
@@ -77,4 +78,11 @@ lv_obj_t * lv_example_slider_bind_state_create(void)
 /**********************
  *   STATIC FUNCTIONS
  **********************/
+
+static void lv_example_slider_bind_state_label_2_disabled_binding_cb(lv_observer_t * observer, lv_subject_t * subject)
+{
+    LV_UNUSED(subject);
+    lv_obj_t * obj = lv_observer_get_target_obj(observer);
+    lv_obj_set_disabled(obj, lv_subject_get_int(subject_value) > 80);
+}
 

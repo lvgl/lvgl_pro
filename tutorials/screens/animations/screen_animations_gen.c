@@ -18,6 +18,12 @@
  *      TYPEDEFS
  **********************/
 
+typedef struct {
+    /* Index is the <COMP>_TIMELINE_* enum. Kept here rather than the root's
+     * user_data, which stays free for the user. */
+    lv_anim_timeline_t ** timelines;
+} screen_animations_t;
+
 /***********************
  *  STATIC VARIABLES
  **********************/
@@ -27,7 +33,12 @@
  **********************/
 
 static lv_anim_timeline_t * timeline_screen_open_create(lv_obj_t * obj);
-static void free_timeline_event_cb(lv_event_t * e);
+
+static uint32_t screen_animations_get_instance_event;
+static void screen_animations_get_instance_cb(lv_event_t * e);
+static screen_animations_t * screen_animations_get_instance(lv_obj_t * obj);
+static void screen_animations_destroy_instance(screen_animations_t * inst);
+static void screen_animations_delete_cb(lv_event_t * e);
 
 /**********************
  *   GLOBAL FUNCTIONS
@@ -40,10 +51,15 @@ lv_obj_t * screen_animations_create(void)
 
     lv_obj_t * the_root = NULL;
 
+    if(screen_animations_get_instance_event == 0) screen_animations_get_instance_event = lv_event_register_id();
+    screen_animations_t * inst = lv_malloc(sizeof(screen_animations_t));
+    lv_memzero(inst, sizeof(screen_animations_t));
+
     #if TUTORIALS_CHECK_COMPILE_TARGET(TUTORIALS_TARGET_ALL)
     if (tutorials_check_target(TUTORIALS_TARGET_ALL)) {
         lv_obj_t * lv_obj_0 = lv_obj_create(NULL);
         lv_obj_set_name_static(lv_obj_0, "screen_animations_#");
+        lv_obj_add_event_cb(lv_obj_0, screen_animations_get_instance_cb, screen_animations_get_instance_event, inst);
 
         lv_obj_t * button_list = list_create(lv_obj_0);
         lv_obj_set_name(button_list, "button_list");
@@ -64,8 +80,7 @@ lv_obj_t * screen_animations_create(void)
         /* create animation timeline(s) */
         lv_anim_timeline_t ** at_array = lv_malloc(sizeof(lv_anim_timeline_t *) * _SCREEN_ANIMATIONS_TIMELINE_CNT);
         at_array[SCREEN_ANIMATIONS_TIMELINE_SCREEN_OPEN] = timeline_screen_open_create(lv_obj_0);
-        lv_obj_set_user_data(lv_obj_0, at_array);
-        lv_obj_add_event_cb(lv_obj_0, free_timeline_event_cb, LV_EVENT_DELETE, at_array);
+        inst->timelines = at_array;
 
         lv_obj_add_play_timeline_event(lv_obj_0, LV_EVENT_SCREEN_LOADED, screen_animations_get_timeline(lv_obj_0, SCREEN_ANIMATIONS_TIMELINE_SCREEN_OPEN), 0, false);
         lv_obj_add_play_timeline_event(show, LV_EVENT_CLICKED, list_get_timeline(button_list, LIST_TIMELINE_LIST_OPEN), 0, false);
@@ -75,6 +90,9 @@ lv_obj_t * screen_animations_create(void)
     }
     #endif
 
+    if(the_root) lv_obj_add_event_cb(the_root, screen_animations_delete_cb, LV_EVENT_DELETE, inst);
+    else screen_animations_destroy_instance(inst); /* no target matched, so nothing owns it */
+
     LV_TRACE_OBJ_CREATE("finished");
 
     return the_root;
@@ -82,30 +100,19 @@ lv_obj_t * screen_animations_create(void)
 
 lv_anim_timeline_t * screen_animations_get_timeline(lv_obj_t * obj, screen_animations_timeline_t timeline_id)
 {
-    if (timeline_id >= _SCREEN_ANIMATIONS_TIMELINE_CNT) {
+    if ((uint32_t)timeline_id >= _SCREEN_ANIMATIONS_TIMELINE_CNT) {
         LV_LOG_WARN("screen_animations has no timeline with %d ID", timeline_id);
         return NULL;
     }
 
-    lv_anim_timeline_t ** at_array = lv_obj_get_user_data(obj);
-    return at_array[timeline_id];
+    screen_animations_t * inst = screen_animations_get_instance(obj);
+    return inst ? inst->timelines[timeline_id] : NULL;
 }
 
 /**********************
  *   STATIC FUNCTIONS
  **********************/
 
-/* Helper function to execute animations */
-static void int_anim_exec_cb(lv_anim_t * a, int32_t v)
-{
-    uint32_t data = (lv_uintptr_t)lv_anim_get_user_data(a);
-    lv_style_prop_t prop = data >> 24;
-    lv_style_selector_t selector = data & 0x00ffffff;
-
-    lv_style_value_t style_value;
-    style_value.num = v;
-    lv_obj_set_local_style_prop(a->var, prop, style_value, selector);
-}
 
 static lv_anim_timeline_t * timeline_screen_open_create(lv_obj_t * obj)
 {
@@ -113,7 +120,6 @@ static lv_anim_timeline_t * timeline_screen_open_create(lv_obj_t * obj)
     lv_anim_timeline_t * at_to_merge = NULL;
 
     lv_anim_t a;
-    uint32_t selector_and_prop;
 
 
 
@@ -132,13 +138,32 @@ static lv_anim_timeline_t * timeline_screen_open_create(lv_obj_t * obj)
     return at;
 }
 
-static void free_timeline_event_cb(lv_event_t * e)
+static void screen_animations_get_instance_cb(lv_event_t * e)
 {
-    lv_anim_timeline_t ** at_array = lv_event_get_user_data(e);
-    uint32_t i;
-    for(i = 0; i < _SCREEN_ANIMATIONS_TIMELINE_CNT; i++) {
-        lv_anim_timeline_delete(at_array[i]);
+    void ** out = lv_event_get_param(e);
+    *out = lv_event_get_user_data(e);
+}
+
+static screen_animations_t * screen_animations_get_instance(lv_obj_t * obj)
+{
+    screen_animations_t * inst = NULL;
+    for(lv_obj_t * o = obj; o && !inst; o = lv_obj_get_parent(o)) {
+        lv_obj_send_event(o, screen_animations_get_instance_event, &inst);
     }
-    lv_free(at_array);
+    return inst;
+}
+
+static void screen_animations_destroy_instance(screen_animations_t * inst)
+{
+    if(inst->timelines) {
+        for(uint32_t i = 0; i < 1; i++) lv_anim_timeline_delete(inst->timelines[i]);
+        lv_free(inst->timelines);
+    }
+    lv_free(inst);
+}
+
+static void screen_animations_delete_cb(lv_event_t * e)
+{
+    screen_animations_destroy_instance(lv_event_get_user_data(e));
 }
 

@@ -50,11 +50,11 @@ lv_obj_t * lv_example_slider_bind_value_create(void)
         lv_obj_t * slider = lv_slider_create(lv_obj_0);
         lv_obj_set_name(slider, "slider");
         lv_obj_set_width(slider, lv_pct(90));
-        lv_slider_bind_value(slider, &subject_value);
+        lv_slider_bind_value(slider, subject_value);
 
         lv_obj_t * label = lv_label_create(lv_obj_0);
         lv_obj_set_name(label, "label");
-        lv_label_bind_text(label, &subject_value, "Value: %d/100");
+        lv_label_bind_text(label, subject_value, "Value: %d/100");
 
         the_root = lv_obj_0;
     }

@@ -1,0 +1,22 @@
+<globals>
+	<consts>
+		<color name="color_1565c0" value="0x1565c0" />
+		<color name="color_4caf50" value="0x4caf50" />
+		<color name="color_eeeeee" value="0xeeeeee" />
+		<color name="color_ff9800" value="0xff9800" />
+		<color name="color_fff3e0" value="0xfff3e0" />
+		<int name="num_2" value="2" />
+		<int name="num_4" value="4" />
+		<int name="num_8" value="8" />
+	</consts>
+
+	<styles>
+	</styles>
+
+	<images>
+		<data name="img_lvgl_logo" src_path="images/img_lvgl_logo.png" color_format="argb8888" />
+	</images>
+
+	<fonts>
+	</fonts>
+</globals>

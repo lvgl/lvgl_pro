@@ -67,7 +67,7 @@ lv_obj_t * screen_layouts_create(void)
 
         lv_obj_t * lv_checkbox_2 = lv_checkbox_create(column_1);
         lv_checkbox_set_text(lv_checkbox_2, "Third");
-        lv_obj_set_flag(lv_checkbox_2, LV_OBJ_FLAG_IGNORE_LAYOUT, true);
+        lv_obj_set_ignore_layout(lv_checkbox_2, true);
         lv_obj_set_x(lv_checkbox_2, 142);
         lv_obj_set_y(lv_checkbox_2, 15);
 
@@ -109,7 +109,7 @@ lv_obj_t * screen_layouts_create(void)
         lv_label_set_text(lv_label_0, "Made by LVGL's UI editor");
 
         lv_obj_t * button_normal_3 = button_normal_create(lv_obj_0, "Floating");
-        lv_obj_set_flag(button_normal_3, LV_OBJ_FLAG_FLOATING, true);
+        lv_obj_set_floating(button_normal_3, true);
         lv_obj_set_align(button_normal_3, LV_ALIGN_BOTTOM_RIGHT);
         lv_obj_set_x(button_normal_3, -20);
         lv_obj_set_y(button_normal_3, -12);

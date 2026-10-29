@@ -26,6 +26,8 @@
  *  STATIC PROTOTYPES
  **********************/
 
+static void lv_example_checkbox_bind_checked_label_hidden_binding_cb(lv_observer_t * observer, lv_subject_t * subject);
+
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
@@ -46,14 +48,14 @@ lv_obj_t * lv_example_checkbox_bind_checked_create(void)
         lv_obj_set_name(checkbox, "checkbox");
         lv_checkbox_set_text(checkbox, "Show extra details");
         lv_obj_set_align(checkbox, LV_ALIGN_CENTER);
-        lv_obj_bind_checked(checkbox, &subject_flag);
+        lv_obj_bind_checked(checkbox, subject_flag);
 
         lv_obj_t * label = lv_label_create(lv_obj_0);
         lv_obj_set_name(label, "label");
         lv_label_set_text(label, "Extra details only visible while the box is ticked.");
+        lv_subject_add_observer_obj(subject_flag, lv_example_checkbox_bind_checked_label_hidden_binding_cb, label, NULL);
         lv_obj_set_align(label, LV_ALIGN_CENTER);
         lv_obj_set_y(label, 30);
-        lv_obj_bind_flag_if_eq(label, &subject_flag, LV_OBJ_FLAG_HIDDEN, 0);
 
         the_root = lv_obj_0;
     }
@@ -67,4 +69,11 @@ lv_obj_t * lv_example_checkbox_bind_checked_create(void)
 /**********************
  *   STATIC FUNCTIONS
  **********************/
+
+static void lv_example_checkbox_bind_checked_label_hidden_binding_cb(lv_observer_t * observer, lv_subject_t * subject)
+{
+    LV_UNUSED(subject);
+    lv_obj_t * obj = lv_observer_get_target_obj(observer);
+    lv_obj_set_hidden(obj, !lv_subject_get_int(subject_flag));
+}
 

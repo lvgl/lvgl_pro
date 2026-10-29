@@ -8,5 +8,5 @@
 	</api>
 
 	<!-- Plain image. Set only its source; the size follows the image. -->
-	<view extends="lv_image" src="$src" />
+	<view extends="lv_image" src="{src}" />
 </component>

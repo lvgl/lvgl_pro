@@ -78,7 +78,7 @@ lv_obj_t * lv_example_dropdown_create(void)
         lv_obj_set_align(lv_dropdown_0, LV_ALIGN_CENTER);
         lv_dropdown_set_options(lv_dropdown_0, "Celsius\nFahrenheit\nKelvin");
         lv_dropdown_set_selected(lv_dropdown_0, 1);
-        lv_dropdown_bind_value(lv_dropdown_0, &subject_index);
+        lv_dropdown_bind_value(lv_dropdown_0, subject_index);
         lv_obj_add_style(lv_dropdown_0, &style_dd, 0);
         lv_obj_t * lv_dropdown_list_0 = lv_dropdown_get_list(lv_dropdown_0);
         lv_obj_add_style(lv_dropdown_list_0, &style_dd_list, 0);
@@ -86,7 +86,7 @@ lv_obj_t * lv_example_dropdown_create(void)
         lv_obj_add_style(lv_dropdown_list_0, &style_dd_list_pressed, LV_PART_SELECTED | LV_STATE_PRESSED);
 
         lv_obj_t * lv_label_0 = lv_label_create(lv_obj_0);
-        lv_label_bind_text(lv_label_0, &subject_index, "Selected index: %d");
+        lv_label_bind_text(lv_label_0, subject_index, "Selected index: %d");
         lv_obj_set_align(lv_label_0, LV_ALIGN_CENTER);
         lv_obj_set_y(lv_label_0, -40);
 

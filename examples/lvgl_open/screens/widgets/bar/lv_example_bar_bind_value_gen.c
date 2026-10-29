@@ -51,7 +51,7 @@ lv_obj_t * lv_example_bar_bind_value_create(void)
         lv_obj_set_name(bar, "bar");
         lv_obj_set_width(bar, lv_pct(90));
         lv_obj_set_height(bar, 20);
-        lv_bar_bind_value(bar, &subject_value);
+        lv_bar_bind_value(bar, subject_value);
 
         lv_obj_t * container = lv_obj_create(lv_obj_0);
         lv_obj_set_name(container, "container");
@@ -70,18 +70,18 @@ lv_obj_t * lv_example_bar_bind_value_create(void)
         lv_obj_set_align(label_2, LV_ALIGN_CENTER);
         lv_label_set_text(label_2, "-");
 
-        lv_subject_increment_dsc_t * subject_increment_event_0 = lv_obj_add_subject_increment_event(button_1, &subject_value, LV_EVENT_CLICKED, -5);
+        lv_subject_increment_dsc_t * subject_increment_event_0 = lv_obj_add_subject_increment_event(button_1, subject_value, LV_EVENT_CLICKED, -5);
         lv_obj_set_subject_increment_event_min_value(button_1, subject_increment_event_0, 0);
         lv_obj_set_subject_increment_event_max_value(button_1, subject_increment_event_0, 100);
         lv_obj_set_subject_increment_event_rollover(button_1, subject_increment_event_0, true);
-        lv_subject_increment_dsc_t * subject_increment_event_1 = lv_obj_add_subject_increment_event(button_1, &subject_value, LV_EVENT_LONG_PRESSED_REPEAT, -5);
+        lv_subject_increment_dsc_t * subject_increment_event_1 = lv_obj_add_subject_increment_event(button_1, subject_value, LV_EVENT_LONG_PRESSED_REPEAT, -5);
         lv_obj_set_subject_increment_event_min_value(button_1, subject_increment_event_1, 0);
         lv_obj_set_subject_increment_event_max_value(button_1, subject_increment_event_1, 100);
         lv_obj_set_subject_increment_event_rollover(button_1, subject_increment_event_1, true);
 
         lv_obj_t * label_1 = lv_label_create(container);
         lv_obj_set_name(label_1, "label_1");
-        lv_label_bind_text(label_1, &subject_value, "%d%%");
+        lv_label_bind_text(label_1, subject_value, "%d%%");
 
         lv_obj_t * button_2 = lv_button_create(container);
         lv_obj_set_name(button_2, "button_2");
@@ -90,11 +90,11 @@ lv_obj_t * lv_example_bar_bind_value_create(void)
         lv_obj_set_align(label_3, LV_ALIGN_CENTER);
         lv_label_set_text(label_3, "+");
 
-        lv_subject_increment_dsc_t * subject_increment_event_2 = lv_obj_add_subject_increment_event(button_2, &subject_value, LV_EVENT_CLICKED, 5);
+        lv_subject_increment_dsc_t * subject_increment_event_2 = lv_obj_add_subject_increment_event(button_2, subject_value, LV_EVENT_CLICKED, 5);
         lv_obj_set_subject_increment_event_min_value(button_2, subject_increment_event_2, 0);
         lv_obj_set_subject_increment_event_max_value(button_2, subject_increment_event_2, 100);
         lv_obj_set_subject_increment_event_rollover(button_2, subject_increment_event_2, true);
-        lv_subject_increment_dsc_t * subject_increment_event_3 = lv_obj_add_subject_increment_event(button_2, &subject_value, LV_EVENT_LONG_PRESSED_REPEAT, 5);
+        lv_subject_increment_dsc_t * subject_increment_event_3 = lv_obj_add_subject_increment_event(button_2, subject_value, LV_EVENT_LONG_PRESSED_REPEAT, 5);
         lv_obj_set_subject_increment_event_min_value(button_2, subject_increment_event_3, 0);
         lv_obj_set_subject_increment_event_max_value(button_2, subject_increment_event_3, 100);
         lv_obj_set_subject_increment_event_rollover(button_2, subject_increment_event_3, true);

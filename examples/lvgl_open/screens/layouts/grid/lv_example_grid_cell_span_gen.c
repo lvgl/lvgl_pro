@@ -39,16 +39,14 @@ lv_obj_t * lv_example_grid_cell_span_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_card);
-            lv_style_set_bg_color(&style_card, lv_color_hex(0xf6f6f6));
-            lv_style_set_bg_opa(&style_card, (255 * 100 / 100));
-            lv_style_set_pad_all(&style_card, 6);
-            lv_style_set_radius(&style_card, 6);
+        /*Init all styles*/
+        lv_style_init(&style_card);
 
-        }
-        #endif
+        lv_style_set_bg_color(&style_card, lv_color_hex(0xf6f6f6));
+        lv_style_set_bg_opa(&style_card, (255 * 100 / 100));
+        lv_style_set_pad_all(&style_card, 6);
+        lv_style_set_radius(&style_card, 6);
+
         style_inited = true;
     }
 

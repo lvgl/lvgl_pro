@@ -16,10 +16,8 @@ extern "C" {
 
 #ifdef LV_LVGL_H_INCLUDE_SIMPLE
     #include "lvgl.h"
-    #include "lvgl_private.h"
 #else
     #include "lvgl/lvgl.h"
-    #include "lvgl/lvgl_private.h"
 #endif
 
 #if defined(LV_USE_XML) && LV_USE_XML
@@ -48,21 +46,21 @@ extern "C" {
 lv_obj_t * wd_segment_create(lv_obj_t * parent);
 /**
  * The current selected item, -1 for none
- * @param obj   pointer to a wd_segment
+ * @param wd_segment   pointer to a wd_segment
  * @param selected  The current selected item, -1 for none
  */
 void wd_segment_set_selected(lv_obj_t * wd_segment, int32_t selected);
 
 /**
  * The subject to bind the selected item
- * @param obj   pointer to a wd_segment
+ * @param wd_segment   pointer to a wd_segment
  * @param bind_value  The subject to bind the selected item
  */
 void wd_segment_bind_value(lv_obj_t * wd_segment, lv_subject_t * bind_value);
 
 /**
- * wd_segment button
- * @param obj   pointer to a wd_segment
+ * Add buttons to the segment
+ * @param wd_segment   pointer to a wd_segment
  * @param text  text
  */
 lv_obj_t * wd_segment_add_button(lv_obj_t * wd_segment, const char * text);

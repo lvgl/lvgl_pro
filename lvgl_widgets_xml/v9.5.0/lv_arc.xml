@@ -8,9 +8,9 @@ Example
 <widget>
     <api>
         <enumdef name="lv_arc_mode" help="How the arc’s indicator grows">
-            <enum name="normal" help="Make the indicator grow clockwise"/>
-            <enum name="symmetrical" help="Make the indicator grow symmetrically left and right from the midpoint"/>
-            <enum name="reverse" help="Make the indicator grow counterclockwise"/>
+            <enum name="normal" value="0" help="Make the indicator grow clockwise"/>
+            <enum name="symmetrical" value="1" help="Make the indicator grow symmetrically left and right from the midpoint"/>
+            <enum name="reverse" value="2" help="Make the indicator grow counterclockwise"/>
         </enumdef>
 
         <prop name="start_angle" type="int" help="Set the start angle of the indicator"/>

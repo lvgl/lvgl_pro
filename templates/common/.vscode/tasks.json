@@ -1,0 +1,23 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Configure",
+      "type": "shell",
+      "command": "cmake",
+      "args": ["-S", "sim", "-B", "build", "-DCMAKE_BUILD_TYPE=Debug"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "CMake build",
+      "type": "shell",
+      "command": "cmake",
+      "args": ["--build", "build", "-j"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "dependsOn": "Configure",
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": []
+    }
+  ]
+}

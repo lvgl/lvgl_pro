@@ -63,7 +63,7 @@ lv_obj_t * lv_example_tabview_tab_button_content_create(void)
         lv_obj_set_name(sw_1, "sw_1");
         lv_obj_set_width(sw_1, 40);
         lv_obj_set_height(sw_1, 20);
-        lv_obj_set_flag(sw_1, LV_OBJ_FLAG_IGNORE_LAYOUT, true);
+        lv_obj_set_ignore_layout(sw_1, true);
         lv_obj_set_align(sw_1, LV_ALIGN_RIGHT_MID);
         lv_obj_set_x(sw_1, -10);
 
@@ -72,7 +72,7 @@ lv_obj_t * lv_example_tabview_tab_button_content_create(void)
         lv_obj_set_name(sw_2, "sw_2");
         lv_obj_set_width(sw_2, 40);
         lv_obj_set_height(sw_2, 20);
-        lv_obj_set_flag(sw_2, LV_OBJ_FLAG_IGNORE_LAYOUT, true);
+        lv_obj_set_ignore_layout(sw_2, true);
         lv_obj_set_align(sw_2, LV_ALIGN_RIGHT_MID);
         lv_obj_set_x(sw_2, -10);
 

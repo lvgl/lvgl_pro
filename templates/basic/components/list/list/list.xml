@@ -16,5 +16,5 @@
 	<!-- A panel that stacks list rows in a column. pad defaults to 0 so rows
 	     and dividers span full width (each row brings its own padding).
 	     Drop list_section / list_item / list_separator children in. -->
-	<view extends="panel" pad="$pad" gap="0" grow="$grow" width="200" />
+	<view extends="panel" pad="{pad}" gap="0" grow="{grow}" width="200" />
 </component>

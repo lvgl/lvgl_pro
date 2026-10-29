@@ -17,10 +17,10 @@
 
 	<view
 		extends="base_box"
-		flex_grow="$grow"
-		style_pad_all="$pad"
-		style_pad_row="$gap"
-		style_pad_column="$gap"
-		flex_flow="$flow"
+		flex_grow="{grow}"
+		style_pad_all="{pad}"
+		style_pad_row="{gap}"
+		style_pad_column="{gap}"
+		flex_flow="{flow}"
 	/>
 </component>

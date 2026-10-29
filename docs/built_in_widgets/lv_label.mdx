@@ -20,10 +20,10 @@ Learn more in the [LVGL Open documentation](https://lvgl.io/docs/open/widgets/la
 | Value | Description |
 | --- | --- |
 | `wrap` | Wrap to next line |
+| `dots` | Show dots (…) at the end |
 | `scroll` | Scroll horizontally |
 | `scroll_circular` | Scroll continuously in a loop |
 | `clip` | Clip at the boundary |
-| `dots` | Show dots (…) at the end |
 
 ## Properties
 
@@ -46,5 +46,6 @@ Properties below are the widget's XML [`<api>`](../syntax/api); see [API](../syn
 | `recolor` | `bool` | Allow recoloring words like: A #ff0000 red# word. |
 | `text_selection_start` | `int` | Beginning of text highlight |
 | `text_selection_end` | `int` | End of text highlight |
+| `max_lines` | `int` | Show at most this many lines. Works with `long_mode` wrap or dots |
 | `bind_text` | `subject` | Bind text to a subject |
 | `bind_text-fmt` | `string` | Format string for bound text (printf style) (default: `NULL`) |

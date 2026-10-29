@@ -81,13 +81,13 @@ lv_obj_t * lv_example_slider_create(void)
         lv_obj_set_align(lv_label_0, LV_ALIGN_LEFT_MID);
         lv_obj_set_y(lv_label_0, -65);
         lv_obj_set_x(lv_label_0, 20);
-        lv_label_bind_text(lv_label_0, &subject_value, "%d %%");
+        lv_label_bind_text(lv_label_0, subject_value, "%d %%");
         lv_obj_set_style_text_color(lv_label_0, lv_color_hex(0x192e4f), 0);
 
         lv_obj_t * lv_slider_0 = lv_slider_create(lv_obj_0);
         lv_obj_set_width(lv_slider_0, 240);
         lv_obj_set_height(lv_slider_0, THICKNESS);
-        lv_slider_bind_value(lv_slider_0, &subject_value);
+        lv_slider_bind_value(lv_slider_0, subject_value);
         lv_obj_set_align(lv_slider_0, LV_ALIGN_LEFT_MID);
         lv_obj_set_y(lv_slider_0, -40);
         lv_obj_set_x(lv_slider_0, 20);

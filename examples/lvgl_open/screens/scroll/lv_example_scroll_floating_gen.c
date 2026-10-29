@@ -39,13 +39,11 @@ lv_obj_t * lv_example_scroll_floating_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_fab);
-            lv_style_set_radius(&style_fab, 22);
+        /*Init all styles*/
+        lv_style_init(&style_fab);
 
-        }
-        #endif
+        lv_style_set_radius(&style_fab, 22);
+
         style_inited = true;
     }
 
@@ -121,7 +119,7 @@ lv_obj_t * lv_example_scroll_floating_create(void)
         lv_obj_set_width(button_7, 44);
         lv_obj_set_height(button_7, 44);
         lv_obj_set_align(button_7, LV_ALIGN_BOTTOM_RIGHT);
-        lv_obj_set_flag(button_7, LV_OBJ_FLAG_FLOATING, true);
+        lv_obj_set_floating(button_7, true);
         lv_obj_set_style_bg_color(button_7, lv_color_hex(0x9429ff), 0);
         lv_obj_add_style(button_7, &style_fab, 0);
         lv_obj_t * label_7 = lv_label_create(button_7);

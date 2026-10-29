@@ -10,10 +10,8 @@
 #include "wd_segment_private_gen.h"
 #ifdef LV_LVGL_H_INCLUDE_SIMPLE
     #include "lvgl.h"
-    #include "lvgl_private.h"
 #else
     #include "lvgl/lvgl.h"
-    #include "lvgl/lvgl_private.h"
 #endif
 
 #if defined(LV_USE_XML) && LV_USE_XML

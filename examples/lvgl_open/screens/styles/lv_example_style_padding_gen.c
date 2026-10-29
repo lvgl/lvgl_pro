@@ -14,7 +14,7 @@
  *      DEFINES
  *********************/
 
-#define ACCENT lv_color_hex(0x6366f1)
+#define ACCENT (lv_color_hex(0x6366f1))
 
 
 /**********************
@@ -42,15 +42,13 @@ lv_obj_t * lv_example_style_padding_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_block);
-            lv_style_set_radius(&style_block, 10);
-            lv_style_set_bg_opa(&style_block, (255 * 100 / 100));
-            lv_style_set_bg_color(&style_block, ACCENT);
+        /*Init all styles*/
+        lv_style_init(&style_block);
 
-        }
-        #endif
+        lv_style_set_radius(&style_block, 10);
+        lv_style_set_bg_opa(&style_block, (255 * 100 / 100));
+        lv_style_set_bg_color(&style_block, ACCENT);
+
         style_inited = true;
     }
 

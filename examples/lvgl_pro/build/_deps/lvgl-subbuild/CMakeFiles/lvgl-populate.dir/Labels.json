@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/kisvegabor/projects/lvgl/editor/lvgl_pro/examples/lvgl_pro/build/_deps/lvgl-subbuild/CMakeFiles/lvgl-populate"
+		},
+		{
+			"file" : "/home/kisvegabor/projects/lvgl/editor/lvgl_pro/examples/lvgl_pro/build/_deps/lvgl-subbuild/CMakeFiles/lvgl-populate.rule"
+		},
+		{
+			"file" : "/home/kisvegabor/projects/lvgl/editor/lvgl_pro/examples/lvgl_pro/build/_deps/lvgl-subbuild/CMakeFiles/lvgl-populate-complete.rule"
+		},
+		{
+			"file" : "/home/kisvegabor/projects/lvgl/editor/lvgl_pro/examples/lvgl_pro/build/_deps/lvgl-subbuild/lvgl-populate-prefix/src/lvgl-populate-stamp/lvgl-populate-build.rule"
+		},
+		{
+			"file" : "/home/kisvegabor/projects/lvgl/editor/lvgl_pro/examples/lvgl_pro/build/_deps/lvgl-subbuild/lvgl-populate-prefix/src/lvgl-populate-stamp/lvgl-populate-configure.rule"
+		},
+		{
+			"file" : "/home/kisvegabor/projects/lvgl/editor/lvgl_pro/examples/lvgl_pro/build/_deps/lvgl-subbuild/lvgl-populate-prefix/src/lvgl-populate-stamp/lvgl-populate-download.rule"
+		},
+		{
+			"file" : "/home/kisvegabor/projects/lvgl/editor/lvgl_pro/examples/lvgl_pro/build/_deps/lvgl-subbuild/lvgl-populate-prefix/src/lvgl-populate-stamp/lvgl-populate-install.rule"
+		},
+		{
+			"file" : "/home/kisvegabor/projects/lvgl/editor/lvgl_pro/examples/lvgl_pro/build/_deps/lvgl-subbuild/lvgl-populate-prefix/src/lvgl-populate-stamp/lvgl-populate-mkdir.rule"
+		},
+		{
+			"file" : "/home/kisvegabor/projects/lvgl/editor/lvgl_pro/examples/lvgl_pro/build/_deps/lvgl-subbuild/lvgl-populate-prefix/src/lvgl-populate-stamp/lvgl-populate-patch.rule"
+		},
+		{
+			"file" : "/home/kisvegabor/projects/lvgl/editor/lvgl_pro/examples/lvgl_pro/build/_deps/lvgl-subbuild/lvgl-populate-prefix/src/lvgl-populate-stamp/lvgl-populate-test.rule"
+		},
+		{
+			"file" : "/home/kisvegabor/projects/lvgl/editor/lvgl_pro/examples/lvgl_pro/build/_deps/lvgl-subbuild/lvgl-populate-prefix/src/lvgl-populate-stamp/lvgl-populate-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"lvgl-populate"
+		],
+		"name" : "lvgl-populate"
+	}
+}

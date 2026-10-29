@@ -14,8 +14,8 @@
  *      DEFINES
  *********************/
 
-#define MAIN_COLOR lv_color_hex(0x7a00ff)
-#define SECONDARY_COLOR lv_color_hex(0xfaab44)
+#define MAIN_COLOR (lv_color_hex(0x7a00ff))
+#define SECONDARY_COLOR (lv_color_hex(0xfaab44))
 
 
 /**********************
@@ -80,7 +80,7 @@ lv_obj_t * screen_styles_create(void)
         lv_obj_add_style(lv_slider_0, &style_main, 0);
         lv_obj_add_style(lv_slider_0, &style_indicator, LV_PART_INDICATOR);
         lv_obj_add_style(lv_slider_0, &style_knob, LV_PART_KNOB);
-        lv_obj_bind_style(lv_slider_0, &style_main_dark, 0, &subject_dark_mode, 1);
+        lv_obj_bind_style(lv_slider_0, &style_main_dark, 0, subject_dark_mode, 1);
 
         lv_obj_t * lv_slider_1 = lv_slider_create(lv_obj_0);
         lv_obj_set_align(lv_slider_1, LV_ALIGN_CENTER);
@@ -90,7 +90,7 @@ lv_obj_t * screen_styles_create(void)
         lv_obj_add_style(lv_slider_1, &style_main, 0);
         lv_obj_add_style(lv_slider_1, &style_indicator, LV_PART_INDICATOR);
         lv_obj_add_style(lv_slider_1, &style_knob, LV_PART_KNOB);
-        lv_obj_bind_style(lv_slider_1, &style_main_dark, 0, &subject_dark_mode, 1);
+        lv_obj_bind_style(lv_slider_1, &style_main_dark, 0, subject_dark_mode, 1);
 
         the_root = lv_obj_0;
     }

@@ -4,9 +4,9 @@
      view of its own — useful for exercising a single component without
      depending on where it happens to sit on a screen.
      Docs: https://lvgl.io/docs/pro/syntax/testing -->
-<test width="480" height="320">
+<test>
 	<view width="100%" height="100%" flex_flow="column" style_pad_all="20">
-		<!-- Track spans x=20..220 and is #space_md tall, so its centre is y=24. -->
+		<!-- Track spans x=20..220 and is space_md tall, so its centre is y=24. -->
 		<slider subject="subject_brightness" width="200" />
 	</view>
 

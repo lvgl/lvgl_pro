@@ -11,7 +11,9 @@ Screens work very similarly to Components. Both can be loaded from XML and conta
 
 Screens can only have the following child XML tags:
 
+- `animations` - Define [timelines](./animations) to play on the screen
 - `consts` - Define constants for reuse within the screen
+- `subjects` - Define [local subjects](./api#local-subjects) for the screen's own state
 - `styles` - Define styles and their properties
 - `view` - The main content area containing widgets and components
 
@@ -37,7 +39,7 @@ This example illustrates a screen in XML using `my_header` and `my_main_cont` co
  </styles>
 
  <view>
-  <my_header label="#title"/>
+  <my_header label="{title}"/>
   <my_main_cont>
    <style name="dark"/>
    <button text="Weather" icon="cloudy"/>
@@ -88,8 +90,8 @@ A common pattern is to load or create Screens in response to user interactions l
  <lv_button>
   <lv_label text="Click or Long press me"/>
 
-  <!-- Load an instance of "first" screen with fade animation. -->
-  <screen_load_event screen="first" trigger="clicked" anim_type="fade"/>
+  <!-- Load the permanent "first" screen with a fade-in animation. -->
+  <screen_load_event screen="first" trigger="clicked" anim_type="fade_in"/>
 
   <!-- Create an instance of "about" screen on long press. -->
   <screen_create_event screen="about" trigger="long_pressed"/>

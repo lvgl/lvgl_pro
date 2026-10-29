@@ -1,0 +1,25 @@
+<!--
+Example:
+<lv_gif src="my_gif" loop_count="5"/>
+-->
+
+<widget>
+	<api>
+		<enumdef name="lv_color_format" help="Color format of the buffer the gif is decoded to">
+			<enum name="rgb565" value="0x12" help="16 bit RGB"/>
+			<enum name="rgb565_swapped" value="0x1B" help="16 bit RGB with swapped bytes"/>
+			<enum name="rgb888" value="0x0F" help="24 bit RGB"/>
+			<enum name="xrgb8888" value="0x11" help="32 bit RGB, the alpha byte is unused"/>
+			<enum name="argb8888" value="0x10" help="32 bit RGB with alpha"/>
+		</enumdef>
+
+		<prop name="src" type="image" help="The source for the gif (raw data or a file)"/>
+		<prop name="loop_count" type="int" help="Number of repeats. If not set the information form the gif will be used"/>
+		<prop name="color_format" type="enum:lv_color_format" help="Color format to decode the gif to. Set it before `src` to decode only once"/>
+		<prop name="auto_pause_invisible" type="bool" help="Pause the gif while it is not visible"/>
+
+        <parts>
+            <part name="main" help="Style the GIF: `image_recolor`, `image_recolor_opa` and `image_opa`. Background, border, etc can be added too."/>
+        </parts>
+	</api>
+</widget>

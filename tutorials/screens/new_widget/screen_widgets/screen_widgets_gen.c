@@ -44,7 +44,7 @@ lv_obj_t * screen_widgets_create(void)
 
         lv_obj_t * wd_segment_0 = wd_segment_create(lv_obj_0);
         lv_obj_set_width(wd_segment_0, 300);
-        wd_segment_bind_value(wd_segment_0, &subject_segment);
+        wd_segment_bind_value(wd_segment_0, subject_segment);
         lv_obj_set_style_pad_column(wd_segment_0, 1, 0);
         lv_obj_t * wd_segment_button_0 = wd_segment_add_button(wd_segment_0, "Option 1");
         lv_obj_t * wd_segment_button_1 = wd_segment_add_button(wd_segment_0, "Option 2");

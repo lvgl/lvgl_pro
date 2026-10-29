@@ -12,7 +12,7 @@
 	</styles>
 
 	<!-- Largest heading. Text color inherited; override per-use with style_text_color. -->
-	<view extends="lv_label" text="$text">
+	<view extends="lv_label" text="{text}">
 		<style name="style_h1" />
 	</view>
 </component>

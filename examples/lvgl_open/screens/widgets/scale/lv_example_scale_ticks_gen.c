@@ -39,14 +39,12 @@ lv_obj_t * lv_example_scale_ticks_create(void)
     static bool style_inited = false;
 
     if (!style_inited) {
-        #if LVGL_OPEN_EXAMPLES_CHECK_COMPILE_TARGET(LVGL_OPEN_EXAMPLES_TARGET_ALL)
-        if (lvgl_open_examples_check_target(LVGL_OPEN_EXAMPLES_TARGET_ALL)) {
-            lv_style_init(&style_major);
-            lv_style_set_length(&style_major, 8);
-            lv_style_set_line_width(&style_major, 3);
+        /*Init all styles*/
+        lv_style_init(&style_major);
 
-        }
-        #endif
+        lv_style_set_length(&style_major, 8);
+        lv_style_set_line_width(&style_major, 3);
+
         style_inited = true;
     }
 

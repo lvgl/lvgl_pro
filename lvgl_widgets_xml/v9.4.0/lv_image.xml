@@ -27,8 +27,8 @@ Example
         <prop name="rotation" type="int" help="Rotate the image (degrees)"/>
         <prop name="scale_x" type="int" help="Scale horizontally (100 = original)"/>
         <prop name="scale_y" type="int" help="Scale vertically (100 = original)"/>
-        <prop name="pivot_x" type="int|%" help="Set the pivot X for rotation/scaling"/>
-        <prop name="pivot_y" type="int|%" help="Set the pivot Y for rotation/scaling"/>
+        <prop name="pivot_x" type="px|%" help="Set the pivot X for rotation/scaling"/>
+        <prop name="pivot_y" type="px|%" help="Set the pivot Y for rotation/scaling"/>
         <prop name="bind_src" type="subject:pointer" help="Bind the image source to a pointer subject"/>
     </api>
 </widget>

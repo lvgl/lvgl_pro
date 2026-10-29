@@ -68,7 +68,7 @@ lv_obj_t * lv_example_calendar_create(void)
         lv_calendar_set_today_month(lv_calendar_0, 5);
         lv_calendar_set_today_day(lv_calendar_0, 17);
         lv_obj_add_style(lv_calendar_0, &style_cal, 0);
-        lv_obj_t * lv_calendar_header_dropdown_0 = lv_calendar_add_header_dropdown(lv_calendar_0);
+        lv_calendar_add_header_dropdown(lv_calendar_0);
 
         the_root = lv_obj_0;
     }

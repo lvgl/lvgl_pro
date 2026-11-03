@@ -26,15 +26,16 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
 endif()
 
-# AddressSanitizer, on where the toolchain supports it. `lv_conf_*.defaults`
+# AddressSanitizer, off by default: on some macOS toolchains its runtime hangs
+# before main(), so the simulator never opens its window. `lv_conf_*.defaults`
 # uses LV_STDLIB_CLIB, so ASAN sees every LVGL allocation.
 #
-#   cmake -S sim -B build -DENABLE_ASAN=OFF   # off
+#   cmake -S sim -B build -DENABLE_ASAN=AUTO  # on where the toolchain supports it
 #   cmake -S sim -B build -DENABLE_ASAN=ON    # fail if unavailable
 #
 # Set before LVGL and the UI are added below: every object needs the flags.
 # GCC and Clang only; MSVC's /fsanitize=address is not wired up.
-set(ENABLE_ASAN AUTO CACHE STRING
+set(ENABLE_ASAN OFF CACHE STRING
     "AddressSanitizer: ON, OFF, or AUTO (on when the toolchain supports it)")
 set_property(CACHE ENABLE_ASAN PROPERTY STRINGS AUTO ON OFF)
 
@@ -42,7 +43,7 @@ string(TOUPPER "${ENABLE_ASAN}" _enable_asan)
 
 # AUTO is not one of CMake's boolean words. `if(ENABLE_ASAN)` is already true
 # for it — any value that is not OFF/0/FALSE/NO/empty is true — but naming it
-# spells out the default path instead of leaving it to that rule.
+# spells out that path instead of leaving it to that rule.
 if(_enable_asan STREQUAL "AUTO" OR ENABLE_ASAN)
   # Probe by compiling *and* linking: MinGW-w64 reports itself as GNU but often
   # ships no libasan. The cached result is dropped first so every configure

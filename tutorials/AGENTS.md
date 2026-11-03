@@ -508,7 +508,7 @@ cmake --build build -j
 cmake --build build --target run
 ```
 
-To show another screen, edit the `lv_screen_load(...)` line in `sim/main.c`. AddressSanitizer is on where the toolchain supports it, so a memory error stops the program with a stack trace. That is the tool working, not a broken build. `-DENABLE_ASAN=OFF` turns it off.
+To show another screen, edit the `lv_screen_load(...)` line in `sim/main.c`. AddressSanitizer is off by default. `-DENABLE_ASAN=AUTO` turns it on where the toolchain supports it, so a memory error stops the program with a stack trace. That is the tool working, not a broken build.
 
 ### Tests
 

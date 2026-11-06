@@ -26,7 +26,11 @@
 		/>
 	</styles>
 
-	<view flex_flow="row" style_flex_main_place="center" style_flex_track_place="center">
+	<view
+		flex_flow="row"
+		style_flex_main_place="center"
+		style_flex_track_place="center"
+	>
 		<!-- 💡 "Override" is always pink; press "On press" — its `style_bg_color-pressed` wins only while held. Borders never change. -->
 		<lv_button name="button_1" width="95">
 			<style name="style_shared" />

@@ -11,7 +11,8 @@
 	<view>
 		<!-- 💡 Tap any day: it becomes checked and the previously checked button clears automatically. -->
 		<!-- Weekday selector with single-checked semantics -->
-		<lv_buttonmatrix name="buttonmatrix"
+		<lv_buttonmatrix
+			name="buttonmatrix"
 			align="center"
 			width="90%"
 			height="80"

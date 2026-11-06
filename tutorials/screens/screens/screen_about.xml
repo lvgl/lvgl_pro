@@ -4,7 +4,11 @@
      It also mean that the widget states are lost-->
 <screen>
 	<view style_bg_color="0x041d3a" style_text_color="0xfff">
-		<lv_label text="About screen (dynamically created)" align="top_mid" y="10" />
+		<lv_label
+			text="About screen (dynamically created)"
+			align="top_mid"
+			y="10"
+		/>
 
 		<!-- If set value on this slider, go to About screen and come back here
 		     the value will remain as the "permanent" screens are not recreated. -->
@@ -23,7 +27,11 @@
 			<lv_label text="Back" />
 			<!-- Since the Main screen is permanent <screen_load_event>
 			     shall be used just to load the already existing screen.  -->
-			<screen_load_event screen="screen_main" anim_type="move_bottom" duration="500" />
+			<screen_load_event
+				screen="screen_main"
+				anim_type="move_bottom"
+				duration="500"
+			/>
 		</lv_button>
 	</view>
 </screen>

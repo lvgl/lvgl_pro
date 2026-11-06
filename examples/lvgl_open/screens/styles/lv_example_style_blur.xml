@@ -32,7 +32,8 @@
 		style_pad_all="10"
 	>
 		<!-- 💡 The text under the card is blurred; lower the card's `bg_opa` or raise `blur_radius` for a stronger frost. -->
-		<lv_label name="label_1"
+		<lv_label
+			name="label_1"
 			align="center"
 			width="100%"
 			style_text_align="center"

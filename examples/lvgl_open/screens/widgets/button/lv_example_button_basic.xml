@@ -7,7 +7,13 @@
  clickable base widget with a label child.
 -->
 <screen>
-	<view flex_flow="column" style_flex_main_place="center" style_flex_cross_place="center" style_flex_track_place="center" style_pad_row="16">
+	<view
+		flex_flow="column"
+		style_flex_main_place="center"
+		style_flex_cross_place="center"
+		style_flex_track_place="center"
+		style_pad_row="16"
+	>
 		<!-- 💡 Resize one button or change its label to see how content-sizing reacts. -->
 		<!-- Default size driven by label content -->
 		<lv_button name="button_1">

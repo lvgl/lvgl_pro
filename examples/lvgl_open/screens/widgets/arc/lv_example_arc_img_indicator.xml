@@ -11,9 +11,19 @@
 <screen>
 	<styles>
 		<!-- Background ring: dark segmented bitmap replaces the arc colour -->
-		<style name="style_arc_bg" arc_image_src="img_arc_bg" arc_width="40" arc_rounded="false" />
+		<style
+			name="style_arc_bg"
+			arc_image_src="img_arc_bg"
+			arc_width="40"
+			arc_rounded="false"
+		/>
 		<!-- Indicator ring: glowing cyan bitmap clipped to the swept angle -->
-		<style name="style_arc_indicator" arc_image_src="img_arc_indicator" arc_width="40" arc_rounded="false" />
+		<style
+			name="style_arc_indicator"
+			arc_image_src="img_arc_indicator"
+			arc_width="40"
+			arc_rounded="false"
+		/>
 		<!-- Knob: Just hid it -->
 		<style name="style_arc_knob" opa="0" />
 	</styles>

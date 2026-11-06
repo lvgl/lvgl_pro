@@ -20,7 +20,19 @@
 	>
 		<!-- 💡 Swap `orientation` on either switch to compare auto-derived vs explicit layouts. -->
 
-		<lv_switch name="sw_1" width="60" height="30" orientation="horizontal" checked="true" />
-		<lv_switch name="sw_2" width="30" height="60" orientation="vertical" checked="true" />
+		<lv_switch
+			name="sw_1"
+			width="60"
+			height="30"
+			orientation="horizontal"
+			checked="true"
+		/>
+		<lv_switch
+			name="sw_2"
+			width="30"
+			height="60"
+			orientation="vertical"
+			checked="true"
+		/>
 	</view>
 </screen>

@@ -19,8 +19,20 @@
 	>
 		<!-- 💡 Edit min_value/max_value/value and orientation to see how fill direction and knob travel change. -->
 		<!-- Horizontal slider with custom range -->
-		<lv_slider name="slider_1" width="90%" height="20" min_value="-20" max_value="80" value="35">
-			<lv_label name="label_1" align="center" text="Horizontal" style_text_color="#text_color" />
+		<lv_slider
+			name="slider_1"
+			width="90%"
+			height="20"
+			min_value="-20"
+			max_value="80"
+			value="35"
+		>
+			<lv_label
+				name="label_1"
+				align="center"
+				text="Horizontal"
+				style_text_color="#text_color"
+			/>
 		</lv_slider>
 
 		<!-- Vertical slider with explicit vertical orientation -->

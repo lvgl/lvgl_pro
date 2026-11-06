@@ -21,7 +21,11 @@
 			<lv_label text="About" />
 			<!-- Since the About screen is not permanent <screen_create_event>
 			     shall be used to create it dynamically.  -->
-			<screen_create_event screen="screen_about" anim_type="move_top" duration="500" />
+			<screen_create_event
+				screen="screen_about"
+				anim_type="move_top"
+				duration="500"
+			/>
 		</lv_button>
 	</view>
 </screen>

@@ -11,7 +11,12 @@
 	<styles>
 		<style name="style_major" length="8" line_width="3" />
 	</styles>
-	<view flex_flow="column" style_flex_main_place="space_evenly" style_flex_track_place="center" style_pad_row="20">
+	<view
+		flex_flow="column"
+		style_flex_main_place="space_evenly"
+		style_flex_track_place="center"
+		style_pad_row="20"
+	>
 		<!-- 💡 Bump `total_tick_count` or change `major_tick_every` to see how density and labels reorganise. -->
 		<!-- Sparse: 5 ticks total, every second one major -->
 		<lv_scale

@@ -9,7 +9,13 @@
 <screen>
 	<styles>
 		<!-- Shared chip style for all tiles -->
-		<style name="style_chip" bg_opa="100%" text_color="0xffffff" pad_all="6" radius="4" />
+		<style
+			name="style_chip"
+			bg_opa="100%"
+			text_color="0xffffff"
+			pad_all="6"
+			radius="4"
+		/>
 	</styles>
 
 	<view

@@ -36,7 +36,11 @@
 		</lv_label>
 
 		<!-- Fixed width + circular scroll for overflow -->
-		<lv_label width="200" long_mode="scroll_circular" text="This text is too long to fit so it scrolls around.">
+		<lv_label
+			width="200"
+			long_mode="scroll_circular"
+			text="This text is too long to fit so it scrolls around."
+		>
 			<style name="style_box" />
 		</lv_label>
 

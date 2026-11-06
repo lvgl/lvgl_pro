@@ -10,7 +10,13 @@
 <screen>
 	<styles>
 		<!-- Shared card style for compact text blocks -->
-		<style name="style_card" bg_color="0xf6f6f6" bg_opa="100%" pad_all="6" radius="6" />
+		<style
+			name="style_card"
+			bg_color="0xf6f6f6"
+			bg_opa="100%"
+			pad_all="6"
+			radius="6"
+		/>
 	</styles>
 
 	<view
@@ -96,7 +102,11 @@
 				style_bg_color="0xffe8cc"
 				style_bg_opa="100%"
 			>
-				<lv_label name="label_5" text="span&#10;2 rows" align="center" />
+				<lv_label
+					name="label_5"
+					text="span&#10;2 rows"
+					align="center"
+				/>
 			</lv_obj>
 		</lv_obj>
 	</view>

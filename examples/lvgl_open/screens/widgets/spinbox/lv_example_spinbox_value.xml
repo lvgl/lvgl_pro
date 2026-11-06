@@ -11,7 +11,11 @@
 <screen>
 	<view>
 		<!-- 💡 Edit `step` to 5 or 10; each press now changes by that delta until a bound is hit. -->
-		<lv_label text="Use the arrows to change the value" align="center" y="-50" />
+		<lv_label
+			text="Use the arrows to change the value"
+			align="center"
+			y="-50"
+		/>
 
 		<lv_spinbox
 			name="spinbox"

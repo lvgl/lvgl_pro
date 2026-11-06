@@ -48,6 +48,12 @@
 		</column>
 
 		<!-- This floating button won't be scrolled -->
-		<button_normal label_text="Floating" floating="true" align="bottom_right" x="-20" y="-12" />
+		<button_normal
+			label_text="Floating"
+			floating="true"
+			align="bottom_right"
+			x="-20"
+			y="-12"
+		/>
 	</view>
 </screen>

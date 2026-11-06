@@ -13,10 +13,19 @@
 	</consts>
 	<styles>
 		<!-- Block that fills the padded content area -->
-		<style name="style_block" radius="10" bg_opa="100%" bg_color="#accent" />
+		<style
+			name="style_block"
+			radius="10"
+			bg_opa="100%"
+			bg_color="#accent"
+		/>
 	</styles>
 
-	<view flex_flow="row" style_flex_track_place="center" style_flex_main_place="space_evenly">
+	<view
+		flex_flow="row"
+		style_flex_track_place="center"
+		style_flex_main_place="space_evenly"
+	>
 		<!-- 💡 Edit each card's `style_pad_*`; the accent block tracks the shrinking content area. -->
 
 		<lv_obj

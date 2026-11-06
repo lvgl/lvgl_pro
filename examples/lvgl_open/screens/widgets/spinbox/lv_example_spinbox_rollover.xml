@@ -10,7 +10,11 @@
 <screen>
 	<view>
 		<!-- 💡 Increment past 23; the value wraps to 0 because `rollover="true"`. -->
-		<lv_label text="Use the arrows to change the value" align="center" y="-50" />
+		<lv_label
+			text="Use the arrows to change the value"
+			align="center"
+			y="-50"
+		/>
 		<lv_spinbox
 			name="spinbox"
 			width="160"

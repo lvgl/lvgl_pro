@@ -2,7 +2,13 @@
      The container's size will be according to the content -->
 <component>
 	<styles>
-		<style name="style_base" width="content" height="content" layout="flex" flex_flow="column" />
+		<style
+			name="style_base"
+			width="content"
+			height="content"
+			layout="flex"
+			flex_flow="column"
+		/>
 	</styles>
 	<view>
 		<remove_style_all />

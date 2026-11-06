@@ -14,9 +14,23 @@
 	</previews>
 
 	<api>
-		<prop name="selected" type="int" default="-1" help="The current selected item, -1 for none" />
-		<prop name="bind_value" type="subject" help="The subject to bind the selected item" />
-		<element name="button" access="add" type="lv_obj" help="Add buttons to the segment">
+		<prop
+			name="selected"
+			type="int"
+			default="-1"
+			help="The current selected item, -1 for none"
+		/>
+		<prop
+			name="bind_value"
+			type="subject"
+			help="The subject to bind the selected item"
+		/>
+		<element
+			name="button"
+			access="add"
+			type="lv_obj"
+			help="Add buttons to the segment"
+		>
 			<arg name="text" type="string" />
 		</element>
 	</api>

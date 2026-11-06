@@ -28,11 +28,20 @@
 	<view>
 		<!-- 💡 Drag the arc — the label tracks subject_value live. -->
 
-		<lv_arc width="120" height="120" align="center" bind_value="subject_value">
+		<lv_arc
+			width="120"
+			height="120"
+			align="center"
+			bind_value="subject_value"
+		>
 			<style name="style_arc_main" />
 			<style name="style_arc_ind" selector="indicator" />
 			<style name="style_arc_knob" selector="knob" />
-			<lv_label bind_text="subject_value" bind_text-fmt="value: %d" align="center" />
+			<lv_label
+				bind_text="subject_value"
+				bind_text-fmt="value: %d"
+				align="center"
+			/>
 		</lv_arc>
 	</view>
 </screen>

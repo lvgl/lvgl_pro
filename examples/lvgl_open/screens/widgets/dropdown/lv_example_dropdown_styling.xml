@@ -42,7 +42,11 @@
 		style_pad_row="16"
 	>
 		<!-- 💡 Tap or focus the dropdown to see the focused-state border swap in. -->
-		<lv_dropdown name="dropdown" width="200" options="Apple&#10;Banana&#10;Cherry&#10;Date">
+		<lv_dropdown
+			name="dropdown"
+			width="200"
+			options="Apple&#10;Banana&#10;Cherry&#10;Date"
+		>
 			<style name="style_dropdown_main" selector="main" />
 			<style name="style_dropdown_focused" selector="main|focused" />
 			<lv_dropdown-list style_bg_color-selected-checked="0x6366f1" />

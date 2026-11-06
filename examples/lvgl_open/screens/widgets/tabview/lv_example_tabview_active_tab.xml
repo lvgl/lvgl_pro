@@ -17,7 +17,11 @@
 				<lv_label name="label_2" align="center" text="B" />
 			</lv_tabview-tab>
 			<lv_tabview-tab text="C">
-				<lv_label name="label_3" align="center" text="C is opened first" />
+				<lv_label
+					name="label_3"
+					align="center"
+					text="C is opened first"
+				/>
 			</lv_tabview-tab>
 			<lv_tabview-tab text="D">
 				<lv_label name="label_4" align="center" text="D" />

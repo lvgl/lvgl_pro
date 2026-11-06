@@ -13,7 +13,13 @@
 	</consts>
 	<styles>
 		<!-- Neutral chip -->
-		<style name="style_chip" radius="10" bg_opa="100%" bg_color="0xe2e8f0" pad_all="14" />
+		<style
+			name="style_chip"
+			radius="10"
+			bg_opa="100%"
+			bg_color="0xe2e8f0"
+			pad_all="14"
+		/>
 		<!-- Accent chip carrying the extra margin -->
 		<style
 			name="style_chip_accent"
@@ -25,12 +31,21 @@
 		/>
 	</styles>
 
-	<view flex_flow="row" style_flex_main_place="center" style_flex_track_place="center">
+	<view
+		flex_flow="row"
+		style_flex_main_place="center"
+		style_flex_track_place="center"
+	>
 		<!-- 💡 Change the middle chip's `style_margin_left`/`style_margin_right`; the side chips stay put, the gap grows. -->
 		<lv_label name="label_1" text="A">
 			<style name="style_chip" />
 		</lv_label>
-		<lv_label name="label_2" text="B" style_margin_left="48" style_margin_right="24">
+		<lv_label
+			name="label_2"
+			text="B"
+			style_margin_left="48"
+			style_margin_right="24"
+		>
 			<style name="style_chip_accent" />
 		</lv_label>
 		<lv_label name="label_3" text="C">

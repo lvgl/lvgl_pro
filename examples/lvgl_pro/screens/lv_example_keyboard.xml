@@ -19,9 +19,19 @@
 			border_width="1"
 		/>
 
-		<style name="style_btn_normal" bg_color="0x515e7b" text_color="0xf3f4f6" radius="6" />
+		<style
+			name="style_btn_normal"
+			bg_color="0x515e7b"
+			text_color="0xf3f4f6"
+			radius="6"
+		/>
 
-		<style name="style_btn_checked" bg_color="0x3b82f6" text_color="0xf3f4f6" radius="6" />
+		<style
+			name="style_btn_checked"
+			bg_color="0x3b82f6"
+			text_color="0xf3f4f6"
+			radius="6"
+		/>
 	</styles>
 
 	<view>
@@ -37,7 +47,14 @@
 			<style name="style_bg" />
 		</lv_textarea>
 
-		<lv_keyboard width="320" height="160" mode="text_lower" popovers="true" textarea="ta_input" align="bottom_mid">
+		<lv_keyboard
+			width="320"
+			height="160"
+			mode="text_lower"
+			popovers="true"
+			textarea="ta_input"
+			align="bottom_mid"
+		>
 			<style name="style_bg" />
 			<style name="style_btn_normal" selector="items" />
 			<style name="style_btn_checked" selector="items|checked" />

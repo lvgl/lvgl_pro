@@ -10,9 +10,21 @@
 <screen>
 	<styles>
 		<!-- Block: opaque fill over the character cell -->
-		<style name="style_block_cursor" bg_opa="100%" bg_color="0x2563eb" text_color="0xffffff" border_side="none" />
+		<style
+			name="style_block_cursor"
+			bg_opa="100%"
+			bg_color="0x2563eb"
+			text_color="0xffffff"
+			border_side="none"
+		/>
 		<!-- Bar: transparent fill, only a left edge -->
-		<style name="style_bar_cursor" bg_opa="0%" border_side="left" border_width="2" border_color="0xdc2626" />
+		<style
+			name="style_bar_cursor"
+			bg_opa="0%"
+			border_side="left"
+			border_width="2"
+			border_color="0xdc2626"
+		/>
 	</styles>
 
 	<view
@@ -24,12 +36,26 @@
 	>
 		<!-- 💡 The cursor is its own part — restyle it without touching the field's look. -->
 		<!-- Block cursor -->
-		<lv_textarea name="textarea_1" width="60%" one_line="true" text="Block" cursor_pos="2" focused="true">
+		<lv_textarea
+			name="textarea_1"
+			width="60%"
+			one_line="true"
+			text="Block"
+			cursor_pos="2"
+			focused="true"
+		>
 			<style name="style_block_cursor" selector="cursor|focused" />
 		</lv_textarea>
 
 		<!-- Bar cursor -->
-		<lv_textarea name="textarea_2" width="60%" one_line="true" text="Bar" cursor_pos="2" focused="true">
+		<lv_textarea
+			name="textarea_2"
+			width="60%"
+			one_line="true"
+			text="Bar"
+			cursor_pos="2"
+			focused="true"
+		>
 			<style name="style_bar_cursor" selector="cursor|focused" />
 		</lv_textarea>
 	</view>

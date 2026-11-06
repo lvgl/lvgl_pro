@@ -14,7 +14,13 @@
 <screen>
 	<view>
 		<!-- 💡 Bump `row_count` past what fits on screen — the table scrolls; the empty cells stay in place because they're part of the grid. -->
-		<lv_table name="table" align="center" row_count="10" column_count="2" height="90%">
+		<lv_table
+			name="table"
+			align="center"
+			row_count="10"
+			column_count="2"
+			height="90%"
+		>
 			<lv_table-cell row="0" column="0" value="A" />
 			<lv_table-cell row="0" column="1" value="B" />
 			<lv_table-cell row="2" column="1" value="middle" />

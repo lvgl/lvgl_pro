@@ -9,9 +9,20 @@
 -->
 <screen>
 	<styles>
-		<style name="style_roller" bg_color="0x0f172a" bg_opa="100%" text_color="0x94a3b8" radius="8" pad_all="6" />
+		<style
+			name="style_roller"
+			bg_color="0x0f172a"
+			bg_opa="100%"
+			text_color="0x94a3b8"
+			radius="8"
+			pad_all="6"
+		/>
 		<!-- The centered (selected) row -->
-		<style name="style_roller_sel" bg_color="0x3b82f6" text_color="0xffffff" />
+		<style
+			name="style_roller_sel"
+			bg_color="0x3b82f6"
+			text_color="0xffffff"
+		/>
 	</styles>
 
 	<view>
@@ -26,6 +37,11 @@
 			<style name="style_roller_sel" selector="selected" />
 		</lv_roller>
 
-		<lv_label align="center" y="-70" bind_text="subject_index" bind_text-fmt="Month index: %d" />
+		<lv_label
+			align="center"
+			y="-70"
+			bind_text="subject_index"
+			bind_text-fmt="Month index: %d"
+		/>
 	</view>
 </screen>

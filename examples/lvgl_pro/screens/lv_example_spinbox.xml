@@ -43,7 +43,12 @@
 		</lv_spinbox>
 
 		<!-- Bound to subject_value, driven by the slider below -->
-		<lv_spinbox width="150" min_value="0" max_value="100" bind_value="subject_value">
+		<lv_spinbox
+			width="150"
+			min_value="0"
+			max_value="100"
+			bind_value="subject_value"
+		>
 			<style name="style_sb" />
 		</lv_spinbox>
 

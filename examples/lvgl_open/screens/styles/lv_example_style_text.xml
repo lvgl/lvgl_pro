@@ -13,7 +13,13 @@
 	</consts>
 	<styles>
 		<!-- Card surface -->
-		<style name="style_card" radius="16" bg_opa="100%" bg_color="0xffffff" pad_all="22" />
+		<style
+			name="style_card"
+			radius="16"
+			bg_opa="100%"
+			bg_color="0xffffff"
+			pad_all="22"
+		/>
 		<!-- The styled type itself -->
 		<style
 			name="style_heading"
@@ -28,7 +34,12 @@
 		<!-- 💡 Tune `text_letter_space`/`text_line_space`, or switch `text_decor` to `strikethrough`. -->
 		<lv_obj name="container" width="240" height="content" align="center">
 			<style name="style_card" />
-			<lv_label name="label" align="center" style_text_align="center" text="Custom&#10;Typography">
+			<lv_label
+				name="label"
+				align="center"
+				style_text_align="center"
+				text="Custom&#10;Typography"
+			>
 				<style name="style_heading" />
 			</lv_label>
 		</lv_obj>

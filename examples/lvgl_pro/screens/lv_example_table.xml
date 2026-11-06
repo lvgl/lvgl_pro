@@ -9,7 +9,13 @@
 -->
 <screen>
 	<styles>
-		<style name="style_table" bg_color="0x111827" bg_opa="100%" radius="8" pad_all="8" />
+		<style
+			name="style_table"
+			bg_color="0x111827"
+			bg_opa="100%"
+			radius="8"
+			pad_all="8"
+		/>
 		<!-- Header row cells (the "items" part in selected/first row) -->
 		<style
 			name="style_items"
@@ -37,7 +43,12 @@
 			<lv_table-cell row="2" column="1" value="48 %" />
 
 			<!-- Footer spanning both columns -->
-			<lv_table-cell row="3" column="0" value="All readings nominal" ctrl="merge_right" />
+			<lv_table-cell
+				row="3"
+				column="0"
+				value="All readings nominal"
+				ctrl="merge_right"
+			/>
 		</lv_table>
 	</view>
 </screen>

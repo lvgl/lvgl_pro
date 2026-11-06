@@ -16,9 +16,20 @@
 	>
 		<!-- 💡 The placeholder only shows while the field is empty; typing replaces it. -->
 		<!-- Empty: placeholder hint is shown -->
-		<lv_textarea name="textarea_1" width="60%" one_line="true" placeholder_text="Search..." />
+		<lv_textarea
+			name="textarea_1"
+			width="60%"
+			one_line="true"
+			placeholder_text="Search..."
+		/>
 
 		<!-- Filled: placeholder is hidden -->
-		<lv_textarea name="textarea_2" width="60%" one_line="true" placeholder_text="Search…" text="Hello world!" />
+		<lv_textarea
+			name="textarea_2"
+			width="60%"
+			one_line="true"
+			placeholder_text="Search…"
+			text="Hello world!"
+		/>
 	</view>
 </screen>

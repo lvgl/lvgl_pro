@@ -8,7 +8,11 @@
 -->
 <screen>
 	<styles>
-		<style name="style_tint" image_recolor="0x3b82f6" image_recolor_opa="80%" />
+		<style
+			name="style_tint"
+			image_recolor="0x3b82f6"
+			image_recolor_opa="80%"
+		/>
 	</styles>
 
 	<view

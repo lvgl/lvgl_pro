@@ -11,7 +11,12 @@
 	<view>
 		<!-- 💡 Click each dropdown: each list pops toward the screen edge defined by its dir attribute. -->
 		<!-- Default: list opens downward -->
-		<lv_dropdown name="dropdown_1" align="top_mid" y="20" options="Apple&#10;Banana&#10;Orange&#10;Melon" />
+		<lv_dropdown
+			name="dropdown_1"
+			align="top_mid"
+			y="20"
+			options="Apple&#10;Banana&#10;Orange&#10;Melon"
+		/>
 
 		<!-- List opens upward -->
 		<lv_dropdown

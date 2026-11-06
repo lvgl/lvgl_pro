@@ -10,7 +10,12 @@
 <screen>
 	<view>
 		<!-- 💡 Click either button; the label updates because it reads `subject_text` live. -->
-		<lv_label name="label_1" bind_text="subject_text" align="center" y="-50" />
+		<lv_label
+			name="label_1"
+			bind_text="subject_text"
+			align="center"
+			y="-50"
+		/>
 
 		<lv_button name="button_1" align="center">
 			<lv_label name="label_2" align="center" text="Idle" />

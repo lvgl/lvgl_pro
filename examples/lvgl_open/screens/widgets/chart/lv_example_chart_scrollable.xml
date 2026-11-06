@@ -38,8 +38,16 @@
 					hor_div_line_count="3"
 					ver_div_line_count="0"
 				>
-					<lv_chart-series color="0x6366f1" axis="primary_y" values="32 41 38 55 62 70 65 58 47 60 75 80" />
-					<lv_chart-axis axis="primary_y" min_value="0" max_value="100" />
+					<lv_chart-series
+						color="0x6366f1"
+						axis="primary_y"
+						values="32 41 38 55 62 70 65 58 47 60 75 80"
+					/>
+					<lv_chart-axis
+						axis="primary_y"
+						min_value="0"
+						max_value="100"
+					/>
 				</lv_chart>
 
 				<lv_scale

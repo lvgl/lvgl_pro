@@ -7,7 +7,13 @@
  to isolate the effect of changing the color alone.
 -->
 <screen>
-	<view flex_flow="column" style_flex_main_place="center" style_flex_cross_place="center" style_flex_track_place="center" style_pad_row="16">
+	<view
+		flex_flow="column"
+		style_flex_main_place="center"
+		style_flex_cross_place="center"
+		style_flex_track_place="center"
+		style_pad_row="16"
+	>
 		<!-- 💡 Edit each color attribute to recolor that LED. -->
 		<!-- Red LED -->
 		<lv_led name="led_1" width="40" height="40" color="0xff3030" />

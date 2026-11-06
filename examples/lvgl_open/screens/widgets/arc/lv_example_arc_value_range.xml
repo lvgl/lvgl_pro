@@ -7,7 +7,11 @@
  — including one crossing zero — produces the same relative fill.
 -->
 <screen>
-	<view flex_flow="row" style_flex_main_place="space_evenly" style_flex_track_place="center">
+	<view
+		flex_flow="row"
+		style_flex_main_place="space_evenly"
+		style_flex_track_place="center"
+	>
 		<!-- 💡 Change min_value, max_value, and value together to see how the indicator span maps onto the same background arc. -->
 
 		<!-- Arc with a custom range showing the same concept at different numeric scale -->
@@ -22,7 +26,12 @@
 			bg_end_angle="45"
 			bind_value="subject_value"
 		>
-			<lv_label name="label_4" align="center" y="-10" bind_text="subject_value" />
+			<lv_label
+				name="label_4"
+				align="center"
+				y="-10"
+				bind_text="subject_value"
+			/>
 			<lv_label name="label_3" align="center" y="10" text="[-20..220]" />
 		</lv_arc>
 	</view>

@@ -49,7 +49,11 @@
 					trigger="long_pressed_repeat"
 				/>
 			</lv_button>
-			<lv_label name="label_1" bind_text="subject_value" bind_text-fmt="%d%%" />
+			<lv_label
+				name="label_1"
+				bind_text="subject_value"
+				bind_text-fmt="%d%%"
+			/>
 
 			<lv_button name="button_2">
 				<lv_label name="label_3" align="center" text="+" />

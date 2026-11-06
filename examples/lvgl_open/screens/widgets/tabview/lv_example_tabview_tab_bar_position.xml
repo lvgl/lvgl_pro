@@ -13,7 +13,12 @@
 		<!-- Bar on the top edge -->
 
 		<!-- Bar on the right edge -->
-		<lv_tabview name="tabview_1" tab_bar_position="right" style_bg_color="0xce93d8" style_bg_opa="100%">
+		<lv_tabview
+			name="tabview_1"
+			tab_bar_position="right"
+			style_bg_color="0xce93d8"
+			style_bg_opa="100%"
+		>
 			<lv_tabview-tab text="A">
 				<lv_label name="label_1" align="center" text="Right tab bar" />
 			</lv_tabview-tab>

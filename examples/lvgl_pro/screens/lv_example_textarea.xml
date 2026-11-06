@@ -31,12 +31,22 @@
 	>
 		<!-- 💡 The middle field masks input; the others show plain and wrapped text. -->
 
-		<lv_textarea width="240" one_line="true" placeholder_text="Type your name ...">
+		<lv_textarea
+			width="240"
+			one_line="true"
+			placeholder_text="Type your name ..."
+		>
 			<style name="style_ta" />
 			<style name="style_cursor" selector="cursor|focused" />
 		</lv_textarea>
 
-		<lv_textarea width="240" one_line="true" password_mode="true" password_show_time="500" text="secret">
+		<lv_textarea
+			width="240"
+			one_line="true"
+			password_mode="true"
+			password_show_time="500"
+			text="secret"
+		>
 			<style name="style_ta" />
 			<style name="style_cursor" selector="cursor|focused" />
 		</lv_textarea>

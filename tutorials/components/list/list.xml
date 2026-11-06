@@ -4,18 +4,60 @@
 		<timeline name="list_open">
 			<!-- Fade in the list and translate it from the left.
 			     Translate_x is a good way to animate the X position in a relative way. -->
-			<animation prop="opa" start="0" end="255" duration="300" early_apply="true" target="self" />
-			<animation prop="translate_x" start="-60" end="0" duration="300" early_apply="true" target="self" />
+			<animation
+				prop="opa"
+				start="0"
+				end="255"
+				duration="300"
+				early_apply="true"
+				target="self"
+			/>
+			<animation
+				prop="translate_x"
+				start="-60"
+				end="0"
+				duration="300"
+				early_apply="true"
+				target="self"
+			/>
 
 			<!-- Add the show_up animation of the buttons with increasing delay -->
 			<include_timeline target="button_0" timeline="show_up" delay="0" />
-			<include_timeline target="button_1" timeline="show_up" delay="100" />
-			<include_timeline target="button_2" timeline="show_up" delay="200" />
-			<include_timeline target="button_3" timeline="show_up" delay="300" />
-			<include_timeline target="button_4" timeline="show_up" delay="400" />
-			<include_timeline target="button_5" timeline="show_up" delay="400" />
-			<include_timeline target="button_6" timeline="show_up" delay="400" />
-			<include_timeline target="button_7" timeline="show_up" delay="400" />
+			<include_timeline
+				target="button_1"
+				timeline="show_up"
+				delay="100"
+			/>
+			<include_timeline
+				target="button_2"
+				timeline="show_up"
+				delay="200"
+			/>
+			<include_timeline
+				target="button_3"
+				timeline="show_up"
+				delay="300"
+			/>
+			<include_timeline
+				target="button_4"
+				timeline="show_up"
+				delay="400"
+			/>
+			<include_timeline
+				target="button_5"
+				timeline="show_up"
+				delay="400"
+			/>
+			<include_timeline
+				target="button_6"
+				timeline="show_up"
+				delay="400"
+			/>
+			<include_timeline
+				target="button_7"
+				timeline="show_up"
+				delay="400"
+			/>
 		</timeline>
 	</animations>
 

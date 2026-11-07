@@ -21,9 +21,12 @@ def build_parser():
                              "--from-dump is given")
     parser.add_argument("-o", "--out", default="pro_project",
                         help="output directory (default: pro_project)")
+    parser.add_argument("--plugin", metavar="FILE",
+                        help="a downloaded single-file LVGL GDB plugin "
+                             "(lvglgdb.py) to use instead of fetching it")
     parser.add_argument("--lvgl", metavar="DIR",
                         help="an LVGL checkout to load scripts/gdb from, instead "
-                             "of the installed lvglgdb")
+                             "of the single-file plugin")
     parser.add_argument("--stop-at", default="lv_timer_handler", metavar="LOCATION",
                         help="where to stop the app, any GDB breakpoint location "
                              "(default: lv_timer_handler, the first refresh after "
@@ -57,7 +60,10 @@ def build_parser():
 
 
 #: Only used when the application does not report its own LVGL version.
-FALLBACK_VERSION = "9.5.0"
+FALLBACK_VERSION = "9.6.0"
+
+#: The oldest LVGL the converter accepts.
+MIN_VERSION = (9, 6, 0)
 
 
 def _restore_images(dump, image_dir):
@@ -154,13 +160,12 @@ def main(argv=None):
         elif not args.app:
             raise DumpError("give an application to convert, or --from-dump FILE")
         else:
-            gdb_python = check_gdb(args.gdb)
-            print(f"GDB Python: {gdb_python}")
+            print(f"GDB Python: {check_gdb(args.gdb)}")
             print(f"Running {args.app} to {args.stop_at} ...")
             dump = dump_app(args.app, lvgl_dir=args.lvgl, stop_at=args.stop_at,
                             gdb_binary=args.gdb, timeout=args.timeout,
                             image_dir=Path(args.out) / "images",
-                            app_args=args.app_args, gdb_python=gdb_python)
+                            app_args=args.app_args, plugin_file=args.plugin)
         if args.dump:
             Path(args.dump).write_text(json.dumps(dump, indent=1))
 
@@ -176,6 +181,12 @@ def main(argv=None):
                   f"against; converting as {version}", file=sys.stderr)
         print(f"LVGL version: {version}"
               + ("" if args.lvgl_version is None else " (from --lvgl-version)"))
+        parsed = schema_mod.parse_version(version)
+        if parsed and parsed < MIN_VERSION:
+            raise DumpError(
+                f"LVGL {version} is not supported. Convert an application built "
+                f"with LVGL {'.'.join(map(str, MIN_VERSION))} or newer."
+            )
 
         screens, found, book, report, written = convert(
             dump, args.out, version, args.number_consts,

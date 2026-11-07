@@ -174,9 +174,25 @@ UNCONVERTIBLE_TYPES = ("subject", "style", "lv_obj", "image_set")
 # diff. Reading them from widget_data as well would double them up.
 NOT_FROM_WIDGET_DATA = frozenset(
     {"name", "x", "y", "width", "height", "align", "flex_grow", "flex_flow",
-     "ext_click_area", "scroll_snap_x", "scroll_snap_y", "scrollbar_mode",
-     "radio_button"}
+     "ext_click_area", "radio_button"}
 )
+
+# lv_obj properties kept in obj->spec_attr, which the plugin reports beside
+# widget_data rather than in it. They are compared and converted as widget
+# data. Without a spec_attr LVGL's getters return these values.
+SPEC_ATTR_PROPS = {
+    "scroll_snap_x": 0,   # LV_SCROLL_SNAP_NONE
+    "scroll_snap_y": 0,
+    "scrollbar_mode": 3,  # LV_SCROLLBAR_MODE_AUTO
+}
+
+
+def spec_attr_values(snapshot):
+    values = {}
+    for name, default in SPEC_ATTR_PROPS.items():
+        value = snapshot.get(name)
+        values[name] = default if value is None else value
+    return values
 
 
 # Style slot flags from _lv_obj_style_t. Only "local" and the unflagged
@@ -194,11 +210,12 @@ def style_prop_to_xml(runtime_name: str) -> "str | None":
 
 
 def removal_selector(selector_str: str) -> str:
-    """The selector for `<remove_style selector=>`, which cannot be empty.
+    """The selector for `<remove_theme selector=>`, which cannot be empty.
 
     On a style it is right to leave main+default unwritten, because that is what
-    XML assumes. A removal has to name what it removes, so the main part is
-    spelled out; `lv_xml_style_part_to_enum()` maps "main" to LV_PART_MAIN.
+    XML assumes. A removal has to name what it removes, since no selector means
+    every part, so the main part is spelled out; `lv_xml_style_part_to_enum()`
+    maps "main" to LV_PART_MAIN.
     """
     return selector_to_xml(selector_str) or "main"
 

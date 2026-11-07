@@ -6,9 +6,6 @@ project(lv_demo_widgets C CXX)
 #
 #   cmake -B build && cmake --build build -j
 #
-# LVGL ends up in build/_deps/lvgl-src, which is also what lvgl_app2pro wants
-# for --lvgl, because that is where the matching GDB plugin lives.
-#
 # Pass -DLVGL_DIR=<an lvgl checkout> to build against one you already have
 # instead of fetching another. That is what the test suite does.
 
@@ -36,7 +33,7 @@ if(DEFINED LVGL_DIR)
     set(lvgl_BINARY_DIR ${CMAKE_BINARY_DIR}/lvgl_build)
 else()
     # Which LVGL to build against: -DLVGL_TAG=master to try a newer one.
-    set(LVGL_TAG "v9.5.0" CACHE STRING "LVGL branch or tag to fetch")
+    set(LVGL_TAG "v9.6.0" CACHE STRING "LVGL branch or tag to fetch")
 
     include(FetchContent)
     FetchContent_Declare(

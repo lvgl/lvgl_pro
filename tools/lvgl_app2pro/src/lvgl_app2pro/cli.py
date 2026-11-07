@@ -21,12 +21,13 @@ def build_parser():
                              "--from-dump is given")
     parser.add_argument("-o", "--out", default="pro_project",
                         help="output directory (default: pro_project)")
-    parser.add_argument("--plugin", metavar="FILE",
-                        help="a downloaded single-file LVGL GDB plugin "
-                             "(lvglgdb.py) to use instead of fetching it")
-    parser.add_argument("--lvgl", metavar="DIR",
-                        help="an LVGL checkout to load scripts/gdb from, instead "
-                             "of the single-file plugin")
+    plugin_source = parser.add_mutually_exclusive_group()
+    plugin_source.add_argument("--plugin", metavar="FILE",
+                               help="a downloaded single-file LVGL GDB plugin "
+                                    "(lvglgdb.py) to use instead of fetching it")
+    plugin_source.add_argument("--lvgl", metavar="DIR",
+                               help="an LVGL checkout to load scripts/gdb from, "
+                                    "instead of the single-file plugin")
     parser.add_argument("--stop-at", default="lv_timer_handler", metavar="LOCATION",
                         help="where to stop the app, any GDB breakpoint location "
                              "(default: lv_timer_handler, the first refresh after "
@@ -182,7 +183,9 @@ def main(argv=None):
         print(f"LVGL version: {version}"
               + ("" if args.lvgl_version is None else " (from --lvgl-version)"))
         parsed = schema_mod.parse_version(version)
-        if parsed and parsed < MIN_VERSION:
+        if parsed is None:
+            raise DumpError(f"{version!r} is not an LVGL version, such as 9.6.0")
+        if parsed < MIN_VERSION:
             raise DumpError(
                 f"LVGL {version} is not supported. Convert an application built "
                 f"with LVGL {'.'.join(map(str, MIN_VERSION))} or newer."

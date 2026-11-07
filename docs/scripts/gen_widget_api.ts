@@ -367,7 +367,7 @@ function renderBaseWidget(api: ElNode): string {
 
 	out.push('### Data bindings\n');
 	out.push('Drive widget state, flags or styles from an observer ' +
-		'[subject](../syntax/data-binding).\n');
+		'[subject](../syntax/expressions#data-bindings).\n');
 	for (const e of styleBinds) out.push(renderElement('lv_obj', e).replace(/^### /, '#### '));
 	if (bindProps.length) {
 		out.push('#### Bound properties\n');

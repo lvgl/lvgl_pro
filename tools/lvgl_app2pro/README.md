@@ -64,8 +64,7 @@ slow and prone to mistakes.
   [LVGL's GDB plugin](https://lvgl.io/docs/open/debugging/gdb_plugin) on every
   run, so it always has the latest fixes, and keeps the last copy for runs
   without a network. The plugin needs nothing but Python, so nothing has to be
-  installed into GDB. For now it has to be downloaded by hand, see
-  [Quick start](#quick-start).
+  installed into GDB.
 - **CMake** and **SDL2**, only to build the example in this repository
 - To open the result: an LVGL Pro Editor or [CLI](https://lvgl.io/docs/pro/cli)
   that supports LVGL v9.6. CLI 2.1.0 does; `lvglpro --supported-lvgl-versions`
@@ -114,19 +113,10 @@ cmake -B examples/lv_demo_widgets/build -S examples/lv_demo_widgets
 cmake --build examples/lv_demo_widgets/build -j
 ```
 
-For now, download the GDB plugin by hand. The converter downloads it from
-LVGL's `release/v9.6` branch, but the single-file plugin only exists in
-[LVGL pull request #10952](https://github.com/lvgl/lvgl/pull/10952) until that
-is merged:
-
-```bash
-curl -LO https://raw.githubusercontent.com/kisvegabor/lvgl_fork/gdb-bundle/scripts/gdb/bundle/lvglgdb.py
-```
-
 If you have the application, you can start converting it to XML like this:
 
 ```bash
-python3 lvgl_app2pro.py examples/lv_demo_widgets/build/lv_demo_widgets -o widgets_demo --plugin lvglgdb.py
+python3 lvgl_app2pro.py examples/lv_demo_widgets/build/lv_demo_widgets -o widgets_demo
 ```
 
 (Replace the path of the example with the path of your app if needed.)
@@ -183,9 +173,11 @@ A snippet from the resulting XML:
 - ✅ Elements of complex widgets, like chart series, tabview tabs, scale sections, etc.
 - ✅ Flex and Grid layouts,.
 - ✅ `LV_PCT()` and `LV_SIZE_CONTENT`, as `50%` and `content`
-- ✅ Styles, local ones as inline attributes and shared ones as named styles
-  in `globals.xml`. Theme styles are ignored. If the app removed theme styles,
-  `<remove_theme>` removes the same ones.
+- ✅ Styles: local styles on the main part in the default state become inline
+  attributes. Everything else becomes a named style: in the screen's own
+  `<styles>` when one screen uses it, in `globals.xml` when several do. Theme
+  styles are ignored. If the app removed theme styles, `<remove_theme>` removes
+  the same ones.
 - ✅ Scroll settings: `scroll_snap_x`, `scroll_snap_y` and `scrollbar_mode`
 - ✅ Images stored as C array are recreated as PNG
 - ✅ Colors and repeated numbers are converted into consts.
@@ -221,9 +213,11 @@ Either manually or by an AI agent:
 
 1. The app is started under GDB with
    [LVGL's plugin](https://lvgl.io/docs/open/debugging/gdb_plugin)
-   loaded, and stopped at the **second** `lv_timer_handler()` call. The plugin is
-   the single-file version from LVGL's `release/v9.6` branch. By then LVGL
-   has run a full cycle, so layouts are calculated and coordinates are real.
+   loaded, and stopped at the **second** `lv_timer_handler()` call. By then LVGL
+   has run a full cycle, so layouts are calculated and coordinates are real. The
+   plugin is the single-file version. For now it comes from
+   [LVGL pull request #10952](https://github.com/lvgl/lvgl/pull/10952), and
+   from LVGL's `release/v9.6` branch once that is merged.
 2. Every screen is dumped from that one stop. `lv_display_t` keeps them all in
    `screens[]`, so they are alive at the same time and `act_scr` only says which
    is shown.
@@ -253,6 +247,9 @@ littered with the flags every checkbox has.
 | `--include-layers` | Also convert the bottom/top/system layers |
 | `--keep-fonts` | Write `text_font` even though the font cannot be declared |
 | `--dump FILE` / `--from-dump FILE` | Save the raw JSON, or convert a saved one offline |
+| `--lvgl-version X.Y.Z` | Use this LVGL version instead of the one read from the app |
+| `--gdb GDB` | The GDB binary to use. Default `gdb` |
+| `--timeout SECONDS` | How long to wait for the app to reach the stop point. Default 300 |
 
 ## Contributing
 

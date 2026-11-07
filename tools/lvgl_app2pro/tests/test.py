@@ -43,7 +43,7 @@ WORK = HERE / ".work"
 LVGL = WORK / "lvgl"
 
 sys.path.insert(0, str(SRC))
-from lvgl_app2pro.driver import fetch_plugin  # noqa: E402  (needs the path set first)
+from lvgl_app2pro.driver import DumpError, fetch_plugin  # noqa: E402  (needs the path set first)
 
 LVGL_REPO = "https://github.com/lvgl/lvgl.git"
 LVGL_TAG = "v9.6.0"
@@ -141,8 +141,16 @@ def step(message):
 def fetch_lvgl():
     WORK.mkdir(exist_ok=True)
     if LVGL.is_dir():
-        print(f"  reusing {LVGL}")
-        return
+        tag = subprocess.run(
+            ["git", "-C", str(LVGL), "describe", "--tags", "--exact-match"],
+            capture_output=True, text=True).stdout.strip()
+        if tag == LVGL_TAG:
+            print(f"  reusing {LVGL}")
+            return
+        # A checkout from before LVGL_TAG changed would build the apps against
+        # the wrong LVGL.
+        print(f"  {LVGL} is {tag or 'not at a tag'}, not {LVGL_TAG}")
+        shutil.rmtree(LVGL)
     print(f"  fetching {LVGL_TAG}")
     run(["git", "clone", "--depth", "1", "--branch", LVGL_TAG,
          LVGL_REPO, str(LVGL)])
@@ -338,8 +346,12 @@ def compare_the_two_sides(app, app_shots, converted_shots):
 def snapshot_app(app):
     """Render each tab of the running app with lv_snapshot_take()."""
     script = WORK / app.name / "snapshot.gdb"
+    try:
+        plugin = fetch_plugin()
+    except DumpError as e:
+        raise Failure(str(e))
     script.write_text(f"""
-source {fetch_plugin()}
+source {plugin}
 break lv_timer_handler
 # The second call: by then LVGL has laid out and drawn a full cycle.
 ignore 1 1

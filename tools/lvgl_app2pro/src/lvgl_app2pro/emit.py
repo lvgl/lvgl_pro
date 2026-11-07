@@ -137,8 +137,6 @@ def render_node(node, report, depth):
     body = []
     # Only the theme's styles: a removal is only ever detected on those, and
     # <remove_theme> keeps the attributes and <style>s of this element.
-    if node.remove_theme_all:
-        body.append(f"{pad}{INDENT}<remove_theme />")
     for selector in node.removed_theme_selectors:
         body.append(f'{pad}{INDENT}<remove_theme selector="{selector}" />')
     body += [f"{pad}{INDENT}<style{attrs([('name', n), ('selector', s or None)])} />"
@@ -191,8 +189,6 @@ def render_screen(screen, book, report):
 
     root = screen.root
     body = []
-    if root.remove_theme_all:
-        body.append(f"{INDENT * 2}<remove_theme />")
     for selector in root.removed_theme_selectors:
         body.append(f'{INDENT * 2}<remove_theme selector="{selector}" />')
     body += [f"{INDENT * 2}<style{attrs([('name', n), ('selector', s or None)])} />"

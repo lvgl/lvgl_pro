@@ -158,7 +158,12 @@ def to_png(cf, width, height, stride, data, path):
     """Write the image as a PNG. Raises UnsupportedImage if it cannot be read."""
     # The plugin's encoder needs only the standard library, so this runs in
     # whatever Python GDB embeds. Imported here because lvglgdb needs GDB.
-    from lvglgdb.lvgl.draw.image_codec import RawImage, encode_png
+    try:
+        from lvglgdb.lvgl.draw.image_codec import RawImage, encode_png
+    except ImportError:
+        # A plugin from before the single-file version, loaded with --lvgl.
+        raise UnsupportedImage("this GDB plugin cannot write PNGs; use the "
+                               "single-file plugin instead of --lvgl")
 
     rgba = to_rgba(cf, width, height, stride, data)
     with open(path, "wb") as f:

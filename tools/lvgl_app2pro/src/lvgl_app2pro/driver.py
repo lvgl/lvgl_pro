@@ -1,5 +1,6 @@
 """Runs the app under GDB and brings the dump back."""
 
+import http.client
 import json
 import os
 import subprocess
@@ -13,9 +14,12 @@ DUMP_SCRIPT = Path(__file__).with_name("gdb_dump.py")
 #: What lvglgdb requires of the interpreter GDB embeds.
 PLUGIN_PYTHON = (3, 10)
 
-#: LVGL's GDB plugin as one file. From the release branch, not a tag, so the
-#: fixes made on v9.6 reach the converter without a release of its own.
-PLUGIN_URL = ("https://raw.githubusercontent.com/lvgl/lvgl/release/v9.6/"
+#: LVGL's GDB plugin as one file. From a branch, not a tag, so the fixes made
+#: on v9.6 reach the converter without a release of its own.
+#: TODO: until https://github.com/lvgl/lvgl/pull/10952 is merged the file only
+#: exists on the PR's branch. Then use
+#: https://raw.githubusercontent.com/lvgl/lvgl/release/v9.6/scripts/gdb/bundle/lvglgdb.py
+PLUGIN_URL = ("https://raw.githubusercontent.com/kisvegabor/lvgl_fork/gdb-bundle/"
               "scripts/gdb/bundle/lvglgdb.py")
 
 
@@ -50,7 +54,8 @@ def fetch_plugin(plugin_file=None):
         partial = cache.with_suffix(".part")
         partial.write_bytes(content)
         partial.replace(cache)
-    except OSError as e:
+    # A connection dropped mid-read raises IncompleteRead, which is not an OSError.
+    except (OSError, http.client.HTTPException) as e:
         if not cache.is_file():
             raise DumpError(
                 f"cannot download the LVGL GDB plugin from {PLUGIN_URL} ({e}). "

@@ -14,13 +14,8 @@ DUMP_SCRIPT = Path(__file__).with_name("gdb_dump.py")
 #: What lvglgdb requires of the interpreter GDB embeds.
 PLUGIN_PYTHON = (3, 10)
 
-#: LVGL's GDB plugin as one file. From a branch, not a tag, so the fixes made
-#: on v9.6 reach the converter without a release of its own.
-#: TODO: until https://github.com/lvgl/lvgl/pull/10952 is merged the file only
-#: exists on the PR's branch. Then use
-#: https://raw.githubusercontent.com/lvgl/lvgl/release/v9.6/scripts/gdb/bundle/lvglgdb.py
-PLUGIN_URL = ("https://raw.githubusercontent.com/kisvegabor/lvgl_fork/gdb-bundle/"
-              "scripts/gdb/bundle/lvglgdb.py")
+#: LVGL's GDB plugin as one file, published as an asset of every LVGL release.
+PLUGIN_URL = "https://github.com/lvgl/lvgl/releases/download/v9.6.0/lvglgdb.py"
 
 
 class DumpError(RuntimeError):

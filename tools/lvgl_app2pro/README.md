@@ -61,10 +61,11 @@ slow and prone to mistakes.
 - An LVGL application that runs on your PC, built with **LVGL v9.6 or newer** and
   with debug symbols (`-O0 -g3`)
 - **A network connection** on the first run. The converter downloads
-  [LVGL's GDB plugin](https://lvgl.io/docs/open/debugging/gdb_plugin) on every
-  run, so it always has the latest fixes, and keeps the last copy for runs
-  without a network. The plugin needs nothing but Python, so nothing has to be
-  installed into GDB.
+  [LVGL's GDB plugin](https://lvgl.io/docs/open/debugging/gdb_plugin), a single
+  `lvglgdb.py` file published with every LVGL release, from the
+  [v9.6.0 release](https://github.com/lvgl/lvgl/releases/download/v9.6.0/lvglgdb.py).
+  It keeps a copy for runs without a network. The plugin needs nothing but
+  Python, so nothing has to be installed into GDB.
 - **CMake** and **SDL2**, only to build the example in this repository
 - To open the result: an LVGL Pro Editor or [CLI](https://lvgl.io/docs/pro/cli)
   that supports LVGL v9.6. CLI 2.1.0 does; `lvglpro --supported-lvgl-versions`
@@ -215,9 +216,7 @@ Either manually or by an AI agent:
    [LVGL's plugin](https://lvgl.io/docs/open/debugging/gdb_plugin)
    loaded, and stopped at the **second** `lv_timer_handler()` call. By then LVGL
    has run a full cycle, so layouts are calculated and coordinates are real. The
-   plugin is the single-file version. For now it comes from
-   [LVGL pull request #10952](https://github.com/lvgl/lvgl/pull/10952), and
-   from LVGL's `release/v9.6` branch once that is merged.
+   plugin is the `lvglgdb.py` file from the LVGL v9.6.0 release.
 2. Every screen is dumped from that one stop. `lv_display_t` keeps them all in
    `screens[]`, so they are alive at the same time and `act_scr` only says which
    is shown.

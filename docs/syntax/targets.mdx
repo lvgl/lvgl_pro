@@ -77,6 +77,15 @@ Always the first match has priority, so if a `<view>` has an `if_target`
 that matches the current target, all the other `<view>`s will be ignored. 
 This allows you to have a default `<view>` as the last block, and then override it for specific targets before that.
 
+A component can have several `<view>`s. A screen can have only one, so to change the layout of a
+screen per target, put that layout in a component and use the component in the screen.
+
+For `<consts>`, `<styles>`, `<fonts>` and `<images>` the rule works per name: the first matching
+definition of a name is used. A block without `if_target` matches every target, so the definition of a
+name without `if_target` has to come after its target-specific definitions. If it comes first, it is
+used on every target, and no error is shown. A block without `if_target` that defines other names can
+come anywhere.
+
 ## Selecting a target
 
 When C code is exported all the blocks with `if_target` are wrapped to `if` and `#if`. That
@@ -90,20 +99,25 @@ Its disadvantage is that all the assets and styles for all targets will be inclu
 
 Also, the firmware needs to support all the features of all targets, which can be a problem if the targets have very different capabilities. For example if a widget uses OpenGL and 3D, it can't run on an MCU. In this case compile time selection is the only option.
 
-To select the target at runtime, you can call `<project_name>_set_target(<PROJECT_NAME>_<TARGET_NAME>)`. For example:
+To select the target at runtime, you can call `<project_name>_set_target(<PROJECT_NAME>_TARGET_<TARGET_NAME>)`
+before `<project_name>_init()`. For example:
 ```c
-my_ui_set_target(MY_UI_LARGE);
+my_ui_set_target(MY_UI_TARGET_LARGE);
 ```
 
 ### Compile time selection
 
 To save memory and binary size, you can select the target at compile time. This way only the assets and styles for the selected target will be included in the binary.
 
-Just set a `<PROJECT_NAME>_TARGET` `define` to `<PROJECT_NAME>_<TARGET_NAME>`. For example:
+Just set a `<PROJECT_NAME>_COMPILE_TARGET` `define` to `<PROJECT_NAME>_TARGET_<TARGET_NAME>`. For example:
 ```c
-#define MY_UI_TARGET MY_UI_LARGE
+#define MY_UI_COMPILE_TARGET MY_UI_TARGET_LARGE
 ```
 In CMake you can add a definition like this:
 ```cmake
-add_definitions(-DMY_UI_TARGET=MY_UI_LARGE)
+add_definitions(-DMY_UI_COMPILE_TARGET=MY_UI_TARGET_LARGE)
 ```
+
+The target values are bits, so several targets can be kept, for example
+`MY_UI_TARGET_LARGE | MY_UI_TARGET_SMALL`. Then select one of them at runtime as shown above.
+Without the define, all targets are compiled in.

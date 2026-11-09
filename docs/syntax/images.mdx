@@ -86,10 +86,10 @@ have to exist yet. Treat converted PNGs as build output rather than sources.
 | `width` | no | Target width in pixels. A `#const` can be used |
 | `height` | no | Target height in pixels. A `#const` can be used |
 | `scale` | no | Size as a percent of the source's natural size, e.g. `50%` |
-| `color_format` | no | `rgb565` (default), `rgb565a8`, `rgb888`, `xrgb8888`, `argb8888` or `a8`. The PNG is reduced to the colors and alpha of this format |
+| `color_format` | yes | `rgb565`, `rgb565a8`, `rgb888`, `xrgb8888`, `argb8888` or `a8`. The PNG is reduced to the colors and alpha of this format |
 
 `rgb565`, `rgb888` and `xrgb8888` make every pixel opaque. To keep the transparency of
-an icon or a logo, set `color_format="argb8888"` or `rgb565a8`.
+an icon or a logo, set `color_format="argb8888"` or `rgb565a8`. `a8` keeps only the alpha.
 
 ### Sizing
 

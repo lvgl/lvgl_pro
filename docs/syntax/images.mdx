@@ -71,7 +71,7 @@ the file a `<data>` or `<file>` entry then points at:
 
 ```xml
 <images>
-  <convert src="images/icons/home.svg" dest="images/icons/home.png" width="24"/>
+  <convert src="images/icons/home.svg" dest="images/icons/home.png" width="24" color_format="argb8888"/>
   <data name="icon_home" src_path="images/icons/home.png" color_format="argb8888"/>
 </images>
 ```
@@ -86,6 +86,10 @@ have to exist yet. Treat converted PNGs as build output rather than sources.
 | `width` | no | Target width in pixels. A `#const` can be used |
 | `height` | no | Target height in pixels. A `#const` can be used |
 | `scale` | no | Size as a percent of the source's natural size, e.g. `50%` |
+| `color_format` | no | `rgb565` (default), `rgb565a8`, `rgb888`, `xrgb8888`, `argb8888` or `a8`. The PNG is reduced to the colors and alpha of this format |
+
+`rgb565`, `rgb888` and `xrgb8888` make every pixel opaque. To keep the transparency of
+an icon or a logo, set `color_format="argb8888"` or `rgb565a8`.
 
 ### Sizing
 
@@ -103,10 +107,10 @@ Sizes can be picked from `<consts>` too to allow easily changing the size of man
 </consts>
 
 <images>
-  <convert src="images/icons/home.svg" dest="images/icons/home.png" width="#icon_size"/>
+  <convert src="images/icons/home.svg" dest="images/icons/home.png" width="#icon_size" color_format="argb8888"/>
   <data name="icon_home" src_path="images/icons/home.png" color_format="argb8888"/>
 
-  <convert src="images/icons/home.svg" dest="images/icons/lg/home.png" width="#icon_size_lg"/>
+  <convert src="images/icons/home.svg" dest="images/icons/lg/home.png" width="#icon_size_lg" color_format="argb8888"/>
   <data name="icon_home_lg" src_path="images/icons/lg/home.png" color_format="argb8888"/>
 </images>
 ```
@@ -119,8 +123,8 @@ It also works well with [`if_target`](./targets):
 </consts>
 
 <images>
-  <convert src="images/icons/home.svg" dest="images/icons/home_small.png" width="#icon_size_small"/>
-  <convert src="images/icons/home.svg" dest="images/icons/home_large.png" width="#icon_size_large"/>
+  <convert src="images/icons/home.svg" dest="images/icons/home_small.png" width="#icon_size_small" color_format="argb8888"/>
+  <convert src="images/icons/home.svg" dest="images/icons/home_large.png" width="#icon_size_large" color_format="argb8888"/>
 </images>
 
 <images if_target="small">

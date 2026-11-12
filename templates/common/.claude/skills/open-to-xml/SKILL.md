@@ -36,7 +36,7 @@ Ask for these, all in one message:
 
 Check, and stop with a clear message if one fails:
 
-- Linux. macOS is not supported.
+- Linux, or Windows with [MSYS2](https://www.msys2.org). macOS is not supported.
 - GDB with Python 3.10 or newer:
   `gdb -batch -ex "python import sys; print(sys.version)"`
 - `python3` 3.10 or newer.
@@ -87,7 +87,7 @@ with XML where you can:
 
 | The C body does | XML |
 | --- | --- |
-| `lv_screen_load(scr)` or `lv_screen_load_anim(...)` | `<screen_load_event screen="..."/>`. The screen needs `permanent="true"` |
+| `lv_screen_load(scr)` or `lv_screen_load_anim(...)` | `<screen_load_event screen="..."/>`. The screen needs `permanent="true"`. For `lv_screen_load_anim`, copy its animation to `anim_type`, `duration`, and `delay` |
 | Creates a new screen and loads it | `<screen_create_event screen="..."/>` |
 | Writes a variable or a subject | A subject in `globals.xml` and `<set_subject_event>` |
 | Copies a widget value to a label (`lv_label_set_text_fmt(label, "%d", lv_slider_get_value(...))`) | A subject: `bind_value` on the widget, `text="{subject}"` on the label. No event |
@@ -99,8 +99,9 @@ with XML where you can:
 Rules:
 
 - Ask before you replace a callback that does more than one thing.
-- Keep one `<event_cb>` per callback that stays in C. Remove its `TODO` comment, and
-  list it in the report: the user must add `void X(lv_event_t * e)` to the C code.
+- Keep every `<event_cb>` of a callback that stays in C: one for each widget and
+  trigger it was attached to. Remove the `TODO` comments, and list each callback once in
+  the report: the user must add `void X(lv_event_t * e)` to the C code.
 - Show the user the planned mapping as a table before you edit.
 
 ### 6. Do the other manual work
@@ -108,7 +109,22 @@ Rules:
 Ask which of these to do. Each one costs time:
 
 - **Fonts:** register them in `<fonts>` and set `style_text_font` where the TODOs point.
-  Ask for the TTF files.
+  Ask for the TTF files. LVGL's built-in fonts (`lv_font_montserrat_<N>`) cannot be
+  named in XML. A widget with no font set still uses the default font. To use another
+  size, make the same font: copy `Montserrat-Medium.ttf`
+  and `FontAwesome5.ttf` from `templates/basic/fonts/` in
+  [lvgl/lvgl_pro](https://github.com/lvgl/lvgl_pro), then:
+
+  ```xml
+  <bin name="font_14_symbols" src_path="fonts/FontAwesome5.ttf" size="14" bpp="4"
+       range="0xF00C,0xF015" as_file="false"/>
+  <bin name="font_14" src_path="fonts/Montserrat-Medium.ttf" size="14" bpp="4"
+       range="0x20-0x7F" symbols="°•" as_file="false" lv_fallback="font_14_symbols_data"/>
+  ```
+
+  Put the code of each `LV_SYMBOL_*` the app uses in `range`. The codes are in
+  `include/lvgl/font/lv_symbol_def.h` of LVGL v9.6 (`LV_SYMBOL_HOME` is `0xF015`).
+  Rendered this way, 14 px matches the built-in font to within a few pixels.
 - **Images:** the tool writes PNGs only for C-array images. Ask for the others.
 - **Components:** each screen is one flat file. Find repeated subtrees and propose
   components.
@@ -126,7 +142,8 @@ lvglpro screenshot . screens/<screen>.xml --out /tmp/<screen>.png --delay 300
 ```
 
 Ask the user for a screenshot of each screen from the original app. Compare it with the
-`lvglpro screenshot` result, and list the differences.
+`lvglpro screenshot` result, and list the differences. To find them, use `layout.py` and
+`compare.py`: see "Check and correct" in [image-to-xml/recipes.md](../image-to-xml/recipes.md).
 
 ### 8. Report
 

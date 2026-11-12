@@ -27,13 +27,15 @@ Ask in one message:
 - Is it one screen, or several screens of one flow? In which order?
 - The display size. If the image has another size, the layout is scaled.
 - What must work, not only look right: buttons, sliders, screen changes, live values.
-- The fonts and icons. A font name cannot be read reliably from an image. Ask for the
-  TTF and the icon files (SVG or PNG). Without them, use the fonts in `fonts/` and leave
-  a placeholder with a `TODO` comment for each icon.
+- The input: touch, buttons, or an encoder.
+- The fonts and icons. Ask for the TTF and the icon files (SVG or PNG), and the
+  original photos and logos. Without them, find the closest free font and icon set
+  with the scripts in [recipes.md](recipes.md), and say which ones you picked.
 
 ### 2. List what the image contains
 
-Look at the image and write a list:
+Measure the image, do not guess pixel values from it. [recipes.md](recipes.md) has the
+steps and scripts: scale, layout tree, colors, fonts, icons, photos. Then write a list:
 
 - **Tokens:** colors, spacing, corner radii, font sizes. Round them to a small scale
   (for example spacing 4, 8, 12, 16, 24). Do not make a token for each pixel value.
@@ -59,14 +61,16 @@ Later sessions read this section first. Update it when the UI changes.
 ### 4. Set up `project.xml` and `globals.xml`
 
 - `project.xml`: the display size.
-- `globals.xml`: the tokens as `<consts>`, the shared `<styles>`, the `<fonts>`, the
-  `<images>`, and the `<subjects>`. Keep the names that are already there.
+- `globals.xml`: the tokens as `<consts>`, the `<fonts>`, the `<subjects>`, the
+  `<images>`, and the shared `<styles>`, in this order: `validate` rejects `<styles>`
+  before `<fonts>` or `<images>`. Keep the names that are already there.
 
 ### 5. Build the components, then the screens
 
 Build from small to large. For each file:
 
-1. Write it. Use the tokens; no raw colors or sizes in a view.
+1. Write it. Use the tokens. A raw color or size in a view is correct only for a value
+   that is used once.
 2. `lvglpro validate . --errorlimit 25`
 3. For a screen: `lvglpro generate .` and `lvglpro compile .`, then
    `lvglpro screenshot . screens/<screen>.xml --out /tmp/<screen>.png --delay 300`.
@@ -78,8 +82,10 @@ a new display size.
 
 ### 6. Compare with the image
 
-Look at the screenshot and the source image together. List the differences: size,
-position, spacing, color, font size, missing parts. Fix them and screenshot again.
+Measure both images with `layout.py` and move each item by the difference. Then run
+`compare.py` and look at its output image. See "Check and correct" in
+[recipes.md](recipes.md). List the differences: size, position, spacing, color, font
+size, missing parts. Fix them and screenshot again.
 
 Stop after 3 rounds and show the remaining differences to the user. Ask whether to
 continue. Small differences in fonts and anti-aliasing are normal.

@@ -400,7 +400,7 @@ Fonts are registered in the `<fonts>` block of `globals.xml`, from TTF files. Th
 </view>
 ```
 
-A `<bin>` font takes `range` and `symbols` to pick the glyphs to include, and `fallback="<other_font>"` to look up the ones it does not have in another font.
+A `<bin>` font takes `range` and `symbols` to pick the glyphs to include, and `lv_fallback="<other_font>_data"` to look up the ones it does not have in another `<bin>` font. The value is the other font's C name: its `name` with `_data` added.
 
 ### Translations
 
@@ -419,7 +419,7 @@ Translated strings live in `translations.xml`. `languages` lists the language co
 
 `translation_tag` is a property of `lv_label`, and setting it makes the label follow the active language. Missing translations fall back, as described in [LVGL's translation module](https://lvgl.io/docs/open/main-modules/translation). The application picks the language with `lv_translation_set_language("de")`.
 
-For Chinese, Japanese or Korean prefer a `<tiny_ttf>` font, which loads any glyph on demand from one TTF. With `<bin>` fonts, chain one font per language with `fallback`.
+For Chinese, Japanese or Korean prefer a `<tiny_ttf>` font, which loads any glyph on demand from one TTF. With `<bin>` fonts, chain one font per language with `lv_fallback`.
 
 ### Targets
 

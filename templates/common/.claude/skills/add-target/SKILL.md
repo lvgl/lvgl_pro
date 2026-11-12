@@ -68,9 +68,10 @@ The first target is the default of `lvglpro screenshot`.
 
 ### 4. Move size values to constants
 
-Raw sizes in views and styles cannot change per target. Find them, and propose a
-constant for each group (spacing, radius, icon size, font size). Ask before you change
-many files. Use the names that already exist in `globals.xml`.
+Raw sizes in views cannot change per target. Raw sizes in styles can, with
+`<styles if_target>`, but then each style is written once per target. Find the raw
+sizes, and propose a constant for each group (spacing, radius, icon size, font size).
+Ask before you change many files. Use the names that already exist in `globals.xml`.
 
 ### 5. Add the per-target values
 

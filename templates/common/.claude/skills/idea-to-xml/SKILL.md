@@ -48,7 +48,7 @@ spec.
 | --- | --- |
 | Fonts | [Google Fonts](https://fonts.google.com): Inter, Roboto, Montserrat. For Chinese, Japanese, or Korean: Noto Sans. `templates/basic` in [lvgl/lvgl_pro](https://github.com/lvgl/lvgl_pro) ships Montserrat |
 | Icon fonts | [Font Awesome](https://fontawesome.com) (free set), as in `templates/basic` |
-| Icons (SVG) | [Lucide](https://lucide.dev), [Feather](https://feathericons.com), [Heroicons](https://heroicons.com), [Material Symbols](https://fonts.google.com/icons). Convert with `<convert ... color_format="argb8888"/>`. Many use `currentColor`: see [Images](https://lvgl.io/docs/pro/syntax/images) |
+| Icons (SVG) | [Lucide](https://lucide.dev), [Feather](https://feathericons.com), [Heroicons](https://heroicons.com), [Material Symbols](https://fonts.google.com/icons). Convert with `<convert ... color_format="argb8888"/>`. Many use `currentColor`, which renders as nothing: replace it with a real color before the conversion, see [Images](https://lvgl.io/docs/pro/syntax/images) |
 | Photos | [Unsplash](https://unsplash.com), [Pexels](https://www.pexels.com). Scale them down with `<convert>` to the size they are shown at |
 | LVGL UIs | `examples/`, `tutorials/`, and `templates/basic/` in [lvgl/lvgl_pro](https://github.com/lvgl/lvgl_pro). The `widgets` and `music` demos in [lvgl/lvgl](https://github.com/lvgl/lvgl/tree/master/demos) |
 | Inspiration | [Dribbble](https://dribbble.com), [Behance](https://www.behance.net), [Figma Community](https://www.figma.com/community), [Mobbin](https://mobbin.com). Search for the product type, for example "thermostat UI" or "smartwatch dashboard" |
@@ -76,14 +76,16 @@ Show the spec. Ask the user to approve or correct it. Repeat until it is approve
 ### 4. Set up `project.xml` and `globals.xml`
 
 - `project.xml`: the display size.
-- `globals.xml`: the tokens as `<consts>`, the shared `<styles>`, the `<fonts>`, the
-  `<images>`, and the `<subjects>` from the spec.
+- `globals.xml`: the tokens as `<consts>`, the `<fonts>`, the `<subjects>` from the
+  spec, the `<images>`, and the shared `<styles>`, in this order: `validate` rejects
+  `<styles>` before `<fonts>` or `<images>`.
 
 ### 5. Build the components, then the screens
 
 Build from small to large. For each file:
 
-1. Write it. Use the tokens and subjects; no raw colors or sizes in a view.
+1. Write it. Use the tokens and subjects. A raw color or size in a view is correct only
+   for a value that is used once.
 2. `lvglpro validate . --errorlimit 25`
 3. For a screen: `lvglpro generate .` and `lvglpro compile .`, then
    `lvglpro screenshot . screens/<screen>.xml --out /tmp/<screen>.png --delay 300`.
@@ -96,8 +98,13 @@ Use subjects and XML events for the flow. Use `<event_cb>` only when C must run.
 
 ### 6. Add tests
 
-Write one test in `tests/` for each flow in the spec: set the subjects, click, compare
-the subjects, and take a `screenshot_compare`. Then:
+Write one test in `tests/` for each flow in the spec: set the subjects, do the input,
+compare the subjects, and take a `screenshot_compare`. The steps are in the "Tests"
+part of `AGENTS.md`. The input steps are pointer only (`click_on`, `click_at`,
+`move_to`, `press`, `release`), and `subject_set` and `subject_compare` work on `int`
+and `string` subjects only. If a flow needs something else, for example an encoder or a
+float subject, do not write a test that only looks like it covers the flow: list the
+flow as not verified. Then:
 
 ```bash
 lvglpro generate .

@@ -48,17 +48,17 @@ Read `project.xml`, `globals.xml`, and all the XML files. Look for:
 | Tokens | Raw colors, sizes, and radii in views and styles. A constant may already exist in `globals.xml` |
 | Styles | The same local style properties on many widgets. Make a named style |
 | Components | Repeated markup. A `<view>` deeper than about three levels. A component that does two things |
-| Syntax | `$prop`, `#const`, `bind_*`, `subject_*_event` (see "Legacy elements" in `AGENTS.md`). Only if `lvgl_version` is 9.6 or newer |
+| Syntax | `$prop`, `#const`, `bind_*`, `subject_*_event` (see "Legacy elements" in `AGENTS.md`). Only if `lvgl_version` is 9.6 or newer, and the Editor and the CLI (`lvglpro --version`) are v2.1 or newer. Below that an expression is computed only once, so the legacy form is the correct one |
 | Behavior | `<event_cb>` that a subject and `set_subject_event` or a binding can replace |
-| API | A `<prop>` with no `help`, or no `default`. A component with no `<previews>` |
+| API | A `<prop>` with no `help`. An optional `<prop>` with no `default`: a prop with no `default` must be set on every instance, so do not add one to a prop that is required on purpose. A component with no `<previews>` |
 | Names | Names that do not follow the naming table in `AGENTS.md`. A `name="..."` that nothing uses |
 | Comments | Large blocks with no comment. Comments that repeat the line |
 | Tests | Flows and components with no test in `tests/` |
 | Images | A PNG larger than the size it is shown at: scale it with `<convert>`. `argb8888` on an image with no transparency: `rgb565` is half the size. A `<convert>` without `color_format`: the default is `rgb565`, which makes every pixel opaque. Images that nothing uses |
 | Fonts | A `range` wider than the text needs: check the text in the XML and `translations.xml`. Sizes that are almost the same (15 and 16). `bpp` higher than needed. Fonts that nothing uses |
 
-To check a PNG size: `file images/*.png`. Compare it with the `width` and `height` where
-the image is used.
+To check the PNG sizes, in subfolders too: `find images -name '*.png' -exec file {} +`.
+Compare each with the `width` and `height` where the image is used.
 
 ### 3. The user selects
 

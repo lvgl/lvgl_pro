@@ -126,10 +126,6 @@ The picture is shown at its own size, and the display is drawn 1:1 on top of it 
 (`viewport_x`, `viewport_y`). So the screen area of the picture should be exactly as large as
 the display's `width` × `height`, in pixels. The Preview's zoom scales the picture and the display together.
 
-`image_src_path`, `viewport_x` and `viewport_y` are required, and the viewport values must be
-integers. If one is missing or invalid, `project.xml` has an error and the project isn't loaded:
-the Editor shows the error with its line number, and screens and components can't be previewed
-until it is fixed. The same goes for a `<button_overlay>` with a missing attribute or an unknown `key`.
 
 ### `<button_overlay>`
 
@@ -152,8 +148,8 @@ while it is pressed, and in the [calibration view](#aligning-the-overlay).
 
 ### Keys
 
-`key` takes one of these names, a single letter (`a`–`z`, `A`–`Z`) or a single digit (`0`–`9`).
-The UI receives the matching LVGL key:
+`key` takes one of following special names, a single letter (`a`–`z`, `A`–`Z`) or a single digit (`0`–`9`).
+The UI receives the matching LVGL key.
 
 | `key` | LVGL key |
 |---|---|

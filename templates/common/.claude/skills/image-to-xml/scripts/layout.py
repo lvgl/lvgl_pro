@@ -191,7 +191,7 @@ def main():
     ap.add_argument("--tol", type=int, default=4,
                     help="largest channel difference still counted as background. "
                          "Raise it for JPEGs (with --denoise 5: 8-12)")
-    ap.add_argument("--denoise", type=int, default=0,
+    ap.add_argument("--denoise", type=int, default=0, choices=(0, 3, 5),
                     help="median filter size (3 or 5) for JPEGs and photos of screens")
     a = ap.parse_args()
 
@@ -202,6 +202,8 @@ def main():
     x, y, w, h = 0, 0, img.shape[1], img.shape[0]
     if a.region:
         x, y, w, h = map(int, a.region.split(","))
+        if w < 1 or h < 1 or x < 0 or y < 0 or x + w > img.shape[1] or y + h > img.shape[0]:
+            ap.error(f"--region must be inside the {img.shape[1]}x{img.shape[0]} image")
     print(f"image {img.shape[1]}x{img.shape[0]}")
     cut(img, x, y, w, h, None, a.depth, a.tol)
 

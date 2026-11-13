@@ -43,7 +43,8 @@ def boxes(mask, cell):
             xs = [c[1] for c in cells]
             px = sum(grid[c] for c in cells)
             out.append((px, min(xs) * cell, min(ys) * cell,
-                        (max(xs) + 1) * cell - min(xs) * cell, (max(ys) + 1) * cell - min(ys) * cell))
+                        min((max(xs) + 1) * cell, w) - min(xs) * cell,
+                        min((max(ys) + 1) * cell, h) - min(ys) * cell))
     return sorted(out, reverse=True)
 
 
@@ -56,6 +57,8 @@ def main():
     ap.add_argument("--cell", type=int, default=8, help="grid size for grouping, px")
     ap.add_argument("--top", type=int, default=10)
     a = ap.parse_args()
+    if a.cell < 1:
+        ap.error("--cell must be 1 or more")
 
     shot = Image.open(a.screenshot).convert("RGB")
     ref = Image.open(a.reference).convert("RGB")

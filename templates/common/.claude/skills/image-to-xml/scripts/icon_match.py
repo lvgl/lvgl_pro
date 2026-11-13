@@ -61,6 +61,8 @@ def main():
     a = ap.parse_args()
 
     target = fit(coverage(Image.open(a.crop)))
+    if target is None:
+        ap.error(f"{a.crop} has no icon: it is one flat color")
     rows = []
     for d in a.dirs:
         for root, _, files in os.walk(d):

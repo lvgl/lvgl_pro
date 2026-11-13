@@ -62,9 +62,8 @@ def main():
         bg_count = int((alpha == 0).sum())
         print(f"transparent pixels: {bg_count}/{alpha.size}")
     if a.pad:
-        mode = img.mode
-        big = Image.new(mode, (img.width + 2 * a.pad, img.height + 2 * a.pad),
-                        (0, 0, 0, 0) if mode == "RGBA" else (0, 0, 0))
+        img = img.convert("RGBA")
+        big = Image.new("RGBA", (img.width + 2 * a.pad, img.height + 2 * a.pad), (0, 0, 0, 0))
         big.paste(img, (a.pad, a.pad))
         img = big
     if a.zoom > 1:

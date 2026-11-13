@@ -76,11 +76,8 @@ Ask before you change many files. Use the names that already exist in `globals.x
 ### 5. Add the per-target values
 
 Constants and styles: the target block first, the plain block last. Put per-target
-constants in `globals.xml`.
-
-<!-- CLI 2.1.0: <consts if_target> in a component exports broken C
-     (`../../<project>_check_target(...)`), so compile fails. Remove when fixed. -->
-Do not put `<consts if_target>` in a component: the exported C does not compile.
+constants in `globals.xml` when several files use them, and in the component when only
+it uses them.
 
 ```xml
 <consts if_target="small">

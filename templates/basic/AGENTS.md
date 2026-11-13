@@ -15,7 +15,9 @@ How to work in this LVGL Pro project. The UI is written in LVGL Pro XML: HTML-li
 
 - **Show the steps first.** Before you start, show a short checklist of the steps. Mark each step when it is done, so the user always sees where the work is.
 - **Ask, do not assume.** Ask when a request has two meanings, and before work that takes much time or many tokens: many screens, a large rewrite, many screenshot rounds. Ask all the questions together.
+- **Work without questions only when asked.** If the user asks you to work without questions, skip the confirmation steps: make the reasonable choice, write it in the spec as an assumption if the task has a spec, and list the assumptions in the report. Still ask before you delete or overwrite the user's files.
 - **Check the CLI first.** Run `lvglpro --version` and check that `LVGLPRO_CLI_TOKEN` is set. If one is missing, ask the user to install the CLI or to set `LVGLPRO_CLI_TOKEN` in their environment. Do not ask for the token in the chat. If the user cannot, continue, but mark all the work "not verified".
+- **Fix and retry, then stop.** When a command fails, fix the file the error names and run the command again. After three failed tries on the same error, stop and report it. Do not build on top of a failing step.
 - **Write short and plain.** Use the ASD-STE100 style: short sentences, simple words, active voice. Do not explain what is obvious.
 - **Comment the XML for the next reader.** Use comments to mark large blocks and to explain what is not obvious. Do not repeat what the line says.
 - **Report at the end.** List what you changed, what the CLI checked, and what is not verified.

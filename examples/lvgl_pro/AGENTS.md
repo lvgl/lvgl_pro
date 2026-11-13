@@ -350,8 +350,8 @@ Images are external resources: register them in the `<images>` block of `globals
 <images>
   <!-- Make a PNG from an SVG or a JPEG, and scale it. Runs before <data> and <file>,
        so `dest` doesn't have to exist yet. `width`, `height` or `scale`, and a
-       missing axis keeps the aspect ratio -->
-  <convert src="images/icons/home.svg" dest="images/icons/home.png" width="24"/>
+       missing axis keeps the aspect ratio. `color_format` is required -->
+  <convert src="images/icons/home.svg" dest="images/icons/home.png" width="24" color_format="argb8888"/>
 
   <data name="icon_home" src_path="images/icons/home.png" color_format="argb8888"/>
   <data name="logo"      src_path="images/logo.png"       color_format="rgb565"/>

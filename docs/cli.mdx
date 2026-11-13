@@ -174,8 +174,14 @@ lvglpro screenshot <project-path> <screen> [options]
 | -------------- | ------------------------------------------------------------------- |
 | `--out <file>` | Output file name for the screenshot                                 |
 | `--delay <ms>` | Wait before capturing, e.g. to let animations settle (default: `0`) |
+| `--target <name>` | The `project.xml` target to capture (default: the first target)  |
+| `--language <code>` | The language to capture the screen in (default: `en`)          |
 
 `<screen>` is the path of the screen to capture, relative to `<project-path>`.
+
+`screenshot` builds the runtime from the exported C only if there is no runtime yet. After a change
+that the C code carries, such as a font with `as_file="false"` or a widget, run `generate` and then
+`compile` before `screenshot`. Otherwise the screenshot shows the previous build, without a warning.
 
 ### compare
 
@@ -236,6 +242,7 @@ The CLI gives an AI agent two things a language model otherwise lacks: **objecti
 # 1–2: write XML, then check it
 lvglpro validate path/to/project --errorlimit 25
 lvglpro generate path/to/project
+lvglpro compile path/to/project
 
 # 3: render what the user will actually see
 lvglpro screenshot path/to/project screens/home.xml --out home.png --delay 200

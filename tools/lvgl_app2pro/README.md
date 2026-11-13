@@ -28,7 +28,7 @@ commercial products much simpler and faster:
 
 - Declarative [XML language](https://lvgl.io/docs/pro/syntax/introduction) that
   easily handles [Components](https://lvgl.io/docs/pro/syntax/components),
-  [Data bindings](https://lvgl.io/docs/pro/syntax/data-binding),
+  [Data bindings](https://lvgl.io/docs/pro/syntax/expressions#data-bindings),
   [Translations](https://lvgl.io/docs/pro/syntax/translations),
   [Animations](https://lvgl.io/docs/pro/syntax/animations), etc.
 - [Real time preview](https://lvgl.io/docs/pro/syntax/preview) to see how the
@@ -58,8 +58,18 @@ slow and prone to mistakes.
   with `gdb -batch -ex "python import sys; print(sys.version)"`
 - **Python 3.10** or newer to run the converter itself (this is a separate
   interpreter from the one inside GDB, and the versions need not match)
-- An LVGL application that runs on your PC, built with debug symbols (`-O0 -g3`)
+- An LVGL application that runs on your PC, built with **LVGL v9.6 or newer** and
+  with debug symbols (`-O0 -g3`)
+- **A network connection** on the first run. The converter downloads
+  [LVGL's GDB plugin](https://lvgl.io/docs/open/debugging/gdb_plugin), a single
+  `lvglgdb.py` file published with every LVGL release, from the
+  [v9.6.0 release](https://github.com/lvgl/lvgl/releases/download/v9.6.0/lvglgdb.py).
+  It keeps a copy for runs without a network. The plugin needs nothing but
+  Python, so nothing has to be installed into GDB.
 - **CMake** and **SDL2**, only to build the example in this repository
+- To open the result: an LVGL Pro Editor or [CLI](https://lvgl.io/docs/pro/cli)
+  that supports LVGL v9.6. CLI 2.1.0 does; `lvglpro --supported-lvgl-versions`
+  lists what yours supports.
 
 If you can already compile LVGL applications, these are probably installed. If
 not, install them now:
@@ -117,16 +127,18 @@ The output in the terminal should be something like this:
 ```
 GDB Python: 3.12
 Running examples/lv_demo_widgets/build/lv_demo_widgets to lv_timer_handler ...
+LVGL version: 9.6.0
 
 Wrote 3 files to widgets_demo
-  1 screens, 129 widgets
-  20 styles (0 shared)
-  3 color consts, 16 number consts
+  1 screens, 138 widgets
+  18 styles (0 shared)
+  10 color consts, 16 number consts
   4 images rebuilt as PNG
   2 fonts to declare: lv_font_montserrat_16, lv_font_montserrat_24
 
-  10 event callbacks to implement (10 attachments):
-    slider_event_cb(lv_event_t * e)   on all
+  11 event callbacks to implement (11 attachments):
+    birthday_event_cb(lv_event_t * e)   on all
+    chart_event_cb(lv_event_t * e)   on all
     ...
 ```
 
@@ -143,13 +155,13 @@ widgets_demo/
 A snippet from the resulting XML:
 
 ```xml
-<lv_tabview active="0" tab_bar_position="top" style_layout="flex" style_flex_flow="column">
-    <lv_tabview-tab_bar height="75" width="100%" style_pad_left="400">
-        <lv_image align="left_mid" x="-375" src="img_lvgl_logo" />
+<lv_tabview height="100%" width="100%" style_flex_flow="column" style_layout="flex">
+    <lv_tabview-tab_bar height="75" width="100%" style_flex_flow="row" style_layout="flex" style_pad_left="400">
+        <lv_image align="left_mid" x="-375" src="img_lvgl_logo" ignore_layout="true" />
+        ...
     </lv_tabview-tab_bar>
-    <lv_tabview-tab text="Profile" style_layout="grid"
-                    style_grid_column_dsc_array="content 5 content 2fr 1fr 1fr">
-        <lv_label text="Elena Smith" />
+    <lv_tabview-tab height="100%" width="100%" text="Profile" style_layout="grid"
+                    style_grid_column_dsc_array="1fr 1fr" style_grid_row_dsc_array="content content">
         ...
 ```
 
@@ -162,44 +174,49 @@ A snippet from the resulting XML:
 - ✅ Elements of complex widgets, like chart series, tabview tabs, scale sections, etc.
 - ✅ Flex and Grid layouts,.
 - ✅ `LV_PCT()` and `LV_SIZE_CONTENT`, as `50%` and `content`
-- ✅ Styles, local ones as inline attributes and shared ones as named styles
-  in `globals.xml`. Theme styles are ignored.
+- ✅ Styles: local styles on the main part in the default state become inline
+  attributes. Everything else becomes a named style: in the screen's own
+  `<styles>` when one screen uses it, in `globals.xml` when several do. Theme
+  styles are ignored. If the app removed theme styles, `<remove_theme>` removes
+  the same ones.
+- ✅ Scroll settings: `scroll_snap_x`, `scroll_snap_y` and `scrollbar_mode`
 - ✅ Images stored as C array are recreated as PNG
 - ✅ Colors and repeated numbers are converted into consts.
-- ✅ Event hooks, as `<event_cb>` with the callback name and trigger.
+- ✅ Event hooks, as `<event_cb>` with the callback name and trigger. Callbacks
+  that LVGL adds itself, for example for bindings, are left out.
 
-**Limitation:**
+**Limitations:**
 
-
-- ❌ Only LVGL v9.5 is supported
-- ❌ No custom components are added. The screens contain all their widgets in one screen XML file,
-- ❌ Event callback's code, needs to be added manually. See `TODO` comments in XML.
-- ❌ Animations are ignored. IF there were an animation the start value is read and used on teh widget
-- ❌ Fonts can't be restored from the app. The names are used where possible, but the fonts needs to be added in `globals.xml` manually.
+- ❌ Apps built with LVGL older than v9.6 are not supported
+- ❌ No custom components are added. Each screen contains all its widgets in one screen XML file.
+- ❌ The code of the event callbacks needs to be added manually. See the `TODO` comments in the XML.
+- ❌ Animations are ignored. If a value was being animated, the value it had when the UI was read is used on the widget.
+- ❌ Fonts can't be restored from the app. The names are reported where possible, but the fonts need to be added in `globals.xml` manually.
 - ❌ Subjects and bindings
 - ❌ Translations
 - ❌ Timers
-- ❌ Compressed and indexed images are reported but not resptored
-- ❌ Screens that do not exist yet, but created manually. Only the screen avaialbe initially are converted
-- ❌ Constant/define names are not kept, automatically generated names are used instead.
+- ❌ Compressed and indexed images are reported but not restored
+- ❌ Screens that do not exist yet, but are created later. Only the screens available initially are converted.
+- ❌ Constant and define names are not kept; generated names are used instead.
 
-**Improvment options**
+**Improvement options**
 
 Either manually or by an AI agent:
 
-1. See the report from the terminal to see what caould be converted
+1. Read the report in the terminal to see what could not be converted
 2. Open the project in LVGL Pro Editor
-3. Manully add the fonts in `globals.xml`
+3. Add the fonts in `globals.xml`
 4. Add the events in `<project_name>.c`
-5. Manaully add the animations, timers, and data bindings
-6. Create XML components from the repeating widget sub trees
+5. Add the animations, timers, and data bindings
+6. Create XML components from the repeating widget subtrees
 
 ## How does it work?
 
 1. The app is started under GDB with
-   [LVGL's plugin](https://docs.lvgl.io/master/debugging/gdb_plugin.html)
+   [LVGL's plugin](https://lvgl.io/docs/open/debugging/gdb_plugin)
    loaded, and stopped at the **second** `lv_timer_handler()` call. By then LVGL
-   has run a full cycle, so layouts are calculated and coordinates are real.
+   has run a full cycle, so layouts are calculated and coordinates are real. The
+   plugin is the `lvglgdb.py` file from the LVGL v9.6.0 release.
 2. Every screen is dumped from that one stop. `lv_display_t` keeps them all in
    `screens[]`, so they are alive at the same time and `act_scr` only says which
    is shown.
@@ -212,7 +229,7 @@ Either manually or by an AI agent:
 Two things are measured rather than assumed. The version of LVGL the app was
 built against is read from it and used to pick the matching schemas. And class
 defaults are probed by creating one widget of each class in the running process,
-reading what LVGL's constructor and theme gave it, then deleting it — everything
+reading what LVGL's constructor and theme gave it, then deleting it. Everything
 written out is a difference from that, which is why a converted checkbox is not
 littered with the flags every checkbox has.
 
@@ -222,12 +239,16 @@ littered with the flags every checkbox has.
 | --- | --- |
 | `--stop-at LOCATION` | Any GDB location. Default `lv_timer_handler` |
 | `--app-args ARGS` | Command line to start the app with, if it takes one |
-| `--lvgl DIR` | Load `scripts/gdb` from an LVGL checkout instead of the plugin shipped here |
+| `--plugin FILE` | Use a downloaded single-file plugin (`lvglgdb.py`) instead of fetching it |
+| `--lvgl DIR` | Load `scripts/gdb` from an LVGL checkout instead of the single-file plugin |
 | `--schema DIR` | Widget schemas to use, if not the ones shipped here |
 | `--number-consts N` | Name numbers used N or more times. `0` keeps them inline. Default 3 |
 | `--include-layers` | Also convert the bottom/top/system layers |
 | `--keep-fonts` | Write `text_font` even though the font cannot be declared |
 | `--dump FILE` / `--from-dump FILE` | Save the raw JSON, or convert a saved one offline |
+| `--lvgl-version X.Y.Z` | Use this LVGL version instead of the one read from the app |
+| `--gdb GDB` | The GDB binary to use. Default `gdb` |
+| `--timeout SECONDS` | How long to wait for the app to reach the stop point. Default 300 |
 
 ## Contributing
 

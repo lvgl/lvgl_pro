@@ -1,11 +1,12 @@
 """Runs the app under GDB and brings the dump back."""
 
+import http.client
 import json
 import os
 import subprocess
 import sys
-import sysconfig
 import tempfile
+import urllib.request
 from pathlib import Path
 
 DUMP_SCRIPT = Path(__file__).with_name("gdb_dump.py")
@@ -13,26 +14,51 @@ DUMP_SCRIPT = Path(__file__).with_name("gdb_dump.py")
 #: What lvglgdb requires of the interpreter GDB embeds.
 PLUGIN_PYTHON = (3, 10)
 
+#: LVGL's GDB plugin as one file, published as an asset of every LVGL release.
+PLUGIN_URL = "https://github.com/lvgl/lvgl/releases/download/v9.6.0/lvglgdb.py"
+
 
 class DumpError(RuntimeError):
     pass
 
 
-def _host_site_packages(gdb_python=None):
-    """Where this process's packages live, so GDB's own Python can find them.
+def _plugin_cache():
+    base = os.environ.get("XDG_CACHE_HOME") or os.path.expanduser("~/.cache")
+    return Path(base) / "lvgl_app2pro" / "lvglgdb.py"
 
-    GDB embeds its own interpreter and does not see a virtualenv, so a venv
-    install is offered to it from here.
 
-    Only when the two interpreters are the same minor version, though: numpy
-    and Pillow are compiled extensions, and handing 3.10 builds to GDB's 3.12
-    fails to import at best. If they differ, GDB has to have its own copies.
+def fetch_plugin(plugin_file=None):
+    """Return the path of the plugin bundle to `source` in GDB.
+
+    Downloaded on every run so plugin fixes arrive by themselves. The last
+    download is kept, and used when there is no network.
     """
-    host = "%d.%d" % sys.version_info[:2]
-    if gdb_python and gdb_python != host:
-        return []
-    paths = {sysconfig.get_paths().get("purelib"), sysconfig.get_paths().get("platlib")}
-    return [p for p in paths if p and os.path.isdir(p)]
+    if plugin_file:
+        path = Path(plugin_file).resolve()
+        if not path.is_file():
+            raise DumpError(f"{plugin_file} does not exist")
+        return path
+
+    cache = _plugin_cache()
+    try:
+        with urllib.request.urlopen(PLUGIN_URL, timeout=30) as response:
+            content = response.read()
+        cache.parent.mkdir(parents=True, exist_ok=True)
+        # Through a temporary file, so a failed write never leaves half a
+        # plugin behind for the next offline run.
+        partial = cache.with_suffix(".part")
+        partial.write_bytes(content)
+        partial.replace(cache)
+    # A connection dropped mid-read raises IncompleteRead, which is not an OSError.
+    except (OSError, http.client.HTTPException) as e:
+        if not cache.is_file():
+            raise DumpError(
+                f"cannot download the LVGL GDB plugin from {PLUGIN_URL} ({e}). "
+                "Download it by hand and pass --plugin FILE."
+            )
+        print(f"WARNING: cannot download the LVGL GDB plugin ({e}); using the "
+              f"copy from an earlier run, {cache}", file=sys.stderr)
+    return cache
 
 
 def _clean_env():
@@ -80,7 +106,7 @@ def check_gdb(gdb_binary="gdb"):
 
 
 def dump_app(app, lvgl_dir=None, stop_at="lv_timer_handler", gdb_binary="gdb",
-             timeout=300, image_dir=None, app_args=None, gdb_python=None):
+             timeout=300, image_dir=None, app_args=None, plugin_file=None):
     """Run `app` under GDB, stop once, and return the parsed dump."""
     app = Path(app).resolve()
     if not app.exists():
@@ -90,10 +116,10 @@ def dump_app(app, lvgl_dir=None, stop_at="lv_timer_handler", gdb_binary="gdb",
     env["LVGL_APP2PRO_BREAK"] = stop_at
     if app_args:
         env["LVGL_APP2PRO_ARGS"] = app_args
-    env["LVGL_APP2PRO_SYSPATH"] = json.dumps(_host_site_packages(gdb_python))
-    env["LVGL_APP2PRO_GDB_PYTHON"] = gdb_python or ""
     if lvgl_dir:
         env["LVGL_APP2PRO_LVGL"] = str(Path(lvgl_dir).resolve())
+    else:
+        env["LVGL_APP2PRO_PLUGIN"] = str(fetch_plugin(plugin_file))
     if image_dir:
         image_dir = Path(image_dir).resolve()
         image_dir.mkdir(parents=True, exist_ok=True)

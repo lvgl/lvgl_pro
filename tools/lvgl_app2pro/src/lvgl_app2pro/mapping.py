@@ -4,6 +4,8 @@ Every table here is copied from a source of truth in the LVGL repos, named
 above the table. When the two disagree, the runtime is right.
 """
 
+from .schema import IMPLICIT_DEFAULTS
+
 # Style properties the XML engine accepts, from lv_xml_style_prop_to_enum() in
 # lv_xml/src/lv_xml_base_types.c. The XML name is the lowercased runtime name,
 # so this set doubles as the whitelist: a property missing here cannot be
@@ -174,9 +176,25 @@ UNCONVERTIBLE_TYPES = ("subject", "style", "lv_obj", "image_set")
 # diff. Reading them from widget_data as well would double them up.
 NOT_FROM_WIDGET_DATA = frozenset(
     {"name", "x", "y", "width", "height", "align", "flex_grow", "flex_flow",
-     "ext_click_area", "scroll_snap_x", "scroll_snap_y", "scrollbar_mode",
-     "radio_button"}
+     "ext_click_area", "radio_button"}
 )
+
+# lv_obj properties kept in obj->spec_attr, which the plugin reports beside
+# widget_data rather than in it. They are compared and converted as widget
+# data. Without a spec_attr LVGL's getters return the enum's implicit default.
+SPEC_ATTR_PROPS = {
+    "scroll_snap_x": "lv_scroll_snap",
+    "scroll_snap_y": "lv_scroll_snap",
+    "scrollbar_mode": "lv_scrollbar_mode",
+}
+
+
+def spec_attr_values(snapshot):
+    values = {}
+    for name, enumdef in SPEC_ATTR_PROPS.items():
+        value = snapshot.get(name)
+        values[name] = IMPLICIT_DEFAULTS[enumdef] if value is None else value
+    return values
 
 
 # Style slot flags from _lv_obj_style_t. Only "local" and the unflagged
@@ -194,11 +212,12 @@ def style_prop_to_xml(runtime_name: str) -> "str | None":
 
 
 def removal_selector(selector_str: str) -> str:
-    """The selector for `<remove_style selector=>`, which cannot be empty.
+    """The selector for `<remove_theme selector=>`, which cannot be empty.
 
     On a style it is right to leave main+default unwritten, because that is what
-    XML assumes. A removal has to name what it removes, so the main part is
-    spelled out; `lv_xml_style_part_to_enum()` maps "main" to LV_PART_MAIN.
+    XML assumes. A removal has to name what it removes, since no selector means
+    every part, so the main part is spelled out; `lv_xml_style_part_to_enum()`
+    maps "main" to LV_PART_MAIN.
     """
     return selector_to_xml(selector_str) or "main"
 

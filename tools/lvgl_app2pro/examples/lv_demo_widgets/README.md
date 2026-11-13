@@ -28,8 +28,8 @@ Run the binary on its own to see what is being converted:
 `-g` is forced on, LVGL included. The converter reads the application's debug
 info, and without symbols in LVGL itself it cannot find anything.
 
-LVGL v9.5.0 is used, matching the widget schemas in `lvgl_widgets_xml/`. To try
-another:
+LVGL v9.6.0 is used, the oldest version the converter supports. To try a newer
+one:
 
 ```bash
 cmake -B build -DLVGL_TAG=master

@@ -22,6 +22,8 @@ IMPLICIT_DEFAULTS = {
     "lv_image_align": 0,        # LV_IMAGE_ALIGN_DEFAULT
     "lv_slider_orientation": 0,  # AUTO
     "lv_bar_orientation": 0,
+    "lv_scroll_snap": 0,         # NONE
+    "lv_scrollbar_mode": 3,      # AUTO
 }
 
 

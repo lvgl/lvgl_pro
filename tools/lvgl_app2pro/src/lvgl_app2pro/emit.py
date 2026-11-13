@@ -59,24 +59,14 @@ class StyleBook:
 
 
 def plan_styles(screens):
-    """Assign a name to every non-inlinable slot, before anything is written.
-
-    A widget that removes styles cannot keep its own as attributes. In C the
-    order is `lv_obj_remove_style_all(o)` and then the local sets; in XML an
-    element's attributes are applied with its start tag, before any child, so
-    `<remove_style_all/>` would wipe them - taking `width` and `height` with
-    it, since those are local style properties too. Children are processed in
-    order, so the way to keep them is a named <style> referenced after the
-    removal.
-    """
+    """Assign a name to every non-inlinable slot, before anything is written."""
     book = StyleBook()
     for screen in screens:
         for node in walk(screen.root):
             node.style_refs = []
             node.inline = []
-            removes_styles = node.remove_style_all or node.removed_selectors
             for slot in node.slots:
-                if slot.inlinable and not removes_styles:
+                if slot.inlinable:
                     node.inline.extend(slot.props)
                 else:
                     name = book.register(slot, screen.name)
@@ -145,10 +135,10 @@ def render_node(node, report, depth):
 
     tag = _tag(node, report)
     body = []
-    if node.remove_style_all:
-        body.append(f"{pad}{INDENT}<remove_style_all />")
-    for selector in node.removed_selectors:
-        body.append(f'{pad}{INDENT}<remove_style selector="{selector}" />')
+    # Only the theme's styles: a removal is only ever detected on those, and
+    # <remove_theme> keeps the attributes and <style>s of this element.
+    for selector in node.removed_theme_selectors:
+        body.append(f'{pad}{INDENT}<remove_theme selector="{selector}" />')
     body += [f"{pad}{INDENT}<style{attrs([('name', n), ('selector', s or None)])} />"
              for n, s in node.style_refs]
     for one in node.series:
@@ -199,8 +189,8 @@ def render_screen(screen, book, report):
 
     root = screen.root
     body = []
-    if root.remove_style_all:
-        body.append(f"{INDENT * 2}<remove_style_all />")
+    for selector in root.removed_theme_selectors:
+        body.append(f'{INDENT * 2}<remove_theme selector="{selector}" />')
     body += [f"{INDENT * 2}<style{attrs([('name', n), ('selector', s or None)])} />"
              for n, s in root.style_refs]
     body += render_events(root, report, INDENT * 2)
@@ -249,11 +239,6 @@ def render_globals(book, consts, report, exported):
     lines.append(f"{INDENT}</consts>")
     lines.append("")
 
-    lines.append(f"{INDENT}<styles>")
-    lines.extend(render_style_defs(book.global_names(), book, report, 2))
-    lines.append(f"{INDENT}</styles>")
-    lines.append("")
-
     lines.append(f"{INDENT}<images>")
     for name in sorted(report.images):
         rebuilt = exported.get(name) or {}
@@ -272,6 +257,12 @@ def render_globals(book, consts, report, exported):
     for name in sorted(report.fonts):
         lines.append(f"{INDENT * 2}<!-- TODO: supply a source for {name} -->")
     lines.append(f"{INDENT}</fonts>")
+    lines.append("")
+
+    # The Pro CLI rejects <styles> before <consts>, <fonts> or <images>.
+    lines.append(f"{INDENT}<styles>")
+    lines.extend(render_style_defs(book.global_names(), book, report, 2))
+    lines.append(f"{INDENT}</styles>")
 
     lines.append("</globals>")
     return "\n".join(lines) + "\n"

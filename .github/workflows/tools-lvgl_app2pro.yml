@@ -38,25 +38,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y gdb libsdl2-dev
 
-      - name: Install the plugin's dependencies for the interpreter GDB embeds
-        # lvglgdb imports numpy, Pillow and prettytable at module level, so it
-        # cannot load without them. They have to go to the *system* Python,
-        # which is the one GDB embeds - installing them with the 3.10 above
-        # would put them somewhere GDB never looks.
-        run: |
-          /usr/bin/python3 -m pip install --break-system-packages \
-            -r tools/lvgl_app2pro/src/gdb_plugin/requirements.txt
-
-      - name: Check GDB can load the plugin
-        # The strongest preflight there is: if lvglgdb imports here, it will
-        # import during the run. Without it, a missing dependency surfaces much
-        # later and much less clearly.
-        run: |
-          gdb -batch \
-            -ex "python import sys; print('GDB Python:', sys.version)" \
-            -ex "python sys.path.insert(0, 'tools/lvgl_app2pro/src/gdb_plugin')" \
-            -ex "python import lvglgdb; print('lvglgdb', lvglgdb.__version__, 'loaded')"
-
       - name: Cache the LVGL checkout the example builds against
         uses: actions/cache@v4
         with:

@@ -10,13 +10,13 @@
 		<int name="num_8" value="8" />
 	</consts>
 
-	<styles>
-	</styles>
-
 	<images>
 		<data name="img_lvgl_logo" src_path="images/img_lvgl_logo.png" color_format="argb8888" />
 	</images>
 
 	<fonts>
 	</fonts>
+
+	<styles>
+	</styles>
 </globals>

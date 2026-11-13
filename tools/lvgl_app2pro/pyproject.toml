@@ -5,10 +5,6 @@ description = "Convert a running LVGL Open application into an LVGL Pro XML proj
 readme = "README.md"
 requires-python = ">=3.10"
 
-dependencies = [
-    "lvglgdb",
-]
-
 [project.scripts]
 lvgl_app2pro = "lvgl_app2pro.cli:main"
 

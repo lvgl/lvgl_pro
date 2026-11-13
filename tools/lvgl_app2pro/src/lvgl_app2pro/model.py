@@ -14,6 +14,7 @@ from .mapping import (
     SKIP_CLASSES,
     removal_selector,
     selector_to_xml,
+    spec_attr_values,
 )
 
 
@@ -74,8 +75,7 @@ class Node:
     notes: list = field(default_factory=list)
     # Both filled by resolve_flags().
     flag_attrs: dict = field(default_factory=dict)
-    remove_style_all: bool = False
-    removed_selectors: list = field(default_factory=list)
+    removed_theme_selectors: list = field(default_factory=list)
 
 
 @dataclass
@@ -161,7 +161,8 @@ def build_node(raw, prop_filter, widget_filter):
         theme_styled=themed,
         theme_selectors=selectors,
         slots=slots,
-        widget_data=widget_filter(cls, raw.get("widget_data") or {}, notes),
+        widget_data=widget_filter(
+            cls, {**(raw.get("widget_data") or {}), **spec_attr_values(raw)}, notes),
         events=list(raw.get("events") or []),
         series=list(raw.get("series") or []),
         sections=_sections(raw, prop_filter, notes),
@@ -334,7 +335,8 @@ def _writable_flags(attrs, schema, report):
     return kept
 
 
-def _resolve_style_removal(node, theme_reference, theme_styles_this_class):
+def _resolve_style_removal(node, theme_reference, theme_styles_this_class,
+                           class_theme_selectors=()):
     """Decide what the application removed, by asking what it was given.
 
     Nothing in LVGL records that a style was removed: lv_obj_remove_style()
@@ -354,20 +356,16 @@ def _resolve_style_removal(node, theme_reference, theme_styles_this_class):
     given = theme_reference.get(node.addr) if theme_reference else None
     if given is None:
         # No per-object answer available: fall back to the weaker test, which
-        # can at least see a wholesale removal.
-        node.remove_style_all = theme_styles_this_class and not node.theme_styled
-        return
+        # can at least see a wholesale removal, and to what the class gets.
+        wholesale = theme_styles_this_class and not node.theme_styled
+        given = class_theme_selectors if wholesale else []
 
-    given = set(given)
-    removed = given - set(node.theme_selectors)
-    if not removed:
-        return
-    if removed == given:
-        node.remove_style_all = True
-    else:
-        node.removed_selectors = sorted(
-            {removal_selector(sel) for sel in removed}
-        )
+    removed = set(given) - set(node.theme_selectors)
+    # One removal per selector even when all of the theme is gone: the Pro CLI
+    # requires a selector on <remove_theme>, and lv_xml has no word for "all".
+    node.removed_theme_selectors = sorted(
+        {removal_selector(sel) for sel in removed}
+    )
 
 
 def resolve_flags(screens, class_defaults=None, schema=None, report=None,
@@ -422,7 +420,8 @@ def resolve_flags(screens, class_defaults=None, schema=None, report=None,
             else:
                 attrs = _flag_attrs(node.flags)
             node.flag_attrs = _writable_flags(attrs, schema, report)
-            _resolve_style_removal(node, theme_reference, theme_styles_this_class)
+            _resolve_style_removal(node, theme_reference, theme_styles_this_class,
+                                   (reference or {}).get("theme_selectors") or ())
 
     for screen in screens:
         root = screen.root

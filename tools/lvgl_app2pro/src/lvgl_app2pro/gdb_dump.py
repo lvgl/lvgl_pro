@@ -8,6 +8,7 @@ stopping in the right place, probing what the binary's debug info supports, and
 resolving the pointers in widget_data that the plugin leaves raw.
 """
 
+import functools
 import json
 import os
 import sys
@@ -20,6 +21,7 @@ SRC_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, SRC_ROOT)
 
 from lvgl_app2pro import images  # noqa: E402
+from lvgl_app2pro.mapping import spec_attr_values  # noqa: E402
 
 
 # Where to stop when the caller does not say. The second call has run one
@@ -33,37 +35,20 @@ def _fail(message):
 
 
 def _load_plugin():
-    """Import lvglgdb: the copy shipped here unless another was asked for.
-
-    The copy shipped here is the default because the converter depends on plugin
-    features that are newer than any release, and because it must work against
-    an application built with an older LVGL than the plugin - the plugin reads
-    the application's own debug info, so that skew is fine.
-    """
+    """Import lvglgdb: the single-file bundle, or an LVGL checkout's copy."""
     lvgl_dir = os.environ.get("LVGL_APP2PRO_LVGL")
-    if lvgl_dir:
-        sys.path.insert(0, os.path.join(lvgl_dir, "scripts", "gdb"))
-    else:
-        sys.path.insert(0, os.path.join(SRC_ROOT, "gdb_plugin"))
-
-    for path in json.loads(os.environ.get("LVGL_APP2PRO_SYSPATH", "[]")):
-        if path not in sys.path:
-            sys.path.append(path)
     try:
-        import lvglgdb  # noqa: F401
-    except ImportError as e:
-        missing = getattr(e, "name", "") or ""
+        if lvgl_dir:
+            sys.path.insert(0, os.path.join(lvgl_dir, "scripts", "gdb"))
+            import lvglgdb  # noqa: F401
+        else:
+            # Sourcing the bundle unpacks the plugin and imports it.
+            gdb.execute(f"source {os.environ['LVGL_APP2PRO_PLUGIN']}")
+    except (ImportError, gdb.error) as e:
         hint = ""
-        if missing in ("numpy", "PIL"):
-            # lvglgdb imports both at module level, so they are not optional
-            # even for a run that touches no images. They have to be installed
-            # for the interpreter GDB embeds, which is usually the system one.
-            version = os.environ.get("LVGL_APP2PRO_GDB_PYTHON") or "?"
-            package = "python3-numpy" if missing == "numpy" else "python3-pil"
-            hint = (f"\n  lvglgdb needs it. Install it for the Python {version} "
-                    f"that GDB embeds, not for the one running this tool - on "
-                    f"Debian and Ubuntu that is `sudo apt install {package}`.")
-        elif missing == "math":
+        # An ImportError raised while sourcing reaches here as a gdb.error,
+        # so match the message rather than the exception's module name.
+        if "No module named 'math'" in str(e):
             hint = ("\n  GDB cannot find its own standard library, which means it "
                     "loaded the wrong libpython. Unset LD_LIBRARY_PATH, "
                     "PYTHONHOME and PYTHONPATH and try again.")
@@ -162,11 +147,11 @@ def _resolve_grid_templates(node):
 
 def _resolve_asset(addr):
     """Name a widget_data pointer the way the plugin names style pointers."""
-    from lvglgdb.lvgl.misc.lv_style import _read_image_src, _read_symbol
+    from lvglgdb.lvgl.misc.lv_style import _read_image_src, read_symbol
 
     if not addr:
         return None
-    return _read_symbol(addr) or _read_image_src(addr)
+    return read_symbol(addr) or _read_image_src(addr)
 
 
 # name -> {"file": ...} or {"error": ...}, filled as images are met
@@ -246,7 +231,7 @@ def _collect_events(obj):
         # LVGL installs some itself - lv_keyboard_def_event_cb is added by the
         # keyboard constructor. The rebuilt widget gets them again on its own,
         # and they are not the app's code to reimplement.
-        if name.startswith("lv_"):
+        if name.startswith("lv_") or _defined_in_lvgl(d.get("cb") or ""):
             continue
         out.append({
             "callback": name,
@@ -254,6 +239,34 @@ def _collect_events(obj):
             "preprocess": bool(d.get("is_preprocess")),
         })
     return out
+
+
+@functools.lru_cache(maxsize=None)
+def _lvgl_src_dir():
+    """LVGL's src/ directory: where lv_init() was compiled from."""
+    try:
+        lv_init = gdb.lookup_global_symbol("lv_init").symtab.fullname()
+    except (AttributeError, gdb.error):
+        return None
+    return os.path.dirname(os.path.realpath(lv_init))
+
+
+def _defined_in_lvgl(formatted):
+    """Whether a "0x… <name>" callback was compiled from LVGL's own src/.
+
+    LVGL's static callbacks do not start with lv_: lv_label_bind_text() adds
+    unsubscribe_on_delete_cb, lv_arc_bind_value() arc_value_changed_event_cb.
+    """
+    src = _lvgl_src_dir()
+    if not src:
+        return False
+    try:
+        symtab = gdb.find_pc_line(int(formatted.split()[0], 16)).symtab
+    except (ValueError, IndexError, gdb.error):
+        return False
+    if symtab is None:
+        return False
+    return os.path.realpath(symtab.fullname()).startswith(src + os.sep)
 
 
 def _symbol_from_cb(formatted):
@@ -300,12 +313,15 @@ def probe_class_defaults(classes):
             from lvglgdb.lvgl.widgets import wrap_widget
 
             widget = wrap_widget(reference) or reference
+            widget_data = widget.snapshot().as_dict().get("widget_data") or {}
+            # lv_tileview's constructor sets a scroll snap, for example.
+            widget_data.update(spec_attr_values(reference.snapshot().as_dict()))
             defaults[cls] = {
                 "flags": sorted(reference.flags_list),
                 "theme_selectors": selectors,
                 # What the widget's own fields look like untouched, so the
                 # converter can leave LVGL's defaults out of the XML.
-                "widget_data": widget.snapshot().as_dict().get("widget_data") or {},
+                "widget_data": widget_data,
             }
         except (gdb.error, gdb.MemoryError):
             continue

@@ -528,7 +528,7 @@ To show another screen, edit the `lv_screen_load(...)` line in `sim/main.c`. Add
 
 ### Tests
 
-Tests are XML too: a `<test>` root, with the same `<consts>`, `<styles>` and `<view>` as a component, plus a `<steps>` block. Keep them in `tests/`. Tests run on the first target in `project.xml`; they cannot select another one.
+Tests are XML too: a `<test>` root, with the same `<consts>`, `<styles>` and `<view>` as a component, plus a `<steps>` block. Keep them in `tests/`. Tests run on the first target in `project.xml`, or on the one that `--target <name>` names. `run-all-tests` runs every test on that one target.
 
 A test's `<view>` is built exactly like a component's, so the usual test extends a real screen of the project and drives the actual UI:
 

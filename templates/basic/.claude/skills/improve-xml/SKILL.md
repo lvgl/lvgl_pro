@@ -9,11 +9,7 @@ Read `AGENTS.md` at the project root first, if it is not in your context. Follow
 "Working with the user" rules.
 
 The UI must look and work the same after the change, unless the user asks for a
-different result.
-
-<!-- TODO: when run-test/run-all-tests can select a target, replace the screenshot
-     before/after steps with screenshot_compare tests per screen and target, rerun
-     after each change, and keep the tests in the project. -->
+different result. Screenshot tests check this: one for each screen on each target.
 
 ## Steps
 
@@ -32,12 +28,34 @@ Show this checklist to the user and keep it up to date.
 lvglpro validate . --errorlimit 25
 lvglpro generate .
 lvglpro compile .
-lvglpro screenshot . screens/<screen>.xml --out /tmp/before/<target>_<screen>.png --target <target>
 lvglpro run-all-tests .
 ```
 
-Screenshot every screen on every target in `project.xml`. If `validate` or the tests
-fail now, tell the user before you change anything.
+If `validate`, `compile`, or the tests fail now, tell the user before you change anything.
+
+Then write a screenshot test for each screen on each target in `project.xml`:
+
+```xml
+<test>
+    <view extends="<screen>"/>
+    <steps>
+        <wait ms="300"/>
+        <screenshot_compare path="<screen>.png"/>
+    </steps>
+</test>
+```
+
+- First target: `tests/<screen>.xml`. These tests stay in the project. Skip a screen that
+  already has a screenshot test.
+- Each other target: `improve_check/<target>/<screen>.xml`. `run-all-tests` runs every test
+  in `tests/` on one target, so these stay out of `tests/`. Delete the folder in step 5.
+
+Run each new test once. The first run saves the reference images: the "before" state.
+
+```bash
+lvglpro run-test . tests/<screen>.xml
+lvglpro run-test . improve_check/<target>/<screen>.xml --target <target>
+```
 
 ### 2. Audit
 
@@ -67,7 +85,8 @@ gain, and the effort (small, medium, large). Group them by area. Ask which numbe
 
 ### 4. Change
 
-Do one finding at a time. After each one, run `lvglpro validate .`. Do not change what
+Do one finding at a time. After each one, run `lvglpro validate .`, `lvglpro generate .`,
+and the screenshot tests, so you know which change made a difference. Do not change what
 the user did not select. A renamed constant, subject, or component changes the exported
 C names: tell the user, because the application C code may use them.
 
@@ -76,17 +95,17 @@ C names: tell the user, because the application C code may use them.
 ```bash
 lvglpro generate .
 lvglpro compile .
-lvglpro screenshot . screens/<screen>.xml --out /tmp/after/<target>_<screen>.png --target <target>
 lvglpro run-all-tests .
+lvglpro run-test . improve_check/<target>/<screen>.xml --target <target>
 ```
 
-Compare each "after" image with its "before" image (`cmp` is enough for equal files). If
-two images differ, look at both, and tell the user if the change was not intended.
-Smaller fonts and image formats can change pixels a little; say so.
+A failed `screenshot_compare` saves the new image next to the reference, with an `_err`
+suffix. Look at both, and tell the user if the change was not intended. Smaller fonts and
+image formats can change pixels a little; say so. Then delete `improve_check/`.
 
 ### 6. Report
 
 - The findings done, and the ones left.
 - The C names that changed.
-- The screenshot comparison and the test result.
+- The screenshot tests added to `tests/`, and the test results on each target.
 - What is not verified.

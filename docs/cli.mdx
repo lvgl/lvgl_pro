@@ -156,9 +156,12 @@ lvglpro run-test <project-path> <testing-file> [options]
 lvglpro run-all-tests <project-path> [options]
 ```
 
-| Option           | Description                                                             |
-| ---------------- | ----------------------------------------------------------------------- |
-| `--slowdown <n>` | Slow execution down N times for debugging (`0` = no delay, the default) |
+| Option            | Description                                                                         |
+| ----------------- | ----------------------------------------------------------------------------------- |
+| `--slowdown <n>`  | Slow execution down N times for debugging (`0` = no delay, the default)             |
+| `--target <name>` | The `project.xml` target to run on, at its display size (default: the first target) |
+
+`run-all-tests` runs every test on that one target.
 
 `<testing-file>` is the path to a test XML, relative to `<project-path>`.
 

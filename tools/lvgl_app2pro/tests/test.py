@@ -42,8 +42,11 @@ SHOTS = HERE / "reference_screenshots"
 WORK = HERE / ".work"
 LVGL = WORK / "lvgl"
 
+sys.path.insert(0, str(SRC))
+from lvgl_app2pro.driver import DumpError, fetch_plugin  # noqa: E402  (needs the path set first)
+
 LVGL_REPO = "https://github.com/lvgl/lvgl.git"
-LVGL_TAG = "v9.5.0"
+LVGL_TAG = "v9.6.0"
 
 # How far a render may drift from its committed screenshot. The same binary
 # drawing the same screen is expected to be identical, so this is only slack
@@ -138,8 +141,16 @@ def step(message):
 def fetch_lvgl():
     WORK.mkdir(exist_ok=True)
     if LVGL.is_dir():
-        print(f"  reusing {LVGL}")
-        return
+        tag = subprocess.run(
+            ["git", "-C", str(LVGL), "describe", "--tags", "--exact-match"],
+            capture_output=True, text=True).stdout.strip()
+        if tag == LVGL_TAG:
+            print(f"  reusing {LVGL}")
+            return
+        # A checkout from before LVGL_TAG changed would build the apps against
+        # the wrong LVGL.
+        print(f"  {LVGL} is {tag or 'not at a tag'}, not {LVGL_TAG}")
+        shutil.rmtree(LVGL)
     print(f"  fetching {LVGL_TAG}")
     run(["git", "clone", "--depth", "1", "--branch", LVGL_TAG,
          LVGL_REPO, str(LVGL)])
@@ -172,8 +183,7 @@ def convert(app):
         raise Failure(f"{app.name} is not built; run `test.py build` first")
 
     shutil.rmtree(app.out, ignore_errors=True)
-    # No --lvgl: the plugin shipped in src/gdb_plugin/ is the one to use, and it
-    # is deliberately newer than the LVGL the app was built against.
+    # No --lvgl or --plugin: the plugin is fetched the way a user's run fetches it.
     command = [sys.executable, str(ROOT / "lvgl_app2pro.py"), str(app.binary),
                "-o", str(app.out)]
     if app.args:
@@ -336,12 +346,12 @@ def compare_the_two_sides(app, app_shots, converted_shots):
 def snapshot_app(app):
     """Render each tab of the running app with lv_snapshot_take()."""
     script = WORK / app.name / "snapshot.gdb"
+    try:
+        plugin = fetch_plugin()
+    except DumpError as e:
+        raise Failure(str(e))
     script.write_text(f"""
-python
-import sys
-sys.path.insert(0, "{SRC}/gdb_plugin")
-import lvglgdb
-end
+source {plugin}
 break lv_timer_handler
 # The second call: by then LVGL has laid out and drawn a full cycle.
 ignore 1 1

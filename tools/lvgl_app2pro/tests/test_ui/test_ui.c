@@ -10,6 +10,10 @@
  *   - states set from code, and object flags cleared from code
  *   - an image compiled in as a C array
  *   - an event callback
+ *   - a container that snaps its children (scroll_snap_x) and hides its
+ *     scrollbar, holding a row that removes its styles and then sets its own
+ *     position
+ *   - subject bindings, which add LVGL's own event callbacks to the widgets
  *
  * Everything is fixed: no animation, no random data, and the built-in font
  * throughout, so a screenshot of this and a screenshot of the converted
@@ -29,6 +33,8 @@ static lv_style_t style_card;
 static lv_style_t style_pressed;
 static lv_style_t style_knob;
 static lv_style_t style_indicator;
+
+static lv_subject_t temperature;
 
 /* The test harness calls lv_snapshot_take() from GDB. Nothing in this file
  * calls it, so without a reference the linker leaves it out of the binary. */
@@ -152,6 +158,27 @@ static void data_tab_create(lv_obj_t * parent)
     lv_obj_set_size(note2, lv_pct(90), 40);
     lv_obj_add_style(note2, &style_card, 0);
     lv_obj_remove_flag(note2, LV_OBJ_FLAG_SCROLLABLE);
+
+    lv_obj_t * carousel = lv_obj_create(parent);
+    lv_obj_set_size(carousel, lv_pct(90), 80);
+    lv_obj_set_scroll_snap_x(carousel, LV_SCROLL_SNAP_CENTER);
+    lv_obj_set_scrollbar_mode(carousel, LV_SCROLLBAR_MODE_OFF);
+
+    /*Its position has to survive the style removal*/
+    lv_obj_t * row = lv_obj_create(carousel);
+    lv_obj_remove_style_all(row);
+    lv_obj_set_size(row, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+    lv_obj_set_pos(row, 10, 20);
+
+    /*The bindings add unsubscribe_on_delete_cb and arc_value_changed_event_cb,
+     *which are LVGL's, not the application's*/
+    lv_obj_t * temperature_label = lv_label_create(row);
+    lv_label_bind_text(temperature_label, &temperature, "%d C");
+
+    lv_obj_t * arc = lv_arc_create(carousel);
+    lv_obj_set_size(arc, 50, 50);
+    lv_obj_set_x(arc, 200);
+    lv_arc_bind_value(arc, &temperature);
 }
 
 void test_ui_create(void)
@@ -172,6 +199,8 @@ void test_ui_create(void)
 
     lv_style_init(&style_indicator);
     lv_style_set_bg_color(&style_indicator, lv_color_hex(0x4caf50));
+
+    lv_subject_init_int(&temperature, 21);
 
     lv_obj_t * screen = lv_screen_active();
     lv_obj_set_style_pad_all(screen, 0, 0);

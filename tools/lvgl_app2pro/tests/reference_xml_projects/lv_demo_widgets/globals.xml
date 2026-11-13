@@ -28,9 +28,6 @@
 		<int name="num_32767" value="32767" />
 	</consts>
 
-	<styles>
-	</styles>
-
 	<images>
 		<data name="img_clothes" src_path="images/img_clothes.png" color_format="argb8888" />
 		<data name="img_demo_widgets_avatar" src_path="images/img_demo_widgets_avatar.png" color_format="argb8888" />
@@ -42,4 +39,7 @@
 		<!-- TODO: supply a source for lv_font_montserrat_16 -->
 		<!-- TODO: supply a source for lv_font_montserrat_24 -->
 	</fonts>
+
+	<styles>
+	</styles>
 </globals>

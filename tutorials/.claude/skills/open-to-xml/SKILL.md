@@ -54,8 +54,6 @@ git clone --depth 1 https://github.com/lvgl/lvgl_pro /tmp/lvgl_pro
 cd /tmp/lvgl_pro/tools/lvgl_app2pro
 ```
 
-<!-- Until lvgl/lvgl_pro PR #463 is merged, add: --branch lvgl_open_to_xml -->
-
 Read `README.md` there. If it disagrees with this skill, the README is right.
 
 ### 3. Convert

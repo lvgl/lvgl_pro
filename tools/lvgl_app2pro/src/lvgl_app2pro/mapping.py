@@ -4,6 +4,8 @@ Every table here is copied from a source of truth in the LVGL repos, named
 above the table. When the two disagree, the runtime is right.
 """
 
+from .schema import IMPLICIT_DEFAULTS
+
 # Style properties the XML engine accepts, from lv_xml_style_prop_to_enum() in
 # lv_xml/src/lv_xml_base_types.c. The XML name is the lowercased runtime name,
 # so this set doubles as the whitelist: a property missing here cannot be
@@ -179,19 +181,19 @@ NOT_FROM_WIDGET_DATA = frozenset(
 
 # lv_obj properties kept in obj->spec_attr, which the plugin reports beside
 # widget_data rather than in it. They are compared and converted as widget
-# data. Without a spec_attr LVGL's getters return these values.
+# data. Without a spec_attr LVGL's getters return the enum's implicit default.
 SPEC_ATTR_PROPS = {
-    "scroll_snap_x": 0,   # LV_SCROLL_SNAP_NONE
-    "scroll_snap_y": 0,
-    "scrollbar_mode": 3,  # LV_SCROLLBAR_MODE_AUTO
+    "scroll_snap_x": "lv_scroll_snap",
+    "scroll_snap_y": "lv_scroll_snap",
+    "scrollbar_mode": "lv_scrollbar_mode",
 }
 
 
 def spec_attr_values(snapshot):
     values = {}
-    for name, default in SPEC_ATTR_PROPS.items():
+    for name, enumdef in SPEC_ATTR_PROPS.items():
         value = snapshot.get(name)
-        values[name] = default if value is None else value
+        values[name] = IMPLICIT_DEFAULTS[enumdef] if value is None else value
     return values
 
 

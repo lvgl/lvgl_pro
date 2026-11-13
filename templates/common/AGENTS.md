@@ -361,8 +361,8 @@ Images are external resources: register them in the `<images>` block of `globals
 <images>
   <!-- Make a PNG from an SVG or a JPEG, and scale it. Runs before <data> and <file>,
        so `dest` doesn't have to exist yet. `width`, `height` or `scale`, and a
-       missing axis keeps the aspect ratio. `color_format` defaults to rgb565, which
-       makes every pixel opaque: set argb8888 or rgb565a8 to keep transparency -->
+       missing axis keeps the aspect ratio. `color_format` is required. rgb565
+       makes every pixel opaque: use argb8888 or rgb565a8 to keep transparency -->
   <convert src="images/icons/home.svg" dest="images/icons/home.png" width="24" color_format="argb8888"/>
 
   <data name="icon_home" src_path="images/icons/home.png" color_format="argb8888"/>

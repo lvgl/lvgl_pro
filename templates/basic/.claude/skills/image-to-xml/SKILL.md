@@ -26,6 +26,7 @@ Ask in one message:
 
 - Is it one screen, or several screens of one flow? In which order?
 - The display size. If the image has another size, the layout is scaled.
+- The target in `project.xml` that the image is for, if there are several.
 - What must work, not only look right: buttons, sliders, screen changes, live values.
 - The input: touch, buttons, or an encoder.
 - The fonts and icons. Ask for the TTF and the icon files (SVG or PNG), and the
@@ -73,7 +74,7 @@ Build from small to large. For each file:
    that is used once.
 2. `lvglpro validate . --errorlimit 25`
 3. For a screen: `lvglpro generate .` and `lvglpro compile .`, then
-   `lvglpro screenshot . screens/<screen>.xml --out /tmp/<screen>.png --delay 300`.
+   `lvglpro screenshot . screens/<screen>.xml --target <target> --out /tmp/<screen>.png --delay 300`.
    A component screenshot renders at the display size, so check components inside a
    screen.
 

@@ -98,6 +98,8 @@ with XML where you can:
 Rules:
 
 - Ask before you replace a callback that does more than one thing.
+- Copy the `trigger` of the `<event_cb>` to the event that replaces it. Without it, the
+  trigger is `clicked`.
 - Keep every `<event_cb>` of a callback that stays in C: one for each widget and
   trigger it was attached to. Remove the `TODO` comments, and list each callback once in
   the report: the user must add `void X(lv_event_t * e)` to the C code.
@@ -134,6 +136,7 @@ Ask which of these to do. Each one costs time:
 ### 7. Check
 
 ```bash
+cd <outdir>
 lvglpro validate . --errorlimit 25
 lvglpro generate .
 lvglpro compile .

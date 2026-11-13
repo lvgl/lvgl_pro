@@ -28,10 +28,11 @@ or small text from it.
      often 2x or 3x.
    - Other aspect ratio: crop the image to the screen area first, or ask the user how
      to fit it.
-3. Make a copy at display size. Use it for layout, colors, and the final comparison:
+3. Make a copy at display size. Use it for layout, colors, and the final comparison.
+   Put the display width and height in place of `480, 320`:
 
    ```bash
-   python3 -c "from PIL import Image; Image.open('ref.png').convert('RGB').resize((W, H), Image.LANCZOS).save('/tmp/img/ref.png')"
+   python3 -c "from PIL import Image; Image.open('ref.png').convert('RGB').resize((480, 320), Image.LANCZOS).save('/tmp/img/ref.png')"
    ```
 
 4. Match fonts and icons on the **original** image: more pixels give better results.

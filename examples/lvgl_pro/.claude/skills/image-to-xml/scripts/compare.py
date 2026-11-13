@@ -59,6 +59,10 @@ def main():
     a = ap.parse_args()
     if a.cell < 1:
         ap.error("--cell must be 1 or more")
+    if a.thr < 0:
+        ap.error("--thr must be 0 or more")
+    if a.top < 1:
+        ap.error("--top must be 1 or more")
 
     shot = Image.open(a.screenshot).convert("RGB")
     ref = Image.open(a.reference).convert("RGB")

@@ -86,7 +86,12 @@ def candidates(paths, weights):
             files.append(p)
     for f in files:
         try:
-            axes = ImageFont.truetype(f, 20).get_variation_axes()
+            font = ImageFont.truetype(f, 20)
+        except OSError:
+            print(f"skipped {f}: it cannot be loaded as a font")
+            continue
+        try:
+            axes = font.get_variation_axes()
         except Exception:
             axes = []
         wght = [a for a in axes if axis_name(a) in ("weight", "wght")]
@@ -109,6 +114,8 @@ def main():
     a = ap.parse_args()
 
     crop = trim(coverage(Image.open(a.crop)))
+    if crop is None:
+        ap.error(f"{a.crop} has no text: it is one flat color")
     ch, cw = crop.shape
     weights = [int(w) for w in a.weights.split(",")]
     rows = []
@@ -126,6 +133,9 @@ def main():
             rows.append(dict(family=family(f), file=os.path.basename(f), wght=wt, size=size,
                              shape=shape, ink=ink_err, width=cand.shape[1] / cw - 1,
                              h=cand.shape[0] - ch))
+    if not rows:
+        ap.error("no font could be rendered: check the font files, and that --weights is "
+                 "inside the weight range of each variable font")
 
     # Two stages. The family from shape and width only: total ink depends on the
     # renderer (a browser draws text lighter than FreeType). Then, inside that family,

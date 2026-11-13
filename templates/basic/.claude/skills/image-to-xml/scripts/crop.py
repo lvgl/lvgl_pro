@@ -51,9 +51,16 @@ def main():
     ap.add_argument("--alpha", help="background color 0xRRGGBB, or auto")
     ap.add_argument("--pad", type=int, default=0)
     a = ap.parse_args()
+    if a.zoom < 1:
+        ap.error("--zoom must be 1 or more")
+    if a.pad < 0:
+        ap.error("--pad must be 0 or more")
 
     x, y, w, h = map(int, a.box.split(","))
-    img = Image.open(a.image).convert("RGB").crop((x, y, x + w, y + h))
+    img = Image.open(a.image).convert("RGB")
+    if w < 1 or h < 1 or x < 0 or y < 0 or x + w > img.width or y + h > img.height:
+        ap.error(f"the box must be inside the {img.width}x{img.height} image")
+    img = img.crop((x, y, x + w, y + h))
     if a.alpha:
         px = np.asarray(img)
         rgb, alpha = color_to_alpha(px, parse_color(a.alpha, px))

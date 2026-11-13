@@ -15,7 +15,7 @@ How to work in this LVGL Pro project. The UI is written in LVGL Pro XML: HTML-li
 
 - **Show the steps first.** Before you start, show a short checklist of the steps. Mark each step when it is done, so the user always sees where the work is.
 - **Ask, do not assume.** Ask when a request has two meanings, and before work that takes much time or many tokens: many screens, a large rewrite, many screenshot rounds. Ask all the questions together.
-- **Check the CLI first.** Run `lvglpro --version` and check that `LVGLPRO_CLI_TOKEN` is set. If one is missing, ask the user to install the CLI or to give a token. If the user cannot, continue, but mark all the work "not verified".
+- **Check the CLI first.** Run `lvglpro --version` and check that `LVGLPRO_CLI_TOKEN` is set. If one is missing, ask the user to install the CLI or to set `LVGLPRO_CLI_TOKEN` in their environment. Do not ask for the token in the chat. If the user cannot, continue, but mark all the work "not verified".
 - **Write short and plain.** Use the ASD-STE100 style: short sentences, simple words, active voice. Do not explain what is obvious.
 - **Comment the XML for the next reader.** Use comments to mark large blocks and to explain what is not obvious. Do not repeat what the line says.
 - **Report at the end.** List what you changed, what the CLI checked, and what is not verified.
@@ -592,7 +592,7 @@ The loop, per change:
 2. **Write the XML.** Small steps, one file at a time.
 3. **`lvglpro validate .`** Fix every error, then re-run. The errors name the file, the line and the attribute.
 4. **`lvglpro generate .` and `lvglpro compile .`** A compile error also means that the next screenshot shows an old build.
-5. **`lvglpro screenshot`, then look at the image.** Validation says the XML is legal, not that the UI is right. Check the sizes, the alignment, and that nothing is missing or clipped.
+5. **`lvglpro screenshot . screens/<screen>.xml`, then look at the image.** Validation says the XML is legal, not that the UI is right. Check the sizes, the alignment, and that nothing is missing or clipped.
 6. **`lvglpro generate .`, then `lvglpro run-all-tests .`** if the project has tests, and add a test for what you changed.
 7. **Report what you could not check.** Without a token nothing was verified, so say so.
 

@@ -36,8 +36,8 @@ lvglpro screenshot . screens/<screen>.xml --out /tmp/before/<target>_<screen>.pn
 lvglpro run-all-tests .
 ```
 
-Screenshot every screen on every target in `project.xml`. If `validate` or the tests
-fail now, tell the user before you change anything.
+Screenshot every screen on every target in `project.xml`. If a command fails now, tell
+the user before you change anything.
 
 ### 2. Audit
 

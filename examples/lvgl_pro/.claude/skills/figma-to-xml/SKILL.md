@@ -78,7 +78,8 @@ widgets.
 Write `figma_review/index.html`: one self-contained page, no external files except the
 PNGs next to it. Contents:
 
-1. Per screen: the Figma image and the LVGL image side by side, and the differences.
+1. Per screen: the LVGL image. With the MCP server, also the Figma image next to it, and
+   the differences.
 2. **XML options**, numbered. Typical ones:
    - Events and screen changes. The plugin exports none.
    - Widgets the plugin does not support yet (see
@@ -97,8 +98,8 @@ Tell the user the path, and ask which numbers to do.
 ### 5. Do what the user selects
 
 Do the XML options one at a time. After each one, run `validate`, `generate`, `compile`,
-and `screenshot`, as in step 2. Without `generate` and `compile` the screenshot can show
-the old build. The
+and `screenshot`, as in step 2, and `run-all-tests` if the project has tests. Without
+`generate` and `compile` the screenshot can show the old build. The
 Figma options are for the designer; do not change the Figma file.
 
 ### 6. Report

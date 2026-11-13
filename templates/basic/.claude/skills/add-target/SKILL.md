@@ -42,7 +42,7 @@ Ask in one message:
 - What changes: only sizes (spacing, fonts, icons), or the layout too.
 - The templates name their only target `target1`. Rename it to a real name, for example
   `large`? This changes the C names (`<PROJECT>_TARGET_TARGET1`) that the application may
-  use.
+  use, and every `if_target="target1"` must then use the new name.
 
 ### 2. Take the "before" state
 
@@ -57,11 +57,16 @@ The old target must look the same at the end.
 
 ### 3. Add the target to `project.xml`
 
+Add it inside the existing `<targets>` block:
+
 ```xml
-<target name="small">
-    <display width="320" height="240"/>
-    <memory name="int_flash" size="512kB"/>
-</target>
+<targets>
+    <!-- The existing targets -->
+    <target name="small">
+        <display width="320" height="240"/>
+        <memory name="int_flash" size="512kB"/>
+    </target>
+</targets>
 ```
 
 The first target is the default of `lvglpro screenshot`.
@@ -144,7 +149,8 @@ clipped parts, icons with the wrong size. Compare the old target with "before".
 
 - The target, and the constants, fonts, images, and views added per target.
 - How the application selects the target in C. Read the names in `<project>_gen.h`:
-  at runtime with `<project>_set_target(<PROJECT>_TARGET_<NAME>)`, or at compile time
+  at runtime with `<project>_set_target(<PROJECT>_TARGET_<NAME>)` before `<project>_init()`,
+  which sets up the global styles and fonts for the current target, or at compile time
   with `-D<PROJECT>_COMPILE_TARGET=<PROJECT>_TARGET_<NAME>` (a bit mask, so targets can
   be ORed). Only compile-time selection removes the other targets' assets from the
   binary.

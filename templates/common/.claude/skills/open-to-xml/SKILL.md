@@ -42,7 +42,8 @@ Check, and stop with a clear message if one fails:
 - `python3` 3.10 or newer.
 - The app uses LVGL v9.6 or newer, and is built with `-O0 -g3`. Older versions are
   rejected by the tool.
-- Network access on the first run. The tool downloads LVGL's GDB plugin once.
+- Network access on the first run. The tool downloads LVGL's GDB plugin, and keeps a
+  copy for runs without a network.
 
 ### 2. Get the tool
 

@@ -11,6 +11,7 @@ upscaled JPEGs. The results are measurements, not facts: check them with a scree
 ```bash
 pip install pillow numpy          # all scripts
 pip install cairosvg              # icon_match.py only
+pip install fonttools             # variable fonts only (step 4)
 mkdir -p /tmp/img                 # work folder, outside the project
 T=.claude/skills/image-to-xml/scripts
 ```
@@ -108,7 +109,7 @@ panel also gets `radius~N` and, if it has one, `shadow or soft edge: l t r b`.
    px size: browsers do the same.
 
    ```bash
-   python3 -m fontTools varLib.instancer Inter.ttf wght=600 opsz=16 -o fonts/Inter-SemiBold.ttf
+   python3 -m fontTools varLib.instancer /tmp/img/fonts/Inter.ttf wght=600 opsz=16 -o fonts/Inter-SemiBold.ttf
    ```
 
 6. Platform fonts cannot be shipped. Use a free font that looks the same:
@@ -133,7 +134,7 @@ panel also gets `radius~N` and, if it has one, `shadow or soft edge: l t r b`.
    curl -sL "$(npm view @tabler/icons dist.tarball)" | tar xz && mv package tabler
    curl -sL "$(npm view @material-symbols/svg-400 dist.tarball)" | tar xz && mv package material
    cd -
-   python3 $T/icon_match.py /tmp/img/icon1.png /tmp/img/sets/lucide/icons /tmp/img/sets/tabler/icons/outline
+   python3 $T/icon_match.py /tmp/img/icon1.png /tmp/img/sets/lucide/icons /tmp/img/sets/tabler/icons/outline /tmp/img/sets/material/outlined
    ```
 
    Lower is better. An exact icon scores about 0.1 to 0.2. Look at the top three

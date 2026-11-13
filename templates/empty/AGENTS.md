@@ -11,6 +11,19 @@ How to work in this LVGL Pro project. The UI is written in LVGL Pro XML: HTML-li
 5. **Read how a feature works before you use it.** The [XML syntax docs](https://lvgl.io/docs/pro/syntax/overview) explain each feature on its own page. For the shape of real, working XML, read this project's own files, then the templates, examples and tutorials in [lvgl/lvgl_pro](https://github.com/lvgl/lvgl_pro).
 6. **Ask the LVGL MCP server about LVGL itself.** `.mcp.json` in this folder connects it at `https://lvgl.mcp.kapa.ai/`. Prefer it over recalling LVGL APIs from memory.
 
+## Working with the user
+
+- **Show the steps first.** Before you start, show a short checklist of the steps. Mark each step when it is done, so the user always sees where the work is.
+- **Ask, do not assume.** Ask when a request has two meanings, and before work that takes much time or many tokens: many screens, a large rewrite, many screenshot rounds. Ask all the questions together.
+- **Work without questions only when asked.** If the user asks you to work without questions, skip the confirmation steps: make the reasonable choice, write it in the spec as an assumption if the task has a spec, and list the assumptions in the report. Still ask before you delete or overwrite the user's files.
+- **Check the CLI first.** Run `lvglpro --version` and check that `LVGLPRO_CLI_TOKEN` is set. If one is missing, ask the user to install the CLI or to set `LVGLPRO_CLI_TOKEN` in their environment. Do not ask for the token in the chat. If the user cannot, continue, but mark all the work "not verified".
+- **Fix and retry, then stop.** When a command fails, fix the file the error names and run the command again. After three failed tries on the same error, stop and report it. Do not build on top of a failing step.
+- **Write short and plain.** Use the ASD-STE100 style: short sentences, simple words, active voice. Do not explain what is obvious.
+- **Comment the XML for the next reader.** Use comments to mark large blocks and to explain what is not obvious. Do not repeat what the line says.
+- **Report at the end.** List what you changed, what the CLI checked, and what is not verified.
+
+The skills in `.claude/skills/` give the steps for larger tasks: `open-to-xml` (LVGL C app to XML), `figma-to-xml`, `image-to-xml`, `idea-to-xml`, `improve-xml`, and `add-target`.
+
 ## Project layout
 
 ```
@@ -350,7 +363,8 @@ Images are external resources: register them in the `<images>` block of `globals
 <images>
   <!-- Make a PNG from an SVG or a JPEG, and scale it. Runs before <data> and <file>,
        so `dest` doesn't have to exist yet. `width`, `height` or `scale`, and a
-       missing axis keeps the aspect ratio. `color_format` is required -->
+       missing axis keeps the aspect ratio. `color_format` is required. rgb565
+       makes every pixel opaque: use argb8888 or rgb565a8 to keep transparency -->
   <convert src="images/icons/home.svg" dest="images/icons/home.png" width="24" color_format="argb8888"/>
 
   <data name="icon_home" src_path="images/icons/home.png" color_format="argb8888"/>
@@ -388,7 +402,7 @@ Fonts are registered in the `<fonts>` block of `globals.xml`, from TTF files. Th
 </view>
 ```
 
-A `<bin>` font takes `range` and `symbols` to pick the glyphs to include, and `fallback="<other_font>"` to look up the ones it does not have in another font.
+A `<bin>` font takes `range` and `symbols` to pick the glyphs to include, and `lv_fallback="<other_font>_data"` to look up the ones it does not have in another `<bin>` font. The value is the other font's C name: its `name` with `_data` added.
 
 ### Translations
 
@@ -407,7 +421,7 @@ Translated strings live in `translations.xml`. `languages` lists the language co
 
 `translation_tag` is a property of `lv_label`, and setting it makes the label follow the active language. Missing translations fall back, as described in [LVGL's translation module](https://lvgl.io/docs/open/main-modules/translation). The application picks the language with `lv_translation_set_language("de")`.
 
-For Chinese, Japanese or Korean prefer a `<tiny_ttf>` font, which loads any glyph on demand from one TTF. With `<bin>` fonts, chain one font per language with `fallback`.
+For Chinese, Japanese or Korean prefer a `<tiny_ttf>` font, which loads any glyph on demand from one TTF. With `<bin>` fonts, chain one font per language with `lv_fallback`.
 
 ### Targets
 
@@ -449,7 +463,9 @@ For Chinese, Japanese or Korean prefer a `<tiny_ttf>` font, which loads any glyp
 
 `if_target` works on `<images>`, `<fonts>`, `<styles>`, `<consts>` and, most importantly, `<view>`. Name several targets as `if_target="large|medium"`.
 
-**The first matching block wins, and a block with no `if_target` matches every target.** So the unconditional block has to come last. Put it anywhere earlier and it captures every target, and the specific blocks after it are never reached. Read [Targets](https://lvgl.io/docs/pro/syntax/targets) before using it on a view.
+A component can have several `<view>`s with `if_target`. A screen can have only one `<view>`, so to change a screen's layout per target, put the layout in a component.
+
+**For each name, the first matching definition wins, and a block with no `if_target` matches every target.** So the unconditional definition of a name has to come after the specific ones. Put it earlier and it captures every target, without any error. A plain block with other names, for example the `<convert>`s of all the sizes, can come first. Read [Targets](https://lvgl.io/docs/pro/syntax/targets) before using it on a view.
 
 ### Legacy elements
 
@@ -496,6 +512,8 @@ lvglpro run-all-tests .
 
 Every command needs the token. If it isn't set, say the XML is unverified rather than implying it was checked. `lvglpro <command> --help` lists the current options for any command.
 
+`screenshot` runs the exported C, and builds it only when there is no build yet. So run `lvglpro generate .` and `lvglpro compile .` before `screenshot`. Otherwise it shows the previous build, without a warning. `screenshot` also takes `--target <name>` (default: the first target in `project.xml`) and `--language <code>`.
+
 `run-all-tests` and `run-test` compile the project themselves, but they build the exported C, so run `generate` after every XML change and before the tests.
 
 ### In the simulator
@@ -512,7 +530,7 @@ To show another screen, edit the `lv_screen_load(...)` line in `sim/main.c`. Add
 
 ### Tests
 
-Tests are XML too: a `<test>` root, with the same `<consts>`, `<styles>` and `<view>` as a component, plus a `<steps>` block. Keep them in `tests/`.
+Tests are XML too: a `<test>` root, with the same `<consts>`, `<styles>` and `<view>` as a component, plus a `<steps>` block. Keep them in `tests/`. Tests run on the first target in `project.xml`; they cannot select another one.
 
 A test's `<view>` is built exactly like a component's, so the usual test extends a real screen of the project and drives the actual UI:
 
@@ -575,8 +593,8 @@ The loop, per change:
 1. **Look it up.** The tag's schema, this project's `globals.xml` and `components/`, then the syntax docs for the feature. LVGL questions go to the MCP server.
 2. **Write the XML.** Small steps, one file at a time.
 3. **`lvglpro validate .`** Fix every error, then re-run. The errors name the file, the line and the attribute.
-4. **`lvglpro screenshot`, then look at the image.** Validation says the XML is legal, not that the UI is right. Check the sizes, the alignment, and that nothing is missing or clipped.
-5. **`lvglpro generate .` and `lvglpro compile .`** every few iterations, to catch what only shows up in the C.
+4. **`lvglpro generate .` and `lvglpro compile .`** A compile error also means that the next screenshot shows an old build.
+5. **`lvglpro screenshot . screens/<screen>.xml`, then look at the image.** Validation says the XML is legal, not that the UI is right. Check the sizes, the alignment, and that nothing is missing or clipped.
 6. **`lvglpro generate .`, then `lvglpro run-all-tests .`** if the project has tests, and add a test for what you changed.
 7. **Report what you could not check.** Without a token nothing was verified, so say so.
 

@@ -54,7 +54,7 @@ Read `project.xml`, `globals.xml`, and all the XML files. Look for:
 | Names | Names that do not follow the naming table in `AGENTS.md`. A `name="..."` that nothing uses |
 | Comments | Large blocks with no comment. Comments that repeat the line |
 | Tests | Flows and components with no test in `tests/` |
-| Images | A PNG larger than the size it is shown at: scale it with `<convert>`. `argb8888` on an image with no transparency: `rgb565` is half the size. A `<convert>` without `color_format`: the default is `rgb565`, which makes every pixel opaque. Images that nothing uses |
+| Images | A PNG larger than the size it is shown at: scale it with `<convert>`. `argb8888` on an image with no transparency: `rgb565` is half the size. `rgb565` on an image with transparency: it makes every pixel opaque. Images that nothing uses |
 | Fonts | A `range` wider than the text needs: check the text in the XML and `translations.xml`. Sizes that are almost the same (15 and 16). `bpp` higher than needed. Fonts that nothing uses |
 
 To check the PNG sizes, in subfolders too: `find images -name '*.png' -exec file {} +`.

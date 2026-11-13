@@ -49,7 +49,7 @@ spec.
 | Fonts | [Google Fonts](https://fonts.google.com): Inter, Roboto, Montserrat. For Chinese, Japanese, or Korean: Noto Sans. `templates/basic` in [lvgl/lvgl_pro](https://github.com/lvgl/lvgl_pro) ships Montserrat |
 | Icon fonts | [Font Awesome](https://fontawesome.com) (free set), as in `templates/basic` |
 | Icons (SVG) | [Lucide](https://lucide.dev), [Feather](https://feathericons.com), [Heroicons](https://heroicons.com), [Material Symbols](https://fonts.google.com/icons). Convert with `<convert ... color_format="argb8888"/>`. Many use `currentColor`, which renders as nothing: replace it with a real color before the conversion, see [Images](https://lvgl.io/docs/pro/syntax/images) |
-| Photos | [Unsplash](https://unsplash.com), [Pexels](https://www.pexels.com). Scale them down with `<convert>` to the size they are shown at |
+| Photos | [Unsplash](https://unsplash.com), [Pexels](https://www.pexels.com). Scale them down with `<convert ... color_format="rgb565"/>` to the size they are shown at |
 | LVGL UIs | `examples/`, `tutorials/`, and `templates/basic/` in [lvgl/lvgl_pro](https://github.com/lvgl/lvgl_pro). The `widgets` and `music` demos in [lvgl/lvgl](https://github.com/lvgl/lvgl/tree/master/demos) |
 | Inspiration | [Dribbble](https://dribbble.com), [Behance](https://www.behance.net), [Figma Community](https://www.figma.com/community), [Mobbin](https://mobbin.com). Search for the product type, for example "thermostat UI" or "smartwatch dashboard" |
 

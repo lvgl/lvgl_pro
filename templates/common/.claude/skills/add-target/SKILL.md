@@ -104,8 +104,9 @@ Fonts: the same `name`, another `size`.
 
 In `globals.xml`, all `<consts>`, `<fonts>`, and `<images>` blocks come before `<styles>`.
 
-Images: convert each size once in a plain block, then pick one per target. Set
-`color_format` on `<convert>`: the default is `rgb565`, which makes every pixel opaque.
+Images: convert each size once in a plain block, then pick one per target.
+`<convert>` requires `color_format`. `rgb565` makes every pixel opaque: use `argb8888`
+or `rgb565a8` to keep transparency.
 
 ```xml
 <images>

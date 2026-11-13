@@ -1,6 +1,6 @@
 ---
 title: Project File
-description: Configure your LVGL Pro project with project.xml — set the LVGL version, exported code name, and the display targets used to preview screens.
+description: Configure your LVGL Pro project with project.xml — set the LVGL version, exported code name, the display targets used to preview screens, and a hardware overlay that shows them inside a picture of the device.
 ---
 
 `project.xml` is the top-level configuration file of an LVGL Pro project. It is read by the Editor, by the CLI, and by the runtime XML loader to learn the target LVGL version, the exported code's name, and the display configurations used to render screens in the preview.
@@ -69,6 +69,122 @@ This is also how the Editor knows how to size a Screen's `<view>`.
 It's also possible to conditionally use assets, styles or even views based on selected target.
 It's a great way to manage assets and the appearance of components separately for different targets.
 Learn more at [Targets](./targets)
+
+
+## Hardware Overlay
+
+<Callout type="info">
+This feature requires [LVGL Pro Editor v2.1](https://github.com/lvgl/lvgl_pro/releases) or higher.
+</Callout>
+
+A `<display>` can be shown inside a picture of the real device, so the Preview looks like the
+finished product. Areas of that picture can also act as the device's physical buttons: clicking one
+sends a key to the UI, so keypad navigation can be tested with the mouse, without any hardware.
+
+To add an overlay, place an `<overlay>` inside the `<display>` of a target:
+
+```xml
+<project name="ui" lvgl_version="9.6.0">
+    <targets>
+        <target name="target1">
+            <display width="368" height="448">
+                <overlay image_src_path="images/device_frame.png" viewport_x="78" viewport_y="88">
+                    <button_overlay name="UP"    help="Move up"    key="arrow_up"    x="291" y="562" w="52" h="40"/>
+                    <button_overlay name="DOWN"  help="Move down"  key="arrow_down"  x="291" y="654" w="52" h="40"/>
+                    <button_overlay name="LEFT"  help="Move left"  key="arrow_left"  x="251" y="602" w="40" h="52"/>
+                    <button_overlay name="RIGHT" help="Move right" key="arrow_right" x="343" y="602" w="40" h="52"/>
+                    <button_overlay name="OK"    help="Confirm"    key="enter"       x="291" y="602" w="52" h="52" color="0x2ADEF6"/>
+                    <button_overlay name="BACK"  help="Go back"    key="esc"         x="131" y="585" w="78" h="78" color="0xF5AB2A"/>
+                </overlay>
+            </display>
+        </target>
+    </targets>
+</project>
+```
+
+<Figure
+  src="/_static/images/hardware_overlay.png"
+  alt="A 368x448 display shown inside a picture of a handheld device, next to the same picture with the display area and six button areas highlighted"
+  caption="Left: a screen previewed inside the device picture. Right: project.xml open, with the display area and the clickable buttons highlighted"
+/>
+
+The overlay is used only by the Editor. The image is not added to `globals.xml`, and nothing
+about the overlay reaches the exported C code.
+
+Since each `<target>` has its own `<display>`, each target can have its own device picture and buttons.
+
+### `<overlay>`
+
+| Attribute | Required | Description |
+|---|---|---|
+| `image_src_path` | yes | PNG picture of the device, relative to the project root |
+| `viewport_x` | yes | X position of the display's top-left corner inside the picture, in pixels |
+| `viewport_y` | yes | Y position of the display's top-left corner inside the picture, in pixels |
+| `hidden` | no | `true` hides the overlay in the Preview of screens and components without deleting it. Default: `false` |
+
+The picture is shown at its own size, and the display is drawn 1:1 on top of it at
+(`viewport_x`, `viewport_y`). So the screen area of the picture should be exactly as large as
+the display's `width` × `height`, in pixels. The Preview's zoom scales the picture and the display together.
+
+
+### `<button_overlay>`
+
+Each `<button_overlay>` is a rectangular area of the picture that works as a key when clicked.
+An `<overlay>` can have any number of them.
+
+| Attribute | Required | Description |
+|---|---|---|
+| `name` | yes | Name of the button, e.g. `OK` |
+| `help` | yes | Tooltip shown when hovering the button |
+| `key` | yes | Key sent to the UI. See [Keys](#keys) |
+| `x` | yes | X position of the area's top-left corner, in pixels of the picture (not of the display) |
+| `y` | yes | Y position of the area's top-left corner, in pixels of the picture |
+| `w` | yes | Width of the area, in pixels |
+| `h` | yes | Height of the area, in pixels |
+| `color` | no | Color of the button's highlight, as `0xRRGGBB`. Default: white |
+
+The area itself is invisible: the picture already shows the button. It is highlighted in its `color`
+while it is pressed, and in the [calibration view](#aligning-the-overlay).
+
+### Keys
+
+`key` takes one of following special names, a single letter (`a`–`z`, `A`–`Z`) or a single digit (`0`–`9`).
+The UI receives the matching LVGL key.
+
+| `key` | LVGL key |
+|---|---|
+| `arrow_up`, `arrow_down`, `arrow_left`, `arrow_right` | `LV_KEY_UP`, `LV_KEY_DOWN`, `LV_KEY_LEFT`, `LV_KEY_RIGHT` |
+| `enter` | `LV_KEY_ENTER` |
+| `esc` | `LV_KEY_ESC` |
+| `backspace` | `LV_KEY_BACKSPACE` |
+| `delete` | `LV_KEY_DEL` |
+| `tab`, `page_down` | `LV_KEY_NEXT` |
+| `page_up` | `LV_KEY_PREV` |
+| `space`, a letter or a digit | That character |
+
+Clicking a button is the same as pressing that key on your keyboard while the Preview has focus.
+The key is pressed when the mouse button goes down and released when it goes up, so holding the
+mouse button holds the key.
+
+In the Preview, keys go to a keypad input device whose group is the default group. So the
+focused widget gets them as usual in LVGL: `tab` moves the focus to the next widget, `enter`
+clicks it, and the arrows change a slider or a roller. Your own code can also handle them with
+`LV_EVENT_KEY`. On the device, read the physical buttons with your own keypad input driver and
+send the same keys, so the UI behaves the same way as in the Preview.
+
+### Aligning the Overlay
+
+Open `project.xml` to see the **calibration view**: the picture with the display area highlighted
+in blue and each button area in its `color`. Use it to adjust `viewport_x`/`viewport_y` and the
+buttons' `x`, `y`, `w` and `h` until they line up with the picture. This view always shows the
+overlay, even if it has `hidden="true"`.
+
+When previewing a screen or component:
+
+- Clicking anywhere on the picture outside the display and the buttons briefly highlights all the
+  clickable areas.
+- The overlay is not shown in Design mode or while the [Inspector](../editor/overview#inspector-mode)
+  is on, so the display can be edited and inspected on its own.
 
 
 ## Theme

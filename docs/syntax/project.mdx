@@ -9,7 +9,7 @@ description: Configure your LVGL Pro project with project.xml — set the LVGL v
 
 ## Recommended Project Layout
 
-LVGL Pro doesn't enforce a folder structure, but the Editor, the tutorials, and the example projects all follow the same convention. Sticking to it keeps `src_path` references short and makes generated code predictable.
+Apart from the three XML files at the root (see below), LVGL Pro doesn't enforce a folder structure, but the Editor, the tutorials, and the example projects all follow the same convention. Sticking to it keeps `src_path` references short and makes generated code predictable.
 
 ```
 my_project/
@@ -24,7 +24,7 @@ my_project/
 └── custom_data/         ← optional, arbitrary files copied into the Editor preview
 ```
 
-The three XML files (`project.xml`, `globals.xml`, `translations.xml`) sit at the project root; the sub-folders hold everything else. Any of the sub-folders can be omitted if the project doesn't use that category.
+The three XML files (`project.xml`, `globals.xml`, `translations.xml`) sit at the project root; the sub-folders hold everything else. `project.xml` and `globals.xml` are required, and `translations.xml` is optional. Each of them belongs at the root under exactly this name: the Editor and the CLI report any of them in a sub-folder as an error, and each project has at most one `translations.xml` (see [Translations](./translations#the-translations-file)). Any of the sub-folders can be omitted if the project doesn't use that category.
 
 Any files placed in a `custom_data/` folder are copied into the Editor preview as-is. This is useful for shipping arbitrary application or test data (e.g. a JSON fixture or a data file read by a widget at runtime) alongside the UI.
 
@@ -213,7 +213,7 @@ A project can include other projects — for example a shared component library,
 </project>
 ```
 
-Each `<folder path="…">` points at another project folder (i.e. a folder containing its own `project.xml`/`globals.xml`). Its widgets, components, and globals become available to the including project.
+Each `<folder path="…">` points at another project folder (i.e. a folder containing its own `project.xml`/`globals.xml`). Its widgets, components, and globals become available to the including project. An included project cannot have a `translations.xml`: translations live only in the root project (see [Translations](./translations#the-translations-file)).
 
 <Callout type="info">
 Included projects may themselves declare `<folders>` to include further projects, but those nested inclusions are ignored — this feature is only one level deep. If root project A includes project B, and B includes project C, C is skipped and B will likely not function correctly.

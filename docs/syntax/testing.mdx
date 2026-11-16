@@ -36,7 +36,7 @@ The following step types are currently supported:
 | `<set_language name="de"/>` | `name` | Switch to the given language from `translations.xml` |
 | `<screenshot_compare path="path/to/image.png"/>` | `path` | Compares the current screen with a reference image. If the image doesn't exist, it is created. If the comparison fails, an image with `_err` suffix is saved for inspection |
 
-The `<test>` tag takes no attributes. A test runs at the display size of the target in `project.xml`.
+The `<test>` tag takes no attributes. A test runs at the display size of a target in `project.xml`: in the Editor, the target selected in the preview; in the CLI, the first target.
 
 Example:
 

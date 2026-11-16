@@ -17,9 +17,11 @@ retrieving translations, and fallback behavior.
 
 ## The translations file
 
-Translations live in one `translations.xml` at the project root. The Editor and the CLI read translations only from
-that file: a `translations.xml` in a sub-folder is reported as an error, and translations in a file with any other name
-are not loaded.
+Translations live in one `translations.xml` at the project root. The Editor, the CLI and the exported C code read
+translations only from that file: a `translations.xml` in a sub-folder is reported as an error, and translations in a
+file with any other name are not loaded. An application that loads XML at runtime with
+[`lv_xml_load_all_from_path()`](../integration/loading-xml-files) registers every `<translations>` file it finds, so
+keep only the one at the root there too.
 
 A product has one set of translations, so only the root project has them. An
 [included project](./project#including-other-projects) cannot have a `translations.xml`: put all the strings in the root

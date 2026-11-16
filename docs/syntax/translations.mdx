@@ -17,12 +17,13 @@ retrieving translations, and fallback behavior.
 
 ## The translations file
 
-Translations live in `translations.xml` at the project root, one file per project. The Editor and the CLI read
-translations only from that file: a `translations.xml` in a sub-folder is reported as an error, and translations in a
-file with any other name are not loaded.
+Translations live in one `translations.xml` at the project root. The Editor and the CLI read translations only from
+that file: a `translations.xml` in a sub-folder is reported as an error, and translations in a file with any other name
+are not loaded.
 
-An [included project](./project#including-other-projects) can have its own `translations.xml` at its own root. Its
-tags can be used in the including project, and its languages are listed together with the including project's.
+A product has one set of translations, so only the root project has them. An
+[included project](./project#including-other-projects) cannot have a `translations.xml`: put all the strings in the root
+project's `translations.xml`.
 
 ## Usage
 

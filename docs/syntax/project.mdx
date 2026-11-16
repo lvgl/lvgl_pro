@@ -213,7 +213,7 @@ A project can include other projects — for example a shared component library,
 </project>
 ```
 
-Each `<folder path="…">` points at another project folder (i.e. a folder containing its own `project.xml`/`globals.xml`). Its widgets, components, globals, and translations become available to the including project.
+Each `<folder path="…">` points at another project folder (i.e. a folder containing its own `project.xml`/`globals.xml`). Its widgets, components, and globals become available to the including project. An included project cannot have a `translations.xml`: translations live only in the root project (see [Translations](./translations#the-translations-file)).
 
 <Callout type="info">
 Included projects may themselves declare `<folders>` to include further projects, but those nested inclusions are ignored — this feature is only one level deep. If root project A includes project B, and B includes project C, C is skipped and B will likely not function correctly.

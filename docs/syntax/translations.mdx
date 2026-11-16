@@ -15,9 +15,18 @@ It's built on top of LVGL's translation module.
 Check [LVGL's translation module documentation](https://lvgl.io/docs/open/main-modules/translation) to learn more about selecting the active language,
 retrieving translations, and fallback behavior.
 
+## The translations file
+
+Translations live in `translations.xml` at the project root, one file per project. The Editor and the CLI read
+translations only from that file: a `translations.xml` in a sub-folder is reported as an error, and translations in a
+file with any other name are not loaded.
+
+An [included project](./project#including-other-projects) can have its own `translations.xml` at its own root. Its
+tags can be used in the including project, and its languages are listed together with the including project's.
+
 ## Usage
 
-Example XML translation definition:
+Example `translations.xml`:
 
 ``` xml
 <translations languages="en de hu">

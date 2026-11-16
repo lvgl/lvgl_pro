@@ -18,7 +18,7 @@ does. `test_theme_toggle.xml` is found; `theme_toggle_test.xml` is not.
 A test file is a component with a `<steps>` block appended:
 
 ```xml
-<test width="480" height="320">
+<test>
   <view ... />      <!-- same syntax as a <component> view -->
   <steps> ... </steps>
 </test>
@@ -68,6 +68,6 @@ working regression coverage, and rely on `subject_compare` for assertions that
 must hold. Also note that `path` is flattened to its basename (a `path="imgs/a.png"`
 becomes `a.png` beside the test file), so subfolders don't work.
 
-**`<test width=… height=…>` doesn't resize the canvas here.** Both tests render
-at the `project.xml` display size (480×320) regardless, which is why the
+**A test has no size of its own.** `<test>` takes no attributes, so both tests
+render at the `project.xml` display size (480×320), which is why the
 coordinates in `test_slider_drag.xml` assume that size.

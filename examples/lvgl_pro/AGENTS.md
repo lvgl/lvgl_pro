@@ -556,7 +556,7 @@ A test's `<view>` is built exactly like a component's, so the usual test extends
 A `<view>` of its own works too, and is the right choice to exercise one component without depending on where it sits on a screen:
 
 ```xml
-<test width="480" height="320">
+<test>
   <view width="100%" height="100%" flex_flow="column" style_pad_all="20">
     <slider subject="subject_brightness" width="200"/>
   </view>

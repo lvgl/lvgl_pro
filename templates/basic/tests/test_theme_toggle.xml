@@ -4,7 +4,7 @@
      real screen and drive the actual UI. Steps run top to bottom; the first
      failing assertion fails the test.
      Docs: https://lvgl.io/docs/pro/syntax/testing -->
-<test width="480" height="320">
+<test>
 	<view extends="screen_components" />
 
 	<steps>

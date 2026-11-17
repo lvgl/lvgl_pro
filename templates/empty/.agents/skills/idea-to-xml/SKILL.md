@@ -44,6 +44,10 @@ Then propose sources from this list. Ask before you download anything. Check the
 license of each asset, put the license file next to it, and write the source in the
 spec.
 
+Create a `LICENSE.md` file at the project root. List every image and font that the
+project uses, also the ones that were already there. For each one, give the file name,
+the source, and the license.
+
 | Need | Sources |
 | --- | --- |
 | Fonts | [Google Fonts](https://fonts.google.com): Inter, Roboto, Montserrat. For Chinese, Japanese, or Korean: Noto Sans. `templates/basic` in [lvgl/lvgl_pro](https://github.com/lvgl/lvgl_pro) ships Montserrat |
@@ -96,6 +100,9 @@ fix on one screen than on all of them.
 
 Use subjects and XML events for the flow. Use `<event_cb>` only when C must run.
 
+Prefer XML. If a part is much simpler in C, for example custom drawing, write a widget.
+See "Writing a widget" in `AGENTS.md`.
+
 ### 6. Add tests
 
 Write one test in `tests/` for each flow in the spec: set the subjects, do the input,
@@ -117,5 +124,6 @@ The first run creates the reference screenshots. Look at them before you accept 
 
 - The screens, components, subjects, and tests created.
 - The `<event_cb>` callbacks the application must implement in C.
+- The assets in `LICENSE.md` whose license you could not confirm.
 - The open questions from the spec.
 - What is not verified.

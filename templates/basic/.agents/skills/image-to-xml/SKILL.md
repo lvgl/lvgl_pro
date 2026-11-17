@@ -65,6 +65,9 @@ Later sessions read this section first. Update it when the UI changes.
 - `globals.xml`: the tokens as `<consts>`, the `<fonts>`, the `<subjects>`, the
   `<images>`, and the shared `<styles>`, in this order: `validate` rejects `<styles>`
   before `<fonts>` or `<images>`. Keep the names that are already there.
+- `LICENSE.md` at the project root: list every image and font that the project uses,
+  also the ones that were already there. For each one, give the file name, the source,
+  and the license.
 
 ### 5. Build the components, then the screens
 
@@ -81,6 +84,9 @@ Build from small to large. For each file:
 Lay out with flex or grid, not with `x` and `y`. Then the UI survives a font change and
 a new display size.
 
+Prefer XML. If a part of the image is much simpler in C, for example a custom-drawn
+gauge, write a widget. See "Writing a widget" in `AGENTS.md`.
+
 ### 6. Compare with the image
 
 Measure both images with `layout.py` and move each item by the difference. Then run
@@ -95,5 +101,6 @@ continue. Small differences in fonts and anti-aliasing are normal.
 
 - The screens, components, subjects, and tokens created.
 - The placeholders and `TODO`s: fonts, icons, behavior.
+- The assets in `LICENSE.md` whose license you could not confirm.
 - The differences that remain.
 - What is not verified.

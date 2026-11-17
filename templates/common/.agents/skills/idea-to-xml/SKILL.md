@@ -100,6 +100,9 @@ fix on one screen than on all of them.
 
 Use subjects and XML events for the flow. Use `<event_cb>` only when C must run.
 
+Prefer XML. If a part is much simpler in C, for example custom drawing, write a widget.
+See "Writing a widget" in `AGENTS.md`.
+
 ### 6. Add tests
 
 Write one test in `tests/` for each flow in the spec: set the subjects, do the input,

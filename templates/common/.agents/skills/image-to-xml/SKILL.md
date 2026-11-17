@@ -84,6 +84,9 @@ Build from small to large. For each file:
 Lay out with flex or grid, not with `x` and `y`. Then the UI survives a font change and
 a new display size.
 
+Prefer XML. If a part of the image is much simpler in C, for example a custom-drawn
+gauge, write a widget. See "Writing a widget" in `AGENTS.md`.
+
 ### 6. Compare with the image
 
 Measure both images with `layout.py` and move each item by the difference. Then run

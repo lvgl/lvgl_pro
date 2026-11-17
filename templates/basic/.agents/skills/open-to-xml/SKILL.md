@@ -132,6 +132,9 @@ Ask which of these to do. Each one costs time:
 - **Constants:** the tool names constants by value. Rename them by meaning, for example
   `color_primary`, not `color_1`.
 - **Animations, timers, translations:** the tool does not convert them.
+- **Parts that are much simpler in C:** for example the app's own custom-drawn widget.
+  Prefer XML. If XML is much harder, keep the C in a widget. See "Writing a widget" in
+  `AGENTS.md`.
 
 ### 7. Check
 

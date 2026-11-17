@@ -19,7 +19,7 @@ The XML and C pairs show exactly what each XML construct becomes in C.
 
 ## Working in this repo
 
-- **Common project files.** `AGENTS.md`, `.mcp.json`, `user_config.cmake`, `.vscode/` and `sim/` are the same in every project. Edit them in `templates/common/`, then run `scripts/sync-common-template-files.sh`. CI fails if a project's copy differs. `sim/main.c` stays per project.
+- **Common project files.** `AGENTS.md`, `.mcp.json`, `user_config.cmake`, `.agents/skills/`, `.vscode/` and `sim/` are the same in every project. Edit them in `templates/common/`, then run `scripts/sync-common-template-files.sh`. CI fails if a project's copy differs. `sim/main.c` stays per project.
 - **Templates carry no exported C.** The top-level `.gitignore` keeps it out. `examples/` and `tutorials/` do commit their exports.
 - **Generated docs.** `docs/built_in_widgets/` comes from `docs/scripts/gen_widget_api.ts`, and `docs/examples/` from `docs/scripts/generate_examples.py`. Edit the source, not the output.
 - **Verify XML with the CLI.** Run `lvglpro validate <project>`, `generate`, `screenshot` and `run-all-tests`. See `docs/cli.mdx`. Without a license token nothing was verified, so say so.

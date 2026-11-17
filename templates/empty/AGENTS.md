@@ -9,7 +9,7 @@ How to work in this LVGL Pro project. The UI is written in LVGL Pro XML: HTML-li
 3. **Validate what you write.** `lvglpro validate .` gives precise errors. Then `screenshot` to see it. Guessing is not the same as knowing. See [Verifying](#verifying).
 4. **Reuse before you create.** Read this project's `globals.xml` and `components/` first. The constant, the style and the button you were about to invent are often already there.
 5. **Read how a feature works before you use it.** The [XML syntax docs](https://lvgl.io/docs/pro/syntax/overview) explain each feature on its own page. For the shape of real, working XML, read this project's own files, then the templates, examples and tutorials in [lvgl/lvgl_pro](https://github.com/lvgl/lvgl_pro).
-6. **Ask the LVGL MCP server about LVGL itself.** `.mcp.json` in this folder connects it at `https://lvgl.mcp.kapa.ai/`. Prefer it over recalling LVGL APIs from memory.
+6. **Ask the LVGL MCP server about LVGL itself.** `.mcp.json` (and `.vscode/mcp.json` for VS Code) in this folder connects it at `https://lvgl.mcp.kapa.ai/`. Prefer it over recalling LVGL APIs from memory.
 
 ## Working with the user
 
@@ -22,7 +22,18 @@ How to work in this LVGL Pro project. The UI is written in LVGL Pro XML: HTML-li
 - **Comment the XML for the next reader.** Use comments to mark large blocks and to explain what is not obvious. Do not repeat what the line says.
 - **Report at the end.** List what you changed, what the CLI checked, and what is not verified.
 
-The skills in `.claude/skills/` give the steps for larger tasks: `open-to-xml` (LVGL C app to XML), `figma-to-xml`, `image-to-xml`, `idea-to-xml`, `improve-xml`, and `add-target`.
+## Skills
+
+A skill gives the steps for a larger task. Before you start a task, check this list. If a skill matches, read its `.agents/skills/<name>/SKILL.md` and follow it.
+
+| Skill | Use it when the user wants to |
+| --- | --- |
+| `open-to-xml` | move an LVGL C application, a running LVGL app, or `lv_demo` code to XML |
+| `figma-to-xml` | finish and check XML that the LVGL Pro Figma plugin exported |
+| `image-to-xml` | build screens and components from an image of a UI: a screenshot, a mockup, a photo, or a sketch |
+| `idea-to-xml` | build a UI from a text description or an idea |
+| `improve-xml` | clean up, refactor, optimize, or review the XML, or add tests to it |
+| `add-target` | support another display, board, or screen resolution |
 
 ## Project layout
 

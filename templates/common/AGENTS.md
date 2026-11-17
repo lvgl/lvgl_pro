@@ -34,6 +34,7 @@ A skill gives the steps for a larger task. Before you start a task, check this l
 | `idea-to-xml` | build a UI from a text description or an idea |
 | `improve-xml` | clean up, refactor, optimize, or review the XML, or add tests to it |
 | `add-target` | support another display, board, or screen resolution |
+| `write-readme` | write or update `README.md` for the developer who adds the UI to an application |
 
 ## Project layout
 

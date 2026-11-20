@@ -9,7 +9,7 @@ How to work in this LVGL Pro project. The UI is written in LVGL Pro XML: HTML-li
 3. **Validate what you write.** `lvglpro validate .` gives precise errors. Then `screenshot` to see it. Guessing is not the same as knowing. See [Verifying](#verifying).
 4. **Reuse before you create.** Read this project's `globals.xml` and `components/` first. The constant, the style and the button you were about to invent are often already there.
 5. **Read how a feature works before you use it.** The [XML syntax docs](https://lvgl.io/docs/pro/syntax/overview) explain each feature on its own page. For the shape of real, working XML, read this project's own files, then the templates, examples and tutorials in [lvgl/lvgl_pro](https://github.com/lvgl/lvgl_pro).
-6. **Ask the LVGL MCP server about LVGL itself.** `.mcp.json` in this folder connects it at `https://lvgl.mcp.kapa.ai/`. Prefer it over recalling LVGL APIs from memory.
+6. **Ask the LVGL MCP server about LVGL itself.** `.mcp.json` (and `.vscode/mcp.json` for VS Code) in this folder connects it at `https://lvgl.mcp.kapa.ai/`. Prefer it over recalling LVGL APIs from memory.
 
 ## Working with the user
 
@@ -22,7 +22,19 @@ How to work in this LVGL Pro project. The UI is written in LVGL Pro XML: HTML-li
 - **Comment the XML for the next reader.** Use comments to mark large blocks and to explain what is not obvious. Do not repeat what the line says.
 - **Report at the end.** List what you changed, what the CLI checked, and what is not verified.
 
-The skills in `.claude/skills/` give the steps for larger tasks: `open-to-xml` (LVGL C app to XML), `figma-to-xml`, `image-to-xml`, `idea-to-xml`, `improve-xml`, and `add-target`.
+## Skills
+
+A skill gives the steps for a larger task. Before you start a task, check this list. If a skill matches, read its `.agents/skills/<name>/SKILL.md` and follow it.
+
+| Skill | Use it when the user wants to |
+| --- | --- |
+| `open-to-xml` | move an LVGL C application, a running LVGL app, or `lv_demo` code to XML |
+| `figma-to-xml` | finish and check XML that the LVGL Pro Figma plugin exported |
+| `image-to-xml` | build screens and components from an image of a UI: a screenshot, a mockup, a photo, or a sketch |
+| `idea-to-xml` | build a UI from a text description or an idea |
+| `improve-xml` | clean up, refactor, optimize, or review the XML, or add tests to it |
+| `add-target` | support another display, board, or screen resolution |
+| `write-readme` | write or update `README.md` for the developer who adds the UI to an application |
 
 ## Project layout
 
@@ -43,8 +55,7 @@ sim/                 ← the PC simulator, nothing in it ships in the firmware
 
 For components, widgets and screens: One file per element, and the filename becomes the name you use as a tag. `my_button.xml` is used as `<my_button/>`.
 
-**Write components unless you truly need C.** Widgets require a C implementation plus an XML parser; reach for one only when the behavior cannot be expressed as composition plus data binding.
-
+**Prefer components.** Write a widget only when a part is much simpler in C than in XML, for example custom drawing. A widget needs a C implementation and an XML parser, and every change needs a new build of the preview. See [Writing a widget](#writing-a-widget).
 
 ## Example
 
@@ -353,7 +364,7 @@ Events are children of a widget. All take `trigger`, which can be
 
 `set_subject_event`'s `value` is re-evaluated on every fire when it is written as `{ }`, and the subject's own `min_value`/`max_value` clamp the result. A bare literal is written as it is, every time.
 
-`event_cb` assumes you implement `void my_handler(lv_event_t * e)` in C. With an expression trigger there is no real LVGL event behind the call, so don't read the event code in it.
+`event_cb` assumes you implement `void my_handler(lv_event_t * e)` in C. With an expression trigger there is no real LVGL event behind the call, so don't read the event code in it. See [Calling C callbacks](#calling-c-callbacks).
 
 ### Images
 
@@ -481,6 +492,60 @@ Still supported, and common in older projects. Prefer the current form in new XM
 | `<subject_set_int_event>`, `<subject_toggle_event>`, `<subject_increment_event>` | `<set_subject_event value="{...}"/>` |
 
 `bind_flag_*` takes a `flag`, `bind_state_*` takes a `state`, and both come in `if_eq`, `if_not_eq`, `if_gt`, `if_ge`, `if_lt`, `if_le`. The old subject events take an event name in `trigger`, never a condition, and `<subject_increment_event>` is the only one with `rollover`.
+
+## Adding custom C code
+
+Prefer XML. Use C only for what XML cannot do, or does with much more effort: hardware, files, the network, custom drawing, too complex logic, etc.
+
+### Calling C callbacks
+
+`<event_cb trigger="..." callback="my_cb" user_data="..."/>` calls `void my_cb(lv_event_t * e)`. Write the function in `<project>.c`, or in a file you add to `user_config.cmake`. The firmware must define every callback. Run `lvglpro compile .` after you change one, or the preview runs the old C.
+
+In the callback:
+
+- `lv_event_get_current_target(e)` is the element that contains the `<event_cb>`.
+- `lv_event_get_user_data(e)` is the `user_data` string, or `NULL`.
+- `lv_obj_find_by_name(obj, "label_value")` finds a child that has `name="label_value"`.
+
+**Run C once, at creation.** `trigger="{true}"` calls the callback once, when the screen or component is created. Use it to add C to any screen or component, for example to start a timer or to set something XML cannot set:
+
+```xml
+<view>
+  <lv_label name="label_value" text="0"/>
+  <lv_chart name="chart"/>
+  <!-- Last, so all the children above exist when it runs -->
+  <event_cb trigger="{true}" callback="my_view_init"/>
+</view>
+```
+
+```c
+void my_view_init(lv_event_t * e)
+{
+    lv_obj_t * view = lv_event_get_current_target(e);
+    lv_obj_t * chart = lv_obj_find_by_name(view, "chart");
+    /* Your code */
+}
+```
+
+The callback runs where the `<event_cb>` stands: only the elements above it exist.
+
+There is no real LVGL event behind a `{ }` trigger, so do not read the event code (`lv_event_get_code(e)`) in the callback. The current target and the user data are set.
+
+### Writing a widget
+
+Write a complete widget that has an API, constructor, destructor, etc if you need the full power of C:
+
+1. Write `widgets/<name>/<name>.xml` with a `<widget>` root. Start it with a comment that says what the widget does and why it is in C. Give every `<prop>` a `help`, and add `<previews>` that show it as it is used. The XML is the only place that describes the widget, so other agents find it there. No theme is applied to a widget, so set every style it needs: a `style_bg_color` shows nothing without `style_bg_opa="100%"`.
+2. Run `lvglpro generate .`. It creates `<name>.c`, `<name>.h` and `<name>_xml_parser.c` once, and keeps them on the next runs. The `*_gen.*` files are written again each time.
+3. In `<name>.c`, write the body of each setter, for example `<name>_set_count()`: the generated ones are empty. Add extra code in `<name>_constructor_hook()`.
+4. In `<name>_xml_parser.c`, map each prop in the loop of `<name>_xml_apply()`:
+
+   ```c
+   if(lv_streq("count", name)) <name>_set_count(item, lv_xml_atoi(value));
+   ```
+
+   Without this line the Editor preview, `screenshot` and the tests ignore the attribute, while the exported C calls the setter. The two then differ, with no warning.
+5. Run `lvglpro compile .` after every change in the C files, then `validate` and `screenshot` as usual. Without `compile` the preview runs the old C.
 
 ## Verifying
 

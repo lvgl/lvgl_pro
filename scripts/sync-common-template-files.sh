@@ -10,8 +10,8 @@
 # Edit the files in templates/common, never a project's copy, then run this script.
 # CI runs it and fails if anything changed, so a copy edited by hand is caught.
 #
-# sim/ and .vscode/ hold exactly what templates/common holds, so a file removed from
-# templates/common is removed from the projects too. These stay per project:
+# sim/, .vscode/ and .agents/skills/ hold exactly what templates/common holds, so a file
+# removed from templates/common is removed from the projects too. These stay per project:
 #   sim/main.c               the screen each project loads
 #   tutorials/sim/README.md  tutorials has its own longer text
 #
@@ -23,7 +23,7 @@ COMMON='templates/common'
 PROJECTS='templates/empty templates/basic examples/lvgl_open examples/lvgl_pro tutorials'
 
 # Folders owned by templates/common: any other file in them is deleted.
-OWNED_DIRS='sim .vscode'
+OWNED_DIRS='sim .vscode .agents/skills'
 
 cd "$(git rev-parse --show-toplevel)"
 

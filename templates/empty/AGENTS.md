@@ -529,7 +529,7 @@ void my_view_init(lv_event_t * e)
 
 The callback runs where the `<event_cb>` stands: only the elements above it exist.
 
-There is no real LVGL event behind a `{ }` trigger, so do not read the event code in the callback.
+There is no real LVGL event behind a `{ }` trigger, so do not read the event code (`lv_event_get_code(e)`) in the callback. The current target and the user data are set.
 
 ### Writing a widget
 

@@ -65,9 +65,10 @@ Later sessions read this section first. Update it when the UI changes.
 - `globals.xml`: the tokens as `<consts>`, the `<fonts>`, the `<subjects>`, the
   `<images>`, and the shared `<styles>`, in this order: `validate` rejects `<styles>`
   before `<fonts>` or `<images>`. Keep the names that are already there.
-- `LICENSE.md` at the project root: list every image and font that the project uses,
+- `ASSET_LICENSES.md` at the project root: list every image and font that the project uses,
   also the ones that were already there. For each one, give the file name, the source,
-  and the license.
+  and the license. If you cannot confirm the source or the license, write
+  `unconfirmed`. Keep the license files next to the assets too.
 
 ### 5. Build the components, then the screens
 
@@ -101,6 +102,6 @@ continue. Small differences in fonts and anti-aliasing are normal.
 
 - The screens, components, subjects, and tokens created.
 - The placeholders and `TODO`s: fonts, icons, behavior.
-- The assets in `LICENSE.md` whose license you could not confirm.
+- The assets in `ASSET_LICENSES.md` whose license you could not confirm.
 - The differences that remain.
 - What is not verified.

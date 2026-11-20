@@ -53,10 +53,10 @@ mark every C name in the report as not verified.
 | Subjects | `<subjects>` in `globals.xml`, `extern lv_subject_t *` in `<project>_gen.h` | Name, type, `value` (the start value), `min_value`, `max_value`, XML comments for the meaning and the unit |
 | Who writes a subject | The XML | The UI writes it if it is in a `<set_subject_event subject=...>`, or in a widget binding such as `bind_value`, which works both ways. Otherwise the application writes it |
 | Callbacks | `<event_cb callback=...>` in the XML, the "Event Callbacks" part of `<project>_gen.h` | The function name, the widget and the screen it is on, `trigger`, `user_data`. The application must write each one as `void <name>(lv_event_t * e)` |
-| Targets | `<targets>` in `project.xml`, `<project>_gen.h` | `<PROJECT>_TARGET_<NAME>`, `<project>_set_target()`, and `<PROJECT>_COMPILE_TARGET`. The default is all targets. To build fewer, change its `#define` in `<project>.h`, which `generate` does not overwrite |
+| Targets | `<targets>` in `project.xml`, `<project>_gen.h` | `<PROJECT>_TARGET_<NAME>`, `<project>_set_target()`, and `<PROJECT>_COMPILE_TARGET`. The default is all targets. To build fewer, change its `#define` in `<project>.h`, which `generate` does not overwrite. In an older project, `<project>.h` does not have it: add it there, before the `#include` of `<project>_gen.h` |
 | Translations | `translations.xml` | The language codes. Init selects the first one |
 | Asset files | `asset_path, "` in `<project>_gen.c` | The relative path of each font and image loaded from a file at runtime. These files must be on the device under `asset_path` |
-| Licenses | `LICENSE.md` | Link to it. If it is missing, tell the user |
+| Licenses | `ASSET_LICENSES.md` | Link to it. If it is missing, tell the user |
 | Tests | `tests/*.xml`, `tests/*.png` | Each test file, and what it checks: read its `<view>` and its `<steps>`. The reference screenshots, and whether they are committed (`git ls-files tests`) |
 | CI | `.github/workflows/` | Whether a workflow already runs the tests |
 
@@ -104,7 +104,8 @@ Facts to state about the tests:
 - The CLI runs them: `npm install --global @lvgl/lvglpro` (Node 18 or newer). It
   needs an LVGL Pro license token in `LVGLPRO_CLI_TOKEN`, see the
   [CLI docs](https://lvgl.io/docs/pro/cli). Without the token every
-  command stops with "No token provided" and exit code 1.
+  project command stops with "No token provided" and exit code 1. `--help` and
+  `--version` work without it.
 - Run `lvglpro generate .` first: the tests build the exported C, and a template does
   not commit it. Then `lvglpro run-all-tests .`, or `lvglpro run-test . tests/<file>.xml`
   for one test. `run-all-tests` compiles the project itself.
@@ -202,7 +203,7 @@ nothing in it, for example "Targets" for a project with one target.
    that the generated code calls each one, so the application must define all of them.
 7. **Targets:** the values, and `<project>_set_target()` before `<project>_init()`.
 8. **Translations:** the languages, and `lv_translation_set_language("<code>")`.
-9. **Asset files:** the paths to copy to the device, and a link to `LICENSE.md`.
+9. **Asset files:** the paths to copy to the device, and a link to `ASSET_LICENSES.md`.
 10. **Tests:** a table: test file, what it checks. How to run them locally, and a CI
     workflow that runs them, with the token as a secret. Use the facts above. If the
     project has no tests, keep the section short: where tests go, and a link to the
@@ -211,17 +212,18 @@ nothing in it, for example "Targets" for a project with one target.
     your code in `<project>.c` or in files listed in `user_config.cmake`. The simulator
     commands from `AGENTS.md`.
 
-Do not list the component `_create` functions or the `#define` constants. A developer
-finds them in the headers.
+Do not list the component `_create` functions or the `#define` constants, except the
+target values of item 7. A developer finds them in the headers.
 
 Write short and plain. Use tables for lists of names. Every C name in the README must
 be one you read in a generated file.
 
 ### 5. Check the names
 
-Search for each C name of the README in the generated files, for example
-`grep -rn "subject_volume" --include=*.h .`. Remove or fix every name that is not there.
-Then read the README from top to bottom once, as the firmware developer.
+If step 1 ran the CLI, search for each C name of the README in the generated files, for
+example `grep -rn "subject_volume" --include=*.h .`. Remove or fix every name that is not
+there. If it did not, keep the names from the XML, and mark them as not verified. Then
+read the README from top to bottom once, as the firmware developer.
 
 ### 6. Report
 

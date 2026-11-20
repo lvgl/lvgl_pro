@@ -148,7 +148,7 @@ panel also gets `radius~N` and, if it has one, `shadow or soft edge: l t r b`.
 3. No match (a logo, a custom icon): cut it out of the image and remove the background:
 
    ```bash
-   python3 $T/crop.py ref.png X,Y,W,H images/logo.png --alpha auto
+   python3 $T/crop.py /tmp/img/ref.png X,Y,W,H images/logo.png --alpha auto
    ```
 
    The edges stay smooth on any background. Cut it from the image at display scale, at

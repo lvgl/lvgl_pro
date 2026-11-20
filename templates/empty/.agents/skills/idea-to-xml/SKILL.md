@@ -44,16 +44,12 @@ Then propose sources from this list. Ask before you download anything. Check the
 license of each asset, put the license file next to it, and write the source in the
 spec.
 
-Create a `LICENSE.md` file at the project root. List every image and font that the
-project uses, also the ones that were already there. For each one, give the file name,
-the source, and the license.
-
 | Need | Sources |
 | --- | --- |
 | Fonts | [Google Fonts](https://fonts.google.com): Inter, Roboto, Montserrat. For Chinese, Japanese, or Korean: Noto Sans. `templates/basic` in [lvgl/lvgl_pro](https://github.com/lvgl/lvgl_pro) ships Montserrat |
 | Icon fonts | [Font Awesome](https://fontawesome.com) (free set), as in `templates/basic` |
 | Icons (SVG) | [Lucide](https://lucide.dev), [Feather](https://feathericons.com), [Heroicons](https://heroicons.com), [Material Symbols](https://fonts.google.com/icons). Convert with `<convert ... color_format="argb8888"/>`. Many use `currentColor`, which renders as nothing: replace it with a real color before the conversion, see [Images](https://lvgl.io/docs/pro/syntax/images) |
-| Photos | [Unsplash](https://unsplash.com), [Pexels](https://www.pexels.com). Scale them down with `<convert ... color_format="rgb565"/>` to the size they are shown at |
+| Photos | [Unsplash](https://unsplash.com), [Pexels](https://www.pexels.com). Scale them down with `<convert ... width="..." color_format="rgb565"/>` to the size they are shown at |
 | LVGL UIs | `examples/`, `tutorials/`, and `templates/basic/` in [lvgl/lvgl_pro](https://github.com/lvgl/lvgl_pro). The `widgets` and `music` demos in [lvgl/lvgl](https://github.com/lvgl/lvgl/tree/master/demos) |
 | Inspiration | [Dribbble](https://dribbble.com), [Behance](https://www.behance.net), [Figma Community](https://www.figma.com/community), [Mobbin](https://mobbin.com). Search for the product type, for example "thermostat UI" or "smartwatch dashboard" |
 
@@ -83,6 +79,10 @@ Show the spec. Ask the user to approve or correct it. Repeat until it is approve
 - `globals.xml`: the tokens as `<consts>`, the `<fonts>`, the `<subjects>` from the
   spec, the `<images>`, and the shared `<styles>`, in this order: `validate` rejects
   `<styles>` before `<fonts>` or `<images>`.
+- `ASSET_LICENSES.md` at the project root: list every image and font that the project uses,
+  also the ones that were already there. For each one, give the file name, the source,
+  and the license. If you cannot confirm the source or the license, write
+  `unconfirmed`. Keep the license files next to the assets too.
 
 ### 5. Build the components, then the screens
 
@@ -124,6 +124,6 @@ The first run creates the reference screenshots. Look at them before you accept 
 
 - The screens, components, subjects, and tests created.
 - The `<event_cb>` callbacks the application must implement in C.
-- The assets in `LICENSE.md` whose license you could not confirm.
+- The assets in `ASSET_LICENSES.md` whose license you could not confirm.
 - The open questions from the spec.
 - What is not verified.

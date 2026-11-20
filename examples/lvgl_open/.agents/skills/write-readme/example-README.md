@@ -165,7 +165,7 @@ Copy these files to the device, under the path given to `thermostat_init()`:
 
 With `thermostat_init("A:")` the UI opens `A:fonts/Montserrat-Medium.ttf`.
 
-The licenses of the fonts and images are in [LICENSE.md](LICENSE.md).
+The licenses of the fonts and images are in [ASSET_LICENSES.md](ASSET_LICENSES.md).
 
 ## Tests
 

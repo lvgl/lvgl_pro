@@ -1,0 +1,82 @@
+---
+title: Embedded Preview
+description: Show a live, editable preview of an LVGL Pro project in any web page with one iframe, such as your docs, blog or product page.
+---
+
+The embedded preview, along with the [Editor](./editor/overview), [CLI](./cli), [Figma plugin](./figma), and [online viewer](./online-viewer), is part of **LVGL Pro**, a professional toolkit to develop embedded UIs.
+
+Put an LVGL Pro UI on any web page with one `<iframe>`. Visitors see the screen running, can click and slide through it, and can open its XML and edit it: the preview redraws as they type. Nothing they change is saved, and nobody needs to sign in.
+
+<iframe
+    src="https://embed.lvgl.io/?project=https%3A%2F%2Fgithub.com%2Flvgl%2Flvgl_pro%2Ftree%2Fmaster%2Ftutorials&file=screens%2Fanimations%2Fscreen_animations.xml&code=right"
+    width="100%"
+    height="480"
+    loading="lazy"
+    title="LVGL Pro preview: the animations tutorial"
+    sandbox="allow-scripts"
+/>
+
+## How it works
+
+<Steps>
+<Step>
+**Publish the project.** Run [`lvglpro publish`](./cli#publish) in the project folder. It validates the project and writes `manifest.json`, which lists the files the preview loads, the LVGL version and the screen to open first.
+
+```bash
+lvglpro publish ./my-project
+```
+</Step>
+<Step>
+**Put it online.** Commit and push `manifest.json` with the project to a public GitHub repository. Any other host works too, if it lets other sites read the files: see [Where projects can live](#where-projects-can-live).
+</Step>
+<Step>
+**Add the iframe.** Point it at `https://embed.lvgl.io/`, with the project's URL in the `project` parameter:
+
+```html
+<iframe
+  src="https://embed.lvgl.io/?project=https%3A%2F%2Fgithub.com%2FORG%2FREPO%2Ftree%2Fmain%2Fmy-project&code=right"
+  width="800"
+  height="480"
+  loading="lazy"
+  title="LVGL Pro preview: my project"
+  sandbox="allow-scripts"
+></iframe>
+```
+</Step>
+</Steps>
+
+## Parameters
+
+| Parameter | Required | Value                                                                                   | Default                                      |
+| --------- | -------- | --------------------------------------------------------------------------------------- | -------------------------------------------- |
+| `project` | Yes      | The project folder, its `manifest.json` or its `project.xml`, on GitHub or another host |                                              |
+| `file`    | No       | The file to open, relative to the project, such as `screens/home.xml`                   | The screen `lvglpro publish` chose           |
+| `code`    | No       | Where the XML shows: `off`, `right`, `left`, `below` or `above`                         | `off`: the preview alone, with a code button |
+
+Encode the `project` URL with `encodeURIComponent`, as in the examples. A `file` that isn't a screen or a component, such as `globals.xml`, opens in the code panel beside the preview of the default screen. In a frame narrower than 40rem, the code goes below the preview.
+
+## Where projects can live
+
+The preview reads the project from the page visitor's browser, so the project's host must let other sites read it.
+
+- **GitHub:** use the link of the project's folder, such as `https://github.com/ORG/REPO/tree/BRANCH/FOLDER`. Links to a file (`blob`), to the raw file (`raw`) and to the repository itself, which opens its default branch, work too. The repository must be public.
+- **Other hosts,** such as GitHub Pages, your own server or a bucket: use the folder's URL. The host must send `Access-Control-Allow-Origin: *`. To upload only the files the preview needs, use `lvglpro publish <project-path> --out <folder>`.
+
+Only `https://` URLs work, plus `http://localhost` while you test.
+
+## What the preview runs
+
+The preview runs the prebuilt LVGL runtime of the project's LVGL version, not a runtime compiled from the project, so a few things only work in the [Editor](./editor/overview):
+
+- **Custom C code,** such as custom widgets, doesn't run.
+- **JPEG images** don't show. Use PNG.
+- **Converted images** show only if the project has the converted file. Run [`lvglpro generate`](./cli#generate) before publishing, so that `<convert>` makes it.
+- **Projects that include other folders** with `<folders>` can't be published yet.
+
+`lvglpro publish` warns about each of these.
+
+## Tips
+
+- Keep `sandbox="allow-scripts"`: the preview works without other permissions, and the page that embeds it stays out of reach.
+- Keep `loading="lazy"`, so that a preview further down the page starts only when it scrolls into view. Each preview runs its own LVGL runtime.
+- After you change the project, run `lvglpro publish` again and push `manifest.json` with the changes.

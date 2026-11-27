@@ -105,6 +105,7 @@ lvglpro screenshot path/to/project screens/home.xml --out home.png
 | `run-all-tests` | Run all UI tests                             |
 | `screenshot`    | Capture a screen as a PNG                    |
 | `compare`       | Compare generated code against a reference   |
+| `publish`       | Publish a project for the embedded preview   |
 
 Run `lvglpro <command> --help` for the full, up-to-date options of any command.
 
@@ -190,6 +191,24 @@ Compare two project directories by file presence and normalized content. Use it 
 ```bash
 lvglpro compare <generated-path> <reference-path>
 ```
+
+### publish
+
+Write `manifest.json` into the project, so that the [embedded preview](./embed) can show the project on any web page. The manifest lists the files the preview loads, the LVGL version and the screen to open first. `publish` validates the project first, so a project with errors is never published.
+
+```bash
+lvglpro publish <project-path> [options]
+```
+
+| Option             | Description                                                                                       |
+| ------------------ | ------------------------------------------------------------------------------------------------- |
+| `--default <file>` | The screen or component the preview opens first, relative to the project                          |
+| `--out <folder>`   | Also copy `manifest.json` and the files it lists into this folder, to upload them to another host |
+| `-y, --yes`        | Replace the contents of an `--out` folder that isn't empty without asking                         |
+
+The files are `project.xml`, `globals.xml`, `translations.xml`, the XML in `screens/`, `components/` and `widgets/`, the fonts and images, and everything in `custom_data/`. Tests, `preview-bin/`, exported C and hidden files are left out. Without `--default`, the preview opens the previous manifest's screen while it is still published, otherwise the first screen, or the first component.
+
+`publish` warns about what the preview shows differently from the Editor: JPEG images, custom widgets, which need C code, and `globals.xml` entries whose files aren't published, such as `<convert>` output that `generate` hasn't made yet. Projects that include other folders with `<folders>` can't be published yet.
 
 ## Use case: CI/CD pipelines
 

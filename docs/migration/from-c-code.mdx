@@ -3,6 +3,13 @@ title: From C code
 description: lvgl_app2pro converts a running LVGL application into an LVGL Pro XML project by reading the live widget tree out of the process with GDB.
 ---
 
+import c_tab0 from '../_static/images/migration/app2pro_c_tab0.png';
+import c_tab1 from '../_static/images/migration/app2pro_c_tab1.png';
+import c_tab2 from '../_static/images/migration/app2pro_c_tab2.png';
+import xml_tab0 from '../_static/images/migration/app2pro_xml_tab0.png';
+import xml_tab1 from '../_static/images/migration/app2pro_xml_tab1.png';
+import xml_tab2 from '../_static/images/migration/app2pro_xml_tab2.png';
+
 `lvgl_app2pro` turns an existing LVGL application into an LVGL Pro XML project.
 
 It needs an LVGL application that runs on your PC. No source code is needed: it
@@ -24,8 +31,8 @@ converted XML project. Nothing was edited by hand in between.
 
 | | Profile | Analytics | Shop |
 | --- | --- | --- | --- |
-| Original (C) | <img src="/_static/images/migration/app2pro_c_tab0.png" width="200" alt="Profile tab in the C application" /> | <img src="/_static/images/migration/app2pro_c_tab1.png" width="200" alt="Analytics tab in the C application" /> | <img src="/_static/images/migration/app2pro_c_tab2.png" width="200" alt="Shop tab in the C application" /> |
-| Converted (XML) | <img src="/_static/images/migration/app2pro_xml_tab0.png" width="200" alt="Profile tab converted to XML" /> | <img src="/_static/images/migration/app2pro_xml_tab1.png" width="200" alt="Analytics tab converted to XML" /> | <img src="/_static/images/migration/app2pro_xml_tab2.png" width="200" alt="Shop tab converted to XML" /> |
+| Original (C) | <img src={c_tab0.src} width="200" alt="Profile tab in the C application" /> | <img src={c_tab1.src} width="200" alt="Analytics tab in the C application" /> | <img src={c_tab2.src} width="200" alt="Shop tab in the C application" /> |
+| Converted (XML) | <img src={xml_tab0.src} width="200" alt="Profile tab converted to XML" /> | <img src={xml_tab1.src} width="200" alt="Analytics tab converted to XML" /> | <img src={xml_tab2.src} width="200" alt="Shop tab converted to XML" /> |
 
 All the layouts, properties and images were extracted and converted correctly.
 You need to add the fonts and the custom functions and callbacks yourself. See

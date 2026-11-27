@@ -206,7 +206,7 @@ lvglpro publish <project-path> [options]
 | `--out <folder>`   | Also copy `manifest.json` and the files it lists into this folder, to upload them to another host |
 | `-y, --yes`        | Replace the contents of an `--out` folder that isn't empty without asking                         |
 
-The files are `project.xml`, `globals.xml`, `translations.xml`, the XML in `screens/`, `components/` and `widgets/`, the fonts and images, and everything in `custom_data/`. Tests, `preview-bin/`, exported C and hidden files are left out. Without `--default`, the preview opens the previous manifest's screen while it is still published, otherwise the first screen, or the first component.
+The files are `project.xml`, `globals.xml`, `translations.xml`, the XML in `screens/`, `components/` and `widgets/`, the fonts and images, and everything in `custom_data/`. The `tests/` folders, `preview-bin/`, exported C and hidden files are left out. Without `--default`, the preview opens the previous manifest's screen while it is still published, otherwise the first screen, or the first component.
 
 `publish` warns about what the preview shows differently from the Editor: JPEG images, custom widgets, which need C code, and `globals.xml` entries whose files aren't published, such as `<convert>` output that `generate` hasn't made yet. Projects that include other folders with `<folders>` can't be published yet.
 

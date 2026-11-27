@@ -60,7 +60,7 @@ Encode the `project` URL with `encodeURIComponent`, as in the examples. A `file`
 The preview reads the project from the page visitor's browser, so the project's host must let other sites read it.
 
 - **GitHub:** use the link of the project's folder, such as `https://github.com/ORG/REPO/tree/BRANCH/FOLDER`. Links to a file (`blob`), to the raw file (`raw`) and to the repository itself, which opens its default branch, work too. The repository must be public.
-- **Other hosts,** such as GitHub Pages, your own server or a bucket: use the folder's URL. The host must send `Access-Control-Allow-Origin: *`. To upload only the files the preview needs, use `lvglpro publish --out <folder>`.
+- **Other hosts,** such as GitHub Pages, your own server or a bucket: use the folder's URL. The host must send `Access-Control-Allow-Origin: *`. To upload only the files the preview needs, use `lvglpro publish <project-path> --out <folder>`.
 
 Only `https://` URLs work, plus `http://localhost` while you test.
 
